@@ -1,0 +1,447 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+.center-box-growth {
+  height: 0%;
+  animation: box_grow 1.5s forwards;
+}
+@keyframes box_grow {
+  0% {
+    height: 0%;
+  }
+  100% {
+    height: 100%;
+  }
+}
+.page-fade-in {
+  opacity: 0;
+  animation: fade-in 1s ease-in forwards;
+}
+
+.fade-in {
+  opacity: 0;
+  animation: fade-in 0.5s ease-in-out forwards;
+}
+.fade-out {
+  opacity: 1;
+  animation: fade-out 0.5s ease-in-out forwards;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes fade-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+ul.icons {
+  cursor: default;
+  list-style: none;
+  padding-left: 0;
+}
+
+ul.icons li {
+  display: inline-block;
+  padding: 0 0.75em 0 0;
+}
+ul.icons li a {
+  border-radius: 100%;
+  box-shadow: inset 0 0 0 1px #e2e2e2;
+  display: flex;
+  height: 2rem;
+  line-height: 2.25rem;
+  text-align: center;
+  width: 2rem;
+  filter: brightness(80%);
+}
+
+ul.icons li a:hover {
+  background-color: rgba(255, 255, 255, 0.075);
+}
+
+ul.icons li a:active {
+  background-color: rgba(255, 255, 255, 0.175);
+}
+.hover-underline-animation {
+  display: inline-block;
+  position: relative;
+}
+
+.hover-underline-animation::after {
+  content: "";
+  position: absolute;
+  width: 100%;
+  transform: scaleX(0);
+  height: 1px;
+  bottom: 0;
+  left: 0;
+  transform-origin: bottom right;
+  transition: transform 0.35s ease-out;
+}
+
+.hover-underline-animation:hover::after {
+  transform: scaleX(1);
+  transform-origin: bottom left;
+}
+
+@media (prefers-color-scheme: dark) {
+  .hover-underline-animation:hover::after {
+    background-color: #ffffff;
+  }
+}
+@media (prefers-color-scheme: light) {
+  .hover-underline-animation:hover::after {
+    background-color: #27272a;
+  }
+}
+
+#LineA,
+#LineB {
+  transition: all 0.5s ease;
+}
+#menu {
+  transition: all 0.5s ease;
+  z-index: -1;
+}
+.LineA {
+  transform: translate(20px, -14px) rotate(45deg);
+}
+.LineB {
+  transform: translate(-50px, 48px) rotate(-45deg);
+}
+.fade-in {
+  opacity: 0;
+  animation: fade-in 0.5s ease-in-out forwards;
+}
+.fade-in-long {
+  opacity: 0;
+  animation: fade-in 1s ease-in-out forwards;
+}
+.fade-out {
+  opacity: 1;
+  animation: fade-out 0.5s ease-in-out forwards;
+}
+.page-fade-in {
+  opacity: 0;
+  animation: fade-in 1s ease-in forwards;
+}
+.dropdown-fade-in {
+  opacity: 0;
+  animation: soft-fade-in 0.5s ease-in forwards;
+}
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 0.5;
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes fade-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+.input-group,
+.textarea-group {
+  position: relative;
+  margin-top: 45px;
+}
+
+input.underlinedInput,
+textarea.underlinedInput {
+  font-size: 18px;
+  padding: 10px 10px 10px 5px;
+  display: block;
+  border: none;
+}
+.home input.underlinedInput,
+.home textarea.underlinedInput {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+@media (prefers-color-scheme: light) {
+  input.underlinedInput,
+  textarea.underlinedInput {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  }
+}
+@media (prefers-color-scheme: dark) {
+  input.underlinedInput,
+  textarea.underlinedInput {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+}
+
+textarea.underlinedInput {
+  resize: none;
+}
+
+input.underlinedInput:focus,
+textarea.underlinedInput:focus {
+  outline: none;
+}
+
+.bar {
+  position: relative;
+  display: block;
+}
+
+.bar:before,
+.bar:after {
+  content: "";
+  height: 2px;
+  width: 0;
+  bottom: 0px;
+  position: absolute;
+  transition: width 0.3s ease-out;
+}
+.home .bar:before,
+.home .bar:after {
+  background: #60a5fa;
+}
+
+@media (prefers-color-scheme: light) {
+  .bar:before,
+  .bar:after {
+    background: #60a5fa;
+  }
+}
+@media (prefers-color-scheme: dark) {
+  .bar:before,
+  .bar:after {
+    background: #1d4ed8;
+  }
+}
+
+.bar:before {
+  left: 50%;
+}
+
+.bar:after {
+  right: 50%;
+}
+
+input.underlinedInput:focus ~ .bar:before,
+input.underlinedInput:focus ~ .bar:after,
+textarea.underlinedInput:focus ~ .bar:before,
+textarea.underlinedInput:focus ~ .bar:after {
+  width: 50%;
+}
+input.underlinedInput:focus ~ label,
+input.underlinedInput:not(:placeholder-shown) ~ label,
+textarea.underlinedInput:focus ~ label,
+textarea.underlinedInput:not(:placeholder-shown) ~ label {
+  top: -20px;
+  font-size: 14px;
+}
+
+.home input.underlinedInput:focus ~ label,
+.home input.underlinedInput:not(:placeholder-shown) ~ label,
+.home textarea.underlinedInput:focus ~ label,
+.home textarea.underlinedInput:not(:placeholder-shown) ~ label {
+  color: #60a5fa;
+}
+
+@media (prefers-color-scheme: light) {
+  input.underlinedInput:focus ~ label,
+  input.underlinedInput:not(:placeholder-shown) ~ label,
+  textarea.underlinedInput:focus ~ label,
+  textarea.underlinedInput:not(:placeholder-shown) ~ label {
+    color: #60a5fa;
+  }
+}
+@media (prefers-color-scheme: dark) {
+  input.underlinedInput:focus ~ label,
+  input.underlinedInput:not(:placeholder-shown) ~ label,
+  textarea.underlinedInput:focus ~ label,
+  textarea.underlinedInput:not(:placeholder-shown) ~ label {
+    color: #1d4ed8;
+  }
+}
+
+label.underlinedInputLabel {
+  font-size: 18px;
+  font-weight: normal;
+  position: absolute;
+  pointer-events: none;
+  left: 5px;
+  top: 10px;
+  transition: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1),
+    color 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
+}
+
+label.underlinedInputLabelHOME {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 18px;
+  font-weight: normal;
+  position: absolute;
+  pointer-events: none;
+  left: 5px;
+  top: 10px;
+  transition: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1),
+    color 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
+}
+
+.home label.underlinedInputLabel {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+@media (prefers-color-scheme: light) {
+  label.underlinedInputLabel {
+    color: rgba(0, 0, 0, 0.4);
+  }
+}
+@media (prefers-color-scheme: dark) {
+  label.underlinedInputLabel {
+    color: rgba(255, 255, 255, 0.8);
+  }
+}
+
+.scroll-y-disabled {
+  overflow: hidden;
+}
+.checkbox-container {
+  position: relative;
+  padding-left: 35px;
+  cursor: pointer;
+  font-size: 22px;
+  user-select: none;
+}
+
+.checkbox-container input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+
+.checkmark {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 25px;
+  width: 25px;
+  background-color: #eee;
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+}
+
+.checkbox-container:hover input ~ .checkmark {
+  background-color: #ccc;
+}
+
+.checkbox-container input:checked ~ .checkmark {
+  background-color: #2196f3;
+}
+
+input[type="checkbox"] {
+  -webkit-appearance: none;
+  appearance: none;
+  background-color: var(--form-background);
+  margin: 0;
+  font: inherit;
+  width: 1.15em;
+  height: 1.15em;
+  border: 0.15em solid #3b82f6;
+  border-radius: 0.15em;
+  transform: translateY(-0.075em);
+
+  display: grid;
+  place-content: center;
+}
+
+input[type="checkbox"]::before {
+  content: "";
+  width: 0.65em;
+  height: 0.65em;
+  clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
+  transform: scale(0);
+  color: #3b82f6;
+  transform-origin: bottom left;
+  transition: 120ms transform ease-in-out;
+  /* Windows High Contrast Mode */
+  background-color: CanvasText;
+}
+@media (prefers-color-scheme: light) {
+  input[type="checkbox"]::before {
+    box-shadow: inset 1em 1em black;
+  }
+}
+@media (prefers-color-scheme: dark) {
+  input[type="checkbox"]::before {
+    box-shadow: inset 1em 1em white;
+  }
+}
+
+input[type="checkbox"]:checked::before {
+  transform: scale(1);
+}
+.navShadow {
+  -webkit-box-shadow: 0px 0 25px 5px black;
+  box-shadow: 0px 0 25px 5px #3f3f46;
+  animation: shadowfadein 1.5s forwards; /* Start the animation */
+}
+.ProseMirror {
+  padding: 4px 4px 4px 4px;
+}
+.white-underline {
+  text-decoration-color: white;
+}
+.logoSpinner:hover {
+  animation: spinner 1.5s ease;
+}
+@keyframes spinner {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(-360deg);
+  }
+}
+@keyframes spinReverse {
+  to {
+    transform: rotate(-360deg);
+  }
+}
+.animate-spin-reverse {
+  animation: spinReverse 1s linear infinite;
+}
+
+.vertical-rule-around {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: flex-end;
+}
+
+.vertical-rule-around:before,
+.vertical-rule-around:after {
+  content: "";
+  flex: 1;
+  border-left: 1px solid #60a5fa;
+  margin: 10px 0;
+}

@@ -1,5 +1,5 @@
 {
-  "name": "freno-me-ssr",
+  "name": "freno-me-app-dir",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -9,17 +9,39 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.370.0",
+    "@aws-sdk/s3-request-presigner": "^3.370.0",
+    "@planetscale/database": "^1.8.0",
+    "@t3-oss/env-nextjs": "^0.6.0",
+    "@tiptap/react": "^2.0.3",
+    "@tiptap/starter-kit": "^2.0.3",
     "@types/node": "20.4.0",
     "@types/react": "18.2.14",
     "@types/react-dom": "18.2.6",
     "autoprefixer": "10.4.14",
+    "aws-crt": "^1.15.20",
+    "bcrypt": "^5.1.0",
     "eslint": "8.44.0",
     "eslint-config-next": "13.4.9",
+    "js-cookie": "^3.0.5",
+    "jsonwebtoken": "^9.0.1",
     "next": "13.4.9",
     "postcss": "8.4.25",
     "react": "18.2.0",
     "react-dom": "18.2.0",
+    "react-dropzone": "^14.2.3",
+    "sass": "^1.63.6",
+    "swr": "^2.2.0",
     "tailwindcss": "3.3.2",
-    "typescript": "5.1.6"
+    "typescript": "5.1.6",
+    "uuid": "^9.0.0",
+    "zod": "^3.21.4"
+  },
+  "devDependencies": {
+    "@tailwindcss/typography": "^0.5.9",
+    "@types/bcrypt": "^5.0.0",
+    "@types/js-cookie": "^3.0.3",
+    "@types/jsonwebtoken": "^9.0.2",
+    "@types/uuid": "^9.0.2"
   }
 }
