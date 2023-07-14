@@ -1,25 +1,26 @@
 /* eslint-disable jsx-a11y/alt-text */
 /* eslint-disable @next/next/no-img-element */
-import CommentBlock from "@/components/CommentBlock";
 import CommentIcon from "@/icons/CommentIcon";
-import CommentInputBlock from "@/components/CommentInputBlock";
 import { env } from "@/env.mjs";
 import Link from "next/link";
-import { API_RES_GBWC } from "@/types/response-types";
+import { API_RES_GetBlogWithComments } from "@/types/response-types";
+import Image from "next/image";
+import CommentInputBlock from "@/components/CommentInputBlock";
+import CommentBlock from "@/components/CommentBlock";
 
-export default async function DynamicProjectPost({
+export default async function DynamicBlogPost({
   params,
 }: {
   params: { title: string };
 }) {
   const blogQuery = await fetch(
-    `${env.NEXT_PUBLIC_DOMAIN}/api/database/blog/project-by-title/${params.title}`,
+    `${env.NEXT_PUBLIC_DOMAIN}/api/database/blog/by-title/${params.title}`,
     {
       method: "GET",
-      cache: "no-store",
     }
   );
-  const parsedQueryRes = (await blogQuery.json()) as API_RES_GBWC;
+  const parsedQueryRes =
+    (await blogQuery.json()) as API_RES_GetBlogWithComments;
 
   const blog = parsedQueryRes.blog;
   const privilegeLevel = parsedQueryRes.privilegeLevel;
@@ -42,8 +43,8 @@ export default async function DynamicProjectPost({
 
   if (!blog) {
     return (
-      <div className="h-screen w-screen">
-        <div className="mt-[20vh] flex w-full justify-center text-4xl">
+      <>
+        <div className="pt-[20vh] flex w-full justify-center text-4xl">
           No project found!
         </div>
         <div className="flex justify-center pt-12">
@@ -54,7 +55,7 @@ export default async function DynamicProjectPost({
             Back to blog main page
           </Link>
         </div>
-      </div>
+      </>
     );
   }
 
@@ -130,71 +131,84 @@ export default async function DynamicProjectPost({
   //     );
   //   }
   // };
-
-  return (
-    <div className="mx-8 min-h-screen py-14">
-      <div className="flex justify-between">
-        <div className="flex flex-col">
-          <h1 className="pl-24 pt-8 font-light tracking-widest">
-            {blog.title}
-          </h1>
-          <h3 className="pl-32 font-light tracking-widest">{blog.subtitle}</h3>
-        </div>
-        <div className="my-auto flex justify-end">
+  else if (blog) {
+    return (
+      <div className="mx-8 min-h-screen py-14">
+        <div className="flex justify-between">
           <div className="flex flex-col">
-            <div className="flex justify-end">
-              <Link href="#comments">
-                <div className="flex">
-                  <CommentIcon strokeWidth={1} height={32} width={32} />
-                  <div className="my-auto pl-2 text-black dark:text-white">
-                    {/* {top == 1 ? "Comment" : "Comments"} */}
+            <h1 className="pl-24 pt-8 font-light tracking-widest">
+              {blog.title}
+            </h1>
+            <h3 className="pl-32 font-light tracking-widest">
+              {blog.subtitle}
+            </h3>
+          </div>
+          <div className="my-auto flex justify-end">
+            <div className="flex flex-col">
+              <div className="flex justify-end">
+                <Link href="#comments">
+                  <div className="flex">
+                    <CommentIcon strokeWidth={1} height={32} width={32} />
+                    <div className="my-auto pl-2 text-black dark:text-white">
+                      {/* {top == 1 ? "Comment" : "Comments"} */}
+                    </div>
                   </div>
-                </div>
-              </Link>
+                </Link>
+              </div>
+              {/* <div className="flex justify-end">{sessionDependantLike()}</div> */}
             </div>
-            {/* <div className="flex justify-end">{sessionDependantLike()}</div> */}
           </div>
         </div>
-      </div>
-      <div>
-        <img
-          src={blog.banner_photo || "/blueprint.jpg"}
-          className="h-96 w-full object-cover object-center"
-        />
-      </div>
-      <div
-        className="px-24 py-4"
-        dangerouslySetInnerHTML={{ __html: blog.body }}
-      />
-      <div className="px-8 sm:px-12 md:px-16">
-        <div
-          className="text-center text-2xl font-light tracking-widest underline underline-offset-8"
-          id="comments"
-        >
-          Comments
-        </div>
         <div>
-          <CommentInputBlock isReply={false} privilegeLevel={privilegeLevel} />
+          <Image
+            src={
+              blog.banner_photo
+                ? env.NEXT_PUBLIC_AWS_BUCKET_STRING + blog.banner_photo
+                : "/blueprint.jpg"
+            }
+            alt={blog.title + " banner"}
+            height={300}
+            width={300}
+            className="w-full object-cover"
+          />
         </div>
-        <div className="pl-16">
-          {topLevelComments?.map((topLevelComment) => (
-            <CommentBlock
-              key={topLevelComment.id}
-              comment={topLevelComment}
-              category={"project"}
-              projectID={blog.id}
-              recursionCount={1}
-              allComments={comments}
-              child_comments={comments.filter(
-                (comment) => comment.parent_comment_id == topLevelComment.id
-              )}
+        <div
+          className="px-24 py-4"
+          dangerouslySetInnerHTML={{ __html: blog.body }}
+        />
+        <div className="px-8 sm:px-12 md:px-16">
+          <div
+            className="text-center text-2xl font-light tracking-widest underline underline-offset-8"
+            id="comments"
+          >
+            Comments
+          </div>
+          <div>
+            <CommentInputBlock
+              isReply={false}
               privilegeLevel={privilegeLevel}
-              userID={""}
             />
-          ))}
+          </div>
+          <div className="pl-16">
+            {topLevelComments?.map((topLevelComment) => (
+              <CommentBlock
+                key={topLevelComment.id}
+                comment={topLevelComment}
+                category={"blog"}
+                projectID={blog.id}
+                recursionCount={1}
+                allComments={comments}
+                child_comments={comments.filter(
+                  (comment) => comment.parent_comment_id == topLevelComment.id
+                )}
+                privilegeLevel={privilegeLevel}
+                userID={""}
+              />
+            ))}
+          </div>
         </div>
+        <div></div>
       </div>
-      <div></div>
-    </div>
-  );
+    );
+  }
 }

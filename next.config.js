@@ -7,7 +7,7 @@ const nextConfig = {
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "frenome.s3.amazonaws.com",
+        hostname: "frenomeimages.s3.amazonaws.com",
         pathname: "/**",
       },
     ],

@@ -5,7 +5,7 @@ import CommentIcon from "@/icons/CommentIcon";
 import CommentInputBlock from "@/components/CommentInputBlock";
 import { env } from "@/env.mjs";
 import Link from "next/link";
-import { API_RES_GPWC } from "@/types/response-types";
+import { API_RES_GetProjectWithComments } from "@/types/response-types";
 
 export default async function DynamicProjectPost({
   params,
@@ -13,13 +13,14 @@ export default async function DynamicProjectPost({
   params: { title: string };
 }) {
   const projectQuery = await fetch(
-    `${env.NEXT_PUBLIC_DOMAIN}/api/database/blog/project-by-title/${params.title}`,
+    `${env.NEXT_PUBLIC_DOMAIN}/api/database/project/by-title/${params.title}`,
     {
       method: "GET",
       cache: "no-store",
     }
   );
-  const parsedQueryRes = (await projectQuery.json()) as API_RES_GPWC;
+  const parsedQueryRes =
+    (await projectQuery.json()) as API_RES_GetProjectWithComments;
 
   const project = parsedQueryRes.project;
   const privilegeLevel = parsedQueryRes.privilegeLevel;

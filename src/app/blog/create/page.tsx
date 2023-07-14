@@ -56,7 +56,7 @@ export default function ProjectCreation() {
       }
       const data = {
         title: titleRef.current.value,
-        subtitle: titleRef.current.value,
+        subtitle: subtitleRef.current?.value,
         body: editorContent,
         embedded_link: null,
         banner_photo: bannerImageKey !== "" ? bannerImageKey : null,

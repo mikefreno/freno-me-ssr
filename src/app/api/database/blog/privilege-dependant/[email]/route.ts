@@ -9,11 +9,11 @@ export async function GET(
   if (context.params.email !== "undefined") {
     if (context.params.email == env.ADMIN_EMAIL) {
       const conn = ConnectionFactory();
-      const query = "SELECT * FROM Blog";
-      const params = [true];
-      const results = await conn.execute(query, params);
+      const blogQuery = "SELECT * FROM Blog";
+      const blogParams = [true];
+      const blogResults = await conn.execute(blogQuery, blogParams);
       return NextResponse.json(
-        { rows: results.rows, privilegeLevel: "admin" },
+        { rows: blogResults.rows, privilegeLevel: "admin" },
         { status: 200 }
       );
     } else {

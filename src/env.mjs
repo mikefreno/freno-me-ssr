@@ -31,7 +31,7 @@ export const env = createEnv({
    */
   client: {
     NEXT_PUBLIC_DOMAIN: z.string().min(1),
-    NEXT_PUBLIC_AWS_S3_BUCKET_NAME: z.string().min(1),
+    NEXT_PUBLIC_AWS_BUCKET_STRING: z.string().min(1),
   },
 
   /**
@@ -46,7 +46,7 @@ export const env = createEnv({
     DATABASE_URL: process.env.DATABASE_URL,
     DANGEROUS_DBCOMMAND_PASSWORD: process.env.DANGEROUS_DBCOMMAND_PASSWORD,
     AWS_REGION: process.env.AWS_REGION,
-    NEXT_PUBLIC_AWS_S3_BUCKET_NAME: process.env.NEXT_PUBLIC_AWS_S3_BUCKET_NAME,
+    NEXT_PUBLIC_AWS_BUCKET_STRING: process.env.NEXT_PUBLIC_AWS_BUCKET_STRING,
     NEXT_PUBLIC_DOMAIN: process.env.NEXT_PUBLIC_DOMAIN,
     GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
     GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,

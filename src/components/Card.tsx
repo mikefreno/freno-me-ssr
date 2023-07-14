@@ -1,16 +1,31 @@
 import Link from "next/link";
 import Image from "next/image";
 import { Blog, Project } from "@/types/model-types";
+import { env } from "@/env.mjs";
+import { API_RES_GetCommentAndLikeCount } from "@/types/response-types";
 
-export default function ProjectCard(props: {
+export default async function ProjectCard(props: {
   project: Project | Blog;
   privilegeLevel: string;
   linkTarget: "blog" | "projects";
 }) {
+  const query = await fetch(
+    `${env.NEXT_PUBLIC_DOMAIN}/api/database/generic/get-comment-and-like-count/${props.linkTarget}/${props.project.id}`,
+    {
+      method: "GET",
+      cache: "no-store",
+    }
+  );
+  const queryResData = (await query.json()) as API_RES_GetCommentAndLikeCount;
+
   return (
     <div className="relative w-full h-96 bg-white shadow-lg rounded-lg overflow-hidden">
       <Image
-        src={props.project.bannerPhoto || "/blueprint.jpg"}
+        src={
+          props.project.banner_photo
+            ? env.NEXT_PUBLIC_AWS_BUCKET_STRING + props.project.banner_photo
+            : "/blueprint.jpg"
+        }
         alt={props.project.title + " banner"}
         height={300}
         width={300}
@@ -25,21 +40,23 @@ export default function ProjectCard(props: {
           <div className="flex justify-between items-center w-1/2">
             <div>
               <p className="text-black text-sm">
-                {props.project.comments.length || 0} Comments
+                {queryResData.commentCount || 0} Comments
               </p>
               <p className="text-black text-sm">
-                {props.project.likes.length || 0} Likes
+                {queryResData.likeCount || 0} Likes
               </p>
             </div>
             <div>
               <button className="bg-blue-400 text-white rounded px-4 py-2">
-                <Link href={`/${props.linkTarget}/${props.project.id}`}>
+                <Link href={`/${props.linkTarget}/${props.project.title}`}>
                   Read
                 </Link>
               </button>
               {props.privilegeLevel === "admin" && (
                 <button className="bg-green-400 text-white rounded px-4 py-2 ml-2">
-                  <Link href={`/${props.linkTarget}/edit/${props.project.id}`}>
+                  <Link
+                    href={`/${props.linkTarget}/edit/${props.project.title}`}
+                  >
                     Edit
                   </Link>
                 </button>
