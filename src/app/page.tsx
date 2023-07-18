@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import useOnClickOutside from "@/hooks/ClickOutsideHook";
-import Head from "next/head";
 import AboutMeModal from "./AboutMeModal";
 import ContactModal from "./ContactModal";
 
@@ -78,10 +77,6 @@ export default function Home() {
 
   return (
     <>
-      <Head>
-        <title>Freno.me</title>
-        <meta name="description" content="Home" />
-      </Head>
       <div className="page-fade-in h-screen bg-[url('/blur_SH_water.jpg')] bg-cover bg-center bg-no-repeat text-white">
         <div className="flex h-full w-screen justify-center backdrop-brightness-50">
           <div

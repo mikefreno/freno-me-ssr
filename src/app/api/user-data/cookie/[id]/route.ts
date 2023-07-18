@@ -6,7 +6,7 @@ export async function GET(
   request: Request,
   context: { params: { id: string } }
 ) {
-  try {
+  if (context.params.id !== "undefined") {
     const conn = ConnectionFactory();
     const userQuery = "SELECT * FROM User WHERE id =?";
     const userParams = [context.params.id];
@@ -20,8 +20,7 @@ export async function GET(
       },
       { status: 202 }
     );
-  } catch (e) {
-    console.log(e);
+  } else {
     return NextResponse.json({ status: 204 });
   }
 }

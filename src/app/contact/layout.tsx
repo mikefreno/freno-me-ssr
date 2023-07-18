@@ -1,8 +1,9 @@
+import Navbar from "@/components/Navbar";
 import NextTopLoader from "nextjs-toploader";
 
 export const metadata = {
-  title: "Projects | Michael Freno",
-  description: "Project Pages",
+  title: "Contact | Michael Freno",
+  description: "Contact Me",
 };
 
 export default async function NonRootLayout({

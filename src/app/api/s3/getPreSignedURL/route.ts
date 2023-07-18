@@ -23,7 +23,7 @@ export async function POST(input: NextRequest) {
 
   console.log(ext);
   const s3params = {
-    Bucket: env.NEXT_PUBLIC_AWS_S3_BUCKET_NAME,
+    Bucket: env.NEXT_PUBLIC_AWS_BUCKET_STRING,
     Key,
     ContentType: `image/${ext![1]}`,
   };

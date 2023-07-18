@@ -1,8 +1,10 @@
 import Card from "@/components/Card";
+import LoadingSpinner from "@/components/LoadingSpinner";
 import { env } from "@/env.mjs";
 import { API_RES_GetPrivilegeDependantProjects } from "@/types/response-types";
 import { cookies } from "next/headers";
 import Link from "next/link";
+import { Suspense } from "react";
 
 export default async function Projects() {
   const allProjectQuery = await fetch(
@@ -41,11 +43,19 @@ export default async function Projects() {
         <div className="mx-auto flex w-3/4 flex-col">
           {projects.map((project) => (
             <div key={project.id} className="my-4">
-              <Card
-                project={project}
-                privilegeLevel={privilegeLevel}
-                linkTarget={"projects"}
-              />
+              <Suspense
+                fallback={
+                  <div className="mx-auto pt-24 w-full">
+                    <LoadingSpinner height={48} width={48} />
+                  </div>
+                }
+              >
+                <Card
+                  project={project}
+                  privilegeLevel={privilegeLevel}
+                  linkTarget={"projects"}
+                />
+              </Suspense>
             </div>
           ))}
         </div>

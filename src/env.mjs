@@ -15,9 +15,7 @@ export const env = createEnv({
     DATABASE_URL: z.string().min(1),
     DANGEROUS_DBCOMMAND_PASSWORD: z.string().min(1),
     AWS_REGION: z.string().min(1),
-    GOOGLE_CLIENT_ID: z.string().min(1),
     GOOGLE_CLIENT_SECRET: z.string().min(1),
-    GITHUB_CLIENT_ID: z.string().min(1),
     GITHUB_CLIENT_SECRET: z.string().min(1),
     EMAIL_SERVER: z.string().min(1),
     EMAIL_FROM: z.string().min(1),
@@ -32,6 +30,8 @@ export const env = createEnv({
   client: {
     NEXT_PUBLIC_DOMAIN: z.string().min(1),
     NEXT_PUBLIC_AWS_BUCKET_STRING: z.string().min(1),
+    NEXT_PUBLIC_GOOGLE_CLIENT_ID: z.string().min(1),
+    NEXT_PUBLIC_GITHUB_CLIENT_ID: z.string().min(1),
   },
 
   /**
@@ -48,9 +48,9 @@ export const env = createEnv({
     AWS_REGION: process.env.AWS_REGION,
     NEXT_PUBLIC_AWS_BUCKET_STRING: process.env.NEXT_PUBLIC_AWS_BUCKET_STRING,
     NEXT_PUBLIC_DOMAIN: process.env.NEXT_PUBLIC_DOMAIN,
-    GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
+    NEXT_PUBLIC_GOOGLE_CLIENT_ID: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
     GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
-    GITHUB_CLIENT_ID: process.env.GITHUB_CLIENT_ID,
+    NEXT_PUBLIC_GITHUB_CLIENT_ID: process.env.NEXT_PUBLIC_GITHUB_CLIENT_ID,
     GITHUB_CLIENT_SECRET: process.env.GITHUB_CLIENT_SECRET,
     EMAIL_SERVER: process.env.EMAIL_SERVER,
     EMAIL_FROM: process.env.EMAIL_FROM,

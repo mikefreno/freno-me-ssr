@@ -8,6 +8,7 @@ import {
   emailRegistration,
 } from "./actions";
 import Navbar from "@/components/Navbar";
+import { env } from "@/env.mjs";
 
 export default async function LoginPage({
   searchParams,
@@ -159,19 +160,22 @@ export default async function LoginPage({
           <div className="rule-around text-center">Or</div>
           <div className="my-2 flex justify-center">
             <div className="mx-auto mb-4 flex flex-col">
-              <button className="my-4 flex w-80 flex-row bg-white hover:bg-zinc-100 justify-between rounded text-black border dark:text-white border-zinc-800 dark:bg-zinc-800 px-4 py-2 dark:hover:bg-zinc-700 active:scale-95 transition-all duration-300 ease-out">
+              <button className="my-4 flex w-80 flex-row bg-white hover:bg-zinc-100 justify-between dark:border-zinc-50 dark:border rounded text-black border dark:text-white border-zinc-800 dark:bg-zinc-800 px-4 py-2 dark:hover:bg-zinc-700 active:scale-95 transition-all duration-300 ease-out">
                 {register != "true" ? "Sign in " : "Register "} with Google
                 <span className="my-auto">
                   <GoogleLogo height={24} width={24} />
                 </span>
               </button>
               <div className="px-4"></div>
-              <button className="my-4 flex w-80 flex-row justify-between rounded bg-zinc-600 px-4 py-2 text-white hover:bg-zinc-700 active:scale-95 transition-all duration-300 ease-out">
+              <Link
+                href={`https://github.com/login/oauth/authorize?client_id=${env.NEXT_PUBLIC_GITHUB_CLIENT_ID}&redirect_uri=${env.NEXT_PUBLIC_DOMAIN}/api/auth/github&scope=user`}
+                className="my-4 flex w-80 flex-row justify-between rounded bg-zinc-600 px-4 py-2 text-white hover:bg-zinc-700 active:scale-95 transition-all duration-300 ease-out"
+              >
                 {register != "true" ? "Sign in " : "Register "} with Github
                 <span className="my-auto">
-                  <GitHub height={24} width={24} />
+                  <GitHub height={24} width={24} fill={"white"} />
                 </span>
-              </button>
+              </Link>
             </div>
           </div>
         </div>

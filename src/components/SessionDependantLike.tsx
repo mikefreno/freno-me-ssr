@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import LoadingSpinner from "./LoadingSpinner";
 import LikeIcon from "@/icons/LikeIcon";
 import { BlogLike, ProjectLike } from "@/types/model-types";
 import { env } from "@/env.mjs";
+import { set } from "zod";
 
 export default function SessionDependantLike(props: {
   currentUserID: string | undefined;
@@ -13,18 +14,26 @@ export default function SessionDependantLike(props: {
   type: "blog" | "project";
   projectID: number;
 }) {
-  const [likeButtonLoading, setLikeButtonLoading] = useState<boolean>(false);
   const [hovering, setHovering] = useState<boolean>(false);
   const [likes, setLikes] = useState<ProjectLike[] | BlogLike[]>(props.likes);
+  const [instantOffset, setInstantOffset] = useState<number>(0);
+  const [hasLiked, setHasLiked] = useState<boolean>(
+    props.likes.some((like) => like.user_id == props.currentUserID)
+  );
+
+  useEffect(() => {
+    setHasLiked(likes.some((like) => like.user_id == props.currentUserID));
+  }, [likes, props.currentUserID]);
 
   const giveProjectLike = async () => {
-    setLikeButtonLoading(true);
     const data = {
       user_id: props.currentUserID,
       post_id: props.projectID,
       post_type: props.type == "blog" ? "Blog" : "Project",
     };
-    if (likes.some((like) => like.user_id == props.currentUserID)) {
+    if (hasLiked) {
+      setHasLiked(false);
+      setInstantOffset(-1);
       const res = await fetch(
         `${env.NEXT_PUBLIC_DOMAIN}/api/database/generic/post-like/remove`,
         {
@@ -33,9 +42,11 @@ export default function SessionDependantLike(props: {
         }
       );
       const resData = await res.json();
-      4;
       setLikes(resData.newLikes);
+      setInstantOffset(0);
     } else {
+      setHasLiked(true);
+      setInstantOffset(1);
       const res = await fetch(
         `${env.NEXT_PUBLIC_DOMAIN}/api/database/generic/post-like/add`,
         {
@@ -45,14 +56,11 @@ export default function SessionDependantLike(props: {
       );
       const resData = await res.json();
       setLikes(resData.newLikes);
+      setInstantOffset(0);
     }
-
-    setLikeButtonLoading(false);
   };
 
-  if (likeButtonLoading) {
-    return <LoadingSpinner height={24} width={24} />;
-  } else if (props.privilegeLevel != "anonymous") {
+  if (props.privilegeLevel !== "anonymous") {
     return (
       <>
         <button
@@ -75,7 +83,7 @@ export default function SessionDependantLike(props: {
               <LikeIcon
                 strokeWidth={1}
                 color={
-                  likes.some((like) => like.user_id == props.currentUserID)
+                  hasLiked
                     ? props.type == "project"
                       ? "fill-blue-400"
                       : "fill-orange-400"
@@ -103,14 +111,15 @@ export default function SessionDependantLike(props: {
             </div>
             <div
               className={`${
-                likes.some((like) => like.user_id == props.currentUserID)
+                hasLiked
                   ? props.type == "project"
                     ? "text-blue-400"
                     : "text-orange-400"
                   : ""
               } mx-auto flex pl-2 transition-colors ease-in duration-200`}
             >
-              {likes.length} {likes.length == 1 ? "Like" : "Likes"}
+              {likes.length + instantOffset}{" "}
+              {likes.length + instantOffset == 1 ? "Like" : "Likes"}
             </div>
             <div className="tooltip-text px-2">Leave a Like</div>
           </div>
@@ -120,20 +129,22 @@ export default function SessionDependantLike(props: {
   } else {
     return (
       <>
-        <button className="flex tooltip flex-row hover:brightness-50 h-min whitespace-nowrap">
-          <LikeIcon
-            strokeWidth={1}
-            color={"dark:fill-white fill-black"}
-            height={32}
-            width={32}
-          />
+        <button className="flex tooltip flex-col">
+          <div className="mx-auto">
+            <LikeIcon
+              strokeWidth={1}
+              color={"dark:fill-white fill-black"}
+              height={32}
+              width={32}
+            />
+          </div>
           <div
-            className="my-auto pl-2
+            className="my-auto pt-0.5 pl-2
               text-black dark:text-white text-sm"
           >
             {likes.length} {likes.length == 1 ? "Like" : "Likes"}
           </div>
-          <div className="tooltip-text">Must be logged in to Like</div>
+          <div className="tooltip-text">Must be logged in</div>
         </button>
       </>
     );

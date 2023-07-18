@@ -9,6 +9,9 @@ export async function POST(input: NextRequest) {
   const query = `INSERT INTO ${post_type}Like (user_id, ${post_type.toLowerCase()}_id)
     VALUES (?, ?)`;
   const params = [user_id, post_id];
-  const res = await conn.execute(query, params);
+  await conn.execute(query, params);
+  const followUpQuery = `SELECT * FROM ${post_type}Like WHERE ${post_type.toLowerCase()}_id `;
+  const followUpParams = [post_id];
+  const res = await conn.execute(followUpQuery, followUpParams);
   return NextResponse.json({ newLikes: res.rows });
 }

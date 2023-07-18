@@ -37,7 +37,9 @@ export default function CommentInputBlock(props: {
       <div className="flex w-full justify-center">
         <div className="w-3/4 md:w-1/2 h-fit">
           <form onSubmit={submitComment}>
-            <div className="textarea-group">
+            <div
+              className={`textarea-group ${props.type == "blog" ? "blog" : ""}`}
+            >
               <textarea
                 ref={bodyRef}
                 required
@@ -69,8 +71,8 @@ export default function CommentInputBlock(props: {
     );
   } else {
     return (
-      <div className="flex w-full justify-center pt-8">
-        <div className="textarea-group">
+      <div className="flex w-full justify-center">
+        <div className={`textarea-group ${props.type == "blog" ? "blog" : ""}`}>
           <textarea
             required
             disabled

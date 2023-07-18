@@ -1,14 +1,19 @@
 import Xmark from "@/icons/Xmark";
 import { RefObject } from "react";
 import { sendContactRequest } from "./globalActions";
+import Link from "next/link";
+import GitHub from "@/icons/GitHub";
+import LinkedIn from "@/icons/LinkedIn";
 
 export default function ContactModal(props: ContactModalProps) {
   return (
     <>
       <div
         className={`${
-          props.showing ? "fade-in flex" : "hidden"
-        } w-full justify-center overflow-scroll py-[15vh] opacity-0 backdrop-blur-sm transition-all`}
+          props.showing
+            ? "fade-in flex"
+            : "hidden backdrop-brightness-100 backdrop-blur-0"
+        } w-full h-full justify-center overflow-scroll py-[15vh] opacity-0 backdrop-blur-sm backdrop-brightness-75 duration-1000 ease-in-out transition-all`}
       >
         <div
           ref={props.contactRef}
@@ -73,6 +78,32 @@ export default function ContactModal(props: ContactModalProps) {
               </div>
             </div>
           </form>
+          <ul className="icons flex justify-center py-4">
+            <li>
+              <Link
+                href="https://github.com/MikeFreno/"
+                target="_blank"
+                rel="noreferrer"
+                className="hvr-grow-rotate-left rounded-full border-zinc-800 dark:border-zinc-300"
+              >
+                <span className="m-auto">
+                  <GitHub height={16} width={16} fill={undefined} />
+                </span>
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="https://www.linkedin.com/in/michael-freno-176001256/"
+                target="_blank"
+                rel="noreferrer"
+                className="hvr-grow-rotate rounded-full border-zinc-800 dark:border-zinc-300"
+              >
+                <span className="m-auto">
+                  <LinkedIn height={16} width={16} fill={"white"} />
+                </span>
+              </Link>
+            </li>
+          </ul>
         </div>
       </div>
     </>

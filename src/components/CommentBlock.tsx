@@ -80,119 +80,123 @@ export default function CommentBlock(props: {
   };
 
   const upVoteHandler = async () => {
-    const data = {
-      comment_id: props.comment.id,
-      user_id: Cookies.get("userIDToken"),
-    };
+    if (props.privilegeLevel !== "anonymous") {
+      const data = {
+        comment_id: props.comment.id,
+        user_id: Cookies.get("userIDToken"),
+      };
 
-    if (
-      reactions
-        .filter((commentReaction) => commentReaction.type == "upVote")
-        .some((commentReaction) => commentReaction.user_id == props.userID)
-    ) {
-      setPointFeedbackOffset(-1);
-      setImmediateLike(false);
-      const removeRes = await fetch(
-        `${env.NEXT_PUBLIC_DOMAIN}/api/database/comment-reactions/remove/upVote`,
-        { method: "POST", body: JSON.stringify(data) }
-      );
-      const resData = await removeRes.json();
-      setReactions(resData.commentReactions);
-      setPointFeedbackOffset(0);
-      setImmediateDislike(false);
-      setImmediateLike(false);
-    } else if (
-      reactions
-        .filter((commentReaction) => commentReaction.type == "downVote")
-        .some((commentReaction) => commentReaction.user_id == props.userID)
-    ) {
-      setPointFeedbackOffset(2);
-      setImmediateLike(true);
-      setImmediateDislike(false);
-      const removeRes = await fetch(
-        `${env.NEXT_PUBLIC_DOMAIN}/api/database/comment-reactions/remove/downVote`,
-        { method: "POST", body: JSON.stringify(data) }
-      );
-      const addRes = await fetch(
-        `${env.NEXT_PUBLIC_DOMAIN}/api/database/comment-reactions/add/upVote`,
-        { method: "POST", body: JSON.stringify(data) }
-      );
+      if (
+        reactions
+          .filter((commentReaction) => commentReaction.type == "upVote")
+          .some((commentReaction) => commentReaction.user_id == props.userID)
+      ) {
+        setPointFeedbackOffset(-1);
+        setImmediateLike(false);
+        const removeRes = await fetch(
+          `${env.NEXT_PUBLIC_DOMAIN}/api/database/comment-reactions/remove/upVote`,
+          { method: "POST", body: JSON.stringify(data) }
+        );
+        const resData = await removeRes.json();
+        setReactions(resData.commentReactions);
+        setPointFeedbackOffset(0);
+        setImmediateDislike(false);
+        setImmediateLike(false);
+      } else if (
+        reactions
+          .filter((commentReaction) => commentReaction.type == "downVote")
+          .some((commentReaction) => commentReaction.user_id == props.userID)
+      ) {
+        setPointFeedbackOffset(2);
+        setImmediateLike(true);
+        setImmediateDislike(false);
+        const removeRes = await fetch(
+          `${env.NEXT_PUBLIC_DOMAIN}/api/database/comment-reactions/remove/downVote`,
+          { method: "POST", body: JSON.stringify(data) }
+        );
+        const addRes = await fetch(
+          `${env.NEXT_PUBLIC_DOMAIN}/api/database/comment-reactions/add/upVote`,
+          { method: "POST", body: JSON.stringify(data) }
+        );
 
-      const resData = await addRes.json();
-      setReactions(resData.commentReactions);
-      setPointFeedbackOffset(0);
-      setImmediateDislike(false);
-      setImmediateLike(false);
-    } else {
-      setPointFeedbackOffset(1);
-      setImmediateLike(true);
-      const addRes = await fetch(
-        `${env.NEXT_PUBLIC_DOMAIN}/api/database/comment-reactions/add/upVote`,
-        { method: "POST", body: JSON.stringify(data) }
-      );
-      const resData = await addRes.json();
-      setReactions(resData.commentReactions);
-      setPointFeedbackOffset(0);
-      setImmediateDislike(false);
-      setImmediateLike(false);
+        const resData = await addRes.json();
+        setReactions(resData.commentReactions);
+        setPointFeedbackOffset(0);
+        setImmediateDislike(false);
+        setImmediateLike(false);
+      } else {
+        setPointFeedbackOffset(1);
+        setImmediateLike(true);
+        const addRes = await fetch(
+          `${env.NEXT_PUBLIC_DOMAIN}/api/database/comment-reactions/add/upVote`,
+          { method: "POST", body: JSON.stringify(data) }
+        );
+        const resData = await addRes.json();
+        setReactions(resData.commentReactions);
+        setPointFeedbackOffset(0);
+        setImmediateDislike(false);
+        setImmediateLike(false);
+      }
     }
   };
   const downVoteHandler = async () => {
-    const data = {
-      comment_id: props.comment.id,
-      user_id: Cookies.get("userIDToken"),
-    };
+    if (props.privilegeLevel !== "anonymous") {
+      const data = {
+        comment_id: props.comment.id,
+        user_id: Cookies.get("userIDToken"),
+      };
 
-    if (
-      reactions
-        .filter((commentReaction) => commentReaction.type == "downVote")
-        .some((commentReaction) => commentReaction.user_id == props.userID)
-    ) {
-      setPointFeedbackOffset(1);
-      setImmediateDislike(false);
-      const removeRes = await fetch(
-        `${env.NEXT_PUBLIC_DOMAIN}/api/database/comment-reactions/remove/downVote`,
-        { method: "POST", body: JSON.stringify(data) }
-      );
-      const resData = await removeRes.json();
-      setReactions(resData.commentReactions);
-      setPointFeedbackOffset(0);
-      setImmediateDislike(false);
-      setImmediateLike(false);
-    } else if (
-      reactions
-        .filter((commentReaction) => commentReaction.type == "upVote")
-        .some((commentReaction) => commentReaction.user_id == props.userID)
-    ) {
-      setPointFeedbackOffset(-2);
-      setImmediateDislike(false);
-      setImmediateLike(true);
-      const removeRes = await fetch(
-        `${env.NEXT_PUBLIC_DOMAIN}/api/database/comment-reactions/remove/upVote`,
-        { method: "POST", body: JSON.stringify(data) }
-      );
-      const addRes = await fetch(
-        `${env.NEXT_PUBLIC_DOMAIN}/api/database/comment-reactions/add/downVote`,
-        { method: "POST", body: JSON.stringify(data) }
-      );
+      if (
+        reactions
+          .filter((commentReaction) => commentReaction.type == "downVote")
+          .some((commentReaction) => commentReaction.user_id == props.userID)
+      ) {
+        setPointFeedbackOffset(1);
+        setImmediateDislike(false);
+        const removeRes = await fetch(
+          `${env.NEXT_PUBLIC_DOMAIN}/api/database/comment-reactions/remove/downVote`,
+          { method: "POST", body: JSON.stringify(data) }
+        );
+        const resData = await removeRes.json();
+        setReactions(resData.commentReactions);
+        setPointFeedbackOffset(0);
+        setImmediateDislike(false);
+        setImmediateLike(false);
+      } else if (
+        reactions
+          .filter((commentReaction) => commentReaction.type == "upVote")
+          .some((commentReaction) => commentReaction.user_id == props.userID)
+      ) {
+        setPointFeedbackOffset(-2);
+        setImmediateDislike(false);
+        setImmediateLike(true);
+        const removeRes = await fetch(
+          `${env.NEXT_PUBLIC_DOMAIN}/api/database/comment-reactions/remove/upVote`,
+          { method: "POST", body: JSON.stringify(data) }
+        );
+        const addRes = await fetch(
+          `${env.NEXT_PUBLIC_DOMAIN}/api/database/comment-reactions/add/downVote`,
+          { method: "POST", body: JSON.stringify(data) }
+        );
 
-      const resData = await addRes.json();
-      setReactions(resData.commentReactions);
-      setPointFeedbackOffset(0);
-      setImmediateDislike(false);
-      setImmediateLike(false);
-    } else {
-      setPointFeedbackOffset(-1);
-      setImmediateDislike(true);
-      const addRes = await fetch(
-        `${env.NEXT_PUBLIC_DOMAIN}/api/database/comment-reactions/add/downVote`,
-        { method: "POST", body: JSON.stringify(data) }
-      );
-      const resData = await addRes.json();
-      setReactions(resData.commentReactions);
-      setPointFeedbackOffset(0);
-      setImmediateDislike(false);
-      setImmediateLike(false);
+        const resData = await addRes.json();
+        setReactions(resData.commentReactions);
+        setPointFeedbackOffset(0);
+        setImmediateDislike(false);
+        setImmediateLike(false);
+      } else {
+        setPointFeedbackOffset(-1);
+        setImmediateDislike(true);
+        const addRes = await fetch(
+          `${env.NEXT_PUBLIC_DOMAIN}/api/database/comment-reactions/add/downVote`,
+          { method: "POST", body: JSON.stringify(data) }
+        );
+        const resData = await addRes.json();
+        setReactions(resData.commentReactions);
+        setPointFeedbackOffset(0);
+        setImmediateDislike(false);
+        setImmediateLike(false);
+      }
     }
   };
 
@@ -201,30 +205,33 @@ export default function CommentBlock(props: {
     type: string
   ) => {
     event.stopPropagation();
-    const data = {
-      comment_id: props.comment.id,
-      user_id: props.userID,
-    };
-    if (
-      reactions.some(
-        (reaction) => reaction.type == type && reaction.user_id == props.userID
-      )
-    ) {
-      //user has given this reaction, need to remove
-      const res = await fetch(
-        `${env.NEXT_PUBLIC_DOMAIN}/api/database/comment-reactions/remove/${type}`,
-        { method: "POST", body: JSON.stringify(data) }
-      );
-      const resData = await res.json();
-      setReactions(resData.commentReactions);
-    } else {
-      //create new reaction
-      const res = await fetch(
-        `${env.NEXT_PUBLIC_DOMAIN}/api/database/comment-reactions/add/${type}`,
-        { method: "POST", body: JSON.stringify(data) }
-      );
-      const resData = await res.json();
-      setReactions(resData.commentReactions);
+    if (props.privilegeLevel !== "anonymous") {
+      const data = {
+        comment_id: props.comment.id,
+        user_id: props.userID,
+      };
+      if (
+        reactions.some(
+          (reaction) =>
+            reaction.type == type && reaction.user_id == props.userID
+        )
+      ) {
+        //user has given this reaction, need to remove
+        const res = await fetch(
+          `${env.NEXT_PUBLIC_DOMAIN}/api/database/comment-reactions/remove/${type}`,
+          { method: "POST", body: JSON.stringify(data) }
+        );
+        const resData = await res.json();
+        setReactions(resData.commentReactions);
+      } else {
+        //create new reaction
+        const res = await fetch(
+          `${env.NEXT_PUBLIC_DOMAIN}/api/database/comment-reactions/add/${type}`,
+          { method: "POST", body: JSON.stringify(data) }
+        );
+        const resData = await res.json();
+        setReactions(resData.commentReactions);
+      }
     }
   };
 
@@ -254,10 +261,15 @@ export default function CommentBlock(props: {
                         commentReaction.user_id == props.userID
                     ) || immediateLike
                     ? "fill-emerald-500"
-                    : "fill-black dark:fill-white hover:fill-emerald-500"
+                    : `fill-black dark:fill-white hover:fill-emerald-500 ${
+                        props.privilegeLevel == "anonymous" ? "tooltip" : null
+                      }`
                 }`}
               >
                 <ThumbsUpEmoji />
+                {props.privilegeLevel == "anonymous" ? (
+                  <div className="tooltip-text">You must be logged in</div>
+                ) : null}
               </div>
             </button>
             <div className="mx-auto">
@@ -271,7 +283,7 @@ export default function CommentBlock(props: {
             </div>
             <button onClick={() => downVoteHandler()}>
               <div
-                className={`h-5 w-5 rotate-180 ${
+                className={`h-5 w-5 ${
                   reactions
                     .filter(
                       (commentReaction) => commentReaction.type == "downVote"
@@ -281,10 +293,17 @@ export default function CommentBlock(props: {
                         commentReaction.user_id == props.userID
                     ) || immediateDislike
                     ? "fill-rose-500"
-                    : "fill-black dark:fill-white hover:fill-rose-500"
+                    : `fill-black dark:fill-white hover:fill-rose-500 ${
+                        props.privilegeLevel == "anonymous" ? "tooltip" : null
+                      }`
                 }`}
               >
-                <ThumbsUpEmoji />
+                <div className="rotate-180">
+                  <ThumbsUpEmoji />
+                </div>
+                {props.privilegeLevel == "anonymous" ? (
+                  <div className="tooltip-text">You must be logged in</div>
+                ) : null}
               </div>
             </button>
           </div>
@@ -337,6 +356,7 @@ export default function CommentBlock(props: {
                 genericReactionHandler={genericReactionHandler}
                 reactions={reactions}
                 showingReactionOptions={showingReactionOptions}
+                privilegeLevel={props.privilegeLevel}
               />
             </div>
           </div>

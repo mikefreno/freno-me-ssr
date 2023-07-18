@@ -78,7 +78,7 @@ export default function Navbar() {
                 shallow={false}
                 className={`
                   ${
-                    pathname == "projects"
+                    pathname.match("/projects")
                       ? "underline under"
                       : "hover-underline-animation"
                   } border-[#171717] text-[#171717] underline-offset-4  dark:border-[#E2E2E2] dark:text-[#E2E2E2]`}

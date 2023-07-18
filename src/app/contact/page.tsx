@@ -1,6 +1,9 @@
 import Navbar from "@/components/Navbar";
 import Head from "next/head";
 import { sendContactRequest } from "../globalActions";
+import Link from "next/link";
+import GitHub from "@/icons/GitHub";
+import LinkedIn from "@/icons/LinkedIn";
 
 export default function Contact() {
   return (
@@ -59,6 +62,32 @@ export default function Contact() {
               </div>
             </div>
           </form>
+          <ul className="icons flex justify-center pt-24">
+            <li>
+              <Link
+                href="https://github.com/MikeFreno/"
+                target="_blank"
+                rel="noreferrer"
+                className="hvr-grow-rotate-left rounded-full border-zinc-800 dark:border-zinc-300"
+              >
+                <span className="m-auto p-2">
+                  <GitHub height={24} width={24} fill={"black"} />
+                </span>
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="https://www.linkedin.com/in/michael-freno-176001256/"
+                target="_blank"
+                rel="noreferrer"
+                className="hvr-grow-rotate rounded-full border-zinc-800 dark:border-zinc-300"
+              >
+                <span className="m-auto p-2 rounded-md">
+                  <LinkedIn height={24} width={24} fill={undefined} />
+                </span>
+              </Link>
+            </li>
+          </ul>
         </div>
       </div>
     </>

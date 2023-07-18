@@ -57,10 +57,10 @@ ul.icons li a {
   border-radius: 100%;
   box-shadow: inset 0 0 0 1px #e2e2e2;
   display: flex;
-  height: 2rem;
+  min-height: 2rem;
   line-height: 2.25rem;
   text-align: center;
-  width: 2rem;
+  min-width: 2rem;
   filter: brightness(80%);
 }
 
@@ -222,6 +222,10 @@ textarea.underlinedInput:focus {
 .home .bar:after {
   background: #60a5fa;
 }
+.blog .bar:before,
+.blog .bar:after {
+  background: #fb923c;
+}
 
 @media (prefers-color-scheme: light) {
   .bar:before,
@@ -264,6 +268,12 @@ textarea.underlinedInput:not(:placeholder-shown) ~ label {
 .home textarea.underlinedInput:not(:placeholder-shown) ~ label {
   color: #60a5fa;
 }
+.blog input.underlinedInput:focus ~ label,
+.blog input.underlinedInput:not(:placeholder-shown) ~ label,
+.blog textarea.underlinedInput:focus ~ label,
+.blog textarea.underlinedInput:not(:placeholder-shown) ~ label {
+  color: #fb923c;
+}
 
 @media (prefers-color-scheme: light) {
   input.underlinedInput:focus ~ label,
@@ -292,19 +302,6 @@ label.underlinedInputLabel {
   transition: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1),
     color 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
 }
-
-label.underlinedInputLabelHOME {
-  color: rgba(255, 255, 255, 0.8);
-  font-size: 18px;
-  font-weight: normal;
-  position: absolute;
-  pointer-events: none;
-  left: 5px;
-  top: 10px;
-  transition: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1),
-    color 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
-}
-
 .home label.underlinedInputLabel {
   color: rgba(255, 255, 255, 0.8);
 }

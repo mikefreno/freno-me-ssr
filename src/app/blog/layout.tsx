@@ -1,4 +1,5 @@
 import Navbar from "@/components/Navbar";
+import NextTopLoader from "nextjs-toploader";
 
 export const metadata = {
   title: "Blog | Michael Freno",
@@ -10,5 +11,10 @@ export default async function NonRootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return <section>{children}</section>;
+  return (
+    <section>
+      <NextTopLoader showSpinner={false} color="#fb923c" />
+      {children}
+    </section>
+  );
 }
