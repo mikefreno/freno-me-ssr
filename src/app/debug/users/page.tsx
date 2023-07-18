@@ -6,7 +6,7 @@ import Image from "next/image";
 export default async function UsersDebugPage() {
   const resJSON = await fetch(
     `${env.NEXT_PUBLIC_DOMAIN}/api/user-data/get-all-users`,
-    { method: "GET" }
+    { method: "GET", cache: "no-store" }
   );
   const resData = await resJSON.json();
   const userData = resData.users as User[];

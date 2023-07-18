@@ -82,7 +82,7 @@ export const model: { [key: string]: string } = {
       comment_id INT NOT NULL,
       user_id varchar(255) NOT NULL,
       PRIMARY KEY (id),
-      INDEX (comment_id)
+      INDEX (comment_id) .                                                                              
     )
   `,
 };

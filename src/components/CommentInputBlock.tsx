@@ -1,23 +1,50 @@
-import { RefObject } from "react";
+"use client";
+
+import { env } from "@/env.mjs";
+import Cookies from "js-cookie";
+import { useRef } from "react";
 
 export default function CommentInputBlock(props: {
   isReply: boolean;
+  parent_id: number | null;
   privilegeLevel: "admin" | "user" | "anonymous";
+  commentRefreshTrigger: () => void;
+  type: "project" | "blog";
+  post_id: number;
 }) {
-  const submitComment = () => {};
+  const bodyRef = useRef<HTMLTextAreaElement>(null);
+  const submitComment = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (bodyRef.current) {
+      const res = await fetch(
+        `${env.NEXT_PUBLIC_DOMAIN}/api/database/comments/create/${props.type}/${props.post_id}`,
+        {
+          method: "POST",
+          body: JSON.stringify({
+            body: bodyRef.current.value,
+            parent_comment_id: props.parent_id,
+            commenter_id: Cookies.get("userIDToken"),
+          }),
+        }
+      );
+      console.log(await res.json());
+    }
+    props.commentRefreshTrigger();
+  };
 
-  if (props.privilegeLevel == ("user" || "admin")) {
+  if (props.privilegeLevel == "user" || props.privilegeLevel == "admin") {
     return (
-      <div className="flex w-full justify-center pt-8">
+      <div className="flex w-full justify-center">
         <div className="w-3/4 md:w-1/2">
           <form onSubmit={submitComment}>
             <div className="textarea-group">
               <textarea
+                ref={bodyRef}
                 required
                 name="message"
                 placeholder=" "
                 className="bg-transparent underlinedInput w-full "
-                rows={4}
+                rows={props.isReply ? 2 : 4}
               />
               <span className="bar" />
               <label className="underlinedInputLabel">{`Enter your ${
@@ -42,6 +69,7 @@ export default function CommentInputBlock(props: {
         <div className="textarea-group">
           <textarea
             required
+            disabled
             name="message"
             placeholder=" "
             className="bg-transparent underlinedInput w-full "

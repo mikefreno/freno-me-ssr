@@ -1,7 +1,7 @@
 import Card from "@/components/Card";
 import Navbar from "@/components/Navbar";
 import { env } from "@/env.mjs";
-import { API_RES_GPDB } from "@/types/response-types";
+import { API_RES_GetPrivilegeDependantBlogs } from "@/types/response-types";
 import Head from "next/head";
 import { cookies } from "next/headers";
 import Link from "next/link";
@@ -14,7 +14,8 @@ export default async function Blog() {
     { method: "GET" }
   );
 
-  const resData = (await allBlogsQuery.json()) as API_RES_GPDB;
+  const resData =
+    (await allBlogsQuery.json()) as API_RES_GetPrivilegeDependantBlogs;
   const privilegeLevel = resData.privilegeLevel;
   const blogs = resData.rows;
 
@@ -30,7 +31,7 @@ export default async function Blog() {
           <div className="flex justify-end">
             <Link
               href="/blog/create"
-              className="rounded border border-black px-4 py-2 text-black dark:border-white dark:text-white dark:hover:bg-white dark:hover:bg-opacity-20 dark:active:bg-opacity-40"
+              className="rounded border dark:border-white border-zinc-800 px-4 py-2 dark:hover:bg-zinc-700 hover:bg-zinc-200 active:scale-90 transition-all duration-300 ease-out"
             >
               Create Post
             </Link>

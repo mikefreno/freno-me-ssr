@@ -1,4 +1,11 @@
-import { Blog, Comment, Project } from "./model-types";
+import {
+  Blog,
+  BlogLike,
+  Comment,
+  CommentReaction,
+  Project,
+  ProjectLike,
+} from "./model-types";
 
 export interface API_RES_GetPrivilegeDependantProjects {
   status: number;
@@ -17,15 +24,17 @@ export interface API_RES_UserDataNonSensitive {
 }
 export interface API_RES_GetBlogWithComments {
   status: number;
-  blog: Blog;
+  blog: Blog[];
   comments: Comment[];
-  privilegeLevel: "admin" | "user" | "anonymous";
+  likes: BlogLike[];
+  reactionArray: [number, CommentReaction[]][];
 }
 export interface API_RES_GetProjectWithComments {
   status: number;
-  project: Project | undefined;
+  project: Project[];
   comments: Comment[];
-  privilegeLevel: "admin" | "user" | "anonymous";
+  likes: ProjectLike[];
+  reactionArray: [number, CommentReaction[]][];
 }
 export interface API_RES_GetCommentAndLikeCount {
   status: number;

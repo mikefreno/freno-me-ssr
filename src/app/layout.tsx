@@ -19,7 +19,7 @@ export default function RootLayout({
     <html lang="en" className="scroll-smooth">
       <link rel="icon" href="/favicon.ico" sizes="any" />
       <body
-        className={`${SCP.className} bg-zinc-100 dark:bg-zinc-900 text-black dark:text-white`}
+        className={`${SCP.className} bg-zinc-50 dark:bg-zinc-800 text-black dark:text-white`}
       >
         <Navbar />
         {children}

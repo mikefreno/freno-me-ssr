@@ -1,4 +1,4 @@
-export default function CommentIcon(props: {
+export default function LikeIcon(props: {
   strokeWidth: number;
   color: string;
   height: number;
@@ -10,9 +10,9 @@ export default function CommentIcon(props: {
       fill="none"
       viewBox="0 0 24 24"
       strokeWidth={props.strokeWidth}
-      stroke={props.color}
       height={props.height}
       width={props.width}
+      className={`${props.color} transition-colors duration-200 ease-in`}
     >
       <path
         strokeLinecap="round"

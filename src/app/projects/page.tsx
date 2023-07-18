@@ -1,6 +1,6 @@
 import Card from "@/components/Card";
 import { env } from "@/env.mjs";
-import { API_RES_GPDP } from "@/types/response-types";
+import { API_RES_GetPrivilegeDependantProjects } from "@/types/response-types";
 import { cookies } from "next/headers";
 import Link from "next/link";
 
@@ -12,7 +12,8 @@ export default async function Projects() {
     { method: "GET" }
   );
 
-  const resData = (await allProjectQuery.json()) as API_RES_GPDP;
+  const resData =
+    (await allProjectQuery.json()) as API_RES_GetPrivilegeDependantProjects;
   const privilegeLevel = resData.privilegeLevel;
   console.log(resData);
   const projects = resData.rows;
@@ -29,7 +30,7 @@ export default async function Projects() {
           <div className="flex justify-end">
             <Link
               href="/projects/create"
-              className="rounded border border-black px-4 py-2 text-black dark:border-white dark:text-white dark:hover:bg-white dark:hover:bg-opacity-20 dark:active:bg-opacity-40"
+              className="rounded border dark:border-white border-zinc-800 px-4 py-2 dark:hover:bg-zinc-700 hover:bg-zinc-200 active:scale-90 transition-all duration-300 ease-out"
             >
               Create Post
             </Link>

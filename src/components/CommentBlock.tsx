@@ -1,4 +1,5 @@
 "use client";
+
 import UserDefaultImage from "@/icons/UserDefaultImage";
 import React, { useEffect, useRef, useState } from "react";
 import ReplyIcon from "@/icons/ReplyIcon";
@@ -10,10 +11,18 @@ import useSWR from "swr";
 import { env } from "@/env.mjs";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
+import Link from "next/link";
+import Cookies from "js-cookie";
 
-const fetcher = (url: string) => fetch(url).then((res) => res.json());
+const fetcher = async (url: string) => {
+  const res = await fetch(url);
+  const data = await res.json();
+
+  return { data, status: res.status };
+};
 
 export default function CommentBlock(props: {
+  commentRefreshTrigger: () => void;
   comment: Comment;
   category: "project" | "blog";
   projectID: number;
@@ -22,35 +31,33 @@ export default function CommentBlock(props: {
   child_comments: Comment[];
   privilegeLevel: "admin" | "user" | "anonymous";
   userID: string;
+  reactionMap: Map<number, CommentReaction[]>;
 }) {
-  const { data: reactionData, error: reactionError } = useSWR(
-    `/api/database/comment-reactions/${props.comment.id}`,
+  const { data: userData, error: reactionError } = useSWR(
+    `/api/user-data/cookie/${props.comment.commenter_id}`,
     fetcher
   );
-
-  const { data: userData, error: userDataError } = useSWR(
-    `/api/database/comment-reactions/${props.comment.id}`,
-    fetcher
-  );
-
-  const commentReactions = reactionData.commentReactions as CommentReaction[];
-  const commenterUserData = userData.user as User;
 
   const [commentCollapsed, setCommentCollapsed] = useState<boolean>(false);
   const [showingReactionOptions, setShowingReactionOptions] =
     useState<boolean>(false);
   const [replyBoxShowing, setReplyBoxShowing] = useState<boolean>(false);
-  const [showingReplyInput, setShowingReplyInput] = useState<boolean>(false);
   const [toggleHeight, setToggleHeight] = useState<number>(0);
-
   const containerRef = useRef<HTMLDivElement>(null);
-
+  const [reactions, setReactions] = useState<CommentReaction[]>([]);
+  const [pointFeedbackOffset, setPointFeedbackOffset] = useState<number>(0);
   const pathname = usePathname();
+  const commentInputRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
     if (containerRef.current) {
       setToggleHeight(containerRef.current.offsetHeight);
     }
-  }, [containerRef]);
+  }, [containerRef, showingReactionOptions]);
+
+  useEffect(() => {
+    setReactions(props.reactionMap.get(props.comment.id) || []);
+  }, [props.comment, props.reactionMap]);
 
   const collapseCommentToggle = () => {
     setCommentCollapsed(!commentCollapsed);
@@ -58,42 +65,152 @@ export default function CommentBlock(props: {
   const showingReactionOptionsToggle = () => {
     setShowingReactionOptions(!showingReactionOptions);
   };
-  const toggleCommentReplyBox = () => {
+  const toggleCommentReplyBox = (event: React.MouseEvent) => {
+    event.stopPropagation();
+    event.preventDefault();
     setReplyBoxShowing(!replyBoxShowing);
+    setTimeout(() => {
+      if (commentInputRef.current) {
+        commentInputRef.current.scrollIntoView({ behavior: "smooth" });
+      }
+    }, 50);
   };
 
-  const upVoteHandler = () => {
+  const upVoteHandler = async () => {
+    const data = {
+      comment_id: props.comment.id,
+      user_id: Cookies.get("userIDToken"),
+    };
+
     if (
-      commentReactions
+      reactions
         .filter((commentReaction) => commentReaction.type == "upVote")
         .some((commentReaction) => commentReaction.user_id == props.userID)
     ) {
-      // remove upVote
+      setPointFeedbackOffset(-1);
+      const removeRes = await fetch(
+        `${env.NEXT_PUBLIC_DOMAIN}/api/database/comment-reactions/remove/upVote`,
+        { method: "POST", body: JSON.stringify(data) }
+      );
+      console.log("remove: " + (await removeRes.json()));
     } else if (
-      commentReactions
+      reactions
         .filter((commentReaction) => commentReaction.type == "downVote")
         .some((commentReaction) => commentReaction.user_id == props.userID)
     ) {
-      // remove upvote, give downvote
+      setPointFeedbackOffset(2);
+      const removeResPromise = fetch(
+        `${env.NEXT_PUBLIC_DOMAIN}/api/database/comment-reactions/remove/downVote`,
+        { method: "POST", body: JSON.stringify(data) }
+      );
+      const addResPromise = fetch(
+        `${env.NEXT_PUBLIC_DOMAIN}/api/database/comment-reactions/add/upVote`,
+        { method: "POST", body: JSON.stringify(data) }
+      );
+
+      Promise.all([removeResPromise, addResPromise])
+        .then(([removeRes, addRes]) => {
+          return Promise.all([removeRes.json(), addRes.json()]);
+        })
+        .then(([removeResData, addResData]) => {
+          console.log("remove: " + removeResData);
+          console.log("add: " + addResData);
+        })
+        .catch((error) => {
+          setPointFeedbackOffset(0);
+          console.error(error);
+        });
     } else {
-      //give upvote
+      setPointFeedbackOffset(1);
+      const addRes = await fetch(
+        `${env.NEXT_PUBLIC_DOMAIN}/api/database/comment-reactions/add/upVote`,
+        { method: "POST", body: JSON.stringify(data) }
+      );
+      console.log("add: " + (await addRes.json()));
     }
   };
-  const downVoteHandler = () => {
+  const downVoteHandler = async () => {
+    const data = {
+      comment_id: props.comment.id,
+      user_id: Cookies.get("userIDToken"),
+    };
+
     if (
-      commentReactions
+      reactions
         .filter((commentReaction) => commentReaction.type == "downVote")
         .some((commentReaction) => commentReaction.user_id == props.userID)
     ) {
-      // remove downvote
+      setPointFeedbackOffset(1);
+      const removeRes = await fetch(
+        `${env.NEXT_PUBLIC_DOMAIN}/api/database/comment-reactions/remove/upVote`,
+        { method: "POST", body: JSON.stringify(data) }
+      );
+      console.log("remove: " + (await removeRes.json()));
     } else if (
-      commentReactions
+      reactions
         .filter((commentReaction) => commentReaction.type == "upVote")
         .some((commentReaction) => commentReaction.user_id == props.userID)
     ) {
-      // remove downvote, give upvote
+      setPointFeedbackOffset(-2);
+      const removeResPromise = fetch(
+        `${env.NEXT_PUBLIC_DOMAIN}/api/database/comment-reactions/remove/upVote`,
+        { method: "POST", body: JSON.stringify(data) }
+      );
+      const addResPromise = fetch(
+        `${env.NEXT_PUBLIC_DOMAIN}/api/database/comment-reactions/add/downVote`,
+        { method: "POST", body: JSON.stringify(data) }
+      );
+
+      Promise.all([removeResPromise, addResPromise])
+        .then(([removeRes, addRes]) => {
+          return Promise.all([removeRes.json(), addRes.json()]);
+        })
+        .then(([removeResData, addResData]) => {
+          console.log("remove: " + removeResData);
+          console.log("add: " + addResData);
+        })
+        .catch((error) => {
+          setPointFeedbackOffset(0);
+          console.error(error);
+        });
     } else {
-      //give downvote
+      setPointFeedbackOffset(-1);
+      const addRes = await fetch(
+        `${env.NEXT_PUBLIC_DOMAIN}/api/database/comment-reactions/add/downVote`,
+        { method: "POST", body: JSON.stringify(data) }
+      );
+      console.log("add: " + (await addRes.json()));
+    }
+  };
+
+  const genericReactionHandler = async (
+    event: React.MouseEvent,
+    type: string
+  ) => {
+    event.stopPropagation();
+    const currentUserID = Cookies.get("userIDToken");
+    const data = {
+      comment_id: props.comment.id,
+      user_id: currentUserID,
+    };
+    if (
+      reactions.some((reaction) => {
+        reaction.type == type && reaction.user_id == currentUserID;
+      })
+    ) {
+      //user has given this reaction, need to remove
+      const res = await fetch(
+        `${env.NEXT_PUBLIC_DOMAIN}/api/database/comment-reactions/remove/${type}`,
+        { method: "POST", body: JSON.stringify(data) }
+      );
+      console.log("remove: " + (await res.json()));
+    } else {
+      //create new reaction
+      const res = await fetch(
+        `${env.NEXT_PUBLIC_DOMAIN}/api/database/comment-reactions/add/${type}`,
+        { method: "POST", body: JSON.stringify(data) }
+      );
+      console.log("add: " + (await res.json()));
     }
   };
 
@@ -106,14 +223,28 @@ export default function CommentBlock(props: {
         <div className="mr-2 h-6 border-l-2 border-black dark:border-white" />
       </button>
       <div className={commentCollapsed ? "hidden" : ""}>
-        <div ref={containerRef} className="my-2 flex h-fit w-full">
-          <div className="my-auto flex pr-2">
-            {commentReactions.filter(
+        <div ref={containerRef} className="mt-2 flex w-full">
+          <div
+            className={`${
+              reactions.filter(
+                (commentReaction) => commentReaction.type == "upVote"
+              ).length -
+                reactions.filter(
+                  (commentReaction) => commentReaction.type == "downVote"
+                ).length +
+                pointFeedbackOffset <
+              0
+                ? "-ml-6"
+                : "-ml-4"
+            } my-auto absolute`}
+          >
+            {reactions.filter(
               (commentReaction) => commentReaction.type == "upVote"
             ).length -
-              commentReactions.filter(
+              reactions.filter(
                 (commentReaction) => commentReaction.type == "downVote"
-              ).length}
+              ).length +
+              pointFeedbackOffset}
           </div>
           <div
             className="flex flex-col justify-between"
@@ -122,7 +253,7 @@ export default function CommentBlock(props: {
             <button onClick={() => upVoteHandler()}>
               <div
                 className={`h-5 w-5 ${
-                  commentReactions
+                  reactions
                     .filter(
                       (commentReaction) => commentReaction.type == "upVote"
                     )
@@ -140,7 +271,7 @@ export default function CommentBlock(props: {
             <button onClick={() => downVoteHandler()}>
               <div
                 className={`h-5 w-5 rotate-180 ${
-                  commentReactions
+                  reactions
                     .filter(
                       (commentReaction) => commentReaction.type == "downVote"
                     )
@@ -156,26 +287,31 @@ export default function CommentBlock(props: {
               </div>
             </button>
           </div>
-          <button onClick={collapseCommentToggle} className="px-2">
+          <button onClick={collapseCommentToggle} className="px-2 z-0">
             <div
               className="border-l-2 border-black dark:border-white"
               style={{ height: toggleHeight }}
             />
           </button>
-          <button className="w-full" onClick={showingReactionOptionsToggle}>
+          <div className="w-full" onClick={showingReactionOptionsToggle}>
             <div className="flex">{props.comment.body}</div>
             <div className="flex pl-2">
-              <Image
-                src={
-                  env.NEXT_PUBLIC_AWS_S3_BUCKET_NAME +
-                    commenterUserData.image || "/userDefaultImage.svg"
-                }
-                alt="userIcon"
-                className="h-6 w-6 rounded-full"
-              />
-              <div className="px-1">{commenterUserData.email}</div>
+              {userData?.data.image ? (
+                <Image
+                  src={env.NEXT_PUBLIC_AWS_BUCKET_STRING + userData.data.image}
+                  alt="userIcon"
+                  className="h-6 w-6 rounded-full"
+                />
+              ) : (
+                <UserDefaultImage strokeWidth={1} height={24} width={24} />
+              )}
+              <div className="px-1">{userData?.data.email}</div>
+
               <div className="px-1">
-                <button onClick={toggleCommentReplyBox}>
+                <button
+                  onClick={(event) => toggleCommentReplyBox(event)}
+                  className="z-50 absolute"
+                >
                   <ReplyIcon
                     color={
                       pathname.split("/")[1] == "blog" ? "#fb923c" : "#60a5fa"
@@ -185,22 +321,35 @@ export default function CommentBlock(props: {
                   />
                 </button>
               </div>
-              <div className={`${showingReactionOptions ? "" : "hidden"}`}>
-                <ReactionBar
-                  commentID={props.comment.id}
-                  currentUser={undefined}
-                />
-              </div>
             </div>
-          </button>
+            <div
+              className={`${
+                showingReactionOptions || reactions.length > 0 ? "" : "hidden"
+              }`}
+            >
+              <ReactionBar
+                commentID={props.comment.id}
+                currentUserID={props.userID}
+                genericReactionHandler={genericReactionHandler}
+                reactions={reactions}
+              />
+            </div>
+          </div>
         </div>
         <div
-          className={`${showingReplyInput ? "fade-in" : "hidden"} opacity-0`}
+          className={`${
+            replyBoxShowing ? "fade-in" : "hidden"
+          } opacity-0 lg:w-2/3`}
+          ref={commentInputRef}
           style={{ marginLeft: `${-96 * props.recursionCount}px` }}
         >
           <CommentInputBlock
             isReply={true}
             privilegeLevel={props.privilegeLevel}
+            commentRefreshTrigger={props.commentRefreshTrigger}
+            parent_id={props.comment.id}
+            type={props.category}
+            post_id={props.projectID}
           />
         </div>
         <div className="pl-16">
@@ -208,7 +357,7 @@ export default function CommentBlock(props: {
             <CommentBlock
               key={this_comment.id}
               comment={this_comment}
-              category={"project"}
+              category={props.category}
               projectID={props.projectID}
               recursionCount={1}
               allComments={props.allComments}
@@ -216,7 +365,9 @@ export default function CommentBlock(props: {
                 (comment) => comment.parent_comment_id == this_comment.id
               )}
               privilegeLevel={props.privilegeLevel}
-              userID={""}
+              userID={props.userID}
+              commentRefreshTrigger={props.commentRefreshTrigger}
+              reactionMap={props.reactionMap}
             />
           ))}
         </div>

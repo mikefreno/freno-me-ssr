@@ -6,6 +6,7 @@ import CommentInputBlock from "@/components/CommentInputBlock";
 import { env } from "@/env.mjs";
 import Link from "next/link";
 import { API_RES_GetProjectWithComments } from "@/types/response-types";
+import { cookies } from "next/headers";
 
 export default async function DynamicProjectPost({
   params,
@@ -22,12 +23,20 @@ export default async function DynamicProjectPost({
   const parsedQueryRes =
     (await projectQuery.json()) as API_RES_GetProjectWithComments;
 
-  const project = parsedQueryRes.project;
-  const privilegeLevel = parsedQueryRes.privilegeLevel;
+  const project = parsedQueryRes.project[0];
+  const currentUserIDCookie = cookies().get("userIDToken");
+
+  const privilegeLevel = currentUserIDCookie
+    ? currentUserIDCookie.value == env.ADMIN_ID
+      ? "admin"
+      : "user"
+    : "anonymous";
+
   const comments = parsedQueryRes.comments;
   const topLevelComments = parsedQueryRes.comments.filter(
     (comment) => comment.parent_comment_id == null
   );
+  const commentRefreshTrigger = () => {};
 
   // const giveProjectLike = async () => {
   //   setLikeButtonLoading(true);
@@ -177,7 +186,14 @@ export default async function DynamicProjectPost({
           Comments
         </div>
         <div>
-          <CommentInputBlock isReply={false} privilegeLevel={privilegeLevel} />
+          <CommentInputBlock
+            isReply={false}
+            privilegeLevel={privilegeLevel}
+            parent_id={null}
+            commentRefreshTrigger={commentRefreshTrigger}
+            type={"project"}
+            post_id={project.id}
+          />
         </div>
         <div className="pl-16">
           {topLevelComments?.map((topLevelComment) => (
@@ -193,6 +209,7 @@ export default async function DynamicProjectPost({
               )}
               privilegeLevel={privilegeLevel}
               userID={""}
+              commentRefreshTrigger={commentRefreshTrigger}
             />
           ))}
         </div>

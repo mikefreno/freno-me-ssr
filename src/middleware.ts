@@ -18,7 +18,8 @@ export function middleware(request: NextRequest) {
   }
   if (
     request.nextUrl.pathname.match("/blog/create") ||
-    request.nextUrl.pathname.match("/projects/create")
+    request.nextUrl.pathname.match("/projects/create") ||
+    request.nextUrl.pathname.match(/^\/_debug/)
   ) {
     let token = request.cookies.get("userIDToken");
     if (!(token && token.value == env.ADMIN_ID)) {
