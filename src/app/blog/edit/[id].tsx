@@ -7,7 +7,7 @@ import XCircle from "@/icons/XCircle";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 
-export default function ProjectCreation() {
+export default function BlogCreation() {
   const [publish, setPublish] = useState<boolean>(false);
   const [bannerImage, setBannerImage] = useState<File | Blob>();
   const [bannerImageHolder, setBannerImageHolder] = useState<
@@ -42,7 +42,7 @@ export default function ProjectCreation() {
     setPublish(!publish);
   };
 
-  const createProject = async (e: React.FormEvent) => {
+  const createBlog = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitButtonLoading(true);
     if (titleRef.current) {
@@ -51,7 +51,7 @@ export default function ProjectCreation() {
         bannerImageKey = await AddImageToS3(
           bannerImage,
           titleRef.current!.value,
-          "project"
+          "blog"
         );
       }
       const data = {
@@ -64,11 +64,11 @@ export default function ProjectCreation() {
       };
 
       await fetch(
-        `${process.env.NEXT_PUBLIC_DOMAIN}/api/database/project/manipulation`,
+        `${process.env.NEXT_PUBLIC_DOMAIN}/api/database/blog/manipulation`,
         { method: "POST", body: JSON.stringify(data) }
       );
 
-      router.push(`/project/${titleRef.current.value}`);
+      router.push(`/blog/${titleRef.current.value}`);
     }
 
     setSubmitButtonLoading(false);
@@ -81,10 +81,10 @@ export default function ProjectCreation() {
 
   return (
     <div className="px-8 py-32 dark:text-white">
-      <div className="text-center text-2xl tracking-wide">Create a Project</div>
+      <div className="text-center text-2xl tracking-wide">Create a Blog</div>
       <div className="flex h-full w-full justify-center">
         <form
-          onSubmit={createProject}
+          onSubmit={createBlog}
           className="w-full md:w-3/4 lg:w-1/3 xl:w-1/2"
         >
           <div className="input-group mx-4">
@@ -151,7 +151,7 @@ export default function ProjectCreation() {
                 submitButtonLoading
                   ? "bg-zinc-400"
                   : publish
-                  ? "bg-blue-400 dark:bg-blue-600 hover:bg-blue-500 dark:hover:bg-blue-700"
+                  ? "bg-orange-400 dark:bg-orange-600 hover:bg-orange-500 dark:hover:bg-orange-700"
                   : "bg-green-400 dark:bg-green-600 hover:bg-green-500 dark:hover:bg-green-700"
               } active:scale-90 text-white flex w-36 justify-center rounded transition-all duration-300 ease-out py-3 text-white"`}
             >

@@ -2,20 +2,7 @@
 
 import { env } from "@/env.mjs";
 import { cookies } from "next/headers";
-import jwt from "jsonwebtoken";
 import { redirect } from "next/navigation";
-
-// export async function getUserSafeCredentials() {
-//   const token = cookies().get("token");
-//   if (token) {
-//     jwt.verify(token.value, env.JWT_SECRET_KEY, (err, value) => {
-//       if (!err) {
-//         return JSON.stringify({ creds: value, status: 202 });
-//       }
-//     });
-//   }
-//   return JSON.stringify({ status: 401 });
-// }
 
 export async function signOut() {
   //cookie destruction

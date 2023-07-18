@@ -1,7 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { ConnectionFactory } from "../../ConnectionFactory";
 
-export async function GET(context: { params: { commentID: string } }) {
+export async function GET(
+  request: Request,
+  context: { params: { commentID: string } }
+) {
   const commentID = context.params.commentID;
   const conn = ConnectionFactory();
   const commentQuery = "SELECT * FROM CommentReaction WHERE comment_id = ?";
