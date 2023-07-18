@@ -62,7 +62,7 @@ export default async function DynamicBlogPost({
     );
   } else if (blog) {
     return (
-      <div className="mx-8 min-h-screen py-14">
+      <div className="mx-8 min-h-screen py-20">
         <div className="flex justify-between">
           <div className="flex flex-col">
             <h1 className="pl-24 pt-8 font-light tracking-widest">
@@ -110,7 +110,13 @@ export default async function DynamicBlogPost({
           className="px-24 py-4"
           dangerouslySetInnerHTML={{ __html: blog.body }}
         />
-        <Suspense fallback={<LoadingSpinner height={48} width={48} />}>
+        <Suspense
+          fallback={
+            <div className="mx-auto pt-24 w-full">
+              <LoadingSpinner height={48} width={48} />
+            </div>
+          }
+        >
           <CommentSection
             privilegeLevel={privilegeLevel}
             allComments={comments}

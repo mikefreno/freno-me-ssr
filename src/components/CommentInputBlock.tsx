@@ -35,7 +35,7 @@ export default function CommentInputBlock(props: {
   if (props.privilegeLevel == "user" || props.privilegeLevel == "admin") {
     return (
       <div className="flex w-full justify-center">
-        <div className="w-3/4 md:w-1/2">
+        <div className="w-3/4 md:w-1/2 h-fit">
           <form onSubmit={submitComment}>
             <div className="textarea-group">
               <textarea
@@ -51,7 +51,7 @@ export default function CommentInputBlock(props: {
                 props.isReply ? "reply" : "message"
               }`}</label>
             </div>
-            <div className="flex justify-end py-4">
+            <div className="flex justify-end pt-2">
               <button
                 type="submit"
                 className="rounded border text-white shadow-md border-blue-500 bg-blue-400 hover:bg-blue-500 dark: dark:bg-blue-700 dark:hover:bg-blue-800 dark:border-blue-700 active:scale-90 transition-all duration-300 ease-in-out px-4 py-2"

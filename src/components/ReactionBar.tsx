@@ -15,10 +15,19 @@ export default function ReactionBar(props: {
   commentID: number;
   genericReactionHandler: (event: React.MouseEvent, type: string) => void;
   reactions: CommentReaction[];
+  showingReactionOptions: boolean;
 }) {
   return (
-    <div className="pl-6 fade-in flex flex-row">
-      <div className="mx-1 flex">
+    <div className="pl-2 min-h-[1.5rem] fade-in flex flex-row">
+      <div
+        className={`${
+          props.showingReactionOptions ||
+          props.reactions.filter((reaction) => reaction.type == "tears")
+            .length > 0
+            ? "fade-in"
+            : "hidden"
+        } mx-1 flex`}
+      >
         <div
           className={`${
             props.reactions.some(
@@ -42,7 +51,15 @@ export default function ReactionBar(props: {
           <TearsEmoji />
         </button>
       </div>
-      <div className="mx-1 flex">
+      <div
+        className={`${
+          props.showingReactionOptions ||
+          props.reactions.filter((reaction) => reaction.type == "blank")
+            .length > 0
+            ? "fade-in"
+            : "hidden"
+        } mx-1 flex`}
+      >
         <div
           className={`${
             props.reactions.some(
@@ -66,7 +83,15 @@ export default function ReactionBar(props: {
           <BlankEmoji />
         </button>
       </div>
-      <div className="mx-1 flex">
+      <div
+        className={`${
+          props.showingReactionOptions ||
+          props.reactions.filter((reaction) => reaction.type == "cry").length >
+            0
+            ? "fade-in"
+            : "hidden"
+        } mx-1 flex`}
+      >
         <div
           className={`${
             props.reactions.some(
@@ -87,7 +112,15 @@ export default function ReactionBar(props: {
           <CryEmoji />
         </button>
       </div>
-      <div className="mx-1 flex">
+      <div
+        className={`${
+          props.showingReactionOptions ||
+          props.reactions.filter((reaction) => reaction.type == "heartEye")
+            .length > 0
+            ? "fade-in"
+            : "hidden"
+        } mx-1 flex`}
+      >
         <div
           className={`${
             props.reactions.some(
@@ -111,7 +144,15 @@ export default function ReactionBar(props: {
           <HeartEyeEmoji />
         </button>
       </div>
-      <div className="mx-1 flex">
+      <div
+        className={`${
+          props.showingReactionOptions ||
+          props.reactions.filter((reaction) => reaction.type == "angry")
+            .length > 0
+            ? "fade-in"
+            : "hidden"
+        } mx-1 flex`}
+      >
         <div
           className={`${
             props.reactions.some(
@@ -135,7 +176,15 @@ export default function ReactionBar(props: {
           <AngryEmoji />
         </button>
       </div>
-      <div className="mx-1 flex">
+      <div
+        className={`${
+          props.showingReactionOptions ||
+          props.reactions.filter((reaction) => reaction.type == "moneyEye")
+            .length > 0
+            ? "fade-in"
+            : "hidden"
+        } mx-1 flex`}
+      >
         <div
           className={`${
             props.reactions.some(
@@ -159,7 +208,15 @@ export default function ReactionBar(props: {
           <MoneyEyeEmoji />
         </button>
       </div>
-      <div className="mx-1 flex">
+      <div
+        className={`${
+          props.showingReactionOptions ||
+          props.reactions.filter((reaction) => reaction.type == "sick").length >
+            0
+            ? "fade-in"
+            : "hidden"
+        } mx-1 flex`}
+      >
         <div
           className={`${
             props.reactions.some(
@@ -180,7 +237,15 @@ export default function ReactionBar(props: {
           <SickEmoji />
         </button>
       </div>
-      <div className="mx-1 flex">
+      <div
+        className={`${
+          props.showingReactionOptions ||
+          props.reactions.filter((reaction) => reaction.type == "upsideDown")
+            .length > 0
+            ? "fade-in"
+            : "hidden"
+        } mx-1 flex`}
+      >
         <div
           className={`${
             props.reactions.some(
@@ -204,7 +269,15 @@ export default function ReactionBar(props: {
           <UpsideDownEmoji />
         </button>
       </div>
-      <div className="mx-1 flex">
+      <div
+        className={`${
+          props.showingReactionOptions ||
+          props.reactions.filter((reaction) => reaction.type == "worried")
+            .length > 0
+            ? "fade-in"
+            : "hidden"
+        } mx-1 flex`}
+      >
         <div
           className={`${
             props.reactions.some(

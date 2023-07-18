@@ -3,6 +3,7 @@ import Image from "next/image";
 import { Blog, Project } from "@/types/model-types";
 import { env } from "@/env.mjs";
 import { API_RES_GetCommentAndLikeCount } from "@/types/response-types";
+import CardLinks from "./CardLinks";
 
 export default async function ProjectCard(props: {
   project: Project | Blog;
@@ -46,23 +47,11 @@ export default async function ProjectCard(props: {
                 {queryResData.likeCount || 0} Likes
               </p>
             </div>
-            <div>
-              <Link
-                href={`/${props.linkTarget}/${props.project.title}`}
-                className="bg-blue-400 hover:bg-blue-500 active:scale-90 transition-all duration-300 ease-out text-white rounded px-4 py-2"
-              >
-                Read
-              </Link>
-
-              {props.privilegeLevel === "admin" && (
-                <Link
-                  href={`/${props.linkTarget}/edit/${props.project.title}`}
-                  className="bg-green-400 hover:bg-green-500 active:scale-90 transition-all duration-300 ease-out text-white rounded px-4 py-2 ml-2"
-                >
-                  Edit
-                </Link>
-              )}
-            </div>
+            <CardLinks
+              projectTitle={props.project.title}
+              linkTarget={props.linkTarget}
+              privilegeLevel={props.privilegeLevel}
+            />
           </div>
         </div>
       </div>

@@ -188,29 +188,30 @@ export default function CommentBlock(props: {
     type: string
   ) => {
     event.stopPropagation();
-    const currentUserID = Cookies.get("userIDToken");
     const data = {
       comment_id: props.comment.id,
-      user_id: currentUserID,
+      user_id: props.userID,
     };
     if (
-      reactions.some((reaction) => {
-        reaction.type == type && reaction.user_id == currentUserID;
-      })
+      reactions.some(
+        (reaction) => reaction.type == type && reaction.user_id == props.userID
+      )
     ) {
       //user has given this reaction, need to remove
       const res = await fetch(
         `${env.NEXT_PUBLIC_DOMAIN}/api/database/comment-reactions/remove/${type}`,
         { method: "POST", body: JSON.stringify(data) }
       );
-      console.log("remove: " + (await res.json()));
+      const resData = await res.json();
+      setReactions(resData.res);
     } else {
       //create new reaction
       const res = await fetch(
         `${env.NEXT_PUBLIC_DOMAIN}/api/database/comment-reactions/add/${type}`,
         { method: "POST", body: JSON.stringify(data) }
       );
-      console.log("add: " + (await res.json()));
+      const resData = await res.json();
+      setReactions(resData.res);
     }
   };
 
@@ -218,34 +219,12 @@ export default function CommentBlock(props: {
     <>
       <button
         onClick={collapseCommentToggle}
-        className={!commentCollapsed ? "hidden" : "ml-[38px] w-full px-2"}
+        className={!commentCollapsed ? "hidden" : "ml-5 w-full px-2"}
       >
         <div className="mr-2 h-6 border-l-2 border-black dark:border-white" />
       </button>
       <div className={commentCollapsed ? "hidden" : ""}>
-        <div ref={containerRef} className="mt-2 flex w-full">
-          <div
-            className={`${
-              reactions.filter(
-                (commentReaction) => commentReaction.type == "upVote"
-              ).length -
-                reactions.filter(
-                  (commentReaction) => commentReaction.type == "downVote"
-                ).length +
-                pointFeedbackOffset <
-              0
-                ? "-ml-6"
-                : "-ml-4"
-            } my-auto absolute`}
-          >
-            {reactions.filter(
-              (commentReaction) => commentReaction.type == "upVote"
-            ).length -
-              reactions.filter(
-                (commentReaction) => commentReaction.type == "downVote"
-              ).length +
-              pointFeedbackOffset}
-          </div>
+        <div ref={containerRef} className="my-4 flex w-full">
           <div
             className="flex flex-col justify-between"
             style={{ height: toggleHeight }}
@@ -262,12 +241,21 @@ export default function CommentBlock(props: {
                         commentReaction.user_id == props.userID
                     )
                     ? "fill-emerald-500"
-                    : "fill-black dark:fill-white"
+                    : "fill-black dark:fill-white hover:fill-emerald-500"
                 }`}
               >
                 <ThumbsUpEmoji />
               </div>
             </button>
+            <div className="mx-auto">
+              {reactions.filter(
+                (commentReaction) => commentReaction.type == "upVote"
+              ).length -
+                reactions.filter(
+                  (commentReaction) => commentReaction.type == "downVote"
+                ).length +
+                pointFeedbackOffset}
+            </div>
             <button onClick={() => downVoteHandler()}>
               <div
                 className={`h-5 w-5 rotate-180 ${
@@ -280,7 +268,7 @@ export default function CommentBlock(props: {
                         commentReaction.user_id == props.userID
                     )
                     ? "fill-rose-500"
-                    : "fill-black dark:fill-white"
+                    : "fill-black dark:fill-white hover:fill-rose-500"
                 }`}
               >
                 <ThumbsUpEmoji />
@@ -322,9 +310,12 @@ export default function CommentBlock(props: {
                 </button>
               </div>
             </div>
+            {props.userID == props.comment.commenter_id ? <div></div> : null}
             <div
               className={`${
-                showingReactionOptions || reactions.length > 0 ? "" : "hidden"
+                showingReactionOptions || reactions.length > 0
+                  ? ""
+                  : "opacity-0"
               }`}
             >
               <ReactionBar
@@ -332,6 +323,7 @@ export default function CommentBlock(props: {
                 currentUserID={props.userID}
                 genericReactionHandler={genericReactionHandler}
                 reactions={reactions}
+                showingReactionOptions={showingReactionOptions}
               />
             </div>
           </div>

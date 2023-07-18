@@ -468,6 +468,11 @@ input[type="checkbox"]:checked::before {
   opacity: 0;
   transition: opacity 0.3s;
 }
+@media (prefers-color-scheme: dark) {
+  .tooltip .tooltip-text {
+    background-color: #18181b;
+  }
+}
 
 .tooltip:hover .tooltip-text {
   visibility: visible;

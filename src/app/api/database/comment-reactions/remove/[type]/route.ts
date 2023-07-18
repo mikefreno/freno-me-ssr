@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { ConnectionFactory } from "../../../ConnectionFactory";
+import { CommentReactionInput } from "@/types/input-types";
+import { CommentReaction } from "@/types/model-types";
 
 export async function POST(
   input: NextRequest,
@@ -14,5 +16,8 @@ export async function POST(
     `;
   const params = [context.params.type, comment_id, user_id];
   const res = await conn.execute(query, params);
-  return NextResponse.json({ res: res });
+  const data = (res.rows as CommentReaction[]).filter(
+    (commentReaction) => commentReaction.comment_id == comment_id
+  );
+  return NextResponse.json({ commentReactions: data });
 }

@@ -4,7 +4,7 @@ export default function LoadingSpinner(props: {
 }) {
   return (
     <>
-      <picture className="animate-spin-reverse ml-4">
+      <picture className="animate-spin-reverse mx-auto">
         <source srcSet="/WhiteLogo.png" media="(prefers-color-scheme: dark)" />
         <img
           src="/BlackLogo.png"

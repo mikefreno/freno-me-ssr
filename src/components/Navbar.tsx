@@ -91,7 +91,7 @@ export default function Navbar() {
                 href="/blog"
                 shallow={false}
                 className={`${
-                  pathname == "blog"
+                  pathname.match("/blog")
                     ? "underline under"
                     : "hover-underline-animation"
                 } border-[#171717] text-[#171717] underline-offset-4 dark:border-[#E2E2E2] dark:text-[#E2E2E2]`}
@@ -104,7 +104,7 @@ export default function Navbar() {
               <Link
                 href="/contact"
                 className={`${
-                  pathname == "/contact"
+                  pathname.match("/contact")
                     ? "underline under"
                     : "hover-underline-animation"
                 } border-[#171717] text-[#171717] underline-offset-4 dark:border-[#E2E2E2] dark:text-[#E2E2E2]`}

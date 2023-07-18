@@ -33,6 +33,8 @@ export const model: { [key: string]: string } = {
       PRIMARY KEY (id),
       INDEX (user_id),
       INDEX (blog_id)
+              UNIQUE KEY user_type_unique (user_id, blog_id)
+
     )
   `,
   Project: `
@@ -58,6 +60,8 @@ export const model: { [key: string]: string } = {
       PRIMARY KEY (id),
       INDEX (user_id),
       INDEX (project_id)
+        UNIQUE KEY user_type_unique (user_id, project_id)
+
     )
   `,
   Comment: `
@@ -76,13 +80,14 @@ export const model: { [key: string]: string } = {
     )
   `,
   CommentReaction: `
-    CREATE TABLE CommentReaction (
-      id INT AUTO_INCREMENT NOT NULL,
-      type varchar(255) NOT NULL,
-      comment_id INT NOT NULL,
-      user_id varchar(255) NOT NULL,
-      PRIMARY KEY (id),
-      INDEX (comment_id) .                                                                              
-    )
+CREATE TABLE CommentReaction (
+  id INT AUTO_INCREMENT NOT NULL,
+  type varchar(255) NOT NULL,
+  comment_id INT NOT NULL,
+  user_id varchar(255) NOT NULL,
+  PRIMARY KEY (id),
+  INDEX (comment_id),
+  UNIQUE KEY user_type_unique (user_id, type)
+)
   `,
 };
