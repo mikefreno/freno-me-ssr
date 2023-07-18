@@ -71,7 +71,7 @@ export default function Contact() {
                 className="hvr-grow-rotate-left rounded-full border-zinc-800 dark:border-zinc-300"
               >
                 <span className="m-auto p-2">
-                  <GitHub height={24} width={24} fill={"black"} />
+                  <GitHub height={24} width={24} fill={undefined} />
                 </span>
               </Link>
             </li>
