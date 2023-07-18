@@ -2,8 +2,8 @@ import { S3Client, DeleteObjectCommand } from "@aws-sdk/client-s3";
 import { NextRequest } from "next/dist/server/web/spec-extension/request";
 import { NextResponse } from "next/server";
 
-import { env } from "~/env.mjs";
 import { ConnectionFactory } from "../../database/ConnectionFactory";
+import { env } from "@/env.mjs";
 
 interface InputData {
   key: string;
@@ -17,7 +17,7 @@ export async function POST(input: NextRequest) {
   // Parse the url to get the bucket and key
 
   const s3params = {
-    Bucket: env.AWS_S3_BUCKET_NAME,
+    Bucket: env.NEXT_PUBLIC_AWS_BUCKET_STRING,
     Key: key,
   };
 
