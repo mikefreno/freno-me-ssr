@@ -73,7 +73,7 @@ export default async function DynamicBlogPost({
             </h3>
           </div>
           <div className="flex my-auto">
-            <Link href="#comments" className="mx-2">
+            <a href="#comments" className="mx-2">
               <div className="flex flex-col tooltip">
                 <div className="mx-auto">
                   <CommentIcon strokeWidth={1} height={32} width={32} />
@@ -81,7 +81,7 @@ export default async function DynamicBlogPost({
                 <div className="mx-auto">{comments.length} Comments</div>
                 <div className="tooltip-text">Go to Comments</div>
               </div>
-            </Link>
+            </a>
             <div className="mx-2">
               <SessionDependantLike
                 currentUserID={currentUserIDCookie?.value}

@@ -34,24 +34,17 @@ export default function Account() {
   // }
 
   return (
-    <div className="bg-zinc-100 dark:bg-zinc-900">
-      <Head>
-        <title>Account | Freno.me</title>
-        <meta name="description" content="User Account Page" />
-      </Head>
-      <Navbar />
-      <div className="min-h-screen px-36">
-        <div className="pt-24">
-          <div className="flex w-full">
-            <Dropzone
-              onDrop={handleImageDrop}
-              acceptedFiles={"image/jpg, image/jpeg, image/png"}
-              fileHolder={null}
-            />
-          </div>
-          <div className="text-xl">{}</div>
-          <div className="text-lg">{}</div>
+    <div className="min-h-screen px-36">
+      <div className="pt-24">
+        <div className="flex w-full">
+          <Dropzone
+            onDrop={handleImageDrop}
+            acceptedFiles={"image/jpg, image/jpeg, image/png"}
+            fileHolder={null}
+          />
         </div>
+        <div className="text-xl">{}</div>
+        <div className="text-lg">{}</div>
       </div>
     </div>
   );

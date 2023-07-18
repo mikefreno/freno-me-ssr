@@ -15,9 +15,12 @@ export async function POST(
     VALUES (?, ?, ?)
     `;
   const params = [context.params.type, comment_id, user_id];
-  const res = await conn.execute(query, params);
+  await conn.execute(query, params);
+  const followUpQuery = `SELECT * FROM CommentReaction WHERE comment_id = ?`;
+  const followUpParams = [comment_id];
+  const res = await conn.execute(followUpQuery, followUpParams);
   const data = (res.rows as CommentReaction[]).filter(
     (commentReaction) => commentReaction.comment_id == comment_id
   );
-  return NextResponse.json({ commentReactions: data });
+  return NextResponse.json({ commentReactions: data || [] });
 }

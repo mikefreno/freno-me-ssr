@@ -13,6 +13,7 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import Cookies from "js-cookie";
+import { set } from "zod";
 
 const fetcher = async (url: string) => {
   const res = await fetch(url);
@@ -48,6 +49,8 @@ export default function CommentBlock(props: {
   const [pointFeedbackOffset, setPointFeedbackOffset] = useState<number>(0);
   const pathname = usePathname();
   const commentInputRef = useRef<HTMLDivElement>(null);
+  const [immediateLike, setImmediateLike] = useState<boolean>(false);
+  const [immediateDislike, setImmediateDislike] = useState<boolean>(false);
 
   useEffect(() => {
     if (containerRef.current) {
@@ -88,45 +91,50 @@ export default function CommentBlock(props: {
         .some((commentReaction) => commentReaction.user_id == props.userID)
     ) {
       setPointFeedbackOffset(-1);
+      setImmediateLike(false);
       const removeRes = await fetch(
         `${env.NEXT_PUBLIC_DOMAIN}/api/database/comment-reactions/remove/upVote`,
         { method: "POST", body: JSON.stringify(data) }
       );
-      console.log("remove: " + (await removeRes.json()));
+      const resData = await removeRes.json();
+      setReactions(resData.commentReactions);
+      setPointFeedbackOffset(0);
+      setImmediateDislike(false);
+      setImmediateLike(false);
     } else if (
       reactions
         .filter((commentReaction) => commentReaction.type == "downVote")
         .some((commentReaction) => commentReaction.user_id == props.userID)
     ) {
       setPointFeedbackOffset(2);
-      const removeResPromise = fetch(
+      setImmediateLike(true);
+      setImmediateDislike(false);
+      const removeRes = await fetch(
         `${env.NEXT_PUBLIC_DOMAIN}/api/database/comment-reactions/remove/downVote`,
         { method: "POST", body: JSON.stringify(data) }
       );
-      const addResPromise = fetch(
-        `${env.NEXT_PUBLIC_DOMAIN}/api/database/comment-reactions/add/upVote`,
-        { method: "POST", body: JSON.stringify(data) }
-      );
-
-      Promise.all([removeResPromise, addResPromise])
-        .then(([removeRes, addRes]) => {
-          return Promise.all([removeRes.json(), addRes.json()]);
-        })
-        .then(([removeResData, addResData]) => {
-          console.log("remove: " + removeResData);
-          console.log("add: " + addResData);
-        })
-        .catch((error) => {
-          setPointFeedbackOffset(0);
-          console.error(error);
-        });
-    } else {
-      setPointFeedbackOffset(1);
       const addRes = await fetch(
         `${env.NEXT_PUBLIC_DOMAIN}/api/database/comment-reactions/add/upVote`,
         { method: "POST", body: JSON.stringify(data) }
       );
-      console.log("add: " + (await addRes.json()));
+
+      const resData = await addRes.json();
+      setReactions(resData.commentReactions);
+      setPointFeedbackOffset(0);
+      setImmediateDislike(false);
+      setImmediateLike(false);
+    } else {
+      setPointFeedbackOffset(1);
+      setImmediateLike(true);
+      const addRes = await fetch(
+        `${env.NEXT_PUBLIC_DOMAIN}/api/database/comment-reactions/add/upVote`,
+        { method: "POST", body: JSON.stringify(data) }
+      );
+      const resData = await addRes.json();
+      setReactions(resData.commentReactions);
+      setPointFeedbackOffset(0);
+      setImmediateDislike(false);
+      setImmediateLike(false);
     }
   };
   const downVoteHandler = async () => {
@@ -141,45 +149,50 @@ export default function CommentBlock(props: {
         .some((commentReaction) => commentReaction.user_id == props.userID)
     ) {
       setPointFeedbackOffset(1);
+      setImmediateDislike(false);
       const removeRes = await fetch(
-        `${env.NEXT_PUBLIC_DOMAIN}/api/database/comment-reactions/remove/upVote`,
+        `${env.NEXT_PUBLIC_DOMAIN}/api/database/comment-reactions/remove/downVote`,
         { method: "POST", body: JSON.stringify(data) }
       );
-      console.log("remove: " + (await removeRes.json()));
+      const resData = await removeRes.json();
+      setReactions(resData.commentReactions);
+      setPointFeedbackOffset(0);
+      setImmediateDislike(false);
+      setImmediateLike(false);
     } else if (
       reactions
         .filter((commentReaction) => commentReaction.type == "upVote")
         .some((commentReaction) => commentReaction.user_id == props.userID)
     ) {
       setPointFeedbackOffset(-2);
-      const removeResPromise = fetch(
+      setImmediateDislike(false);
+      setImmediateLike(true);
+      const removeRes = await fetch(
         `${env.NEXT_PUBLIC_DOMAIN}/api/database/comment-reactions/remove/upVote`,
         { method: "POST", body: JSON.stringify(data) }
       );
-      const addResPromise = fetch(
-        `${env.NEXT_PUBLIC_DOMAIN}/api/database/comment-reactions/add/downVote`,
-        { method: "POST", body: JSON.stringify(data) }
-      );
-
-      Promise.all([removeResPromise, addResPromise])
-        .then(([removeRes, addRes]) => {
-          return Promise.all([removeRes.json(), addRes.json()]);
-        })
-        .then(([removeResData, addResData]) => {
-          console.log("remove: " + removeResData);
-          console.log("add: " + addResData);
-        })
-        .catch((error) => {
-          setPointFeedbackOffset(0);
-          console.error(error);
-        });
-    } else {
-      setPointFeedbackOffset(-1);
       const addRes = await fetch(
         `${env.NEXT_PUBLIC_DOMAIN}/api/database/comment-reactions/add/downVote`,
         { method: "POST", body: JSON.stringify(data) }
       );
-      console.log("add: " + (await addRes.json()));
+
+      const resData = await addRes.json();
+      setReactions(resData.commentReactions);
+      setPointFeedbackOffset(0);
+      setImmediateDislike(false);
+      setImmediateLike(false);
+    } else {
+      setPointFeedbackOffset(-1);
+      setImmediateDislike(true);
+      const addRes = await fetch(
+        `${env.NEXT_PUBLIC_DOMAIN}/api/database/comment-reactions/add/downVote`,
+        { method: "POST", body: JSON.stringify(data) }
+      );
+      const resData = await addRes.json();
+      setReactions(resData.commentReactions);
+      setPointFeedbackOffset(0);
+      setImmediateDislike(false);
+      setImmediateLike(false);
     }
   };
 
@@ -203,7 +216,7 @@ export default function CommentBlock(props: {
         { method: "POST", body: JSON.stringify(data) }
       );
       const resData = await res.json();
-      setReactions(resData.res);
+      setReactions(resData.commentReactions);
     } else {
       //create new reaction
       const res = await fetch(
@@ -211,7 +224,7 @@ export default function CommentBlock(props: {
         { method: "POST", body: JSON.stringify(data) }
       );
       const resData = await res.json();
-      setReactions(resData.res);
+      setReactions(resData.commentReactions);
     }
   };
 
@@ -239,7 +252,7 @@ export default function CommentBlock(props: {
                     .some(
                       (commentReaction) =>
                         commentReaction.user_id == props.userID
-                    )
+                    ) || immediateLike
                     ? "fill-emerald-500"
                     : "fill-black dark:fill-white hover:fill-emerald-500"
                 }`}
@@ -266,7 +279,7 @@ export default function CommentBlock(props: {
                     .some(
                       (commentReaction) =>
                         commentReaction.user_id == props.userID
-                    )
+                    ) || immediateDislike
                     ? "fill-rose-500"
                     : "fill-black dark:fill-white hover:fill-rose-500"
                 }`}

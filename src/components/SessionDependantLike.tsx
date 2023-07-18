@@ -64,16 +64,38 @@ export default function SessionDependantLike(props: {
             setHovering(false);
           }}
         >
-          <div className="flex flex-col tooltip hover:text-blue-400 text-black dark:text-white">
+          <div
+            className={`${
+              props.type == "project"
+                ? "hover:text-blue-400"
+                : "hover:text-orange-400"
+            } flex flex-col tooltip  text-black dark:text-white`}
+          >
             <div className="mx-auto">
               <LikeIcon
                 strokeWidth={1}
                 color={
                   likes.some((like) => like.user_id == props.currentUserID)
-                    ? "fill-blue-400"
-                    : `dark:fill-${hovering ? "blue-600" : "white"} fill-${
-                        hovering ? "blue-400" : "black"
-                      } hover:fill-blue-400 dark:hover:fill-blue-600`
+                    ? props.type == "project"
+                      ? "fill-blue-400"
+                      : "fill-orange-400"
+                    : `dark:fill-${
+                        hovering
+                          ? props.type == "project"
+                            ? "blue-600"
+                            : "orange-500"
+                          : "white"
+                      } fill-${
+                        hovering
+                          ? props.type == "project"
+                            ? "blue-400"
+                            : "orange-400"
+                          : "black"
+                      } ${
+                        props.type == "project"
+                          ? "hover:fill-blue-400 dark:hover:fill-blue-600"
+                          : "hover:fill-orange-400"
+                      } `
                 }
                 height={32}
                 width={32}
@@ -82,7 +104,9 @@ export default function SessionDependantLike(props: {
             <div
               className={`${
                 likes.some((like) => like.user_id == props.currentUserID)
-                  ? "text-blue-400"
+                  ? props.type == "project"
+                    ? "text-blue-400"
+                    : "text-orange-400"
                   : ""
               } mx-auto flex pl-2 transition-colors ease-in duration-200`}
             >

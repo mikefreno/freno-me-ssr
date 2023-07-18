@@ -1,12 +1,14 @@
-/* eslint-disable jsx-a11y/alt-text */
-/* eslint-disable @next/next/no-img-element */
-import CommentBlock from "@/components/CommentBlock";
 import CommentIcon from "@/icons/CommentIcon";
-import CommentInputBlock from "@/components/CommentInputBlock";
 import { env } from "@/env.mjs";
 import Link from "next/link";
 import { API_RES_GetProjectWithComments } from "@/types/response-types";
+import Image from "next/image";
 import { cookies } from "next/headers";
+import SessionDependantLike from "@/components/SessionDependantLike";
+import CommentSection from "@/components/CommentSection";
+import { CommentReaction } from "@/types/model-types";
+import { Suspense } from "react";
+import LoadingSpinner from "@/components/LoadingSpinner";
 
 export default async function DynamicProjectPost({
   params,
@@ -20,40 +22,32 @@ export default async function DynamicProjectPost({
       cache: "no-store",
     }
   );
+
   const parsedQueryRes =
     (await projectQuery.json()) as API_RES_GetProjectWithComments;
 
-  const project = parsedQueryRes.project[0];
   const currentUserIDCookie = cookies().get("userIDToken");
-
   const privilegeLevel = currentUserIDCookie
     ? currentUserIDCookie.value == env.ADMIN_ID
       ? "admin"
       : "user"
     : "anonymous";
 
+  const project = parsedQueryRes.project[0];
+
   const comments = parsedQueryRes.comments;
   const topLevelComments = parsedQueryRes.comments.filter(
     (comment) => comment.parent_comment_id == null
   );
-  const commentRefreshTrigger = () => {};
-
-  // const giveProjectLike = async () => {
-  //   setLikeButtonLoading(true);
-  //   if (project && project.id) {
-  //     const res = await projectLikeMutation.mutateAsync(project.id);
-  //     setProject(res);
-  //   }
-  //   setLikeButtonLoading(false);
-  // };
-  // const toggleUserNameSetModal = () => {
-  //   setShowingUserNameSetModal(!showingUserNameSetModal);
-  // };
+  const likes = parsedQueryRes.likes;
+  const reactionMap = new Map<number, CommentReaction[]>(
+    parsedQueryRes.reactionArray
+  );
 
   if (!project) {
     return (
-      <div className="h-screen w-screen">
-        <div className="mt-[20vh] flex w-full justify-center text-4xl">
+      <>
+        <div className="pt-[20vh] flex w-full justify-center text-4xl">
           No project found!
         </div>
         <div className="flex justify-center pt-12">
@@ -64,157 +58,76 @@ export default async function DynamicProjectPost({
             Back to blog main page
           </Link>
         </div>
+      </>
+    );
+  } else if (project) {
+    return (
+      <div className="mx-8 min-h-screen py-20">
+        <div className="flex justify-between">
+          <div className="flex flex-col">
+            <h1 className="pl-24 pt-8 font-light tracking-widest">
+              {project.title}
+            </h1>
+            <h3 className="pl-32 font-light tracking-widest">
+              {project.subtitle}
+            </h3>
+          </div>
+          <div className="flex my-auto">
+            <a href="#comments" className="mx-2">
+              <div className="flex flex-col tooltip">
+                <div className="mx-auto">
+                  <CommentIcon strokeWidth={1} height={32} width={32} />
+                </div>
+                <div className="mx-auto">{comments.length} Comments</div>
+                <div className="tooltip-text">Go to Comments</div>
+              </div>
+            </a>
+            <div className="mx-2">
+              <SessionDependantLike
+                currentUserID={currentUserIDCookie?.value}
+                privilegeLevel={privilegeLevel}
+                likes={likes}
+                type={"project"}
+                projectID={project.id}
+              />
+            </div>
+          </div>
+        </div>
+        <div>
+          <Image
+            src={
+              project.banner_photo
+                ? env.NEXT_PUBLIC_AWS_BUCKET_STRING + project.banner_photo
+                : "/blueprint.jpg"
+            }
+            alt={project.title + " banner"}
+            height={300}
+            width={300}
+            className="w-3/4 max-h-[300px] object-cover object-center mx-auto"
+          />
+        </div>
+        <div
+          className="px-24 py-4"
+          dangerouslySetInnerHTML={{ __html: project.body }}
+        />
+        <Suspense
+          fallback={
+            <div className="mx-auto pt-24 w-full">
+              <LoadingSpinner height={48} width={48} />
+            </div>
+          }
+        >
+          <CommentSection
+            privilegeLevel={privilegeLevel}
+            allComments={comments}
+            topLevelComments={topLevelComments}
+            id={project.id}
+            type={"project"}
+            reactionMap={reactionMap}
+            currentUserID={currentUserIDCookie?.value || ""}
+          />
+        </Suspense>
       </div>
     );
   }
-
-  // const submitComment = async (e: React.FormEvent) => {
-  //   e.preventDefault();
-  //   if (commentInputRef.current) {
-  //     if (commentInputRef.current.value.length > 0) {
-  //       await createCommentMutation.mutateAsync({
-  //         id: project.id,
-  //         message: commentInputRef.current.value,
-  //         category: "project",
-  //       });
-  //     }
-  //     await topLevelCommentSetter(id!.toString());
-  //     commentInputRef.current.value = "";
-  //   }
-  // };
-
-  // const sessionDependantLike = () => {
-  //   if (likeButtonLoading) {
-  //     return <Loading />;
-  //   } else if (status == "authenticated") {
-  //     return (
-  //       <Tooltip content={"Leave a Like"} placement="bottom">
-  //         <button
-  //           className="flex py-2 hover:brightness-50"
-  //           onClick={() => giveProjectLike()}
-  //         >
-  //           <LikeIcon
-  //             strokeWidth={1}
-  //             color={
-  //               project.likes.some((like) => like.user_id == session?.user.id)
-  //                 ? "#60a5fa"
-  //                 : isDarkTheme
-  //                 ? "white"
-  //                 : "black"
-  //             }
-  //             height={32}
-  //             width={32}
-  //           />
-  //           <div
-  //             className={`${
-  //               project.likes.some((like) => like.user_id == session?.user.id)
-  //                 ? "text-blue-400"
-  //                 : "text-black dark:text-white"
-  //             } my-auto pl-2 `}
-  //           >
-  //             {project.likes.length}{" "}
-  //             {project.likes.length == 1 ? "Like" : "Likes"}
-  //           </div>
-  //         </button>
-  //       </Tooltip>
-  //     );
-  //   } else {
-  //     return (
-  //       <Tooltip content={"Must be logged in to Like"} placement="bottom">
-  //         <button className="flex py-2 hover:brightness-50">
-  //           <LikeIcon
-  //             strokeWidth={1}
-  //             color={isDarkTheme ? "white" : "black"}
-  //             height={32}
-  //             width={32}
-  //           />
-  //           <div
-  //             className="my-auto pl-2
-  //             text-black dark:text-white"
-  //           >
-  //             {project.likes.length}{" "}
-  //             {project.likes.length == 1 ? "Like" : "Likes"}
-  //           </div>
-  //         </button>
-  //       </Tooltip>
-  //     );
-  //   }
-  // };
-
-  return (
-    <div className="mx-8 min-h-screen py-14">
-      <div className="flex justify-between">
-        <div className="flex flex-col">
-          <h1 className="pl-24 pt-8 font-light tracking-widest">
-            {project.title}
-          </h1>
-          <h3 className="pl-32 font-light tracking-widest">
-            {project.subtitle}
-          </h3>
-        </div>
-        <div className="my-auto flex justify-end">
-          <div className="flex flex-col">
-            <div className="flex justify-end">
-              <Link href="#comments">
-                <div className="flex">
-                  <CommentIcon strokeWidth={1} height={32} width={32} />
-                  <div className="my-auto pl-2 text-black dark:text-white">
-                    {/* {top == 1 ? "Comment" : "Comments"} */}
-                  </div>
-                </div>
-              </Link>
-            </div>
-            {/* <div className="flex justify-end">{sessionDependantLike()}</div> */}
-          </div>
-        </div>
-      </div>
-      <div>
-        <img
-          src={project.banner_photo || "/blueprint.jpg"}
-          className="h-96 w-full object-cover object-center"
-        />
-      </div>
-      <div
-        className="px-24 py-4"
-        dangerouslySetInnerHTML={{ __html: project.body }}
-      />
-      <div className="px-8 sm:px-12 md:px-16">
-        <div
-          className="text-center text-2xl font-light tracking-widest underline underline-offset-8"
-          id="comments"
-        >
-          Comments
-        </div>
-        <div>
-          <CommentInputBlock
-            isReply={false}
-            privilegeLevel={privilegeLevel}
-            parent_id={null}
-            commentRefreshTrigger={commentRefreshTrigger}
-            type={"project"}
-            post_id={project.id}
-          />
-        </div>
-        <div className="pl-16">
-          {topLevelComments?.map((topLevelComment) => (
-            <CommentBlock
-              key={topLevelComment.id}
-              comment={topLevelComment}
-              category={"project"}
-              projectID={project.id}
-              recursionCount={1}
-              allComments={comments}
-              child_comments={comments.filter(
-                (comment) => comment.parent_comment_id == topLevelComment.id
-              )}
-              privilegeLevel={privilegeLevel}
-              userID={""}
-              commentRefreshTrigger={commentRefreshTrigger}
-            />
-          ))}
-        </div>
-      </div>
-      <div></div>
-    </div>
-  );
 }

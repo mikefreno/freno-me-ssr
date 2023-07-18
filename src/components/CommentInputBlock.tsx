@@ -54,7 +54,11 @@ export default function CommentInputBlock(props: {
             <div className="flex justify-end pt-2">
               <button
                 type="submit"
-                className="rounded border text-white shadow-md border-blue-500 bg-blue-400 hover:bg-blue-500 dark: dark:bg-blue-700 dark:hover:bg-blue-800 dark:border-blue-700 active:scale-90 transition-all duration-300 ease-in-out px-4 py-2"
+                className={`${
+                  props.type == "project"
+                    ? "border-blue-500 bg-blue-400 hover:bg-blue-500 dark:bg-blue-700 dark:hover:bg-blue-800 dark:border-blue-700"
+                    : "border-orange-500 bg-orange-400 hover:bg-orange-500"
+                } rounded border text-white shadow-md  active:scale-90 transition-all duration-300 ease-in-out px-4 py-2`}
               >
                 Submit
               </button>
