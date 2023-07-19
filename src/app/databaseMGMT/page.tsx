@@ -92,6 +92,58 @@ export default function DatabasePage() {
     }
   }
 
+  async function AddToTable(input: FormData) {
+    "use server";
+
+    const password = input.get("password")?.toString();
+
+    if (password == env.DANGEROUS_DBCOMMAND_PASSWORD) {
+      const tables = [
+        "Blog",
+        "BlogLike",
+        "Comment",
+        "CommentReaction",
+        "Project",
+        "ProjectLike",
+        "User",
+      ];
+      const updateTarget = input.get("table")?.toString();
+      if (updateTarget && tables.includes(updateTarget)) {
+        const conn = ConnectionFactory();
+        const column = input.get("columnName")?.toString();
+        const type = input.get("dataType")?.toString();
+        const query = `ALTER TABLE ${updateTarget} ADD ${column} ${type}`;
+        const res = await conn.execute(query);
+        console.log(res);
+      }
+    }
+  }
+  async function RemoveFromTable(input: FormData) {
+    "use server";
+
+    const password = input.get("password")?.toString();
+
+    if (password == env.DANGEROUS_DBCOMMAND_PASSWORD) {
+      const tables = [
+        "Blog",
+        "BlogLike",
+        "Comment",
+        "CommentReaction",
+        "Project",
+        "ProjectLike",
+        "User",
+      ];
+      const updateTarget = input.get("table")?.toString();
+      if (updateTarget && tables.includes(updateTarget)) {
+        const conn = ConnectionFactory();
+        const column = input.get("columnName")?.toString();
+        const query = `ALTER TABLE ${updateTarget} DROP COLUMN ${column}`;
+        const res = await conn.execute(query);
+        console.log(res);
+      }
+    }
+  }
+
   return (
     <div className="mx-auto w-1/4">
       <div className="text-2xl text-center pt-24 pb-8">Database Control</div>
@@ -143,6 +195,99 @@ export default function DatabasePage() {
         <div className="flex justify-end py-4">
           <button className="rounded border border-black hover:text-white dark:text-white shadow-md dark:border-white bg-transparent hover:border-blue-400 hover:bg-blue-400 active:scale-90 transition-all duration-300 ease-in-out px-4 py-2">
             Add Table(s)
+          </button>
+        </div>
+      </form>
+      <div className="text-xl text-center pt-8 pb-4">Column Addition</div>
+      <form action={AddToTable}>
+        <div className="input-group">
+          <input
+            type="text"
+            required
+            className="bg-transparent underlinedInput w-full"
+            name="table"
+            placeholder=" "
+          />
+          <span className="bar"></span>
+          <label className="underlinedInputLabel">Table Name</label>
+        </div>
+        <div className="input-group">
+          <input
+            type="text"
+            required
+            className="bg-transparent underlinedInput w-full"
+            name="columnName"
+            placeholder=" "
+          />
+          <span className="bar"></span>
+          <label className="underlinedInputLabel">Column Name</label>
+        </div>
+        <div className="input-group">
+          <input
+            type="text"
+            required
+            className="bg-transparent underlinedInput w-full"
+            name="dataType"
+            placeholder=" "
+          />
+          <span className="bar"></span>
+          <label className="underlinedInputLabel">Column Type</label>
+        </div>
+        <div className="input-group">
+          <input
+            type="password"
+            required
+            className="bg-transparent underlinedInput w-full"
+            name="password"
+            placeholder=" "
+          />
+          <span className="bar"></span>
+          <label className="underlinedInputLabel">DB Command Password</label>
+        </div>
+        <div className="flex justify-end py-4">
+          <button className="rounded border border-black hover:text-white dark:text-white shadow-md dark:border-white bg-transparent hover:border-blue-400 hover:bg-blue-400 active:scale-90 transition-all duration-300 ease-in-out px-4 py-2">
+            Add to Table
+          </button>
+        </div>
+      </form>
+      <div className="text-xl text-center pt-8 pb-4">Column Deletion</div>
+      <form action={RemoveFromTable}>
+        <div className="input-group">
+          <input
+            type="text"
+            required
+            className="bg-transparent underlinedInput w-full"
+            name="table"
+            placeholder=" "
+          />
+          <span className="bar"></span>
+          <label className="underlinedInputLabel">Table Name</label>
+        </div>
+        <div className="input-group">
+          <input
+            type="text"
+            required
+            className="bg-transparent underlinedInput w-full"
+            name="columnName"
+            placeholder=" "
+          />
+          <span className="bar"></span>
+          <label className="underlinedInputLabel">Column Name</label>
+        </div>
+        <div className="input-group">
+          <input
+            type="password"
+            required
+            className="bg-transparent underlinedInput w-full"
+            name="password"
+            placeholder=" "
+          />
+          <span className="bar"></span>
+          <label className="underlinedInputLabel">DB Command Password</label>
+        </div>
+        <div className="flex justify-end py-4">
+          <button className="rounded border border-black hover:text-white dark:text-white shadow-md dark:border-white bg-transparent hover:border-blue-400 hover:bg-blue-400 active:scale-90 transition-all duration-300 ease-in-out px-4 py-2">
+            Add to Table
           </button>
         </div>
       </form>

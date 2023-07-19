@@ -5,6 +5,8 @@ export const model: { [key: string]: string } = {
       email varchar(255) UNIQUE,
       email_verified datetime,
       password_hash varchar(255),
+      display_name varchar(255),
+      provider varchar(255),
       image varchar(255),
       registered_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
       PRIMARY KEY (id)
