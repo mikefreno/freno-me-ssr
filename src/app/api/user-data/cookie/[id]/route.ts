@@ -17,6 +17,7 @@ export async function GET(
         email: user.email,
         id: user.id,
         image: user.image,
+        provider: user.provider,
       },
       { status: 202 }
     );

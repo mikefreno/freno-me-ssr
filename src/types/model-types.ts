@@ -2,6 +2,8 @@ export interface User {
   id: string;
   email: string;
   email_verified: Date | null;
+  display_name: string;
+  provider: string;
   image: string | null;
   password_hash: string | null;
   registered_at: string;

@@ -41,3 +41,9 @@ export interface API_RES_GetCommentAndLikeCount {
   commentCount: number;
   likeCount: number;
 }
+export interface API_RES_GetUserDataFromCookie {
+  email: string | undefined;
+  id: string;
+  image: string | undefined;
+  provider: string | undefined;
+}

@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 "use client";
 
 import React, { useContext, useEffect, useRef, useState } from "react";
@@ -11,10 +12,12 @@ import useSWR from "swr";
 import Cookies from "js-cookie";
 import UserDefaultImage from "@/icons/UserDefaultImage";
 import { signOut } from "@/app/globalActions";
+import { User } from "@/types/model-types";
+import { API_RES_GetUserDataFromCookie } from "@/types/response-types";
 
 const fetcher = async (url: string) => {
   const res = await fetch(url);
-  const data = await res.json();
+  const data = (await res.json()) as API_RES_GetUserDataFromCookie;
 
   return { data, status: res.status };
 };
@@ -118,7 +121,7 @@ export default function Navbar() {
                   <Link href="/account">
                     <div className="flex">
                       {userData.data.image ? (
-                        <Image
+                        <img
                           src={userData.data.image}
                           height={20}
                           width={20}
