@@ -14,9 +14,11 @@ export async function GET(
     const user = res.rows[0] as User;
     return NextResponse.json(
       {
-        email: user.email,
         id: user.id,
+        email: user.email,
+        emailVerified: user.email_verified ? true : false,
         image: user.image,
+        displayName: user.display_name,
         provider: user.provider,
       },
       { status: 202 }

@@ -21,10 +21,6 @@ export default async function LoginPage({
     e.preventDefault();
   };
 
-  async function emailLogin() {}
-  async function googleLogin() {}
-  async function githubLogin() {}
-
   return (
     <>
       <div className="flex h-[100dvh] flex-row justify-evenly">

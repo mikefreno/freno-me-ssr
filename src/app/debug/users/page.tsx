@@ -13,17 +13,19 @@ export default async function UsersDebugPage() {
   return (
     <>
       <div className="pt-24 mx-12">
-        <div className="grid grid-cols-4">
+        <div className="grid grid-cols-5">
           <div>id</div>
           <div>Email</div>
           <div>image</div>
           <div>registered at</div>
+          <div>provider</div>
         </div>
         <hr />
-        <div className="grid grid-cols-4">
-          {userData.map((user) => (
-            <>
-              <div>{user.id}</div>
+        <hr />
+        {userData.map((user) => (
+          <>
+            <div key={user.id} className="grid grid-cols-5">
+              <div className="max-w-[75%]">{user.id}</div>
               <div>{user.email}</div>
               {user.image ? (
                 <Image
@@ -36,9 +38,11 @@ export default async function UsersDebugPage() {
                 <UserDefaultImage strokeWidth={1} height={40} width={40} />
               )}
               <div>{user.registered_at ? user.registered_at : "hihi"}</div>
-            </>
-          ))}
-        </div>
+              <div>{user.provider}</div>
+            </div>
+            <hr />
+          </>
+        ))}
       </div>
     </>
   );

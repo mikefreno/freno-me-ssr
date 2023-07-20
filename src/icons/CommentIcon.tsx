@@ -1,6 +1,5 @@
 export default function CommentIcon(props: {
   strokeWidth: number;
-
   height: number;
   width: number;
 }) {

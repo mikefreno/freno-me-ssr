@@ -1,5 +1,7 @@
+import LoadingSpinner from "@/components/LoadingSpinner";
 import Navbar from "@/components/Navbar";
 import NextTopLoader from "nextjs-toploader";
+import { Suspense } from "react";
 
 export const metadata = {
   title: "Account | Michael Freno",

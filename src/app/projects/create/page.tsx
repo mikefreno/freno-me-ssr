@@ -128,6 +128,7 @@ export default function ProjectCreation() {
                 width={36}
                 stroke={"black"}
                 strokeWidth={1}
+                fill={null}
               />
             </button>
           </div>

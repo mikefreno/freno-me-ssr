@@ -3,7 +3,7 @@ export const model: { [key: string]: string } = {
     CREATE TABLE User (
       id varchar(255) NOT NULL,
       email varchar(255) UNIQUE,
-      email_verified datetime,
+      email_verified boolean NOT NULL DEFAULT FALSE,
       password_hash varchar(255),
       display_name varchar(255),
       provider varchar(255),

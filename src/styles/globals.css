@@ -448,7 +448,7 @@ input[type="checkbox"]:checked::before {
 
 .tooltip .tooltip-text {
   visibility: hidden;
-  width: 120px;
+  width: fit-content;
   background-color: #27272a;
   color: #fff;
   text-align: center;

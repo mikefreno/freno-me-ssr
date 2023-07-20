@@ -7,3 +7,7 @@ export interface PostLikeInput {
   post_id: number;
   post_type: "Project | Blog";
 }
+export interface newEmailInput {
+  id: string;
+  newEmail: string;
+}

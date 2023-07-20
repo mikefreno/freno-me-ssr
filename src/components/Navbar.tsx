@@ -121,7 +121,7 @@ export default function Navbar() {
                   <Link href="/account">
                     <div className="flex">
                       {userData.data.image ? (
-                        <img
+                        <Image
                           src={userData.data.image}
                           height={20}
                           width={20}

@@ -42,31 +42,33 @@ export async function emailPasswordLogin(data: FormData) {
     const params = [email];
     const userResults = await conn.execute(userQuery, params);
     const user = userResults.rows[0] as User;
-    const passwordHash = user.password_hash;
-    const passwordMatch = await checkPassword(password, passwordHash!);
+    if (user) {
+      const passwordHash = user.password_hash;
+      const passwordMatch = await checkPassword(password, passwordHash!);
 
-    if (passwordMatch && rememberMeValue == "on") {
-      cookies().set({
-        name: "emailToken",
-        value: email,
-        maxAge: 60 * 60 * 24 * 14,
-      });
-      cookies().set({
-        name: "userIDToken",
-        value: user.id,
-        maxAge: 60 * 60 * 24 * 14,
-      });
-    } else if (passwordMatch) {
-      cookies().set({
-        name: "emailToken",
-        value: email,
-      });
-      cookies().set({
-        name: "userIDToken",
-        value: user.id,
-      });
+      if (passwordMatch && rememberMeValue == "on") {
+        cookies().set({
+          name: "emailToken",
+          value: email,
+          maxAge: 60 * 60 * 24 * 14,
+        });
+        cookies().set({
+          name: "userIDToken",
+          value: user.id,
+          maxAge: 60 * 60 * 24 * 14,
+        });
+      } else if (passwordMatch) {
+        cookies().set({
+          name: "emailToken",
+          value: email,
+        });
+        cookies().set({
+          name: "userIDToken",
+          value: user.id,
+        });
+      }
+      redirect("/account");
     }
-    redirect("/account");
   } else {
     redirect("/login?error=bad-password");
   }

@@ -14,10 +14,11 @@ import { usePathname } from "next/navigation";
 import Link from "next/link";
 import Cookies from "js-cookie";
 import { set } from "zod";
+import { API_RES_GetUserDataFromCookie } from "@/types/response-types";
 
 const fetcher = async (url: string) => {
   const res = await fetch(url);
-  const data = await res.json();
+  const data = (await res.json()) as API_RES_GetUserDataFromCookie;
 
   return { data, status: res.status };
 };

@@ -45,6 +45,13 @@ export async function GET(request: NextRequest) {
         value: (res.rows[0] as User).id,
         maxAge: 60 * 60 * 24 * 14,
       });
+      if ((res.rows[0] as User).email) {
+        cookies().set({
+          name: "emailToken",
+          value: (res.rows[0] as User).email!,
+          maxAge: 60 * 60 * 24 * 14,
+        });
+      }
     } else {
       const icon = user.avatar_url;
       const email = user.email;
@@ -60,6 +67,13 @@ export async function GET(request: NextRequest) {
         value: userId,
         maxAge: 60 * 60 * 24 * 14,
       });
+      if (email) {
+        cookies().set({
+          name: "emailToken",
+          value: email,
+          maxAge: 60 * 60 * 24 * 14,
+        });
+      }
     }
 
     return NextResponse.redirect(`${env.NEXT_PUBLIC_DOMAIN}/account`);
