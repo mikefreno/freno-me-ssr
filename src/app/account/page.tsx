@@ -6,8 +6,16 @@ import { API_RES_GetUserDataFromCookie } from "@/types/response-types";
 import Cookies from "js-cookie";
 import { useCallback, useEffect, useRef, useState } from "react";
 import useSWR from "swr";
-import { sendEmailVerification, setDisplayName, setEmail } from "./actions";
+import {
+  changePassword,
+  deleteAccount,
+  sendEmailVerification,
+  setDisplayName,
+  setEmail,
+} from "./actions";
 import LoadingSpinner from "@/components/LoadingSpinner";
+import InfoIcon from "@/icons/InfoIcon";
+import { useRouter } from "next/navigation";
 
 const fetcher = async (url: string) => {
   const res = await fetch(url);
@@ -25,16 +33,57 @@ export default function Account() {
   const [profileImageHolder, setProfileImageHolder] = useState<
     string | ArrayBuffer | null
   >(null);
+
   const emailRef = useRef<HTMLInputElement>(null);
+
   const displayNameRef = useRef<HTMLInputElement>(null);
+
+  const deleteAccountPasswordRef = useRef<HTMLInputElement>(null);
+
+  const [passwordsMatch, setPasswordsMatch] = useState<boolean>(false);
+  const [showPasswordLengthWarning, setShowPasswordLengthWarning] =
+    useState<boolean>(false);
+  const [passwordLengthSufficient, setPasswordLengthSufficient] =
+    useState<boolean>(false);
+
+  const oldPasswordRef = useRef<HTMLInputElement>(null);
+  const newPasswordRef = useRef<HTMLInputElement>(null);
+  const newPasswordConfRef = useRef<HTMLInputElement>(null);
+
+  const [passwordBlurred, setPasswordBlurred] = useState(false);
   const [emailButtonLoading, setEmailButtonLoading] = useState<boolean>(false);
   const [displayNameButtonLoading, setDisplayNameButtonLoading] =
     useState<boolean>(false);
+  const [deleteAccountButtonLoading, setDeleteAccountButtonLoading] =
+    useState<boolean>(false);
+  const [passwordChangeLoading, setPasswordChangeLoading] =
+    useState<boolean>(false);
+
+  const [passwordError, setPasswordError] = useState<boolean>(false);
+  const [passwordDeletionError, setPasswordDeletionError] =
+    useState<boolean>(false);
+
+  const [profileImageSetLoading, setProfileImageSetLoading] =
+    useState<boolean>(false);
+
+  const [profileImageStateChange, setProfileImageStateChange] =
+    useState<boolean>(false);
+
+  const [preSetHolder, setPresetHolder] = useState<string | null>(null);
+
   const [userData, setUserData] = useState<API_RES_GetUserDataFromCookie>();
 
   useEffect(() => {
     setUserData(data?.data);
   }, [data]);
+
+  useEffect(() => {
+    if (userData?.image) {
+      setPresetHolder(userData.image);
+    }
+  }, [userData]);
+
+  const router = useRouter();
 
   const handleImageDrop = useCallback((acceptedFiles: Blob[]) => {
     acceptedFiles.forEach((file: Blob) => {
@@ -43,6 +92,7 @@ export default function Account() {
       reader.onload = () => {
         const str = reader.result;
         setProfileImageHolder(str);
+        setProfileImageStateChange(true);
       };
       reader.readAsDataURL(file);
     });
@@ -51,7 +101,15 @@ export default function Account() {
   const removeImage = () => {
     setProfileImage(undefined);
     setProfileImageHolder(null);
+    if (preSetHolder) {
+      setProfileImageStateChange(true);
+      setPresetHolder(null);
+    } else {
+      setProfileImageStateChange(false);
+    }
   };
+
+  const setUserImage = () => {};
 
   const setEmailTrigger = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -74,38 +132,132 @@ export default function Account() {
       setDisplayNameButtonLoading(false);
     }
   };
+  const deleteAccountTrigger = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (deleteAccountPasswordRef.current) {
+      setDeleteAccountButtonLoading(true);
+      const res = await deleteAccount(deleteAccountPasswordRef.current?.value);
+      if (res == "Password Did Not Match") {
+        setPasswordDeletionError(true);
+        setDeleteAccountButtonLoading(false);
+      } else if (res == "deleted") {
+        router.push("/login");
+      }
+    }
+  };
+  const setNewPasswordTrigger = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (
+      oldPasswordRef.current &&
+      newPasswordRef.current &&
+      newPasswordConfRef.current
+    ) {
+      setPasswordChangeLoading(true);
+      const res = await changePassword(
+        newPasswordRef.current.value,
+        newPasswordConfRef.current.value,
+        oldPasswordRef.current.value
+      );
+      if (res != "success") {
+        setPasswordError(true);
+      }
+      setPasswordChangeLoading(false);
+    }
+  };
+
+  const checkForMatch = (newPassword: string, newPasswordConf: string) => {
+    if (newPassword === newPasswordConf) {
+      setPasswordsMatch(true);
+    } else {
+      setPasswordsMatch(false);
+    }
+  };
+
+  const checkPasswordLength = (password: string) => {
+    if (password.length >= 8) {
+      setPasswordLengthSufficient(true);
+      setShowPasswordLengthWarning(false);
+    } else {
+      setPasswordLengthSufficient(false);
+      if (passwordBlurred) {
+        setShowPasswordLengthWarning(true);
+      }
+    }
+  };
+
+  const passwordLengthBlurCheck = () => {
+    if (
+      !passwordLengthSufficient &&
+      newPasswordRef.current &&
+      newPasswordRef.current.value !== ""
+    ) {
+      setShowPasswordLengthWarning(true);
+    }
+    setPasswordBlurred(true);
+  };
+
+  const handleNewPasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    checkPasswordLength(e.target.value);
+  };
+
+  const handlePasswordConfChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (newPasswordRef.current) {
+      checkForMatch(newPasswordRef.current.value, e.target.value);
+    }
+  };
+
+  const handlePasswordBlur = () => {
+    passwordLengthBlurCheck();
+  };
 
   return (
     <div className="min-h-screen px-36">
       <div className="pt-24">
         {!userData ? (
-          <div className="mt[35vh] w-full flex justify-center align-middle">
+          <div className="mt-[35vh] w-full flex justify-center align-middle">
             <LoadingSpinner height={64} width={64} />
           </div>
         ) : (
           <>
-            <div className="flex flex-col py-8">
-              <div className="pl-2">User Profile Image</div>
-              <div className="flex">
-                <Dropzone
-                  onDrop={handleImageDrop}
-                  acceptedFiles={"image/jpg, image/jpeg, image/png"}
-                  fileHolder={profileImageHolder}
-                  preSet={userData?.image ? userData.image : null}
-                />
-                <button
-                  type="button"
-                  className="rounded-full h-fit -ml-6 z-50"
-                  onClick={removeImage}
-                >
-                  <XCircle
-                    height={36}
-                    width={36}
-                    stroke={"black"}
-                    strokeWidth={1}
-                    fill={null}
+            <div className="flex justify-center">
+              <div className="flex flex-col py-8">
+                <div className="pl-2">User Profile Image</div>
+                <div className="flex">
+                  <Dropzone
+                    onDrop={handleImageDrop}
+                    acceptedFiles={"image/jpg, image/jpeg, image/png"}
+                    fileHolder={profileImageHolder}
+                    preSet={preSetHolder}
                   />
-                </button>
+                  <button
+                    type="button"
+                    className="rounded-full h-fit -ml-6 z-20"
+                    onClick={removeImage}
+                  >
+                    <XCircle
+                      height={36}
+                      width={36}
+                      stroke={"black"}
+                      strokeWidth={1}
+                      fill={null}
+                    />
+                  </button>
+                </div>
+                <form onSubmit={setUserImage}>
+                  <button
+                    type={"submit"}
+                    disabled={
+                      profileImageSetLoading || !profileImageStateChange
+                    }
+                    className={`${
+                      profileImageSetLoading || !profileImageStateChange
+                        ? "bg-zinc-400"
+                        : "bg-blue-400 dark:bg-blue-600 hover:bg-blue-500 dark:hover:bg-blue-700 active:scale-90"
+                    } flex justify-center rounded transition-all duration-300 ease-out mt-2 px-4 py-2 text-white`}
+                  >
+                    Set
+                  </button>
+                </form>
               </div>
             </div>
             <div className="grid grid-cols-2">
@@ -115,15 +267,16 @@ export default function Account() {
                     Current email: {userData.email}{" "}
                   </div>
                   {userData?.emailVerified ? (
-                    <div className="my-auto pl-2 tooltip">
+                    <div className="my-auto ml-2 tooltip z-10">
                       <CheckCircle
                         strokeWidth={1}
                         height={24}
                         width={24}
-                        fillColor={"green"}
+                        fillColor={"#22c55e"}
                         strokeColor={null}
                       />
-                      <div className="tooltip-text">
+                      <div className="bg-green-500 rounded-full w-4 -mt-5 ml-1 h-4" />
+                      <div className="tooltip-text mt-1 w-10 -ml-12">
                         <div className="px-1">Email Verified</div>
                       </div>
                     </div>
@@ -140,7 +293,7 @@ export default function Account() {
                           strokeWidth={1}
                           fill={"#f87171"}
                         />
-                        <div className="tooltip-text">
+                        <div className="tooltip-text w-12 -ml-6">
                           <div className="px-1">
                             Click to start email verification
                           </div>
@@ -179,13 +332,18 @@ export default function Account() {
                 </div>
               </form>
 
-              {userData?.displayName ? (
-                <div className="text-xl flex">
-                  <div className="my-auto">
-                    Current Display Name: {userData.displayName}{" "}
-                  </div>
+              <div className={`text-xl flex`}>
+                <div className="my-auto">
+                  Current Display Name:{" "}
+                  {userData.displayName ? (
+                    userData.displayName
+                  ) : (
+                    <span className="italic font-light underline underline-offset-4">
+                      None Set
+                    </span>
+                  )}
                 </div>
-              ) : null}
+              </div>
               <form
                 onSubmit={(e) => setDisplayNameTrigger(e)}
                 className="-mt-4 mx-auto"
@@ -219,6 +377,152 @@ export default function Account() {
                   </button>
                 </div>
               </form>
+            </div>
+            <form
+              onSubmit={(e) => setNewPasswordTrigger(e)}
+              className="mt-4 flex justify-center w-full"
+            >
+              <div className="flex flex-col justify-center">
+                <div className="input-group mx-4">
+                  <input
+                    ref={oldPasswordRef}
+                    name="oldPassword"
+                    type="password"
+                    required
+                    disabled={passwordChangeLoading}
+                    placeholder=" "
+                    className="bg-transparent underlinedInput w-full"
+                  />
+                  <span className="bar"></span>
+                  <label className="underlinedInputLabel">Old Password</label>
+                </div>
+                <div className="input-group mx-4">
+                  <input
+                    ref={newPasswordRef}
+                    name="newPassword"
+                    type="password"
+                    required
+                    onChange={handleNewPasswordChange}
+                    onBlur={handlePasswordBlur}
+                    disabled={passwordChangeLoading}
+                    placeholder=" "
+                    className="bg-transparent underlinedInput w-full"
+                  />
+                  <span className="bar"></span>
+                  <label className="underlinedInputLabel">New Password</label>
+                </div>
+
+                <div
+                  className={`${
+                    showPasswordLengthWarning ? "" : "opacity-0 select-none"
+                  } transition-opacity text-center text-red-500 duration-200 ease-in-out`}
+                >
+                  Password too short! Min Length: 8
+                </div>
+                <div className="-mt-6">
+                  <div className="input-group mx-4">
+                    <input
+                      ref={newPasswordConfRef}
+                      name="newPasswordConf"
+                      onChange={handlePasswordConfChange}
+                      type="password"
+                      required
+                      disabled={passwordChangeLoading}
+                      placeholder=" "
+                      className="bg-transparent underlinedInput w-full"
+                    />
+                    <span className="bar"></span>
+                    <label className="underlinedInputLabel">
+                      Password Confirmation
+                    </label>
+                  </div>
+                </div>
+
+                <div
+                  className={`${
+                    !passwordsMatch &&
+                    passwordLengthSufficient &&
+                    newPasswordConfRef.current!.value.length >= 6
+                      ? ""
+                      : "opacity-0 select-none"
+                  } transition-opacity text-center text-red-500 duration-200 ease-in-out`}
+                >
+                  Passwords do not match!
+                </div>
+
+                <button
+                  type={"submit"}
+                  disabled={passwordChangeLoading || !passwordsMatch}
+                  className={`${
+                    passwordChangeLoading || !passwordsMatch
+                      ? "bg-zinc-400"
+                      : "bg-blue-400 dark:bg-blue-600 hover:bg-blue-500 dark:hover:bg-blue-700 active:scale-90"
+                  } flex justify-center rounded transition-all duration-300 ease-out my-6 px-4 py-2 text-white`}
+                >
+                  Set
+                </button>
+                <div
+                  className={`${
+                    passwordError ? "" : "opacity-0 select-none"
+                  } transition-opacity text-center text-red-500 duration-200 ease-in-out`}
+                >
+                  Password did not match record
+                </div>
+              </div>
+            </form>
+            <hr className="mt-4" />
+            <div className="py-14">
+              <div className="w-3/4 rounded-md mt-4 py-8 px-6 shadow-md bg-red-300 dark:bg-red-950 mx-auto">
+                <div className="text-xl text-center pb-4">Delete Account</div>
+                <div className="w-full flex justify-center">
+                  <div className="tooltip">
+                    <InfoIcon height={36} width={36} strokeWidth={1} />
+                    <div className="tooltip-text w-40 -ml-20">
+                      <div className="px-1">
+                        Warning: This will delete all account information and is
+                        irreversible
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <form onSubmit={(e) => deleteAccountTrigger(e)}>
+                  <div className="w-full flex justify-center">
+                    <div className="input-group mx-4 delete">
+                      <input
+                        ref={deleteAccountPasswordRef}
+                        type="password"
+                        required
+                        disabled={deleteAccountButtonLoading}
+                        name="title"
+                        placeholder=" "
+                        className="bg-transparent underlinedInput"
+                      />
+                      <span className="bar"></span>
+                      <label className="underlinedInputLabel">
+                        Enter Password
+                      </label>
+                    </div>
+                  </div>
+                  <button
+                    type={"submit"}
+                    disabled={deleteAccountButtonLoading}
+                    className={`${
+                      deleteAccountButtonLoading
+                        ? "bg-zinc-400"
+                        : "bg-red-500 dark:bg-red-600 hover:bg-red-600 dark:hover:bg-red-700 active:scale-90"
+                    } flex justify-center mx-auto rounded transition-all duration-300 ease-out mt-2 px-4 py-2 text-white`}
+                  >
+                    Delete
+                  </button>
+                  <div
+                    className={`${
+                      passwordDeletionError ? "" : "opacity-0 select-none"
+                    } transition-opacity text-center text-red-500 duration-200 ease-in-out`}
+                  >
+                    Password did not match record
+                  </div>
+                </form>
+              </div>
             </div>
           </>
         )}

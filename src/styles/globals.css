@@ -226,6 +226,10 @@ textarea.underlinedInput:focus {
 .blog .bar:after {
   background: #fb923c;
 }
+.delete .bar:before,
+.delete .bar:after {
+  background: #ef4444;
+}
 
 @media (prefers-color-scheme: light) {
   .bar:before,
@@ -273,6 +277,13 @@ textarea.underlinedInput:not(:placeholder-shown) ~ label {
 .blog textarea.underlinedInput:focus ~ label,
 .blog textarea.underlinedInput:not(:placeholder-shown) ~ label {
   color: #fb923c;
+}
+
+.delete input.underlinedInput:focus ~ label,
+.delete input.underlinedInput:not(:placeholder-shown) ~ label,
+.delete textarea.underlinedInput:focus ~ label,
+.delete textarea.underlinedInput:not(:placeholder-shown) ~ label {
+  color: #ef4444;
 }
 
 @media (prefers-color-scheme: light) {
@@ -448,23 +459,20 @@ input[type="checkbox"]:checked::before {
 
 .tooltip .tooltip-text {
   visibility: hidden;
-  width: fit-content;
+  min-width: fit-content;
   background-color: #27272a;
   color: #fff;
   text-align: center;
   padding: 5px 0;
   border-radius: 6px;
-
-  /* Position the tooltip text */
   position: absolute;
   z-index: 1;
   top: 100%;
   left: 50%;
-  margin-left: -60px; /* Use half of the width to center the tooltip */
-  /* Fade in tooltip */
   opacity: 0;
   transition: opacity 0.3s;
 }
+
 @media (prefers-color-scheme: dark) {
   .tooltip .tooltip-text {
     background-color: #18181b;

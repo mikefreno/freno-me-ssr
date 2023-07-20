@@ -3,6 +3,9 @@
 import { env } from "@/env.mjs";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
+import { ConnectionFactory } from "./api/database/ConnectionFactory";
+import { checkPassword, hashPassword } from "./api/passwordHashing";
+import { User } from "@/types/model-types";
 
 export async function signOut() {
   //cookie destruction

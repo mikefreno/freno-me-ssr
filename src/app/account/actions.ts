@@ -6,6 +6,8 @@ import jwt from "jsonwebtoken";
 import { ConnectionFactory } from "../api/database/ConnectionFactory";
 import { NextResponse } from "next/server";
 import { User } from "@/types/model-types";
+import { checkPassword, hashPassword } from "../api/passwordHashing";
+import { signOut } from "../globalActions";
 
 export async function sendEmailVerification() {
   const requestedEmail = cookies().get("emailVerificationRequested")?.value;
@@ -109,6 +111,10 @@ export async function setEmail(newEmail: string) {
     displayName: user.display_name,
     provider: user.provider,
   };
+  cookies().set({
+    name: "emailToken",
+    value: newEmail,
+  });
   return data;
 }
 
@@ -132,4 +138,74 @@ export async function setDisplayName(displayName: string) {
     provider: user.provider,
   };
   return data;
+}
+
+export async function deleteAccount(password: string) {
+  const userID = cookies().get("userIDToken")?.value;
+  const conn = ConnectionFactory();
+  const query = `SELECT * FROM User WHERE id = ?`;
+  const params = [userID];
+  const res = await conn.execute(query, params);
+  const user = res.rows[0] as User;
+  if (user) {
+    const passwordHash = user.password_hash;
+    const passwordMatch = await checkPassword(password, passwordHash!);
+    if (passwordMatch) {
+      const bleachQuery = `UPDATE User SET email = ?, email_verified = ?, password_hash = ?, display_name = ?, provider = ?, image = ? WHERE id = ?`;
+      const bleachParams = [
+        null,
+        false,
+        null,
+        "user deleted",
+        null,
+        null,
+        userID,
+      ];
+      const res = await conn.execute(bleachQuery, bleachParams);
+      console.log(res);
+      await signOut();
+      return "deleted";
+    } else {
+      return "Password Did Not Match";
+    }
+  }
+}
+export async function changePassword(
+  newPassword: string,
+  newPasswordConfirmation: string,
+  oldPassword: string
+) {
+  if (newPassword == newPasswordConfirmation) {
+    const userID = cookies().get("userIDToken")?.value;
+    const conn = ConnectionFactory();
+    const query = `SELECT * FROM User WHERE id = ?`;
+    const params = [userID];
+    const res = await conn.execute(query, params);
+    const user = res.rows[0] as User;
+    if (user) {
+      const passwordHash = user.password_hash;
+      const passwordMatch = await checkPassword(oldPassword, passwordHash!);
+      if (passwordMatch) {
+        const passwordHash = await hashPassword(newPassword);
+        const updateQuery = `UPDATE User SET password_hash = ? WHERE id = ?`;
+        const updateParams = [passwordHash, userID];
+        await conn.execute(updateQuery, updateParams);
+        cookies().set({
+          name: "emailToken",
+          value: "",
+          maxAge: 0,
+        });
+        cookies().set({
+          name: "userIDToken",
+          value: "",
+          maxAge: 0,
+        });
+        return "success";
+      } else {
+        return "Password did not match record";
+      }
+    }
+  } else {
+    return "Password Mismatch";
+  }
 }

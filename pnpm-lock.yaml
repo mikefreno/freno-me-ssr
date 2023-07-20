@@ -7,10 +7,16 @@ settings:
 dependencies:
   '@aws-sdk/client-s3':
     specifier: ^3.370.0
-    version: 3.370.0(aws-crt@1.15.20)
+    version: 3.370.0(@aws-sdk/signature-v4-crt@3.370.0)(aws-crt@1.15.20)
   '@aws-sdk/s3-request-presigner':
     specifier: ^3.370.0
+    version: 3.370.0(@aws-sdk/signature-v4-crt@3.370.0)
+  '@aws-sdk/signature-v4-crt':
+    specifier: ^3.370.0
     version: 3.370.0
+  '@aws-sdk/signature-v4-multi-region':
+    specifier: ^3.370.0
+    version: 3.370.0(@aws-sdk/signature-v4-crt@3.370.0)
   '@planetscale/database':
     specifier: ^1.8.0
     version: 1.8.0
@@ -68,6 +74,9 @@ dependencies:
   react:
     specifier: 18.2.0
     version: 18.2.0
+  react-countdown-circle-timer:
+    specifier: ^3.2.1
+    version: 3.2.1(react@18.2.0)
   react-dom:
     specifier: 18.2.0
     version: 18.2.0(react@18.2.0)
@@ -208,7 +217,7 @@ packages:
       tslib: 2.6.0
     dev: false
 
-  /@aws-sdk/client-s3@3.370.0(aws-crt@1.15.20):
+  /@aws-sdk/client-s3@3.370.0(@aws-sdk/signature-v4-crt@3.370.0)(aws-crt@1.15.20):
     resolution: {integrity: sha512-+b53hI+C+tIiE6OhIvaUXD5qC0zFrCWIu6EKT597W+4XzfFIZE0BGgolP8pC1lLDghPjCFSmAm9Efcb2a1sPvw==}
     engines: {node: '>=14.0.0'}
     dependencies:
@@ -231,7 +240,7 @@ packages:
       '@aws-sdk/middleware-signing': 3.370.0
       '@aws-sdk/middleware-ssec': 3.370.0
       '@aws-sdk/middleware-user-agent': 3.370.0
-      '@aws-sdk/signature-v4-multi-region': 3.370.0
+      '@aws-sdk/signature-v4-multi-region': 3.370.0(@aws-sdk/signature-v4-crt@3.370.0)
       '@aws-sdk/types': 3.370.0
       '@aws-sdk/util-endpoints': 3.370.0
       '@aws-sdk/util-user-agent-browser': 3.370.0
@@ -642,11 +651,11 @@ packages:
       tslib: 2.6.0
     dev: false
 
-  /@aws-sdk/s3-request-presigner@3.370.0:
+  /@aws-sdk/s3-request-presigner@3.370.0(@aws-sdk/signature-v4-crt@3.370.0):
     resolution: {integrity: sha512-ilTf+Q3nEKBd6soJo8cAGDCoRV6ggLYxUHqLyVXreMsio9rog7H2ePbFtO9gtbwUGR46gqgDQyIf+7i7yAuP6A==}
     engines: {node: '>=14.0.0'}
     dependencies:
-      '@aws-sdk/signature-v4-multi-region': 3.370.0
+      '@aws-sdk/signature-v4-multi-region': 3.370.0(@aws-sdk/signature-v4-crt@3.370.0)
       '@aws-sdk/types': 3.370.0
       '@aws-sdk/util-format-url': 3.370.0
       '@smithy/middleware-endpoint': 1.0.3
@@ -658,7 +667,23 @@ packages:
       - '@aws-sdk/signature-v4-crt'
     dev: false
 
-  /@aws-sdk/signature-v4-multi-region@3.370.0:
+  /@aws-sdk/signature-v4-crt@3.370.0:
+    resolution: {integrity: sha512-hdIztGY/cMALEaftqvxw0gMbqgunLJMqIMGVG6flXt2FxNhERbuoJAUG7HuxPdFwkxdb9gvNeoLD/fQ9jqYmIA==}
+    engines: {node: '>=14.0.0'}
+    dependencies:
+      '@smithy/querystring-parser': 1.0.2
+      '@smithy/signature-v4': 1.0.2
+      '@smithy/util-middleware': 1.0.2
+      aws-crt: 1.15.20
+      tslib: 2.6.0
+    transitivePeerDependencies:
+      - bufferutil
+      - debug
+      - supports-color
+      - utf-8-validate
+    dev: false
+
+  /@aws-sdk/signature-v4-multi-region@3.370.0(@aws-sdk/signature-v4-crt@3.370.0):
     resolution: {integrity: sha512-Q3NQopPDnHbJXMhtYl0Mfy5U2o76K6tzhdnYRcrYImY0ze/zOkCQI7KPC4588PuyvAXCdQ02cmCPPjYD55UeNg==}
     engines: {node: '>=14.0.0'}
     peerDependencies:
@@ -667,6 +692,7 @@ packages:
       '@aws-sdk/signature-v4-crt':
         optional: true
     dependencies:
+      '@aws-sdk/signature-v4-crt': 3.370.0
       '@aws-sdk/types': 3.370.0
       '@smithy/protocol-http': 1.1.1
       '@smithy/signature-v4': 1.0.2
@@ -6380,6 +6406,14 @@ packages:
       ini: 1.3.8
       minimist: 1.2.8
       strip-json-comments: 2.0.1
+    dev: false
+
+  /react-countdown-circle-timer@3.2.1(react@18.2.0):
+    resolution: {integrity: sha512-yBAy/9ILXOiFbLBM+3jS72TW5LeRcH8wkRC9NNqMpUkCXkGjSnaeRbJMsR9lsYF0oVXjSDbJaRbCuVMT+9HnKA==}
+    peerDependencies:
+      react: '>=16.8.0'
+    dependencies:
+      react: 18.2.0
     dev: false
 
   /react-dom@18.2.0(react@18.2.0):

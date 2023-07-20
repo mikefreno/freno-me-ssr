@@ -3,7 +3,7 @@ export default function XCircle(props: {
   width: number;
   stroke: string;
   strokeWidth: number;
-  fill: string | null;
+  fill?: string | null;
 }) {
   return (
     <svg
