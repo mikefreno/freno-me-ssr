@@ -378,7 +378,7 @@ export default function CommentBlock(props: {
             post_id={props.projectID}
           />
         </div>
-        <div className="pl-16">
+        <div className="pl-6 md:pl-12 lg:pl-16">
           {props.child_comments.map((this_comment) => (
             <CommentBlock
               key={this_comment.id}
