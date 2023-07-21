@@ -11,3 +11,6 @@ export interface newEmailInput {
   id: string;
   newEmail: string;
 }
+export interface changeImageInput {
+  imageURL: string | null;
+}

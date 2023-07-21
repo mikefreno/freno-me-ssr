@@ -21,7 +21,6 @@ export async function signOut() {
     maxAge: 0,
     expires: 0,
   });
-  redirect(`${env.NEXT_PUBLIC_DOMAIN}/login`);
 }
 
 export async function sendContactRequest(data: FormData) {

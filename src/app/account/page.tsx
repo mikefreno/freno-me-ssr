@@ -16,6 +16,8 @@ import {
 import LoadingSpinner from "@/components/LoadingSpinner";
 import InfoIcon from "@/icons/InfoIcon";
 import { useRouter } from "next/navigation";
+import AddImageToS3 from "../s3upload";
+import { env } from "@/env.mjs";
 
 const fetcher = async (url: string) => {
   const res = await fetch(url);
@@ -71,6 +73,7 @@ export default function Account() {
 
   const [preSetHolder, setPresetHolder] = useState<string | null>(null);
 
+  const [showImageSuccess, setShowImageSuccess] = useState<boolean>(false);
   const [userData, setUserData] = useState<API_RES_GetUserDataFromCookie>();
 
   useEffect(() => {
@@ -109,7 +112,44 @@ export default function Account() {
     }
   };
 
-  const setUserImage = () => {};
+  const setUserImage = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setProfileImageSetLoading(true);
+    if (profileImage && userData && userData.id) {
+      let imageKey: string = "";
+      try {
+        imageKey = await AddImageToS3(profileImage, userData.id, "user");
+      } catch (e) {
+        console.log("ERROR: " + e);
+        alert("error submitting image! Check Logs!");
+      }
+      const res = await fetch(
+        `${env.NEXT_PUBLIC_DOMAIN}/api/database/user/user-image/${userData.id}`,
+        { method: "POST", body: JSON.stringify({ imageURL: imageKey }) }
+      );
+
+      const resData = await res.json();
+      if (resData.status == 500) {
+        console.log("ERROR: " + resData.res);
+        alert("error submitting image! Check Logs!");
+      } else {
+        setShowImageSuccess(true);
+      }
+    } else if (userData && userData.id) {
+      const res = await fetch(
+        `${env.NEXT_PUBLIC_DOMAIN}/api/database/user/user-image/${userData.id}`,
+        { method: "POST", body: JSON.stringify({ imageURL: null }) }
+      );
+      const resData = await res.json();
+      if (resData.status == 500) {
+        console.log("ERROR: " + resData.res);
+        alert("error submitting image! Check Logs!");
+      } else {
+        setShowImageSuccess(true);
+      }
+    }
+    setProfileImageSetLoading(false);
+  };
 
   const setEmailTrigger = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -253,11 +293,18 @@ export default function Account() {
                       profileImageSetLoading || !profileImageStateChange
                         ? "bg-zinc-400"
                         : "bg-blue-400 dark:bg-blue-600 hover:bg-blue-500 dark:hover:bg-blue-700 active:scale-90"
-                    } flex justify-center rounded transition-all duration-300 ease-out mt-2 px-4 py-2 text-white`}
+                    } flex justify-center w-full rounded transition-all duration-300 ease-out -ml-2 mt-2 px-4 py-2 text-white`}
                   >
                     Set
                   </button>
                 </form>
+                <div
+                  className={`${
+                    showImageSuccess ? "" : "opacity-0 select-none"
+                  } transition-opacity text-center text-green-500 duration-200 ease-in-out`}
+                >
+                  Image Set Success!
+                </div>
               </div>
             </div>
             <div className="grid grid-cols-2">

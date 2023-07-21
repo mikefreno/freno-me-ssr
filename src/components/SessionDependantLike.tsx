@@ -77,7 +77,7 @@ export default function SessionDependantLike(props: {
               props.type == "project"
                 ? "hover:text-blue-400"
                 : "hover:text-orange-400"
-            } flex flex-col tooltip  text-black dark:text-white`}
+            } flex flex-col tooltip text-black dark:text-white`}
           >
             <div className="mx-auto">
               <LikeIcon
@@ -121,7 +121,13 @@ export default function SessionDependantLike(props: {
               {likes.length + instantOffset}{" "}
               {likes.length + instantOffset == 1 ? "Like" : "Likes"}
             </div>
-            <div className="tooltip-text px-2">Leave a Like</div>
+            <div className={`tooltip-text px-2 w-12 -ml-14`}>
+              {hasLiked ? (
+                <div className="px-2">Remove Like</div>
+              ) : (
+                <div className="px-2 text-center">Leave a Like</div>
+              )}
+            </div>
           </div>
         </button>
       </>
@@ -144,7 +150,7 @@ export default function SessionDependantLike(props: {
           >
             {likes.length} {likes.length == 1 ? "Like" : "Likes"}
           </div>
-          <div className="tooltip-text">Must be logged in</div>
+          <div className="tooltip-text w-12 -ml-12">Must be logged in</div>
         </button>
       </>
     );

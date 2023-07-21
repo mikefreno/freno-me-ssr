@@ -20,6 +20,7 @@ export const env = createEnv({
     EMAIL_SERVER: z.string().min(1),
     EMAIL_FROM: z.string().min(1),
     SENDINBLUE_KEY: z.string().min(1),
+    AWS_S3_BUCKET_NAME: z.string().min(1),
   },
 
   /**
@@ -55,6 +56,7 @@ export const env = createEnv({
     EMAIL_SERVER: process.env.EMAIL_SERVER,
     EMAIL_FROM: process.env.EMAIL_FROM,
     SENDINBLUE_KEY: process.env.SENDINBLUE_KEY,
+    AWS_S3_BUCKET_NAME: process.env.AWS_S3_BUCKET_NAME,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation.
