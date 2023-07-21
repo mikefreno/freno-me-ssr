@@ -8,51 +8,51 @@ import LinkedIn from "@/icons/LinkedIn";
 export default function Contact() {
   return (
     <>
-      <div className="flex min-h-screen justify-center px-12">
+      <div className="flex min-h-screen justify-center w-full">
         <div className="pt-[20vh]">
           <div className="text-center text-3xl tracking-widest dark:text-white">
             Contact
           </div>
-          <form action={sendContactRequest}>
-            <div className="mt-24">
-              <div className="flex justify-evenly md:mx-24">
-                <div className="input-group mx-4">
+          <form action={sendContactRequest} className="min-w-[85vw]">
+            <div className="pt-6 md:mt-24 flex flex-col justify-evenly w-full">
+              <div className="md:flex md:flex-row justify-evenly mx-auto w-full md:w-3/4 lg:w-1/2">
+                <div className="input-group md:mx-4">
                   <input
                     type="text"
                     required
                     name="name"
                     placeholder=" "
-                    className="bg-transparent underlinedInput"
+                    className="bg-transparent underlinedInput w-full"
                   />
                   <span className="bar"></span>
                   <label className="underlinedInputLabel">Name</label>
                 </div>
-                <div className="input-group mx-4">
+                <div className="input-group md:mx-4">
                   <input
                     type="text"
                     required
                     name="email"
                     placeholder=" "
-                    className="bg-transparent underlinedInput"
+                    className="bg-transparent underlinedInput w-full"
                   />
                   <span className="bar"></span>
                   <label className="underlinedInputLabel">Email</label>
                 </div>
               </div>
-              <div className="pl-7 pt-12 max-w-[40vw] mx-auto">
+              <div className="pt-6 md:pt-12 mx-auto w-full md:w-3/4 lg:w-1/2">
                 <div className="textarea-group">
                   <textarea
                     required
                     name="message"
                     placeholder=" "
-                    className="bg-transparent underlinedInput w-full "
+                    className="bg-transparent underlinedInput w-full"
                     rows={4}
                   />
                   <span className="bar" />
                   <label className="underlinedInputLabel">Message</label>
                 </div>
               </div>
-              <div className="flex justify-end pt-4">
+              <div className="flex justify-end pt-4 w-full md:w-3/4 mx-auto lg:w-1/2">
                 <button
                   type="submit"
                   className="rounded border text-white shadow-md border-blue-500 bg-blue-400 hover:bg-blue-500 dark: dark:bg-blue-700 dark:hover:bg-blue-800 dark:border-blue-700 active:scale-90 transition-all duration-300 ease-in-out px-4 py-2"
@@ -62,7 +62,7 @@ export default function Contact() {
               </div>
             </div>
           </form>
-          <ul className="icons flex justify-center pt-24">
+          <ul className="icons flex justify-center pt-24 pb-6">
             <li>
               <Link
                 href="https://github.com/MikeFreno/"
