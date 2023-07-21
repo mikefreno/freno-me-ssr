@@ -139,7 +139,9 @@ export default function LoginPage() {
               ? "Email Already Exists!"
               : null}
           </div>
-          <div className="py-2 text-2xl">{register ? "Register" : "Login"}</div>
+          <div className="py-2 pl-6 md:pl-0 text-2xl">
+            {register ? "Register" : "Login"}
+          </div>
           {!register ? (
             <div className="text-center py-4">
               Don&apos;t have an account yet?
