@@ -76,10 +76,18 @@ export default function Home() {
   };
 
   if (windowWidth == 0) {
-    return <div className="bg-black h-full w-full page-fade-in"></div>;
+    return (
+      <>
+        <link rel="preload" as="image" href="/blur_SH_water.jpg" />
+        <link rel="preload" as="image" href="/me_in_flannel.jpg" />
+        <div className="bg-black h-full w-full page-fade-in"></div>
+      </>
+    );
   } else {
     return (
       <>
+        <link rel="preload" as="image" href="/blur_SH_water.jpg" />
+        <link rel="preload" as="image" href="/me_in_flannel.jpg" />
         <div className="page-fade-in min-h-screen bg-[url('/blur_SH_water.jpg')] bg-cover bg-center bg-no-repeat text-white">
           <div className="flex min-h-screen w-screen justify-center backdrop-brightness-50">
             <div
