@@ -31,7 +31,7 @@ export default function CommentSection(props: {
   };
 
   return (
-    <div className="px-6 sm:px-10 md:px-12 lg:px-16">
+    <div className="px-6 sm:px-10 md:px-12 lg:px-16 max-w-full overflow-scroll">
       <div
         className="text-center text-2xl font-light tracking-widest underline underline-offset-8"
         id="comments"

@@ -240,7 +240,7 @@ export default function CommentBlock(props: {
     <>
       <button
         onClick={collapseCommentToggle}
-        className={!commentCollapsed ? "hidden" : "ml-5 w-full px-2"}
+        className={!commentCollapsed ? "hidden" : "mt-4 ml-5 w-full px-2"}
       >
         <div className="mr-2 h-6 border-l-2 border-black dark:border-white" />
       </button>
