@@ -85,7 +85,9 @@ export default async function DynamicBlogPost({
                   {comments.length}{" "}
                   {comments.length == 1 ? "Comment" : "Comments"}
                 </div>
-                <div className="tooltip-text">Go to Comments</div>
+                <div className="tooltip-text -ml-[4.5rem]">
+                  <div className="px-2 w-fit">Go to Comments</div>
+                </div>
               </div>
             </a>
             <div className="mx-2">

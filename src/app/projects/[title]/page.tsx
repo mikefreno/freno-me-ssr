@@ -62,7 +62,7 @@ export default async function DynamicProjectPost({
     );
   } else if (project) {
     return (
-      <div className="mx-4 md:mx-8 min-h-screen py-20">
+      <div className="mx-4 md:mx-8 min-h-screen py-20 scrollDisabled">
         <div className="flex justify-between">
           <div className="flex flex-col">
             <h1 className="pl-6 md:pl-16 lg:pl-20 pt-4 md:pt-8 font-light tracking-widest">
@@ -85,7 +85,9 @@ export default async function DynamicProjectPost({
                   {comments.length}{" "}
                   {comments.length == 1 ? "Comment" : "Comments"}
                 </div>
-                <div className="tooltip-text">Go to Comments</div>
+                <div className="tooltip-text -ml-[4.5rem]">
+                  <div className="px-2 w-fit">Go to Comments</div>
+                </div>
               </div>
             </a>
             <div className="mx-2">
@@ -116,23 +118,15 @@ export default async function DynamicProjectPost({
           className="px-8 md:px-24 py-4"
           dangerouslySetInnerHTML={{ __html: project.body }}
         />
-        <Suspense
-          fallback={
-            <div className="mx-auto pt-24 w-full">
-              <LoadingSpinner height={48} width={48} />
-            </div>
-          }
-        >
-          <CommentSection
-            privilegeLevel={privilegeLevel}
-            allComments={comments}
-            topLevelComments={topLevelComments}
-            id={project.id}
-            type={"project"}
-            reactionMap={reactionMap}
-            currentUserID={currentUserIDCookie?.value || ""}
-          />
-        </Suspense>
+        <CommentSection
+          privilegeLevel={privilegeLevel}
+          allComments={comments}
+          topLevelComments={topLevelComments}
+          id={project.id}
+          type={"project"}
+          reactionMap={reactionMap}
+          currentUserID={currentUserIDCookie?.value || ""}
+        />
       </div>
     );
   }

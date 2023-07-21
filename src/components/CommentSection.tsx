@@ -3,8 +3,9 @@
 import CommentInputBlock from "@/components/CommentInputBlock";
 import CommentBlock from "@/components/CommentBlock";
 import { Comment, CommentReaction } from "@/types/model-types";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { env } from "@/env.mjs";
+import useOnClickOutside from "@/hooks/ClickOutsideHook";
 
 export default function CommentSection(props: {
   privilegeLevel: "admin" | "user" | "anonymous";
@@ -19,6 +20,10 @@ export default function CommentSection(props: {
   const [topLevelComments, setTopLevelComments] = useState<Comment[]>(
     props.topLevelComments
   );
+  const [clickedOnce, setClickedOnce] = useState<boolean>(false);
+  const [showingBlock, setShowingBlock] = useState<Map<number, boolean>>(
+    new Map(topLevelComments.map((comment) => [comment.id, true]))
+  );
 
   const commentRefreshTrigger = async () => {
     const res = await fetch(
@@ -27,6 +32,27 @@ export default function CommentSection(props: {
     const resData = await res.json();
     if (resData.status == 302) {
       setComments(resData.comments);
+    }
+  };
+
+  useEffect(() => {
+    const newTopLevelComments = comments.filter(
+      (comment) => comment.parent_comment_id == null
+    );
+    setTopLevelComments(newTopLevelComments);
+  }, [comments]);
+
+  useEffect(() => {
+    if (clickedOnce) {
+      setTimeout(() => setClickedOnce(false), 300);
+    }
+  }, [clickedOnce]);
+
+  const checkForDoubleClick = (id: number) => {
+    if (clickedOnce) {
+      setShowingBlock((prev) => new Map(prev).set(id, !prev.get(id)));
+    } else {
+      setClickedOnce(true);
     }
   };
 
@@ -48,24 +74,33 @@ export default function CommentSection(props: {
           post_id={props.id}
         />
       </div>
-      <div className="md:pl-6 lg:pl-10" id="comments">
+      <div className="" id="comments">
         {topLevelComments?.map((topLevelComment) => (
-          <CommentBlock
+          <div
+            onClick={() => checkForDoubleClick(topLevelComment.id)}
             key={topLevelComment.id}
-            comment={topLevelComment}
-            category={"blog"}
-            projectID={props.id}
-            recursionCount={1}
-            allComments={comments}
-            child_comments={props.allComments.filter(
-              (comment) => comment.parent_comment_id == topLevelComment.id
+            className="bg-white dark:bg-zinc-900 rounded shadow mt-4 pl-6 md:pl-12 lg:pl-16 max-w-full py-2"
+          >
+            {showingBlock.get(topLevelComment.id) ? (
+              <CommentBlock
+                comment={topLevelComment}
+                category={"blog"}
+                projectID={props.id}
+                recursionCount={1}
+                allComments={comments}
+                child_comments={props.allComments.filter(
+                  (comment) => comment.parent_comment_id == topLevelComment.id
+                )}
+                privilegeLevel={props.privilegeLevel}
+                userID={props.currentUserID}
+                commentRefreshTrigger={commentRefreshTrigger}
+                reactionMap={props.reactionMap}
+                level={0}
+              />
+            ) : (
+              <div className="h-4"></div>
             )}
-            privilegeLevel={props.privilegeLevel}
-            userID={props.currentUserID}
-            commentRefreshTrigger={commentRefreshTrigger}
-            reactionMap={props.reactionMap}
-            level={0}
-          />
+          </div>
         ))}
       </div>
     </div>

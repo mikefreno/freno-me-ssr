@@ -55,7 +55,7 @@ export default function CommentBlock(props: {
   const [immediateDislike, setImmediateDislike] = useState<boolean>(false);
 
   useEffect(() => {
-    setCommentCollapsed(props.level >= 3 ? true : false);
+    setCommentCollapsed(props.level >= 4 ? true : false);
   }, [props.level]);
 
   useEffect(() => {
@@ -68,12 +68,18 @@ export default function CommentBlock(props: {
     setReactions(props.reactionMap.get(props.comment.id) || []);
   }, [props.comment, props.reactionMap]);
 
-  const collapseCommentToggle = () => {
+  const collapseCommentToggle = (event: React.MouseEvent) => {
+    event.stopPropagation();
+    event.preventDefault();
     setCommentCollapsed(!commentCollapsed);
   };
-  const showingReactionOptionsToggle = () => {
+
+  const showingReactionOptionsToggle = (event: React.MouseEvent) => {
+    event.stopPropagation();
+    event.preventDefault();
     setShowingReactionOptions(!showingReactionOptions);
   };
+
   const toggleCommentReplyBox = (event: React.MouseEvent) => {
     event.stopPropagation();
     event.preventDefault();
@@ -85,7 +91,9 @@ export default function CommentBlock(props: {
     }, 50);
   };
 
-  const upVoteHandler = async () => {
+  const upVoteHandler = async (event: React.MouseEvent) => {
+    event.stopPropagation();
+    event.preventDefault();
     if (props.privilegeLevel !== "anonymous") {
       const data = {
         comment_id: props.comment.id,
@@ -145,7 +153,9 @@ export default function CommentBlock(props: {
       }
     }
   };
-  const downVoteHandler = async () => {
+  const downVoteHandler = async (event: React.MouseEvent) => {
+    event.stopPropagation();
+    event.preventDefault();
     if (props.privilegeLevel !== "anonymous") {
       const data = {
         comment_id: props.comment.id,
@@ -245,17 +255,17 @@ export default function CommentBlock(props: {
     <>
       <button
         onClick={collapseCommentToggle}
-        className={!commentCollapsed ? "hidden" : "mt-4 ml-5 w-full px-2"}
+        className={!commentCollapsed ? "hidden" : "ml-5 w-full lg:w-3/4 px-2"}
       >
-        <div className="mr-2 h-6 border-l-2 border-black dark:border-white" />
+        <div className="mr-2 h-8 border-l-2 mt-1 border-black dark:border-white my-auto" />
       </button>
       <div className={commentCollapsed ? "hidden" : ""}>
-        <div ref={containerRef} className="my-4 flex w-full">
+        <div ref={containerRef} className="my-4 flex w-full lg:w-3/4">
           <div
             className="flex flex-col justify-between"
             style={{ height: toggleHeight }}
           >
-            <button onClick={() => upVoteHandler()}>
+            <button onClick={(e) => upVoteHandler(e)}>
               <div
                 className={`h-5 w-5 ${
                   reactions
@@ -268,13 +278,17 @@ export default function CommentBlock(props: {
                     ) || immediateLike
                     ? "fill-emerald-500"
                     : `fill-black dark:fill-white hover:fill-emerald-500 ${
-                        props.privilegeLevel == "anonymous" ? "tooltip" : null
+                        props.privilegeLevel == "anonymous"
+                          ? "tooltip z-50"
+                          : null
                       }`
                 }`}
               >
                 <ThumbsUpEmoji />
                 {props.privilegeLevel == "anonymous" ? (
-                  <div className="tooltip-text">You must be logged in</div>
+                  <div className="tooltip-text w-32 -ml-16 text-white">
+                    You must be logged in
+                  </div>
                 ) : null}
               </div>
             </button>
@@ -287,7 +301,7 @@ export default function CommentBlock(props: {
                 ).length +
                 pointFeedbackOffset}
             </div>
-            <button onClick={() => downVoteHandler()}>
+            <button onClick={(e) => downVoteHandler(e)}>
               <div
                 className={`h-5 w-5 ${
                   reactions
@@ -300,7 +314,9 @@ export default function CommentBlock(props: {
                     ) || immediateDislike
                     ? "fill-rose-500"
                     : `fill-black dark:fill-white hover:fill-rose-500 ${
-                        props.privilegeLevel == "anonymous" ? "tooltip" : null
+                        props.privilegeLevel == "anonymous"
+                          ? "tooltip z-50"
+                          : null
                       }`
                 }`}
               >
@@ -308,7 +324,9 @@ export default function CommentBlock(props: {
                   <ThumbsUpEmoji />
                 </div>
                 {props.privilegeLevel == "anonymous" ? (
-                  <div className="tooltip-text">You must be logged in</div>
+                  <div className="tooltip-text w-32 -ml-16">
+                    You must be logged in
+                  </div>
                 ) : null}
               </div>
             </button>
@@ -319,7 +337,7 @@ export default function CommentBlock(props: {
               style={{ height: toggleHeight }}
             />
           </button>
-          <div className="w-full" onClick={showingReactionOptionsToggle}>
+          <div className="w-3/4" onClick={showingReactionOptionsToggle}>
             <div className="flex">{props.comment.body}</div>
             <div className="flex pl-2">
               {userData?.data.image ? (

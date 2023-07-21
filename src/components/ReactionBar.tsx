@@ -19,7 +19,7 @@ export default function ReactionBar(props: {
   showingReactionOptions: boolean;
 }) {
   return (
-    <div className="pl-2 min-h-[1.5rem] fade-in flex flex-row max-w-[1/4] overflow-scroll">
+    <div className="pl-2 min-h-[1.5rem] fade-in flex flex-row max-w-[1/4] overflow-scroll scrollYDisabled">
       <div
         className={`${
           props.showingReactionOptions ||

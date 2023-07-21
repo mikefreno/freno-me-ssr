@@ -483,3 +483,6 @@ input[type="checkbox"]:checked::before {
   visibility: visible;
   opacity: 1;
 }
+.scrollYDisabled {
+  overflow-y: hidden;
+}
