@@ -11,19 +11,21 @@ export async function GET(
     const userQuery = "SELECT * FROM User WHERE id =?";
     const userParams = [context.params.id];
     const res = await conn.execute(userQuery, userParams);
-    const user = res.rows[0] as User;
-    return NextResponse.json(
-      {
-        id: user.id,
-        email: user.email,
-        emailVerified: user.email_verified ? true : false,
-        image: user.image,
-        displayName: user.display_name,
-        provider: user.provider,
-      },
-      { status: 202 }
-    );
-  } else {
-    return NextResponse.json({ status: 204 });
+    if (res.rows[0]) {
+      const user = res.rows[0] as User;
+      if (user && user.display_name !== "user deleted")
+        return NextResponse.json(
+          {
+            id: user.id,
+            email: user.email,
+            emailVerified: user.email_verified,
+            image: user.image,
+            displayName: user.display_name,
+            provider: user.provider,
+          },
+          { status: 202 }
+        );
+    }
   }
+  return NextResponse.json({ status: 204 });
 }
