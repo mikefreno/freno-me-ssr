@@ -61,7 +61,7 @@ export default function Navbar() {
 
   return (
     <div className={pathname == "/" ? "hidden" : undefined}>
-      <nav className="fixed z-50 flex w-screen bg-white bg-opacity-30 p-2 backdrop-blur dark:bg-opacity-5">
+      <nav className="fixed z-50 flex w-screen bg-white bg-opacity-50 p-2 backdrop-blur dark:bg-opacity-5">
         <div className={`mx-4 my-2 flex flex-1`}>
           <Link href={"/"} className="flex z-50">
             <picture className="logoSpinner">
@@ -74,7 +74,7 @@ export default function Navbar() {
           </Link>
         </div>
         <div className="my-auto flex justify-end" style={{ flex: 3 }}>
-          <ul className="hidden text-sm text-[#171717] dark:text-[#222222] md:flex">
+          <ul className="hidden text-sm text-zinc-900 dark:text-[#222222] md:flex">
             <li className="my-auto pl-4">
               <Link
                 href="/projects"
@@ -84,7 +84,7 @@ export default function Navbar() {
                     pathname.match("/projects")
                       ? "underline under"
                       : "hover-underline-animation"
-                  } border-[#171717] text-[#171717] underline-offset-4  dark:border-[#E2E2E2] dark:text-[#E2E2E2]`}
+                  } border-zinc-900 text-zinc-900 underline-offset-4  dark:border-zinc-200 dark:text-zinc-200`}
               >
                 Projects
               </Link>
@@ -97,7 +97,7 @@ export default function Navbar() {
                   pathname.match("/blog")
                     ? "underline under"
                     : "hover-underline-animation"
-                } border-[#171717] text-[#171717] underline-offset-4 dark:border-[#E2E2E2] dark:text-[#E2E2E2]`}
+                } border-zinc-900 text-zinc-900 underline-offset-4 dark:border-zinc-200 dark:text-zinc-200`}
               >
                 Blog
               </Link>
@@ -110,7 +110,7 @@ export default function Navbar() {
                   pathname.match("/contact")
                     ? "underline under"
                     : "hover-underline-animation"
-                } border-[#171717] text-[#171717] underline-offset-4 dark:border-[#E2E2E2] dark:text-[#E2E2E2]`}
+                } border-zinc-900 text-zinc-900 underline-offset-4 dark:border-zinc-200 dark:text-zinc-200`}
               >
                 Contact
               </Link>
@@ -142,7 +142,7 @@ export default function Navbar() {
                           pathname == "/account"
                             ? "underline"
                             : "hover-underline-animation"
-                        } my-auto border-[#171717]text-[#171717] underline-offset-4 dark:border-[#E2E2E2] dark:text-[#E2E2E2]`}
+                        } my-auto border-zinc-900 text-zinc-900 underline-offset-4 dark:border-zinc-200 dark:text-zinc-200`}
                       >
                         Account
                       </div>
@@ -152,7 +152,7 @@ export default function Navbar() {
                 <li className="my-auto pl-4">
                   <form action={signOut}>
                     <button
-                      className="hover-underline-animation cursor-pointer border-[#171717] text-[#171717] underline-offset-4 dark:border-[#E2E2E2] dark:text-[#E2E2E2]"
+                      className="hover-underline-animation cursor-pointer border-zinc-900 text-zinc-900 underline-offset-4 dark:border-zinc-200 dark:text-zinc-200"
                       type="submit"
                     >
                       Sign out
@@ -168,7 +168,7 @@ export default function Navbar() {
                     pathname == "login"
                       ? "underline under"
                       : "hover-underline-animation"
-                  } border-[#171717] text-[#171717] underline-offset-4 dark:border-[#E2E2E2] dark:text-[#E2E2E2]`}
+                  } border-zinc-900 text-zinc-900 underline-offset-4 dark:border-zinc-200 dark:text-zinc-200`}
                 >
                   Login / Register
                 </Link>
