@@ -15,7 +15,7 @@ export default function Menu(props: {
     <div
       id="menu"
       ref={props.menuRef}
-      className={`fade-in absolute right-2  top-2 z-[100] overflow-scroll ${
+      className={`fade-in absolute right-2 top-2 z-[100] overflow-scroll ${
         pathname === "/app" ? "" : "md:hidden"
       }`}
     >
@@ -26,7 +26,7 @@ export default function Menu(props: {
             : "border-blue-400 dark:border-blue-700"
         } rounded-b-3xl rounded-tl-3xl rounded-tr-sm border bg-zinc-50 shadow-xl dark:bg-zinc-900`}
       >
-        <ul className="px-1 pb-4 pt-8 ">
+        <ul className="px-1 pb-4 pt-8 w-2/3 mx-auto">
           <li className="pt-2 text-lg">
             <Link href="/">
               <div

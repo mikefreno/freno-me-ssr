@@ -32,13 +32,17 @@ export default async function ProjectCard(props: {
         width={300}
         className="w-full h-full object-cover"
       />
-      <div className="absolute bottom-0 w-full bg-white bg-opacity-40 backdrop-blur-md border-t border-white border-opacity-20 py-4 px-6">
-        <div className="flex justify-between items-center">
+      <div className="absolute bottom-0 w-full bg-white bg-opacity-40 backdrop-blur-md border-t border-white border-opacity-20 py-4 px-2 md:px-6">
+        <div className="flex md:flex-row flex-col justify-between items-center">
           <div>
-            <div className="text-xl text-black">{props.project.subtitle}</div>
-            <div className="text-3xl text-black">{props.project.title}</div>
+            <div className="text-lg md:text-xl text-black">
+              {props.project.subtitle}
+            </div>
+            <div className="text-2xl md:text-3xl text-black">
+              {props.project.title}
+            </div>
           </div>
-          <div className="flex justify-between items-center w-1/2">
+          <div className="flex justify-between items-center pt-2 md:pt-0 w-3/5 md:w-1/2">
             <div>
               <p className="text-black text-sm">
                 {queryResData.commentCount || 0} Comments
