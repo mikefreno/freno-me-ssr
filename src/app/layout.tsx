@@ -18,6 +18,8 @@ export default function RootLayout({
   return (
     <html lang="en" className="scroll-smooth">
       <link rel="icon" href="/favicon.ico" sizes="any" />
+      <link rel="preload" as="image" href="/blur_SH_water.jpg" />
+      <link rel="preload" as="image" href="/me_in_flannel.jpg" />
       <body
         className={`${SCP.className} bg-zinc-50 dark:bg-zinc-800 text-black dark:text-white`}
       >

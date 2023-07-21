@@ -16,7 +16,7 @@ export default function AboutMeModal(props: AboutMeProps) {
       >
         <div
           ref={props.aboutRef}
-          className="h-fit w-3/4 rounded border border-white bg-white bg-opacity-10 px-4 py-2 md:w-2/3 md:px-12 md:py-6 lg:w-1/2"
+          className="h-fit w-11/12 rounded border border-white bg-white bg-opacity-10 px-4 py-2 md:w-3/4 lg:w-3/5 md:px-12 md:py-6 xl:w-1/2"
         >
           <div className="-my-6 flex justify-end pt-4 md:pt-2">
             <button onClick={props.aboutToggle}>

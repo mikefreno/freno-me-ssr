@@ -17,7 +17,7 @@ export default function ContactModal(props: ContactModalProps) {
       >
         <div
           ref={props.contactRef}
-          className="h-fit w-3/4 rounded border border-white bg-white bg-opacity-10 px-4 py-2 md:w-2/3 md:px-12 md:py-6 lg:w-1/2"
+          className="h-fit w-11/12 rounded border border-white bg-white bg-opacity-10 px-4 py-2 md:w-3/4 lg:w-3/5 md:px-12 md:py-6 xl:w-1/2"
         >
           <div className="-my-6 flex justify-end pt-4 md:pt-2">
             <button onClick={props.contactToggle}>
@@ -29,25 +29,25 @@ export default function ContactModal(props: ContactModalProps) {
           </h2>
           <form action={sendContactRequest}>
             <div className="mt-24">
-              <div className="flex justify-evenly">
-                <div className="input-group home">
+              <div className="flex flex-col md:flex-row justify-evenly">
+                <div className="input-group home mx-auto">
                   <input
                     type="text"
                     required
                     name="name"
                     placeholder=" "
-                    className="bg-transparent underlinedInput"
+                    className="bg-transparent underlinedInput w-full"
                   />
                   <span className="bar"></span>
                   <label className="underlinedInputLabel">Name</label>
                 </div>
-                <div className="input-group home">
+                <div className="input-group home mx-auto">
                   <input
                     type="text"
                     required
                     name="email"
                     placeholder=" "
-                    className="bg-transparent underlinedInput"
+                    className="bg-transparent underlinedInput w-full"
                   />
                   <span className="bar"></span>
                   <label className="underlinedInputLabel">Email</label>
