@@ -29,7 +29,7 @@ export default function Contact() {
                 </div>
                 <div className="input-group md:mx-4">
                   <input
-                    type="text"
+                    type="email"
                     required
                     name="email"
                     placeholder=" "

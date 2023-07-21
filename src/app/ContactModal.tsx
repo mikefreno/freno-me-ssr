@@ -43,7 +43,7 @@ export default function ContactModal(props: ContactModalProps) {
                 </div>
                 <div className="input-group home mx-auto">
                   <input
-                    type="text"
+                    type="email"
                     required
                     name="email"
                     placeholder=" "
