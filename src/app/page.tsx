@@ -107,7 +107,11 @@ export default function Home() {
                   ref={centerDiv}
                   className="max-h-0 transform bg-transparent overflow-hidden transition-all duration-[1500ms] ease-out"
                 >
-                  <div className="py-12">
+                  <div
+                    className={`${
+                      onLoad ? "py-12" : "py-4"
+                    } transition-all duration-[1500ms] transform`}
+                  >
                     <div
                       ref={nameRef}
                       className="max-h-0 transform overflow-hidden transition-all duration-1000 ease-out"
