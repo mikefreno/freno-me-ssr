@@ -181,7 +181,7 @@ export default function Navbar() {
               className="z-[1000] my-auto"
               ref={closeRef}
             >
-              <MenuBars stroke="black" />
+              <MenuBars />
             </button>
           </div>
           <div className="">
