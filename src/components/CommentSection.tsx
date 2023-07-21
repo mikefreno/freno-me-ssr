@@ -31,7 +31,7 @@ export default function CommentSection(props: {
   };
 
   return (
-    <div className="px-6 sm:px-10 md:px-12 lg:px-16 max-w-full overflow-scroll">
+    <div className="w-full">
       <div
         className="text-center text-2xl font-light tracking-widest underline underline-offset-8"
         id="comments"
@@ -48,7 +48,7 @@ export default function CommentSection(props: {
           post_id={props.id}
         />
       </div>
-      <div className="pl-16" id="comments">
+      <div className="md:pl-6 lg:pl-10" id="comments">
         {topLevelComments?.map((topLevelComment) => (
           <CommentBlock
             key={topLevelComment.id}
@@ -64,6 +64,7 @@ export default function CommentSection(props: {
             userID={props.currentUserID}
             commentRefreshTrigger={commentRefreshTrigger}
             reactionMap={props.reactionMap}
+            level={0}
           />
         ))}
       </div>

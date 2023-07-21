@@ -62,13 +62,13 @@ export default async function DynamicProjectPost({
     );
   } else if (project) {
     return (
-      <div className="mx-8 min-h-screen py-20">
+      <div className="mx-4 md:mx-8 min-h-screen py-20">
         <div className="flex justify-between">
           <div className="flex flex-col">
-            <h1 className="pl-24 pt-8 font-light tracking-widest">
+            <h1 className="pl-6 md:pl-16 lg:pl-20 pt-4 md:pt-8 font-light tracking-widest">
               {project.title}
             </h1>
-            <h3 className="pl-32 font-light tracking-widest">
+            <h3 className="pl-10 md:pl-20 lg:pl-28 pt-4 font-light tracking-widest">
               {project.subtitle}
             </h3>
           </div>
@@ -78,7 +78,13 @@ export default async function DynamicProjectPost({
                 <div className="mx-auto">
                   <CommentIcon strokeWidth={1} height={32} width={32} />
                 </div>
-                <div className="mx-auto">{comments.length} Comments</div>
+                <div
+                  className="my-auto pt-0.5 pl-2
+              text-black dark:text-white text-sm"
+                >
+                  {comments.length}{" "}
+                  {comments.length == 1 ? "Comment" : "Comments"}
+                </div>
                 <div className="tooltip-text">Go to Comments</div>
               </div>
             </a>
@@ -103,11 +109,11 @@ export default async function DynamicProjectPost({
             alt={project.title + " banner"}
             height={300}
             width={300}
-            className="w-3/4 max-h-[300px] object-cover object-center mx-auto"
+            className="w-11/12 md:w-3/4 max-h-[300px] object-cover object-center mx-auto"
           />
         </div>
         <div
-          className="px-24 py-4"
+          className="px-8 md:px-24 py-4"
           dangerouslySetInnerHTML={{ __html: project.body }}
         />
         <Suspense

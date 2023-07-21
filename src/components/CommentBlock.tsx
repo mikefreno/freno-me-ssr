@@ -34,6 +34,7 @@ export default function CommentBlock(props: {
   privilegeLevel: "admin" | "user" | "anonymous";
   userID: string;
   reactionMap: Map<number, CommentReaction[]>;
+  level: number;
 }) {
   const { data: userData, error: reactionError } = useSWR(
     `/api/user-data/cookie/${props.comment.commenter_id}`,
@@ -52,6 +53,10 @@ export default function CommentBlock(props: {
   const commentInputRef = useRef<HTMLDivElement>(null);
   const [immediateLike, setImmediateLike] = useState<boolean>(false);
   const [immediateDislike, setImmediateDislike] = useState<boolean>(false);
+
+  useEffect(() => {
+    setCommentCollapsed(props.level >= 3 ? true : false);
+  }, [props.level]);
 
   useEffect(() => {
     if (containerRef.current) {
@@ -327,29 +332,24 @@ export default function CommentBlock(props: {
                 <UserDefaultImage strokeWidth={1} height={24} width={24} />
               )}
               <div className="px-1">{userData?.data.email}</div>
-
-              <div className="px-1">
-                <button
-                  onClick={(event) => toggleCommentReplyBox(event)}
-                  className="z-50 absolute"
-                >
-                  <ReplyIcon
-                    color={
-                      pathname.split("/")[1] == "blog" ? "#fb923c" : "#60a5fa"
-                    }
-                    height={24}
-                    width={24}
-                  />
-                </button>
-              </div>
             </div>
             {props.userID == props.comment.commenter_id ? <div></div> : null}
+            <button
+              onClick={(event) => toggleCommentReplyBox(event)}
+              className="z-30 absolute"
+            >
+              <ReplyIcon
+                color={pathname.split("/")[1] == "blog" ? "#fb923c" : "#60a5fa"}
+                height={24}
+                width={24}
+              />
+            </button>
             <div
               className={`${
                 showingReactionOptions || reactions.length > 0
                   ? ""
                   : "opacity-0"
-              }`}
+              } ml-6`}
             >
               <ReactionBar
                 commentID={props.comment.id}
@@ -394,6 +394,7 @@ export default function CommentBlock(props: {
               userID={props.userID}
               commentRefreshTrigger={props.commentRefreshTrigger}
               reactionMap={props.reactionMap}
+              level={props.level + 1}
             />
           ))}
         </div>
