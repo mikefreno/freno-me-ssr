@@ -13,7 +13,7 @@ export default function ContactModal(props: ContactModalProps) {
           props.showing
             ? "fade-in flex"
             : "hidden backdrop-brightness-100 backdrop-blur-0"
-        } w-full h-full justify-center overflow-scroll py-[15vh] opacity-0 backdrop-blur-sm backdrop-brightness-75 duration-1000 ease-in-out transition-all`}
+        } w-full h-screen justify-center overflow-scroll py-[15vh] opacity-0 backdrop-blur-sm backdrop-brightness-75 duration-1000 ease-in-out transition-all`}
       >
         <div
           ref={props.contactRef}

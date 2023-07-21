@@ -50,7 +50,7 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    setOnLoad(true);
+    setTimeout(() => setOnLoad(true), 200);
     setTimeout(() => {
       centerDiv.current?.classList.replace("max-h-0", "max-h-[300px]");
       nameRef.current?.classList.replace("max-h-0", "max-h-[200px]");
@@ -187,26 +187,47 @@ export default function Home() {
                     <button
                       ref={aboutButtonRef}
                       onClick={aboutToggle}
-                      className="w-36 mb-4 rounded border border-white py-4 text-center hover:bg-white hover:bg-opacity-20 active:bg-opacity-60"
+                      className="w-36 rounded border border-white py-4 text-center hover:bg-white hover:bg-opacity-20 active:bg-opacity-60"
                     >
                       About
                     </button>
+                    <div className="mx-auto">
+                      <div
+                        className={`${
+                          onLoad ? "h-4" : "h-0"
+                        } border-[0.5px] w-0 border-white transform transition-all duration-[1500ms] ease-in-out`}
+                      />
+                    </div>
                     <Link
                       href="/projects"
-                      className="w-36 mb-4 rounded border border-white py-4 text-center text-white hover:bg-white hover:bg-opacity-20 active:bg-opacity-60"
+                      className="w-36 rounded border border-white py-4 text-center text-white hover:bg-white hover:bg-opacity-20 active:bg-opacity-60"
                     >
                       Projects
                     </Link>
+                    <div className="mx-auto">
+                      <div
+                        className={`${
+                          onLoad ? "h-4" : "h-0"
+                        } border-[0.5px] w-0 border-white transform transition-all duration-[1500ms] ease-in-out`}
+                      />
+                    </div>
                     <Link
                       href="/blog"
-                      className="w-36 mb-4 rounded border border-white py-4 text-center text-white hover:bg-white hover:bg-opacity-20 active:bg-opacity-60"
+                      className="w-36 rounded border border-white py-4 text-center text-white hover:bg-white hover:bg-opacity-20 active:bg-opacity-60"
                     >
                       Blog
                     </Link>
+                    <div className="mx-auto">
+                      <div
+                        className={`${
+                          onLoad ? "h-4" : "h-0"
+                        } border-[0.5px] w-0 border-white transform transition-all duration-[1500ms] ease-in-out`}
+                      />
+                    </div>
                     <button
                       ref={contactButtonRef}
                       onClick={contactToggle}
-                      className="w-36 mb-4 rounded border border-white py-4 text-center hover:bg-white hover:bg-opacity-20 active:bg-opacity-60"
+                      className="w-36 rounded border border-white py-4 text-center hover:bg-white hover:bg-opacity-20 active:bg-opacity-60"
                     >
                       Contact
                     </button>
