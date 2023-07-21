@@ -12,6 +12,7 @@ export default async function NonRootLayout({
 }) {
   return (
     <section>
+      <link rel="preload" as="image" href="/blueprint.jpg" />
       <NextTopLoader showSpinner={false} color="#3b82f6" />
       {children}
     </section>
