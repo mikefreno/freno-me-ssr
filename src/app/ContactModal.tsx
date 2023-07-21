@@ -87,7 +87,7 @@ export default function ContactModal(props: ContactModalProps) {
                 className="hvr-grow-rotate-left rounded-full border-zinc-800 dark:border-zinc-300"
               >
                 <span className="m-auto">
-                  <GitHub height={16} width={16} fill={undefined} />
+                  <GitHub height={16} width={16} fill={"white"} />
                 </span>
               </Link>
             </li>

@@ -12,7 +12,7 @@ export default function AboutMeModal(props: AboutMeProps) {
           props.showing
             ? "fade-in flex"
             : "hidden backdrop-brightness-100 backdrop-blur-0"
-        } w-full h-full justify-center overflow-scroll py-[15vh] opacity-0 backdrop-blur-sm backdrop-brightness-75 duration-1000 ease-in-out transition-all`}
+        } w-full h-screen justify-center overflow-scroll py-[15vh] opacity-0 backdrop-blur-sm backdrop-brightness-75 duration-1000 ease-in-out transition-all`}
       >
         <div
           ref={props.aboutRef}
@@ -69,7 +69,7 @@ export default function AboutMeModal(props: AboutMeProps) {
                   className="hvr-grow-rotate-left rounded-full border-zinc-800 dark:border-zinc-300"
                 >
                   <span className="m-auto">
-                    <GitHub height={16} width={16} fill={undefined} />
+                    <GitHub height={16} width={16} fill={"white"} />
                   </span>
                 </Link>
               </li>
