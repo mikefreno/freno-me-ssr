@@ -94,7 +94,7 @@ export default function Home() {
               />
               <div
                 ref={centerDiv}
-                className="max-h-0 transform overflow-hidden transition-all duration-[1500ms] ease-out"
+                className="max-h-0 transform bg-transparent overflow-hidden transition-all duration-[1500ms] ease-out"
               >
                 <div className="py-12">
                   <div
@@ -131,7 +131,7 @@ export default function Home() {
               />
             </div>
             <nav className="mx-auto flex flex-row">
-              {windowWidth > 768 ? (
+              {windowWidth == 0 || windowWidth > 768 ? (
                 <div
                   ref={linkRef}
                   className="flex w-fit flex-row transition-all duration-400 ease-in-out"

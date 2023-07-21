@@ -40,7 +40,7 @@ export default async function Projects() {
         ) : null}
       </div>
       {projects && projects.length > 0 ? (
-        <div className="mx-auto flex w-3/4 flex-col">
+        <div className="mx-auto flex w-5/6 md:w-3/4 flex-col">
           {projects.map((project) => (
             <div key={project.id} className="my-4">
               <Suspense

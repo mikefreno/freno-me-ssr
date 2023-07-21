@@ -39,7 +39,7 @@ export default async function Blog() {
         ) : null}
       </div>
       {blogs && blogs.length > 0 ? (
-        <div className="mx-auto flex w-3/4 flex-col">
+        <div className="mx-auto flex w-5/6 md:w-3/4 flex-col">
           {blogs.map((blog) => (
             <div key={blog.id} className="my-4">
               <Card
