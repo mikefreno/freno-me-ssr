@@ -24,7 +24,7 @@ export default async function ProjectCard(props: {
       <Image
         src={
           props.project.banner_photo
-            ? env.NEXT_PUBLIC_AWS_BUCKET_STRING + props.project.banner_photo
+            ? props.project.banner_photo
             : "/blueprint.jpg"
         }
         alt={props.project.title + " banner"}

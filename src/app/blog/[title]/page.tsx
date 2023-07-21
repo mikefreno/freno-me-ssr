@@ -103,11 +103,7 @@ export default async function DynamicBlogPost({
         </div>
         <div>
           <Image
-            src={
-              blog.banner_photo
-                ? env.NEXT_PUBLIC_AWS_BUCKET_STRING + blog.banner_photo
-                : "/blueprint.jpg"
-            }
+            src={blog.banner_photo ? blog.banner_photo : "/blueprint.jpg"}
             alt={blog.title + " banner"}
             height={300}
             width={300}

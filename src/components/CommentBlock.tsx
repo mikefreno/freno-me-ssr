@@ -342,7 +342,7 @@ export default function CommentBlock(props: {
             <div className="flex pl-2">
               {userData?.data.image ? (
                 <Image
-                  src={env.NEXT_PUBLIC_AWS_BUCKET_STRING + userData.data.image}
+                  src={userData.data.image}
                   alt="userIcon"
                   className="h-6 w-6 rounded-full"
                 />

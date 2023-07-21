@@ -103,11 +103,7 @@ export default async function DynamicProjectPost({
         </div>
         <div>
           <Image
-            src={
-              project.banner_photo
-                ? env.NEXT_PUBLIC_AWS_BUCKET_STRING + project.banner_photo
-                : "/blueprint.jpg"
-            }
+            src={project.banner_photo ? project.banner_photo : "/blueprint.jpg"}
             alt={project.title + " banner"}
             height={300}
             width={300}
