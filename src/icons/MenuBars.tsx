@@ -20,7 +20,7 @@ function MenuBars() {
             y2="31.5"
             strokeWidth="6"
             strokeLinecap="round"
-            className="stoke-black dark:stroke-white"
+            className="stroke-black dark:stroke-white"
           />
           <line
             id="LineB"
@@ -30,7 +30,7 @@ function MenuBars() {
             y2="64.5"
             strokeWidth="6"
             strokeLinecap="round"
-            className="stoke-black dark:stroke-white"
+            className="stroke-black dark:stroke-white"
           />
         </g>
       </g>
