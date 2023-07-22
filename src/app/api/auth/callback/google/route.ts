@@ -73,7 +73,7 @@ export async function GET(request: NextRequest) {
     } else {
       const userId = uuidV4();
 
-      const insertQuery = `INSERT INTO User (id, email, email_verified, display_name, provider, image) VALUES (?, ?, ?, ?, ?)`;
+      const insertQuery = `INSERT INTO User (id, email, email_verified, display_name, provider, image) VALUES (?, ?, ?, ?, ?, ?)`;
       const insertParams = [
         userId,
         email,
