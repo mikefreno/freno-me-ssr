@@ -19,18 +19,7 @@ import { useRouter } from "next/navigation";
 import AddImageToS3 from "../s3upload";
 import { env } from "@/env.mjs";
 
-const fetcher = async (url: string) => {
-  const res = await fetch(url);
-  const data = (await res.json()) as API_RES_GetUserDataFromCookie;
-
-  return { data, status: res.status };
-};
-
 export default function Account() {
-  const { data: data, error: reactionError } = useSWR(
-    `/api/user-data/cookie/${Cookies.get("userIDToken")}`,
-    fetcher
-  );
   const [profileImage, setProfileImage] = useState<File | Blob>();
   const [profileImageHolder, setProfileImageHolder] = useState<
     string | ArrayBuffer | null
@@ -74,11 +63,24 @@ export default function Account() {
   const [preSetHolder, setPresetHolder] = useState<string | null>(null);
 
   const [showImageSuccess, setShowImageSuccess] = useState<boolean>(false);
-  const [userData, setUserData] = useState<API_RES_GetUserDataFromCookie>();
+  const [userData, setUserData] = useState<{
+    id: string;
+    email: string | undefined;
+    emailVerified: boolean;
+    image: string | null;
+    displayName: string | undefined;
+    provider: string | undefined;
+  }>();
 
   useEffect(() => {
-    setUserData(data?.data);
-  }, [data]);
+    asyncGetUserData();
+  }, []);
+
+  const asyncGetUserData = async () => {
+    const res = await fetch(`/api/user-data/non-sensitive`, { method: "GET" });
+    const resData = (await res.json()) as API_RES_GetUserDataFromCookie;
+    setUserData(resData);
+  };
 
   useEffect(() => {
     if (userData?.image) {

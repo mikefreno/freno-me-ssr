@@ -293,15 +293,18 @@ export default function LoginPage() {
           <div className="rule-around text-center">Or</div>
           <div className="my-2 flex justify-center">
             <div className="mx-auto mb-4 flex flex-col">
-              <button className="my-4 flex w-80 flex-row bg-white hover:bg-zinc-100 justify-between dark:border-zinc-50 dark:border rounded text-black border dark:text-white border-zinc-800 dark:bg-zinc-800 px-4 py-2 dark:hover:bg-zinc-700 active:scale-95 transition-all duration-300 ease-out">
+              <Link
+                href={`https://accounts.google.com/o/oauth2/v2/auth?client_id=${env.NEXT_PUBLIC_GOOGLE_CLIENT_ID}&redirect_uri=https://www.freno.me/api/auth/callback/google&response_type=code&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email`}
+                className="my-4 flex w-80 flex-row bg-white hover:bg-zinc-100 justify-between dark:border-zinc-50 dark:border rounded text-black border dark:text-white border-zinc-800 dark:bg-zinc-800 px-4 py-2 dark:hover:bg-zinc-700 active:scale-95 transition-all duration-300 ease-out"
+              >
                 {!register ? "Sign in " : "Register "} with Google
                 <span className="my-auto">
                   <GoogleLogo height={24} width={24} />
                 </span>
-              </button>
+              </Link>
               <div className="px-4"></div>
               <Link
-                href={`https://github.com/login/oauth/authorize?client_id=${env.NEXT_PUBLIC_GITHUB_CLIENT_ID}&redirect_uri=https://freno.me/api/auth/github&scope=user`}
+                href={`https://github.com/login/oauth/authorize?client_id=${env.NEXT_PUBLIC_GITHUB_CLIENT_ID}&redirect_uri=https://freno.me/api/auth/callback/github&scope=user`}
                 className="my-4 flex w-80 flex-row justify-between rounded bg-zinc-600 px-4 py-2 text-white hover:bg-zinc-700 active:scale-95 transition-all duration-300 ease-out"
               >
                 {!register ? "Sign in " : "Register "} with Github

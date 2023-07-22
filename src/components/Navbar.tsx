@@ -6,7 +6,7 @@ import Image from "next/image";
 import MenuBars from "@/icons/MenuBars";
 import Menu from "./Menu";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import useOnClickOutside from "@/hooks/ClickOutsideHook";
 import useSWR from "swr";
 import Cookies from "js-cookie";
@@ -15,25 +15,47 @@ import { signOut } from "@/app/globalActions";
 import { User } from "@/types/model-types";
 import { API_RES_GetUserDataFromCookie } from "@/types/response-types";
 
-const fetcher = async (url: string) => {
-  const res = await fetch(url);
-  const data = (await res.json()) as API_RES_GetUserDataFromCookie;
+// const fetcher = async (url: string) => {
+//   const res = await fetch(url);
+//   const data = (await res.json()) as API_RES_GetUserDataFromCookie;
 
-  return { data, status: res.status };
-};
+//   return { data, status: res.status };
+// };
 
 export default function Navbar() {
-  const { data: userData, error: reactionError } = useSWR(
-    `/api/user-data/cookie/${Cookies.get("userIDToken")}`,
-    fetcher
-  );
-
+  // const { data: userData, error: reactionError } = useSWR(
+  //   `/api/user-data/cookie/${Cookies.get("userIDToken")}`,
+  //   fetcher
+  // );
   const pathname = usePathname();
   //state
   const [menuOpen, setMenuOpen] = useState<boolean>(false);
   //ref
   const menuRef = useRef<HTMLDivElement>(null);
   const closeRef = useRef<HTMLButtonElement>(null);
+
+  const router = useRouter();
+
+  const [status, setStatus] = useState<number>(0);
+  const [userData, setUserData] = useState<{
+    id: string;
+    email: string | undefined;
+    emailVerified: boolean;
+    image: string | null;
+    displayName: string | undefined;
+    provider: string | undefined;
+  }>();
+
+  useEffect(() => {
+    asyncGetUserData();
+  }, [pathname]);
+
+  const asyncGetUserData = async () => {
+    const res = await fetch(`/api/user-data/non-sensitive`, { method: "GET" });
+    const resData = (await res.json()) as API_RES_GetUserDataFromCookie;
+    setStatus(res.status);
+    setUserData(resData);
+  };
 
   useOnClickOutside([menuRef, closeRef], () => {
     setMenuOpen(false);
@@ -58,6 +80,13 @@ export default function Navbar() {
     setMenuOpen(!menuOpen);
     rotateBars();
   }
+
+  const signOutTrigger = async (e: React.FormEvent) => {
+    e.preventDefault();
+    await signOut();
+    await asyncGetUserData();
+    router.refresh();
+  };
 
   return (
     <div className={pathname == "/" ? "hidden" : undefined}>
@@ -115,14 +144,14 @@ export default function Navbar() {
                 Contact
               </Link>
             </li>
-            {userData?.status == 202 ? (
+            {status == 202 && userData ? (
               <>
                 <li className="pl-4">
                   <Link href="/account">
                     <div className="flex">
-                      {userData.data.image ? (
+                      {userData.image ? (
                         <Image
-                          src={userData.data.image}
+                          src={userData.image}
                           height={20}
                           width={20}
                           alt="user-image"
@@ -142,7 +171,7 @@ export default function Navbar() {
                           pathname == "/account"
                             ? "underline"
                             : "hover-underline-animation"
-                        } my-auto border-zinc-900 text-zinc-900 underline-offset-4 dark:border-zinc-200 dark:text-zinc-200`}
+                        } my-auto pl-[6px] border-zinc-900 text-zinc-900 underline-offset-4 dark:border-zinc-200 dark:text-zinc-200`}
                       >
                         Account
                       </div>
@@ -150,7 +179,7 @@ export default function Navbar() {
                   </Link>
                 </li>
                 <li className="my-auto pl-4">
-                  <form action={signOut}>
+                  <form onSubmit={signOutTrigger}>
                     <button
                       className="hover-underline-animation cursor-pointer border-zinc-900 text-zinc-900 underline-offset-4 dark:border-zinc-200 dark:text-zinc-200"
                       type="submit"
@@ -189,7 +218,7 @@ export default function Navbar() {
               <Menu
                 menuRef={menuRef}
                 setMenuOpen={setMenuOpen}
-                userDataResponse={userData?.status}
+                userDataResponse={status}
               />
             ) : null}
           </div>

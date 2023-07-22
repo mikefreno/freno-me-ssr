@@ -1,4 +1,4 @@
-import Navbar from "@/components/Navbar";
+import Navbar from "@/components/Navbar-client";
 import Head from "next/head";
 import { sendContactRequest } from "../globalActions";
 import Link from "next/link";

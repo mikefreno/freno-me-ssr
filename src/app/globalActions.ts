@@ -2,24 +2,19 @@
 
 import { env } from "@/env.mjs";
 import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
-import { ConnectionFactory } from "./api/database/ConnectionFactory";
-import { checkPassword, hashPassword } from "./api/passwordHashing";
-import { User } from "@/types/model-types";
 
 export async function signOut() {
-  //cookie destruction
   cookies().set({
     name: "emailToken",
     value: "null",
     maxAge: 0,
-    expires: 0,
+    expires: new Date("2016-10-05"),
   });
   cookies().set({
     name: "userIDToken",
     value: "null",
     maxAge: 0,
-    expires: 0,
+    expires: new Date("2016-10-05"),
   });
 }
 

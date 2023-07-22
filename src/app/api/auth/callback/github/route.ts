@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { ConnectionFactory } from "../../database/ConnectionFactory";
+import { ConnectionFactory } from "../../../database/ConnectionFactory";
 import { v4 as uuidV4 } from "uuid";
 import { env } from "@/env.mjs";
 import { cookies } from "next/headers";
