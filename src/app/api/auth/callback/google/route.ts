@@ -41,6 +41,17 @@ export async function GET(request: NextRequest) {
     const email = userData.email;
     const email_verified = userData.email_verified;
 
+    console.log(
+      "name: " +
+        name +
+        " image: " +
+        image +
+        " email: " +
+        email +
+        " email_verified: " +
+        email
+    );
+
     const conn = ConnectionFactory();
 
     const query = `SELECT * FROM User WHERE provider = ? AND email = ?`;
@@ -66,7 +77,7 @@ export async function GET(request: NextRequest) {
       const insertParams = [
         userId,
         email,
-        email_verified == "true" ? true : false,
+        email_verified,
         name,
         "google",
         image,
