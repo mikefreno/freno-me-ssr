@@ -79,8 +79,8 @@ export async function GET(request: NextRequest) {
     //     }
     //   }
 
-    //   return NextResponse.redirect(`${env.NEXT_PUBLIC_DOMAIN}/account`);
-    // } else {
+    return NextResponse.redirect(`${env.NEXT_PUBLIC_DOMAIN}/account`);
+  } else {
     console.log("no code on callback");
   }
 }
