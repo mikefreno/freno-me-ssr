@@ -259,7 +259,7 @@ export default function CommentBlock(props: {
       >
         <div className="mr-2 h-8 border-l-2 mt-1 border-black dark:border-white my-auto" />
       </button>
-      <div className={commentCollapsed ? "hidden" : ""}>
+      <div className={commentCollapsed ? "hidden" : "z-[500]"}>
         <div ref={containerRef} className="my-4 flex w-full lg:w-3/4">
           <div
             className="flex flex-col justify-between"
@@ -338,7 +338,7 @@ export default function CommentBlock(props: {
             />
           </button>
           <div className="w-3/4" onClick={showingReactionOptionsToggle}>
-            <div className="flex">{props.comment.body}</div>
+            <div className="flex select-text">{props.comment.body}</div>
             <div className="flex pl-2">
               {userData?.data.image ? (
                 <Image

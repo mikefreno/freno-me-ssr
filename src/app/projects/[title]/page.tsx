@@ -62,74 +62,81 @@ export default async function DynamicProjectPost({
     );
   } else if (project) {
     return (
-      <div className="min-h-screen">
-        <div className="pb-[400px] relative">
-          <Image
-            src={project.banner_photo ? project.banner_photo : "/bitcoin.jpg"}
-            alt={project.title + " banner"}
-            height={400}
-            width={600}
-            className="w-full max-h-[400px] object-cover object-center absolute z-0"
-          />
-          <div className="flex flex-col justify-center items-center h-full absolute top-0 left-0 right-0 bottom-0 bg-white bg-opacity-25 backdrop-blur-[px] z-30">
-            <h1 className="px-6 md:px-16 lg:px-20 text-shadow pt-4 md:pt-8 font-light tracking-widest text-center text-3xl text-white">
-              {project.title}
-            </h1>
-            <h3 className="px-10 md:px-20 lg:px-28 text-shadow pt-4 font-light tracking-widest text-lg text-center text-white">
-              {project.subtitle}
-            </h3>
-          </div>
-        </div>
-        <div className="flex justify-end pr-12 py-4 my-auto">
-          <a href="#comments" className="mx-2">
-            <div className="flex flex-col tooltip">
-              <div className="mx-auto">
-                <CommentIcon strokeWidth={1} height={32} width={32} />
-              </div>
-              <div
-                className="my-auto pt-0.5 pl-2
-              text-black dark:text-white text-sm"
-              >
-                {comments.length}{" "}
-                {comments.length == 1 ? "Comment" : "Comments"}
-              </div>
-              <div className="tooltip-text -ml-[4.5rem]">
-                <div className="px-2 w-fit">Go to Comments</div>
+      <div className="min-h-screen select-none">
+        <div className="relative z-40 overflow-hidden">
+          <div
+            className="page-fade-in z-20 h-[50dvh] brightness-75 mx-auto w-full bg-cover bg-fixed bg-center bg-no-repeat image-overlay"
+            style={{
+              backgroundImage: `url(${
+                project.banner_photo ? project.banner_photo : "/bitcoin.jpg"
+              })`,
+            }}
+          >
+            <div
+              className={`text-shadow fixed left-0 right-0 mt-48 brightness-125 z-10 select-text text-center tracking-widest text-white`}
+              style={{ pointerEvents: "none" }}
+            >
+              <div className="z-10 mx-auto inline-block font-light tracking-widest text-3xl">
+                {project.title}
+                <div className="py-8 font-light tracking-widest text-xl">
+                  {project.subtitle}
+                </div>
               </div>
             </div>
-          </a>
-          <div className="mx-2">
-            <SessionDependantLike
-              currentUserID={currentUserIDCookie?.value}
-              privilegeLevel={privilegeLevel}
-              likes={likes}
-              type={"project"}
-              projectID={project.id}
-            />
           </div>
         </div>
-        <div
-          className="px-12 md:px-28 lg:px-32 py-8"
-          dangerouslySetInnerHTML={{ __html: project.body }}
-        />
-        <div className="mx-4 md:mx-8 lg:mx-12 pb-12">
-          <Suspense
-            fallback={
-              <div className="mx-auto pt-24 w-full">
-                <LoadingSpinner height={48} width={48} />
+        <div className="z-40">
+          <div className="flex justify-end pr-12 py-4 my-auto">
+            <a href="#comments" className="mx-2">
+              <div className="flex flex-col tooltip">
+                <div className="mx-auto">
+                  <CommentIcon strokeWidth={1} height={32} width={32} />
+                </div>
+                <div
+                  className="my-auto pt-0.5 pl-2
+              text-black dark:text-white text-sm"
+                >
+                  {comments.length}{" "}
+                  {comments.length == 1 ? "Comment" : "Comments"}
+                </div>
+                <div className="tooltip-text -ml-[4.5rem]">
+                  <div className="px-2 w-fit">Go to Comments</div>
+                </div>
               </div>
-            }
-          >
-            <CommentSection
-              privilegeLevel={privilegeLevel}
-              allComments={comments}
-              topLevelComments={topLevelComments}
-              id={project.id}
-              type={"project"}
-              reactionMap={reactionMap}
-              currentUserID={currentUserIDCookie?.value || ""}
-            />
-          </Suspense>
+            </a>
+            <div className="mx-2">
+              <SessionDependantLike
+                currentUserID={currentUserIDCookie?.value}
+                privilegeLevel={privilegeLevel}
+                likes={likes}
+                type={"project"}
+                projectID={project.id}
+              />
+            </div>
+          </div>
+          <div
+            className="px-12 md:px-28 lg:px-32 py-8 select-text"
+            dangerouslySetInnerHTML={{ __html: project.body }}
+          />
+          <div className="mx-4 md:mx-8 lg:mx-12 pb-12">
+            <Suspense
+              fallback={
+                <div className="mx-auto pt-24 w-full">
+                  <LoadingSpinner height={48} width={48} />
+                </div>
+              }
+            >
+              <CommentSection
+                privilegeLevel={privilegeLevel}
+                allComments={comments}
+                topLevelComments={topLevelComments}
+                id={project.id}
+                type={"project"}
+                reactionMap={reactionMap}
+                currentUserID={currentUserIDCookie?.value || ""}
+              />
+            </Suspense>
+          </div>
         </div>
       </div>
     );

@@ -34,18 +34,20 @@ export default function CommentInputBlock(props: {
 
   if (props.privilegeLevel == "user" || props.privilegeLevel == "admin") {
     return (
-      <div className="flex w-full justify-center">
+      <div className="flex w-full justify-center select-none">
         <div className="w-3/4 md:w-1/2 h-fit">
           <form onSubmit={submitComment}>
             <div
-              className={`textarea-group ${props.type == "blog" ? "blog" : ""}`}
+              className={`textarea-group  ${
+                props.type == "blog" ? "blog" : ""
+              }`}
             >
               <textarea
                 ref={bodyRef}
                 required
                 name="message"
                 placeholder=" "
-                className="bg-transparent underlinedInput w-full "
+                className="bg-transparent underlinedInput w-full select-text"
                 rows={props.isReply ? 2 : 4}
               />
               <span className="bar" />
