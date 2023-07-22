@@ -35,7 +35,7 @@ export async function GET(request: NextRequest) {
     );
 
     const userData = await userResponse.json();
-    console.log(userData);
+
     const name = userData.name;
     const image = userData.picture;
     const email = userData.email;
@@ -66,7 +66,7 @@ export async function GET(request: NextRequest) {
       const insertParams = [
         userId,
         email,
-        email_verified,
+        email_verified == "true" ? true : false,
         name,
         "google",
         image,
