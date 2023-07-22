@@ -1,4 +1,3 @@
-import Navbar from "@/components/Navbar-client";
 import NextTopLoader from "nextjs-toploader";
 
 export const metadata = {

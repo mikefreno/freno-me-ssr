@@ -3,7 +3,6 @@ import { ConnectionFactory } from "@/app/api/database/ConnectionFactory";
 import { hashPassword } from "@/app/api/passwordHashing";
 import { env } from "@/env.mjs";
 import { cookies } from "next/headers";
-import { NextResponse } from "next/server";
 import jwt, { JwtPayload } from "jsonwebtoken";
 
 export async function passwordReset(

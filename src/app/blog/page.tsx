@@ -1,8 +1,6 @@
 import Card from "@/components/Card";
-import Navbar from "@/components/Navbar-client";
 import { env } from "@/env.mjs";
 import { API_RES_GetPrivilegeDependantBlogs } from "@/types/response-types";
-import Head from "next/head";
 import { cookies } from "next/headers";
 import Link from "next/link";
 

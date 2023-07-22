@@ -1,6 +1,5 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
-import { useRouter } from "next/router";
 import { requestPasswordReset } from "./actions";
 import { CountdownCircleTimer } from "react-countdown-circle-timer";
 import Cookies from "js-cookie";
