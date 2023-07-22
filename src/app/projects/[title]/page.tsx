@@ -74,6 +74,7 @@ export default async function DynamicProjectPost({
           >
             <div
               className={`text-shadow absolute md:fixed mt-48 w-full brightness-150 z-10 select-text text-center tracking-widest text-white`}
+              style={{ pointerEvents: "none" }}
             >
               <div className="z-10 font-light tracking-widest text-3xl">
                 {project.title}
