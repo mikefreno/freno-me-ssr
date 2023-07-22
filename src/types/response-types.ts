@@ -17,11 +17,6 @@ export interface API_RES_GetPrivilegeDependantBlogs {
   rows: Blog[];
   privilegeLevel: "admin" | "user" | "anonymous";
 }
-export interface API_RES_UserDataNonSensitive {
-  email: string | undefined;
-  id: string | undefined;
-  image: string | undefined;
-}
 export interface API_RES_GetBlogWithComments {
   status: number;
   blog: Blog[];
@@ -48,4 +43,5 @@ export interface API_RES_GetUserDataFromCookie {
   image: string | null;
   displayName: string | undefined;
   provider: string | undefined;
+  hasPassword: boolean;
 }

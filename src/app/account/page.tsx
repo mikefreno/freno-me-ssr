@@ -10,12 +10,14 @@ import {
   sendEmailVerification,
   setDisplayName,
   setEmail,
+  setPassword,
 } from "./actions";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import InfoIcon from "@/icons/InfoIcon";
 import { useRouter } from "next/navigation";
 import AddImageToS3 from "../s3upload";
 import { env } from "@/env.mjs";
+import Cookies from "js-cookie";
 
 export default function Account() {
   const [profileImage, setProfileImage] = useState<File | Blob>();
@@ -52,6 +54,7 @@ export default function Account() {
     image: string | null;
     displayName: string | undefined;
     provider: string | undefined;
+    hasPassword: boolean;
   }>();
 
   const oldPasswordRef = useRef<HTMLInputElement>(null);
@@ -66,7 +69,10 @@ export default function Account() {
   }, []);
 
   const asyncGetUserData = async () => {
-    const res = await fetch(`/api/user-data/non-sensitive`, { method: "GET" });
+    const res = await fetch(
+      `/api/user-data/cookie/${Cookies.get("userIDToken")}`,
+      { method: "GET" }
+    );
     const resData = (await res.json()) as API_RES_GetUserDataFromCookie;
     setUserData(resData);
   };
@@ -124,6 +130,7 @@ export default function Account() {
         console.log("ERROR: " + resData.res);
         alert("error submitting image! Check Logs!");
       } else {
+        router.refresh();
         setShowImageSuccess(true);
       }
     } else if (userData && userData.id) {
@@ -136,6 +143,7 @@ export default function Account() {
         console.log("ERROR: " + resData.res);
         alert("error submitting image! Check Logs!");
       } else {
+        router.refresh();
         setShowImageSuccess(true);
       }
     }
@@ -196,6 +204,21 @@ export default function Account() {
     }
   };
 
+  const setPasswordTrigger = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (newPasswordRef.current && newPasswordConfRef.current) {
+      setPasswordChangeLoading(true);
+      const res = await setPassword(
+        newPasswordRef.current.value,
+        newPasswordConfRef.current.value
+      );
+      if (res != "success") {
+        setPasswordError(true);
+      }
+      setPasswordChangeLoading(false);
+    }
+  };
+
   const checkForMatch = (newPassword: string, newPasswordConf: string) => {
     if (newPassword === newPasswordConf) {
       setPasswordsMatch(true);
@@ -242,7 +265,7 @@ export default function Account() {
   };
 
   return (
-    <div className="min-h-screen px-36">
+    <div className="min-h-screen px-8 md:px-24 lg:px-36">
       <div className="pt-24">
         {!userData ? (
           <div className="mt-[35vh] w-full flex justify-center align-middle">
@@ -284,7 +307,7 @@ export default function Account() {
                       profileImageSetLoading || !profileImageStateChange
                         ? "bg-zinc-400"
                         : "bg-blue-400 dark:bg-blue-600 hover:bg-blue-500 dark:hover:bg-blue-700 active:scale-90"
-                    } flex justify-center w-full rounded transition-all duration-300 ease-out -ml-2 mt-2 px-4 py-2 text-white`}
+                    } flex justify-center w-full rounded transition-all duration-300 -ml-[6px] ease-out mt-2 px-4 py-2 text-white`}
                   >
                     Set
                   </button>
@@ -298,49 +321,51 @@ export default function Account() {
                 </div>
               </div>
             </div>
-            <div className="grid grid-cols-2">
-              {userData?.email ? (
-                <div className="text-xl flex">
-                  <div className="my-auto">
-                    Current email: {userData.email}{" "}
-                  </div>
-                  {userData?.emailVerified ? (
-                    <div className="my-auto ml-2 tooltip z-10">
-                      <CheckCircle
-                        strokeWidth={1}
-                        height={24}
-                        width={24}
-                        fillColor={"#22c55e"}
-                        strokeColor={null}
-                      />
-                      <div className="bg-green-500 rounded-full w-4 -mt-5 ml-1 h-4" />
-                      <div className="tooltip-text mt-1 w-10 -ml-12">
-                        <div className="px-1">Email Verified</div>
-                      </div>
-                    </div>
+            <div className="flex flex-col mx-auto md:grid md:grid-cols-2">
+              <div className="text-xl flex justify-center md:justify-normal">
+                <div className="my-auto flex lg:flex-row flex-col justify-start">
+                  <div className="whitespace-nowrap pr-1">Current email: </div>
+                  {userData.email ? (
+                    userData.email
                   ) : (
-                    <form
-                      action={sendEmailVerification}
-                      className="my-auto pl-2"
-                    >
-                      <button className="tooltip">
-                        <XCircle
-                          height={24}
-                          width={24}
-                          stroke={"black"}
-                          strokeWidth={1}
-                          fill={"#f87171"}
-                        />
-                        <div className="tooltip-text w-12 -ml-6">
-                          <div className="px-1">
-                            Click to start email verification
-                          </div>
-                        </div>
-                      </button>
-                    </form>
+                    <span className="italic font-light underline underline-offset-4">
+                      None Set
+                    </span>
                   )}
                 </div>
-              ) : null}
+                {userData?.emailVerified ? (
+                  <div className="my-auto ml-2 tooltip z-10">
+                    <CheckCircle
+                      strokeWidth={1}
+                      height={24}
+                      width={24}
+                      fillColor={"#22c55e"}
+                      strokeColor={null}
+                    />
+                    <div className="bg-green-500 rounded-full w-4 -mt-5 ml-1 h-4" />
+                    <div className="tooltip-text mt-1 w-10 -ml-12">
+                      <div className="px-1">Email Verified</div>
+                    </div>
+                  </div>
+                ) : (
+                  <form action={sendEmailVerification} className="my-auto pl-2">
+                    <button className="tooltip">
+                      <XCircle
+                        height={24}
+                        width={24}
+                        stroke={"black"}
+                        strokeWidth={1}
+                        fill={"#f87171"}
+                      />
+                      <div className="tooltip-text w-12 -ml-6">
+                        <div className="px-1">
+                          Click to start email verification
+                        </div>
+                      </div>
+                    </button>
+                  </form>
+                )}
+              </div>
               <form onSubmit={setEmailTrigger} className="-mt-4 mx-auto">
                 <div className="input-group mx-4">
                   <input
@@ -370,15 +395,27 @@ export default function Account() {
                 </div>
               </form>
 
-              <div className={`text-xl flex`}>
-                <div className="my-auto">
-                  Current Display Name:{" "}
+              <div className="text-xl flex justify-center md:justify-normal">
+                <div className="my-auto flex lg:flex-row flex-col justify-start">
+                  <div className="whitespace-nowrap pr-1">
+                    Current Display Name:
+                  </div>
                   {userData.displayName ? (
                     userData.displayName
                   ) : (
-                    <span className="italic font-light underline underline-offset-4">
-                      None Set
-                    </span>
+                    <>
+                      <div className="tooltip">
+                        <InfoIcon height={24} width={24} strokeWidth={1} />
+                        <div className="tooltip-text w-40 -ml-20">
+                          <div className="px-1">
+                            This will allow you to sign in with a password
+                          </div>
+                        </div>
+                      </div>
+                      <span className="italic font-light underline underline-offset-4">
+                        None Set
+                      </span>
+                    </>
                   )}
                 </div>
               </div>
@@ -417,23 +454,38 @@ export default function Account() {
               </form>
             </div>
             <form
-              onSubmit={(e) => setNewPasswordTrigger(e)}
+              onSubmit={(e) => {
+                userData.hasPassword
+                  ? setNewPasswordTrigger(e)
+                  : setPasswordTrigger(e);
+              }}
               className="mt-4 flex justify-center w-full"
             >
               <div className="flex flex-col justify-center">
-                <div className="input-group mx-4">
-                  <input
-                    ref={oldPasswordRef}
-                    name="oldPassword"
-                    type="password"
-                    required
-                    disabled={passwordChangeLoading}
-                    placeholder=" "
-                    className="bg-transparent underlinedInput w-full"
-                  />
-                  <span className="bar"></span>
-                  <label className="underlinedInputLabel">Old Password</label>
-                </div>
+                {userData.hasPassword ? (
+                  <div className="input-group mx-4">
+                    <input
+                      ref={oldPasswordRef}
+                      name="oldPassword"
+                      type="password"
+                      required
+                      disabled={passwordChangeLoading}
+                      placeholder=" "
+                      className="bg-transparent underlinedInput w-full"
+                    />
+                    <span className="bar"></span>
+                    <label className="underlinedInputLabel">Old Password</label>
+                  </div>
+                ) : (
+                  <div className="tooltip">
+                    <InfoIcon height={24} width={24} strokeWidth={1} />
+                    <div className="tooltip-text w-40 -ml-20">
+                      <div className="px-1">
+                        This will allow you to sign in with a password
+                      </div>
+                    </div>
+                  </div>
+                )}
                 <div className="input-group mx-4">
                   <input
                     ref={newPasswordRef}
@@ -449,7 +501,6 @@ export default function Account() {
                   <span className="bar"></span>
                   <label className="underlinedInputLabel">New Password</label>
                 </div>
-
                 <div
                   className={`${
                     showPasswordLengthWarning ? "" : "opacity-0 select-none"
@@ -475,7 +526,6 @@ export default function Account() {
                     </label>
                   </div>
                 </div>
-
                 <div
                   className={`${
                     !passwordsMatch &&
@@ -504,7 +554,9 @@ export default function Account() {
                     passwordError ? "" : "opacity-0 select-none"
                   } transition-opacity text-center text-red-500 duration-200 ease-in-out`}
                 >
-                  Password did not match record
+                  {userData.hasPassword
+                    ? "Password did not match record"
+                    : "Fatal error: Password already exists! Refresh page!"}
                 </div>
               </div>
             </form>

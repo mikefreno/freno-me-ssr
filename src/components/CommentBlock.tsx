@@ -343,8 +343,10 @@ export default function CommentBlock(props: {
               {userData?.data.image ? (
                 <Image
                   src={userData.data.image}
-                  alt="userIcon"
-                  className="h-6 w-6 rounded-full"
+                  height={24}
+                  width={24}
+                  alt="user-image"
+                  className="rounded-full w-6 h-6 object-cover object-center"
                 />
               ) : (
                 <UserDefaultImage strokeWidth={1} height={24} width={24} />

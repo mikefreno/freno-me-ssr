@@ -109,6 +109,7 @@ export async function setEmail(newEmail: string) {
     image: user.image,
     displayName: user.display_name,
     provider: user.provider,
+    hasPassword: user.password_hash ? true : false,
   };
   cookies().set({
     name: "emailToken",
@@ -135,6 +136,7 @@ export async function setDisplayName(displayName: string) {
     image: user.image,
     displayName: user.display_name,
     provider: user.provider,
+    hasPassword: user.password_hash ? true : false,
   };
   return data;
 }
@@ -206,5 +208,37 @@ export async function changePassword(
     }
   } else {
     return "Password Mismatch";
+  }
+}
+export async function setPassword(
+  newPassword: string,
+  newPasswordConfirmation: string
+) {
+  if (newPassword == newPasswordConfirmation) {
+    const userID = cookies().get("userIDToken")?.value;
+    const conn = ConnectionFactory();
+    const query = `SELECT * FROM User WHERE id = ?`;
+    const params = [userID];
+    const res = await conn.execute(query, params);
+    const user = res.rows[0] as User;
+    if (user && !user.password_hash) {
+      const passwordHash = await hashPassword(newPassword);
+      const updateQuery = `UPDATE User SET password_hash = ? WHERE id = ?`;
+      const updateParams = [passwordHash, userID];
+      await conn.execute(updateQuery, updateParams);
+      cookies().set({
+        name: "emailToken",
+        value: "",
+        maxAge: 0,
+      });
+      cookies().set({
+        name: "userIDToken",
+        value: "",
+        maxAge: 0,
+      });
+      return "success";
+    } else {
+      return "Password exists";
+    }
   }
 }

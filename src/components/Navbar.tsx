@@ -1,7 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
 
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import MenuBars from "@/icons/MenuBars";
 import Menu from "./Menu";
@@ -12,50 +12,36 @@ import useSWR from "swr";
 import Cookies from "js-cookie";
 import UserDefaultImage from "@/icons/UserDefaultImage";
 import { signOut } from "@/app/globalActions";
-import { User } from "@/types/model-types";
 import { API_RES_GetUserDataFromCookie } from "@/types/response-types";
 
-// const fetcher = async (url: string) => {
-//   const res = await fetch(url);
-//   const data = (await res.json()) as API_RES_GetUserDataFromCookie;
+const fetcher = async (url: string) => {
+  const res = await fetch(url);
+  const data = (await res.json()) as API_RES_GetUserDataFromCookie;
 
-//   return { data, status: res.status };
-// };
+  return { data, status: res.status };
+};
 
 export default function Navbar() {
-  // const { data: userData, error: reactionError } = useSWR(
-  //   `/api/user-data/cookie/${Cookies.get("userIDToken")}`,
-  //   fetcher
-  // );
+  const { data: userData, error: reactionError } = useSWR(
+    `/api/user-data/cookie/${Cookies.get("userIDToken")}`,
+    fetcher
+  );
+
+  const router = useRouter();
   const pathname = usePathname();
   //state
   const [menuOpen, setMenuOpen] = useState<boolean>(false);
-  //ref
-  const menuRef = useRef<HTMLDivElement>(null);
-  const closeRef = useRef<HTMLButtonElement>(null);
-
-  const router = useRouter();
-
-  const [status, setStatus] = useState<number>(0);
-  const [userData, setUserData] = useState<{
+  const [user, setUser] = useState<{
     id: string;
     email: string | undefined;
     emailVerified: boolean;
     image: string | null;
     displayName: string | undefined;
     provider: string | undefined;
-  }>();
-
-  useEffect(() => {
-    asyncGetUserData();
-  }, [pathname]);
-
-  const asyncGetUserData = async () => {
-    const res = await fetch(`/api/user-data/non-sensitive`, { method: "GET" });
-    const resData = (await res.json()) as API_RES_GetUserDataFromCookie;
-    setStatus(res.status);
-    setUserData(resData);
-  };
+  } | null>(null);
+  //ref
+  const menuRef = useRef<HTMLDivElement>(null);
+  const closeRef = useRef<HTMLButtonElement>(null);
 
   useOnClickOutside([menuRef, closeRef], () => {
     setMenuOpen(false);
@@ -76,6 +62,12 @@ export default function Navbar() {
     }
   }
 
+  useEffect(() => {
+    if (userData) {
+      setUser(userData.data);
+    }
+  }, [userData]);
+
   function menuToggle() {
     setMenuOpen(!menuOpen);
     rotateBars();
@@ -84,7 +76,8 @@ export default function Navbar() {
   const signOutTrigger = async (e: React.FormEvent) => {
     e.preventDefault();
     await signOut();
-    await asyncGetUserData();
+    Cookies.remove("userIDToken");
+    Cookies.remove("emailToken");
     router.refresh();
   };
 
@@ -103,7 +96,7 @@ export default function Navbar() {
           </Link>
         </div>
         <div className="my-auto flex justify-end" style={{ flex: 3 }}>
-          <ul className="hidden text-sm text-zinc-900 dark:text-[#222222] md:flex">
+          <ul className="hidden text-sm text-zinc-900 dark:text-zinc-200 pr-2 md:flex">
             <li className="my-auto pl-4">
               <Link
                 href="/projects"
@@ -144,25 +137,25 @@ export default function Navbar() {
                 Contact
               </Link>
             </li>
-            {status == 202 && userData ? (
+            {userData?.status == 202 ? (
               <>
                 <li className="pl-4">
                   <Link href="/account">
                     <div className="flex">
-                      {userData.image ? (
+                      {user?.image ? (
                         <Image
-                          src={userData.image}
-                          height={20}
-                          width={20}
+                          src={user.image}
+                          height={36}
+                          width={36}
                           alt="user-image"
-                          className="rounded-full"
+                          className="rounded-full w-9 h-9 object-cover object-center"
                         />
                       ) : (
                         <div className="border border-black dark:border-white rounded-full p-0.5 mr-1">
                           <UserDefaultImage
                             strokeWidth={1}
-                            height={20}
-                            width={20}
+                            height={36}
+                            width={36}
                           />
                         </div>
                       )}
@@ -218,7 +211,7 @@ export default function Navbar() {
               <Menu
                 menuRef={menuRef}
                 setMenuOpen={setMenuOpen}
-                userDataResponse={status}
+                userDataResponse={userData?.status}
               />
             ) : null}
           </div>

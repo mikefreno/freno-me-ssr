@@ -22,6 +22,7 @@ export async function GET(
             image: user.image,
             displayName: user.display_name,
             provider: user.provider,
+            hasPassword: user.password_hash ? true : false,
           },
           { status: 202 }
         );

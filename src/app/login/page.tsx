@@ -21,7 +21,8 @@ export default function LoginPage() {
   const [countDown, setCountDown] = useState<number>(0);
   const [emailSent, setEmailSent] = useState<boolean>(false);
   const [showPasswordError, setShowPasswordError] = useState<boolean>(false);
-  const [reportLoginSuccess, setReportLoginSuccess] = useState<boolean>(false);
+  const [showPasswordSuccess, setShowPasswordSuccess] =
+    useState<boolean>(false);
   const rememberMeRef = useRef<HTMLInputElement>(null);
   const emailRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
@@ -84,7 +85,7 @@ export default function LoginPage() {
         if (res == "no-match") {
           setShowPasswordError(true);
         } else if (res == "success") {
-          setReportLoginSuccess(true);
+          setShowPasswordSuccess(true);
           router.push("/account");
         }
       }
@@ -144,7 +145,7 @@ export default function LoginPage() {
             {register ? "Register" : "Login"}
           </div>
           {!register ? (
-            <div className="text-center py-4">
+            <div className="text-center py-4 md:min-w-[475px]">
               Don&apos;t have an account yet?
               <button
                 onClick={() => {
@@ -157,7 +158,7 @@ export default function LoginPage() {
               </button>
             </div>
           ) : (
-            <div className="text-center py-4">
+            <div className="text-center py-4 md:min-w-[475px]">
               Already have an account?
               <button
                 onClick={() => {
@@ -226,10 +227,16 @@ export default function LoginPage() {
             </div>
             <div
               className={`${
-                showPasswordError ? "" : "opacity-0 select-none"
-              } text-red-500 italic transition-opacity flex justify-center duration-300 ease-in-out`}
+                showPasswordError
+                  ? "text-red-500"
+                  : showPasswordSuccess
+                  ? "text-green-500"
+                  : "opacity-0 select-none"
+              }  italic transition-opacity flex justify-center duration-300 ease-in-out`}
             >
-              Credentials did not match any record
+              {showPasswordError
+                ? "Credentials did not match any record"
+                : "Login Success! Redirecting..."}
             </div>
             <div className="flex justify-center py-4">
               {!register && !usePassword && countDown > 0 ? (
@@ -253,7 +260,7 @@ export default function LoginPage() {
                     loading
                       ? "bg-zinc-400"
                       : "bg-blue-400 dark:bg-blue-600 hover:bg-blue-500 dark:hover:bg-blue-700 active:scale-90"
-                  } flex w-36 justify-center rounded transition-all duration-300 ease-out py-3 text-white`}
+                  } flex w-36 justify-center rounded transition-all duration-300 ease-out py-3 text-white shadow-lg shadow-blue-200`}
                 >
                   {register ? "Sign Up" : usePassword ? "Sign In" : "Get Link"}
                 </button>
@@ -296,7 +303,7 @@ export default function LoginPage() {
             <div className="mx-auto mb-4 flex flex-col">
               <Link
                 href={`https://accounts.google.com/o/oauth2/v2/auth?client_id=${env.NEXT_PUBLIC_GOOGLE_CLIENT_ID}&redirect_uri=https://www.freno.me/api/auth/callback/google&response_type=code&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email`}
-                className="my-4 flex w-80 flex-row bg-white hover:bg-zinc-100 justify-between dark:border-zinc-50 dark:border rounded text-black border dark:text-white border-zinc-800 dark:bg-zinc-800 px-4 py-2 dark:hover:bg-zinc-700 active:scale-95 transition-all duration-300 ease-out"
+                className="my-4 flex w-80 shadow-md flex-row bg-white hover:bg-zinc-100 justify-between dark:border-zinc-50 dark:border rounded text-black border dark:text-white border-zinc-800 dark:bg-zinc-800 px-4 py-2 dark:hover:bg-zinc-700 active:scale-95 transition-all duration-300 ease-out"
               >
                 {!register ? "Sign in " : "Register "} with Google
                 <span className="my-auto">
@@ -306,7 +313,7 @@ export default function LoginPage() {
               <div className="px-4"></div>
               <Link
                 href={`https://github.com/login/oauth/authorize?client_id=${env.NEXT_PUBLIC_GITHUB_CLIENT_ID}&redirect_uri=https://freno.me/api/auth/callback/github&scope=user`}
-                className="my-4 flex w-80 flex-row justify-between rounded bg-zinc-600 px-4 py-2 text-white hover:bg-zinc-700 active:scale-95 transition-all duration-300 ease-out"
+                className="my-4 flex w-80 shadow-md flex-row justify-between rounded bg-zinc-600 px-4 py-2 text-white hover:bg-zinc-700 active:scale-95 transition-all duration-300 ease-out"
               >
                 {!register ? "Sign in " : "Register "} with Github
                 <span className="my-auto">

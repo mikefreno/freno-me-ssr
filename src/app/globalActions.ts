@@ -6,13 +6,13 @@ import { cookies } from "next/headers";
 export async function signOut() {
   cookies().set({
     name: "emailToken",
-    value: "null",
+    value: "",
     maxAge: 0,
     expires: new Date("2016-10-05"),
   });
   cookies().set({
     name: "userIDToken",
-    value: "null",
+    value: "",
     maxAge: 0,
     expires: new Date("2016-10-05"),
   });
