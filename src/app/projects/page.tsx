@@ -24,7 +24,7 @@ export default async function Projects() {
     <>
       <div className="min-h-screen">
         <div className="h-[30vh] w-full bg-[url('/blueprint.jpg')] bg-cover bg-center bg-no-repeat">
-          <div className="pt-24 text-center text-6xl font-extralight tracking-widest text-white">
+          <div className="pt-24 text-center text-6xl font-extralight tracking-widest text-white text-shadow">
             Projects
           </div>
         </div>

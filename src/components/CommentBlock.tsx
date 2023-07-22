@@ -351,7 +351,11 @@ export default function CommentBlock(props: {
               ) : (
                 <UserDefaultImage strokeWidth={1} height={24} width={24} />
               )}
-              <div className="px-1">{userData?.data.email}</div>
+              <div className="px-1">
+                {userData?.data.displayName
+                  ? userData?.data.displayName
+                  : userData?.data.email}
+              </div>
             </div>
             {props.userID == props.comment.commenter_id ? <div></div> : null}
             <button

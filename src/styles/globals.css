@@ -486,3 +486,6 @@ input[type="checkbox"]:checked::before {
 .scrollYDisabled {
   overflow-y: hidden;
 }
+.text-shadow {
+  text-shadow: 1px 1px 0.25px #27272a;
+}

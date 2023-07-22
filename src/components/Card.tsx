@@ -25,6 +25,8 @@ export default async function ProjectCard(props: {
         src={
           props.project.banner_photo
             ? props.project.banner_photo
+            : props.linkTarget == "blog"
+            ? "/bitcoin.jpg"
             : "/blueprint.jpg"
         }
         alt={props.project.title + " banner"}
@@ -34,7 +36,7 @@ export default async function ProjectCard(props: {
       />
       <div className="absolute bottom-0 w-full bg-white bg-opacity-40 backdrop-blur-md border-t border-white border-opacity-20 py-4 px-2 md:px-6">
         <div className="flex md:flex-row flex-col justify-between items-center">
-          <div>
+          <div className="text-center md:text-left">
             <div className="text-lg md:text-xl text-black">
               {props.project.subtitle}
             </div>
@@ -55,6 +57,7 @@ export default async function ProjectCard(props: {
               projectTitle={props.project.title}
               linkTarget={props.linkTarget}
               privilegeLevel={props.privilegeLevel}
+              projectID={props.project.id}
             />
           </div>
         </div>

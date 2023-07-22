@@ -403,19 +403,19 @@ export default function Account() {
                   {userData.displayName ? (
                     userData.displayName
                   ) : (
-                    <>
+                    <div className="flex">
                       <div className="tooltip">
                         <InfoIcon height={24} width={24} strokeWidth={1} />
                         <div className="tooltip-text w-40 -ml-20">
                           <div className="px-1">
-                            This will allow you to sign in with a password
+                            This will show instead of your email in comments
                           </div>
                         </div>
                       </div>
                       <span className="italic font-light underline underline-offset-4">
                         None Set
                       </span>
-                    </>
+                    </div>
                   )}
                 </div>
               </div>
@@ -462,7 +462,7 @@ export default function Account() {
               className="mt-4 flex justify-center w-full"
             >
               <div className="flex flex-col justify-center">
-                {userData.hasPassword ? (
+                {!userData.hasPassword ? (
                   <div className="input-group mx-4">
                     <input
                       ref={oldPasswordRef}
@@ -477,11 +477,13 @@ export default function Account() {
                     <label className="underlinedInputLabel">Old Password</label>
                   </div>
                 ) : (
-                  <div className="tooltip">
-                    <InfoIcon height={24} width={24} strokeWidth={1} />
-                    <div className="tooltip-text w-40 -ml-20">
-                      <div className="px-1">
-                        This will allow you to sign in with a password
+                  <div className="flex justify-center">
+                    <div className="tooltip -mb-8">
+                      <InfoIcon height={24} width={24} strokeWidth={1} />
+                      <div className="tooltip-text w-36 -ml-[4.5rem]">
+                        <div className="px-1">
+                          This will allow you to sign in with a password
+                        </div>
                       </div>
                     </div>
                   </div>

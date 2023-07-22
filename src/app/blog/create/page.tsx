@@ -21,11 +21,6 @@ export default function BlogCreation() {
   const titleRef = useRef<HTMLInputElement>(null);
   const subtitleRef = useRef<HTMLInputElement>(null);
 
-  useEffect(() => {
-    console.log(bannerImage?.name);
-    console.log(bannerImage?.size);
-  }, [bannerImage]);
-
   const handleBannerImageDrop = useCallback((acceptedFiles: Blob[]) => {
     acceptedFiles.forEach((file: Blob) => {
       setBannerImage(file);

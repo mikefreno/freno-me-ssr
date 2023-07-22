@@ -21,7 +21,7 @@ export default async function Blog() {
     <>
       <div className="min-h-screen">
         <div className="h-[30vh] w-full bg-[url('/bitcoin.jpg')] bg-cover bg-center bg-no-repeat">
-          <div className="pt-24 text-center text-6xl font-extralight tracking-widest text-white">
+          <div className="pt-24 text-center text-6xl font-extralight tracking-widest text-white text-shadow">
             Blog
           </div>
         </div>

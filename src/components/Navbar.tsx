@@ -22,7 +22,7 @@ const fetcher = async (url: string) => {
 };
 
 export default function Navbar() {
-  const { data: userData, error: reactionError } = useSWR(
+  const { data: userData, error: error } = useSWR(
     `/api/user-data/cookie/${Cookies.get("userIDToken")}`,
     fetcher
   );
