@@ -498,6 +498,3 @@ input[type="checkbox"]:checked::before {
   left: 0;
   background: rgba(255, 255, 255, 0.1);
 }
-.hero-bg {
-  background-size: auto 50%;
-}
