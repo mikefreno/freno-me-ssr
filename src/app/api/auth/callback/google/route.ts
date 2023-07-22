@@ -35,7 +35,7 @@ export async function GET(request: NextRequest) {
     );
 
     const userData = await userResponse.json();
-
+    console.log(userData);
     const name = userData.name;
     const image = userData.picture;
     const email = userData.email;
@@ -49,7 +49,7 @@ export async function GET(request: NextRequest) {
         " email: " +
         email +
         " email_verified: " +
-        email
+        email_verified
     );
 
     const conn = ConnectionFactory();
