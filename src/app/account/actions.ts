@@ -4,7 +4,6 @@ import { env } from "@/env.mjs";
 import { cookies } from "next/headers";
 import jwt from "jsonwebtoken";
 import { ConnectionFactory } from "../api/database/ConnectionFactory";
-import { NextResponse } from "next/server";
 import { User } from "@/types/model-types";
 import { checkPassword, hashPassword } from "../api/passwordHashing";
 import { signOut } from "../globalActions";

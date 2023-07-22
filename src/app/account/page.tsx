@@ -3,9 +3,7 @@ import Dropzone from "@/components/Dropzone";
 import CheckCircle from "@/icons/CheckCircle";
 import XCircle from "@/icons/XCircle";
 import { API_RES_GetUserDataFromCookie } from "@/types/response-types";
-import Cookies from "js-cookie";
 import { useCallback, useEffect, useRef, useState } from "react";
-import useSWR from "swr";
 import {
   changePassword,
   deleteAccount,
@@ -24,23 +22,11 @@ export default function Account() {
   const [profileImageHolder, setProfileImageHolder] = useState<
     string | ArrayBuffer | null
   >(null);
-
-  const emailRef = useRef<HTMLInputElement>(null);
-
-  const displayNameRef = useRef<HTMLInputElement>(null);
-
-  const deleteAccountPasswordRef = useRef<HTMLInputElement>(null);
-
   const [passwordsMatch, setPasswordsMatch] = useState<boolean>(false);
   const [showPasswordLengthWarning, setShowPasswordLengthWarning] =
     useState<boolean>(false);
   const [passwordLengthSufficient, setPasswordLengthSufficient] =
     useState<boolean>(false);
-
-  const oldPasswordRef = useRef<HTMLInputElement>(null);
-  const newPasswordRef = useRef<HTMLInputElement>(null);
-  const newPasswordConfRef = useRef<HTMLInputElement>(null);
-
   const [passwordBlurred, setPasswordBlurred] = useState(false);
   const [emailButtonLoading, setEmailButtonLoading] = useState<boolean>(false);
   const [displayNameButtonLoading, setDisplayNameButtonLoading] =
@@ -49,19 +35,15 @@ export default function Account() {
     useState<boolean>(false);
   const [passwordChangeLoading, setPasswordChangeLoading] =
     useState<boolean>(false);
-
   const [passwordError, setPasswordError] = useState<boolean>(false);
   const [passwordDeletionError, setPasswordDeletionError] =
     useState<boolean>(false);
-
   const [profileImageSetLoading, setProfileImageSetLoading] =
     useState<boolean>(false);
 
   const [profileImageStateChange, setProfileImageStateChange] =
     useState<boolean>(false);
-
   const [preSetHolder, setPresetHolder] = useState<string | null>(null);
-
   const [showImageSuccess, setShowImageSuccess] = useState<boolean>(false);
   const [userData, setUserData] = useState<{
     id: string;
@@ -71,6 +53,13 @@ export default function Account() {
     displayName: string | undefined;
     provider: string | undefined;
   }>();
+
+  const oldPasswordRef = useRef<HTMLInputElement>(null);
+  const newPasswordRef = useRef<HTMLInputElement>(null);
+  const newPasswordConfRef = useRef<HTMLInputElement>(null);
+  const emailRef = useRef<HTMLInputElement>(null);
+  const displayNameRef = useRef<HTMLInputElement>(null);
+  const deleteAccountPasswordRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     asyncGetUserData();
