@@ -19,7 +19,13 @@ export default function ReactionBar(props: {
   showingReactionOptions: boolean;
 }) {
   return (
-    <div className="pl-2 min-h-[1.5rem] fade-in flex flex-row max-w-[1/4] overflow-scroll scrollYDisabled">
+    <div
+      className={`${
+        props.showingReactionOptions
+          ? "bg-zinc-50 dark:bg-zinc-700 shadow-inner"
+          : null
+      } ml-2 w-fit min-h-[1.5rem] py-1 rounded-sm fade-in flex flex-row max-w-[1/4] overflow-scroll md:overflow-hidden scrollYDisabled`}
+    >
       <div
         className={`${
           props.showingReactionOptions ||
@@ -47,15 +53,10 @@ export default function ReactionBar(props: {
             : null}
         </div>
         <button
-          className={`pl-0.5 h-6 w-6 ${
-            props.privilegeLevel == "anonymous" ? "tooltip" : null
-          }`}
+          className={`pl-0.5 h-6 w-6`}
           onClick={(event) => props.genericReactionHandler(event, "tears")}
         >
           <TearsEmoji />
-          {props.privilegeLevel == "anonymous" ? (
-            <div className="tooltip-text">You must be logged in</div>
-          ) : null}
         </button>
       </div>
       <div
@@ -85,15 +86,10 @@ export default function ReactionBar(props: {
             : null}
         </div>
         <button
-          className={`pl-0.5 h-6 w-6 ${
-            props.privilegeLevel == "anonymous" ? "tooltip" : null
-          }`}
+          className={`pl-0.5 h-6 w-6`}
           onClick={(event) => props.genericReactionHandler(event, "blank")}
         >
           <BlankEmoji />
-          {props.privilegeLevel == "anonymous" ? (
-            <div className="tooltip-text">You must be logged in</div>
-          ) : null}
         </button>
       </div>
       <div
@@ -123,15 +119,10 @@ export default function ReactionBar(props: {
             : null}
         </div>
         <button
-          className={`pl-0.5 h-6 w-6 ${
-            props.privilegeLevel == "anonymous" ? "tooltip" : null
-          }`}
+          className={`pl-0.5 h-6 w-6`}
           onClick={(event) => props.genericReactionHandler(event, "tongue")}
         >
           <TongueEmoji />
-          {props.privilegeLevel == "anonymous" ? (
-            <div className="tooltip-text">You must be logged in</div>
-          ) : null}
         </button>
       </div>
       <div
@@ -161,15 +152,10 @@ export default function ReactionBar(props: {
             : null}
         </div>
         <button
-          className={`pl-0.5 h-6 w-6 ${
-            props.privilegeLevel == "anonymous" ? "tooltip" : null
-          }`}
+          className={`pl-0.5 h-6 w-6`}
           onClick={(event) => props.genericReactionHandler(event, "cry")}
         >
           <CryEmoji />
-          {props.privilegeLevel == "anonymous" ? (
-            <div className="tooltip-text">You must be logged in</div>
-          ) : null}
         </button>
       </div>
       <div
@@ -199,15 +185,10 @@ export default function ReactionBar(props: {
             : null}
         </div>
         <button
-          className={`pl-0.5 h-6 w-6 ${
-            props.privilegeLevel == "anonymous" ? "tooltip" : null
-          }`}
+          className={`pl-0.5 h-6 w-6`}
           onClick={(event) => props.genericReactionHandler(event, "heartEye")}
         >
           <HeartEyeEmoji />
-          {props.privilegeLevel == "anonymous" ? (
-            <div className="tooltip-text">You must be logged in</div>
-          ) : null}
         </button>
       </div>
       <div
@@ -237,15 +218,10 @@ export default function ReactionBar(props: {
             : null}
         </div>
         <button
-          className={`pl-0.5 h-6 w-6 ${
-            props.privilegeLevel == "anonymous" ? "tooltip" : null
-          }`}
+          className={`pl-0.5 h-6 w-6`}
           onClick={(event) => props.genericReactionHandler(event, "angry")}
         >
           <AngryEmoji />
-          {props.privilegeLevel == "anonymous" ? (
-            <div className="tooltip-text">You must be logged in</div>
-          ) : null}
         </button>
       </div>
       <div
@@ -275,15 +251,10 @@ export default function ReactionBar(props: {
             : null}
         </div>
         <button
-          className={`pl-0.5 h-6 w-6 ${
-            props.privilegeLevel == "anonymous" ? "tooltip" : null
-          }`}
+          className={`pl-0.5 h-6 w-6`}
           onClick={(event) => props.genericReactionHandler(event, "moneyEye")}
         >
           <MoneyEyeEmoji />
-          {props.privilegeLevel == "anonymous" ? (
-            <div className="tooltip-text">You must be logged in</div>
-          ) : null}
         </button>
       </div>
       <div
@@ -313,15 +284,10 @@ export default function ReactionBar(props: {
             : null}
         </div>
         <button
-          className={`pl-0.5 h-6 w-6 ${
-            props.privilegeLevel == "anonymous" ? "tooltip" : null
-          }`}
+          className={`pl-0.5 h-6 w-6`}
           onClick={(event) => props.genericReactionHandler(event, "sick")}
         >
           <SickEmoji />
-          {props.privilegeLevel == "anonymous" ? (
-            <div className="tooltip-text">You must be logged in</div>
-          ) : null}
         </button>
       </div>
       <div
@@ -352,15 +318,10 @@ export default function ReactionBar(props: {
             : null}
         </div>
         <button
-          className={`pl-0.5 h-6 w-6 ${
-            props.privilegeLevel == "anonymous" ? "tooltip" : null
-          }`}
+          className={`pl-0.5 h-6 w-6`}
           onClick={(event) => props.genericReactionHandler(event, "upsideDown")}
         >
           <UpsideDownEmoji />
-          {props.privilegeLevel == "anonymous" ? (
-            <div className="tooltip-text">You must be logged in</div>
-          ) : null}
         </button>
       </div>
       <div
@@ -390,15 +351,10 @@ export default function ReactionBar(props: {
             : null}
         </div>
         <button
-          className={`pl-0.5 h-6 w-6 ${
-            props.privilegeLevel == "anonymous" ? "tooltip" : null
-          }`}
+          className={`pl-0.5 h-6 w-6`}
           onClick={(event) => props.genericReactionHandler(event, "worried")}
         >
           <WorriedEmoji />
-          {props.privilegeLevel == "anonymous" ? (
-            <div className="tooltip-text">You must be logged in</div>
-          ) : null}
         </button>
       </div>
     </div>
