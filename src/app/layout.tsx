@@ -1,6 +1,6 @@
 import Navbar from "@/components/Navbar";
 import "@/styles/globals.css";
-
+import { Analytics } from "@vercel/analytics/react";
 import { Source_Code_Pro } from "next/font/google";
 
 const SCP = Source_Code_Pro({ subsets: ["latin"] });
@@ -23,6 +23,7 @@ export default function RootLayout({
       >
         <Navbar />
         {children}
+        <Analytics />
       </body>
     </html>
   );
