@@ -63,7 +63,7 @@ export default function ProjectCreation() {
         { method: "POST", body: JSON.stringify(data) }
       );
 
-      router.push(`/project/${titleRef.current.value}`);
+      router.push(`/projects/${titleRef.current.value}`);
     }
 
     setSubmitButtonLoading(false);
