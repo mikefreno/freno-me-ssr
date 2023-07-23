@@ -6,15 +6,14 @@ import ReplyIcon from "@/icons/ReplyIcon";
 import CommentInputBlock from "./CommentInputBlock";
 import ReactionBar from "./ReactionBar";
 import ThumbsUpEmoji from "@/icons/emojis/ThumbsUp.svg";
-import { Comment, CommentReaction, User } from "@/types/model-types";
+import { Comment, CommentReaction } from "@/types/model-types";
 import useSWR from "swr";
 import { env } from "@/env.mjs";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import Link from "next/link";
 import Cookies from "js-cookie";
-import { set } from "zod";
 import { API_RES_GetUserDataFromCookie } from "@/types/response-types";
+import debounce from "./Debounce";
 
 const fetcher = async (url: string) => {
   const res = await fetch(url);
@@ -60,9 +59,9 @@ export default function CommentBlock(props: {
   }, [props.level]);
 
   useEffect(() => {
-    const handleResize = () => {
+    const handleResize = debounce(() => {
       setWindowWidth(window.innerWidth);
-    };
+    }, 200);
 
     window.addEventListener("resize", handleResize);
 
