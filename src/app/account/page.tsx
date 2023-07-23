@@ -265,10 +265,10 @@ export default function Account() {
   };
 
   return (
-    <div className="min-h-screen px-8 md:px-24 lg:px-36">
+    <div className="min-h-screen mx-8 md:mx-24 lg:mx-36">
       <div className="pt-24">
         {!userData ? (
-          <div className="mt-[35vh] w-full flex justify-center align-middle">
+          <div className="mt-[35vh] w-100% flex justify-center align-middle">
             <LoadingSpinner height={64} width={64} />
           </div>
         ) : (
@@ -564,7 +564,7 @@ export default function Account() {
             </form>
             <hr className="mt-4" />
             <div className="py-14">
-              <div className="w-3/4 rounded-md mt-4 py-8 px-6 shadow-md bg-red-300 dark:bg-red-950 mx-auto">
+              <div className="w-full md:w-3/4 rounded-md mt-4 pt-8 pb-4 md:py-8 px-6 shadow-md bg-red-300 dark:bg-red-950 mx-auto">
                 <div className="text-xl text-center pb-4">Delete Account</div>
                 <div className="w-full flex justify-center">
                   <div className="tooltip">
