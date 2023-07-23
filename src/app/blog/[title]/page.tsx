@@ -64,7 +64,7 @@ export default async function DynamicBlogPost({
       <div className="min-h-screen select-none">
         <div className="relative z-30 overflow-hidden">
           <div
-            className="page-fade-in z-20 h-[50dvh] brightness-75 mx-auto w-full md:bg-cover bg-fixed bg-center bg-no-repeat image-overlay"
+            className="page-fade-in z-20 h-[50dvh] brightness-75 mx-auto w-full bg-cover bg-fixed md:bg-contain md:bg-center bg-no-repeat image-overlay"
             style={{
               backgroundImage: `url(${
                 blog.banner_photo ? blog.banner_photo : "/bitcoin.jpg"
