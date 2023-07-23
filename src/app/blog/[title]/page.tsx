@@ -64,19 +64,19 @@ export default async function DynamicBlogPost({
     return (
       <div className="select-none">
         <div className="z-30 overflow-hidden">
-          <div className="page-fade-in z-20 h-72 sm:h-96 md:h-[50vh] mx-auto">
-            <div className="fixed w-full h-72 sm:h-96 md:h-[50vh] brightness-75 image-overlay">
+          <div className="page-fade-in z-20 h-80 sm:h-96 md:h-[50vh] mx-auto">
+            <div className="fixed w-full h-80 sm:h-96 md:h-[50vh] brightness-75 image-overlay">
               <Image
                 src={blog.banner_photo ? blog.banner_photo : "/bitcoin.jpg"}
                 alt="post-cover"
                 height={400}
                 width={600}
                 priority={true}
-                className="object-cover w-full h-full"
+                className="object-cover w-full h-80 sm:h-96 md:h-[50vh]"
               />
             </div>
             <div
-              className={`text-shadow fixed top-32 sm:top-40 md:top-[20vh] w-full brightness-150 z-10 select-text text-center tracking-widest text-white`}
+              className={`text-shadow fixed top-36 sm:top-44 md:top-[20vh] w-full brightness-150 z-10 select-text text-center tracking-widest text-white`}
               style={{ pointerEvents: "none" }}
             >
               <div className="z-10 font-light tracking-widest text-3xl">
