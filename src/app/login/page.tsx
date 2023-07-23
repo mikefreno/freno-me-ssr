@@ -260,7 +260,7 @@ export default function LoginPage() {
                     loading
                       ? "bg-zinc-400"
                       : "bg-blue-400 dark:bg-blue-600 hover:bg-blue-500 dark:hover:bg-blue-700 active:scale-90"
-                  } flex w-36 justify-center rounded transition-all duration-300 ease-out py-3 text-white shadow-lg shadow-blue-700`}
+                  } flex w-36 justify-center rounded transition-all duration-300 ease-out py-3 text-white shadow-lg shadow-blue-300 dark:shadow-blue-700`}
                 >
                   {register ? "Sign Up" : usePassword ? "Sign In" : "Get Link"}
                 </button>
