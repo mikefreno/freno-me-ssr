@@ -456,7 +456,34 @@ input[type="checkbox"]:checked::before {
 .tooltip {
   position: relative;
 }
-
+.rule-around {
+  display: flex;
+  align-items: center;
+}
+.rule-around:before,
+.rule-around:after {
+  content: "";
+  flex: 1;
+  border-top: 1px solid #ccc;
+  margin: 0 10px;
+}
+@keyframes shaker {
+  0% {
+    transform: rotate(0deg);
+  }
+  33% {
+    transform: rotate(15deg);
+  }
+  66% {
+    transform: rotate(-15deg);
+  }
+  100% {
+    transform: rotate(0deg);
+  }
+}
+.shaker:hover {
+  animation: shaker 0.5s ease;
+}
 .tooltip .tooltip-text {
   visibility: hidden;
   min-width: fit-content;

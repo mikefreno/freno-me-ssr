@@ -66,7 +66,7 @@ export default function Contact() {
                 href="https://github.com/MikeFreno/"
                 target="_blank"
                 rel="noreferrer"
-                className="hvr-grow-rotate-left rounded-full border-zinc-800 dark:border-zinc-300"
+                className="rounded-full shaker border-zinc-800 dark:border-zinc-300"
               >
                 <span className="m-auto p-2">
                   <GitHub height={24} width={24} fill={undefined} />
@@ -78,7 +78,7 @@ export default function Contact() {
                 href="https://www.linkedin.com/in/michael-freno-176001256/"
                 target="_blank"
                 rel="noreferrer"
-                className="hvr-grow-rotate rounded-full border-zinc-800 dark:border-zinc-300"
+                className="rounded-full shaker border-zinc-800 dark:border-zinc-300"
               >
                 <span className="m-auto p-2 rounded-md">
                   <LinkedIn height={24} width={24} fill={undefined} />

@@ -21,7 +21,7 @@ export default function Menu(props: {
     <div
       id="menu"
       ref={props.menuRef}
-      className={`fade-in absolute right-0 top-0 shadow-lg z-[100] overflow-scroll ${
+      className={`fade-in absolute right-0 top-0 z-[100] overflow-scroll ${
         pathname === "/app" ? "" : "md:hidden"
       }`}
     >
@@ -30,7 +30,7 @@ export default function Menu(props: {
           pathname.split("/")[1] == "blog"
             ? "border-yellow-400 dark:border-yellow-700"
             : "border-blue-400 dark:border-blue-700"
-        } rounded-b-3xl rounded-tl-3xl rounded-tr-sm border bg-zinc-50 shadow-xl dark:bg-zinc-900`}
+        } rounded-b-3xl rounded-tl-3xl rounded-tr-sm border bg-zinc-50 shadow-inner dark:bg-zinc-900`}
       >
         <ul className="px-6 pt-8 pb-4">
           <li className="pt-2 text-lg">
@@ -148,7 +148,7 @@ export default function Menu(props: {
                       : "hover:bg-blue-400 hover:dark:bg-blue-700"
                   } rounded-lg p-2 px-4 text-center text-lg text-zinc-800  dark:text-zinc-100 `}
                 >
-                  Login / Register
+                  Login /<br /> Register
                 </div>
               </Link>
             </li>

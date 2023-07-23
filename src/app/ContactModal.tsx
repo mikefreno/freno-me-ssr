@@ -12,12 +12,14 @@ export default function ContactModal(props: ContactModalProps) {
         className={`${
           props.showing
             ? "fade-in flex"
-            : "hidden backdrop-brightness-100 backdrop-blur-0"
-        } w-full h-screen justify-center overflow-scroll py-[15vh] opacity-0 backdrop-blur-sm backdrop-brightness-75 duration-1000 ease-in-out transition-all`}
+            : "backdrop-brightness-100 backdrop-blur-0 -translate-x-full absolute"
+        } w-full h-screen justify-center overflow-scroll pb-36 pt-24 md:pb-[20vh] md:pt-[15vh] opacity-0 backdrop-blur-sm backdrop-brightness-75`}
       >
         <div
           ref={props.contactRef}
-          className="h-fit w-11/12 rounded border border-white bg-white bg-opacity-10 px-4 py-2 md:w-3/4 lg:w-3/5 md:px-12 md:py-6 xl:w-1/2"
+          className={`${
+            props.showing ? "" : "-translate-y-full"
+          } h-fit w-11/12 rounded border border-white bg-white bg-opacity-10 px-4 py-2 md:w-3/4 lg:w-3/5 md:px-12 md:py-6 xl:w-1/2 transition-all duration-700 ease-in-out`}
         >
           <div className="-my-6 flex justify-end pt-4 md:pt-2">
             <button onClick={props.contactToggle}>
@@ -84,10 +86,10 @@ export default function ContactModal(props: ContactModalProps) {
                 href="https://github.com/MikeFreno/"
                 target="_blank"
                 rel="noreferrer"
-                className="hvr-grow-rotate-left rounded-full border-zinc-800 dark:border-zinc-300"
+                className="hvr-grow-rotate-left shaker rounded-full border-zinc-800 dark:border-zinc-300"
               >
                 <span className="m-auto">
-                  <GitHub height={16} width={16} fill={"white"} />
+                  <GitHub height={20} width={20} fill={"white"} />
                 </span>
               </Link>
             </li>
@@ -96,10 +98,10 @@ export default function ContactModal(props: ContactModalProps) {
                 href="https://www.linkedin.com/in/michael-freno-176001256/"
                 target="_blank"
                 rel="noreferrer"
-                className="hvr-grow-rotate rounded-full border-zinc-800 dark:border-zinc-300"
+                className="hvr-grow-rotate rounded-full shaker border-zinc-800 dark:border-zinc-300"
               >
                 <span className="m-auto">
-                  <LinkedIn height={16} width={16} fill={"white"} />
+                  <LinkedIn height={20} width={20} fill={"white"} />
                 </span>
               </Link>
             </li>

@@ -133,7 +133,7 @@ export default function LoginPage() {
             </picture>
           </div>
         </div>
-        <div className="pt-48">
+        <div className="pt-24 md:pt-48">
           <div className="text-center text-3xl absolute -mt-12 italic text-red-400">
             {error == "passwordMismatch"
               ? "Passwords did not match!"

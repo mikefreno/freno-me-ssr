@@ -88,12 +88,12 @@ export default function Home() {
       <>
         <link rel="preload" as="image" href="/blur_SH_water.jpg" />
         <link rel="preload" as="image" href="/me_in_flannel.jpg" />
-        <div className="page-fade-in min-h-screen bg-[url('/blur_SH_water.jpg')] bg-cover bg-center bg-no-repeat text-white">
-          <div className="flex min-h-screen w-screen justify-center backdrop-brightness-50">
+        <div className="page-fade-in max-h-[100dvh] bg-[url('/blur_SH_water.jpg')] bg-cover bg-center bg-no-repeat text-white">
+          <div className="flex min-h-[100dvh] w-screen justify-center backdrop-brightness-50">
             <div
               className={`${
                 showingAbout || showingContact ? "hidden" : "fade-in"
-              } flex min-h-screen w-full flex-col justify-center opacity-0`}
+              } flex min-h-[100dvh] w-full flex-col justify-center opacity-0`}
             >
               <div className="text-center">
                 <div
@@ -235,20 +235,21 @@ export default function Home() {
                 )}
               </nav>
             </div>
+          </div>
+          <div className="-mt-[100dvh]">
             <AboutMeModal
               showing={showingAbout}
               aboutRef={aboutRef}
               aboutToggle={aboutToggle}
             />
-            <ContactModal
-              showing={showingContact}
-              contactRef={contactRef}
-              contactToggle={contactToggle}
-            />
+            <div className="-mt-[100dvh]">
+              <ContactModal
+                showing={showingContact}
+                contactRef={contactRef}
+                contactToggle={contactToggle}
+              />
+            </div>
           </div>
-          {/* <footer className="flex justify-end px-12 py-4 backdrop-brightness-50">
-        <p>&copy;2022 - {currentYear}. Michael Freno</p>
-      </footer> */}
         </div>
       </>
     );

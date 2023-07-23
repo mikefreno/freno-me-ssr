@@ -1,26 +1,37 @@
-import GitHub from "@/icons/GitHub";
-import LinkedIn from "@/icons/LinkedIn";
-import Xmark from "@/icons/Xmark";
+import GitHubIcon from "@/icons/GitHub";
+import LinkedInIcon from "@/icons/LinkedIn";
+import CloseIcon from "@/icons/Xmark";
 import Link from "next/link";
 import { RefObject } from "react";
 
-export default function AboutMeModal(props: AboutMeProps) {
+export default function AboutMeModal({
+  showing,
+  aboutRef,
+  aboutToggle,
+}: AboutMeProps) {
   return (
     <>
       <div
         className={`${
-          props.showing
+          showing
             ? "fade-in flex"
-            : "hidden backdrop-brightness-100 backdrop-blur-0"
-        } w-full h-screen justify-center overflow-scroll py-[15vh] opacity-0 backdrop-blur-sm backdrop-brightness-75 duration-1000 ease-in-out transition-all`}
+            : "backdrop-brightness-100 backdrop-blur-0 -translate-x-full absolute"
+        } w-full h-screen justify-center overflow-scroll pb-36 pt-24 md:pb-[20vh] md:pt-[15vh] opacity-0 backdrop-blur-sm backdrop-brightness-75`}
       >
         <div
-          ref={props.aboutRef}
-          className="h-fit w-11/12 rounded border border-white bg-white bg-opacity-10 px-4 py-2 md:w-3/4 lg:w-3/5 md:px-12 md:py-6 xl:w-1/2"
+          ref={aboutRef}
+          className={`${
+            showing ? "" : "translate-y-full"
+          } h-fit w-11/12 rounded border border-white bg-white bg-opacity-10 px-4 py-2 md:w-3/4 lg:w-3/5 md:px-12 md:py-6 xl:w-1/2 transition-all duration-700 ease-in-out`}
         >
           <div className="-my-6 flex justify-end pt-4 md:pt-2">
-            <button onClick={props.aboutToggle}>
-              <Xmark strokeWidth={0.5} color={"white"} height={50} width={50} />
+            <button onClick={aboutToggle}>
+              <CloseIcon
+                strokeWidth={0.5}
+                color={"white"}
+                height={50}
+                width={50}
+              />
             </button>
           </div>
           <article>
@@ -31,32 +42,32 @@ export default function AboutMeModal(props: AboutMeProps) {
               <div className="h-[30vh] w-full  bg-[url('/me_in_flannel.jpg')] bg-cover bg-center bg-no-repeat" />
             </div>
             <p>
-              My name is Mike Freno, and I&apos;m a software developer. I came
-              to this profession in a nonlinear path. While searching for other
-              career paths I developed an interest in business and finance,
-              before settling in on programming. I had taken a course on java
-              during my undergraduate and have had a lifelong interest in
-              computers (building many myself) and how it all worked, so in
-              someways it&apos;s odd I hadn&apos;t gone down this career path
-              earlier.
+              Hello! I&apos;m Mike Freno, a passionate software developer. My
+              journey into this field has been quite unique. I initially
+              explored various fields including genetics and then finance,
+              before discovering my true calling in programming. I&apos;ve
+              always been fascinated by computers and technology, and even took
+              a course on Java during my undergraduate studies. Looking back, it
+              seems inevitable that I would find my way into this exciting
+              profession.
             </p>
             <br />
             <p>
-              This website serves as a display of some of my technical skills
-              some of which you can find{" "}
+              This website serves as a showcase of my technical abilities, some
+              of which you can explore{" "}
               <Link
                 href="/projects"
                 className="text-white underline underline-offset-4 hover:text-blue-400 hover:underline"
               >
                 here
               </Link>
-              . As well as a place for me to write about things that interest
-              me, mostly surrounding{" "}
+              . Additionally, it&apos;s a platform where I share my thoughts and
+              insights on topics that intrigue me, primarily revolving around{" "}
               <Link
                 href="/blog"
                 className="text-white underline underline-offset-4 hover:text-yellow-400 hover:underline"
               >
-                bitcoin, economics and other tech related topics
+                Bitcoin, economics, and other tech-related subjects
               </Link>
               .
             </p>
@@ -66,10 +77,10 @@ export default function AboutMeModal(props: AboutMeProps) {
                   href="https://github.com/MikeFreno/"
                   target="_blank"
                   rel="noreferrer"
-                  className="hvr-grow-rotate-left rounded-full border-zinc-800 dark:border-zinc-300"
+                  className="rounded-full shaker border-zinc-800 dark:border-zinc-300"
                 >
                   <span className="m-auto">
-                    <GitHub height={16} width={16} fill={"white"} />
+                    <GitHubIcon height={16} width={16} fill={"white"} />
                   </span>
                 </Link>
               </li>
@@ -78,10 +89,10 @@ export default function AboutMeModal(props: AboutMeProps) {
                   href="https://www.linkedin.com/in/michael-freno-176001256/"
                   target="_blank"
                   rel="noreferrer"
-                  className="hvr-grow-rotate rounded-full border-zinc-800 dark:border-zinc-300"
+                  className="rounded-full shaker border-zinc-800 dark:border-zinc-300"
                 >
                   <span className="m-auto">
-                    <LinkedIn height={16} width={16} fill={"white"} />
+                    <LinkedInIcon height={16} width={16} fill={"white"} />
                   </span>
                 </Link>
               </li>

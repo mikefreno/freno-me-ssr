@@ -321,7 +321,7 @@ export default function Account() {
                 </div>
               </div>
             </div>
-            <div className="flex flex-col mx-auto md:grid md:grid-cols-2">
+            <div className="flex flex-col mx-auto md:grid md:grid-cols-2 max-w-full overflow-scroll">
               <div className="text-xl flex justify-center md:justify-normal">
                 <div className="my-auto flex lg:flex-row flex-col justify-start">
                   <div className="whitespace-nowrap pr-1">Current email: </div>
@@ -564,7 +564,7 @@ export default function Account() {
             </form>
             <hr className="mt-4" />
             <div className="py-14">
-              <div className="w-full md:w-3/4 rounded-md mt-4 pt-8 pb-4 md:py-8 px-6 shadow-md bg-red-300 dark:bg-red-950 mx-auto">
+              <div className="w-full md:w-3/4 overflow-scroll rounded-md mt-4 pt-8 pb-4 md:py-8 px-6 shadow-md bg-red-300 dark:bg-red-950 mx-auto">
                 <div className="text-xl text-center pb-4">Delete Account</div>
                 <div className="w-full flex justify-center">
                   <div className="tooltip">
