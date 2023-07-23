@@ -89,7 +89,7 @@ export default async function DynamicBlogPost({
           </div>
         </div>
         <div className="z-40 relative bg-zinc-100 dark:bg-zinc-800 pb-24">
-          <div className="flex justify-end pr-12 py-4 my-auto">
+          <div className="flex justify-center md:justify-end md:pr-12 py-4 my-auto">
             <a href="#comments" className="mx-2">
               <div className="flex flex-col tooltip">
                 <div className="mx-auto">
