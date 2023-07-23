@@ -62,10 +62,10 @@ export default async function DynamicProjectPost({
     );
   } else if (project) {
     return (
-      <div className="min-h-screen select-none">
-        <div className="relative z-30 overflow-hidden">
-          <div className="page-fade-in z-20 h-[50vh] mx-auto">
-            <div className="fixed w-full h-[50vh] brightness-75 image-overlay">
+      <div className="select-none">
+        <div className="z-30 overflow-hidden">
+          <div className="page-fade-in z-20 h-72 sm:h-96 md:h-[50vh] mx-auto">
+            <div className="fixed w-full h-72 sm:h-96 md:h-[50vh] brightness-75 image-overlay">
               <Image
                 src={
                   project.banner_photo ? project.banner_photo : "/blueprint.jpg"
@@ -78,7 +78,7 @@ export default async function DynamicProjectPost({
               />
             </div>
             <div
-              className={`text-shadow absolute md:fixed top-[20vh] w-full brightness-150 z-10 select-text text-center tracking-widest text-white`}
+              className={`text-shadow fixed h-32 sm:top-40 md:top-[20vh] w-full brightness-150 z-10 select-text text-center tracking-widest text-white`}
               style={{ pointerEvents: "none" }}
             >
               <div className="z-10 font-light tracking-widest text-3xl">
@@ -90,7 +90,7 @@ export default async function DynamicProjectPost({
             </div>
           </div>
         </div>
-        <div className="z-40">
+        <div className="z-40 relative bg-zinc-100 dark:bg-zinc-800">
           <div className="flex justify-end pr-12 py-4 my-auto">
             <a href="#comments" className="mx-2">
               <div className="flex flex-col tooltip">
