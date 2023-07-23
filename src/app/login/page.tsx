@@ -295,9 +295,13 @@ export default function LoginPage() {
               </Link>
             </div>
           ) : null}
-          {emailSent ? (
-            <div className="text-green-400 italic text-center">Email Sent!</div>
-          ) : null}
+          <div
+            className={`${
+              emailSent ? "" : "user-select opacity-0"
+            } text-green-400 text-center italic transition-opacity flex justify-center duration-300 ease-in-out`}
+          >
+            Email Sent!
+          </div>
           <div className="rule-around text-center">Or</div>
           <div className="my-2 flex justify-center">
             <div className="mx-auto mb-4 flex flex-col">

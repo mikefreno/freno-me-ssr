@@ -1,9 +1,83 @@
-import { sendContactRequest } from "../globalActions";
+"use client";
+
+import { useEffect, useRef, useState } from "react";
+import { sendContactRequest } from "@/app/globalActions";
 import Link from "next/link";
 import GitHub from "@/icons/GitHub";
 import LinkedIn from "@/icons/LinkedIn";
+import Cookies from "js-cookie";
+import { CountdownCircleTimer } from "react-countdown-circle-timer";
+import LoadingSpinner from "@/components/LoadingSpinner";
 
 export default function Contact() {
+  const [countDown, setCountDown] = useState<number>(0);
+  const [emailSent, setEmailSent] = useState<boolean>(false);
+  const [error, setError] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(false);
+  const emailRef = useRef<HTMLInputElement>(null);
+  const nameRef = useRef<HTMLInputElement>(null);
+  const messageRef = useRef<HTMLTextAreaElement>(null);
+  const timerIdRef = useRef<number | NodeJS.Timeout | null>(null);
+
+  const calcRemainder = (timer: string) => {
+    const expires = new Date(timer);
+    const remaining = expires.getTime() - Date.now();
+    const remainingInSeconds = remaining / 1000;
+
+    if (remainingInSeconds <= 0) {
+      setCountDown(0);
+      if (timerIdRef.current !== null) {
+        clearInterval(timerIdRef.current);
+      }
+    } else {
+      setCountDown(remainingInSeconds);
+    }
+  };
+
+  useEffect(() => {
+    const timer = Cookies.get("contactRequestSent");
+    if (timer) {
+      timerIdRef.current = setInterval(() => calcRemainder(timer), 1000);
+      return () => {
+        if (timerIdRef.current !== null) {
+          clearInterval(timerIdRef.current);
+        }
+      };
+    }
+  }, []);
+
+  const sendEmailTrigger = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (nameRef.current && messageRef.current && emailRef.current) {
+      setLoading(true);
+      const res = await sendContactRequest({
+        name: nameRef.current.value,
+        email: emailRef.current.value,
+        message: messageRef.current.value,
+      });
+      if (res == "email sent") {
+        setEmailSent(true);
+        const timer = Cookies.get("contactRequestSent");
+        if (timer) {
+          if (timerIdRef.current !== null) {
+            clearInterval(timerIdRef.current);
+          }
+          timerIdRef.current = setInterval(() => calcRemainder(timer), 1000);
+        }
+      } else if (res) {
+        setError(res);
+      }
+    }
+    setLoading(false);
+  };
+
+  const renderTime = () => {
+    return (
+      <div className="timer">
+        <div className="value">{countDown.toFixed(0)}</div>
+      </div>
+    );
+  };
   return (
     <>
       <div className="flex min-h-screen justify-center w-full">
@@ -11,7 +85,7 @@ export default function Contact() {
           <div className="text-center text-3xl tracking-widest dark:text-white">
             Contact
           </div>
-          <form action={sendContactRequest} className="min-w-[85vw]">
+          <form onSubmit={sendEmailTrigger} className="min-w-[85vw]">
             <div className="pt-6 md:mt-24 flex flex-col justify-evenly w-full">
               <div className="md:flex md:flex-row justify-evenly mx-auto w-full md:w-3/4 lg:w-1/2">
                 <div className="input-group md:mx-4">
@@ -51,15 +125,47 @@ export default function Contact() {
                 </div>
               </div>
               <div className="flex justify-end pt-4 w-full md:w-3/4 mx-auto lg:w-1/2">
-                <button
-                  type="submit"
-                  className="rounded border text-white shadow-md border-blue-500 bg-blue-400 hover:bg-blue-500 dark: dark:bg-blue-700 dark:hover:bg-blue-800 dark:border-blue-700 active:scale-90 transition-all duration-300 ease-in-out px-4 py-2"
-                >
-                  Send Message
-                </button>
+                {countDown > 0 ? (
+                  <CountdownCircleTimer
+                    isPlaying
+                    duration={60}
+                    initialRemainingTime={countDown}
+                    size={48}
+                    strokeWidth={6}
+                    colors={"#60a5fa"}
+                    colorsTime={undefined}
+                    onComplete={() => ({ shouldRepeat: false })}
+                  >
+                    {renderTime}
+                  </CountdownCircleTimer>
+                ) : (
+                  <button
+                    type="submit"
+                    className={`${
+                      loading ? "bg-zinc-400" : "hover:bg-blue-500 bg-blue-400"
+                    } rounded border w-40 text-white shadow-md active:scale-90 transition-all duration-300 ease-in-out py-2`}
+                  >
+                    {loading ? (
+                      <LoadingSpinner height={24} width={24} />
+                    ) : (
+                      "Send Message"
+                    )}
+                  </button>
+                )}
               </div>
             </div>
           </form>
+          <div
+            className={`${
+              emailSent
+                ? "text-green-400"
+                : error !== ""
+                ? "text-red-400"
+                : "user-select opacity-0"
+            } text-center italic transition-opacity flex justify-center duration-300 ease-in-out`}
+          >
+            {emailSent ? "Email Sent!" : error}
+          </div>
           <ul className="icons flex justify-center pt-24 pb-6">
             <li>
               <Link
