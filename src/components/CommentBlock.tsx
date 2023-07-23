@@ -53,17 +53,30 @@ export default function CommentBlock(props: {
   const commentInputRef = useRef<HTMLDivElement>(null);
   const [immediateLike, setImmediateLike] = useState<boolean>(false);
   const [immediateDislike, setImmediateDislike] = useState<boolean>(false);
+  const [windowWidth, setWindowWidth] = useState(0);
 
   useEffect(() => {
     setCommentCollapsed(props.level >= 4 ? true : false);
   }, [props.level]);
 
   useEffect(() => {
+    const handleResize = () => {
+      setWindowWidth(window.innerWidth);
+    };
+
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
+
+  useEffect(() => {
     if (containerRef.current) {
       const correction = showingReactionOptions ? 80 : 48;
       setToggleHeight(containerRef.current.clientHeight + correction);
     }
-  }, [containerRef, showingReactionOptions]);
+  }, [containerRef, showingReactionOptions, windowWidth]);
 
   useEffect(() => {
     setReactions(props.reactionMap.get(props.comment.id) || []);
