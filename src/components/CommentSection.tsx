@@ -79,7 +79,7 @@ export default function CommentSection(props: {
           <div
             onClick={() => checkForDoubleClick(topLevelComment.id)}
             key={topLevelComment.id}
-            className="bg-white select-none dark:bg-zinc-900 rounded shadow mt-4 pl-6 md:pl-12 lg:pl-16 max-w-full py-2"
+            className="bg-white select-none dark:bg-zinc-900 rounded shadow mt-4 pl-2 sm:pl-6 md:pl-12 lg:pl-16 max-w-full py-2"
           >
             {showingBlock.get(topLevelComment.id) ? (
               <CommentBlock

@@ -60,7 +60,8 @@ export default function CommentBlock(props: {
 
   useEffect(() => {
     if (containerRef.current) {
-      setToggleHeight(containerRef.current.offsetHeight);
+      const correction = showingReactionOptions ? 80 : 48;
+      setToggleHeight(containerRef.current.clientHeight + correction);
     }
   }, [containerRef, showingReactionOptions]);
 
@@ -260,7 +261,7 @@ export default function CommentBlock(props: {
         <div className="mr-2 h-8 border-l-2 mt-1 border-black dark:border-white my-auto" />
       </button>
       <div className={commentCollapsed ? "hidden" : "z-[500]"}>
-        <div ref={containerRef} className="my-4 flex w-full lg:w-3/4">
+        <div className="my-4 flex w-full lg:w-3/4 overflow-x-scroll overflow-y-hidden">
           <div
             className="flex flex-col justify-between"
             style={{ height: toggleHeight }}
@@ -333,12 +334,17 @@ export default function CommentBlock(props: {
           </div>
           <button onClick={collapseCommentToggle} className="px-2 z-0">
             <div
-              className="border-l-2 border-black dark:border-white"
+              className="border-l-2 border-black dark:border-white transition-all duration-300 ease-in-out"
               style={{ height: toggleHeight }}
             />
           </button>
           <div className="w-3/4" onClick={showingReactionOptionsToggle}>
-            <div className="flex select-text">{props.comment.body}</div>
+            <div
+              ref={containerRef}
+              className="flex select-text overflow-x-scroll overflow-y-hidden"
+            >
+              {props.comment.body}
+            </div>
             <div className="flex pl-2">
               {userData?.data.image ? (
                 <Image
@@ -402,7 +408,7 @@ export default function CommentBlock(props: {
             post_id={props.projectID}
           />
         </div>
-        <div className="pl-6 md:pl-12 lg:pl-16">
+        <div className="pl-2 sm:pl-6 md:pl-12 lg:pl-16">
           {props.child_comments.map((this_comment) => (
             <CommentBlock
               key={this_comment.id}
