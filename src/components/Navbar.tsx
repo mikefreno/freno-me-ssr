@@ -197,7 +197,11 @@ export default function Navbar() {
               </li>
             )}
           </ul>
-          <div className="my-auto pl-4 pr-2 md:hidden">
+          <div
+            className={`${
+              menuOpen ? "-mt-4 -mr-2" : ""
+            } my-auto transition-all duration-300 ease-in md:hidden`}
+          >
             <button
               onClick={menuToggle}
               className="z-[1000] my-auto"
@@ -211,7 +215,7 @@ export default function Navbar() {
               <Menu
                 menuRef={menuRef}
                 setMenuOpen={setMenuOpen}
-                userDataResponse={userData?.status}
+                userData={userData}
               />
             ) : null}
           </div>
