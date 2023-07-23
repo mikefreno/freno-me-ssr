@@ -8,6 +8,7 @@ import CommentSection from "@/components/CommentSection";
 import { CommentReaction } from "@/types/model-types";
 import { Suspense } from "react";
 import LoadingSpinner from "@/components/LoadingSpinner";
+import Image from "next/image";
 
 export default async function DynamicBlogPost({
   params,
@@ -63,14 +64,17 @@ export default async function DynamicBlogPost({
     return (
       <div className="min-h-screen select-none">
         <div className="relative z-30 overflow-hidden">
-          <div
-            className="page-fade-in z-20 h-[50dvh] brightness-75 mx-auto w-full md:bg-cover bg-top bg-fixed bg-contain md:bg-center bg-no-repeat image-overlay"
-            style={{
-              backgroundImage: `url(${
-                blog.banner_photo ? blog.banner_photo : "/bitcoin.jpg"
-              })`,
-            }}
-          >
+          <div className="page-fade-in z-20 h-[50dvh] mx-auto">
+            <div className="fixed w-full h-[50dvh] brightness-75 image-overlay">
+              <Image
+                src={blog.banner_photo ? blog.banner_photo : "/bitcoin.jpg"}
+                alt="post-cover"
+                height={400}
+                width={600}
+                priority={true}
+                className="object-cover w-full h-full"
+              />
+            </div>
             <div
               className={`text-shadow absolute md:fixed top-[20dvh] w-full brightness-150 z-10 select-text text-center tracking-widest text-white`}
               style={{ pointerEvents: "none" }}

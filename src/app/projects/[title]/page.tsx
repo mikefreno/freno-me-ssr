@@ -63,17 +63,22 @@ export default async function DynamicProjectPost({
   } else if (project) {
     return (
       <div className="min-h-screen select-none">
-        <div className="relative z-40 overflow-hidden">
-          <div
-            className="page-fade-in z-20 h-[50dvh] brightness-75 mx-auto w-full bg-cover bg-fixed bg-center bg-no-repeat image-overlay"
-            style={{
-              backgroundImage: `url(${
-                project.banner_photo ? project.banner_photo : "/bitcoin.jpg"
-              })`,
-            }}
-          >
+        <div className="relative z-30 overflow-hidden">
+          <div className="page-fade-in z-20 h-[50dvh] mx-auto">
+            <div className="fixed w-full h-[50dvh] brightness-75 image-overlay">
+              <Image
+                src={
+                  project.banner_photo ? project.banner_photo : "/blueprint.jpg"
+                }
+                alt="post-cover"
+                height={400}
+                width={600}
+                priority={true}
+                className="object-cover w-full h-full"
+              />
+            </div>
             <div
-              className={`text-shadow absolute md:fixed mt-48 w-full brightness-150 z-10 select-text text-center tracking-widest text-white`}
+              className={`text-shadow absolute md:fixed top-[20dvh] w-full brightness-150 z-10 select-text text-center tracking-widest text-white`}
               style={{ pointerEvents: "none" }}
             >
               <div className="z-10 font-light tracking-widest text-3xl">
