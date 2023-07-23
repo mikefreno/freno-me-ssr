@@ -76,7 +76,7 @@ export default async function DynamicBlogPost({
               />
             </div>
             <div
-              className={`text-shadow fixed h-32 sm:top-40 md:top-[20vh] w-full brightness-150 z-10 select-text text-center tracking-widest text-white`}
+              className={`text-shadow fixed top-32 sm:top-40 md:top-[20vh] w-full brightness-150 z-10 select-text text-center tracking-widest text-white`}
               style={{ pointerEvents: "none" }}
             >
               <div className="z-10 font-light tracking-widest text-3xl">
