@@ -1,3 +1,5 @@
+import "@/styles/content.scss";
+
 import CommentIcon from "@/icons/CommentIcon";
 import { env } from "@/env.mjs";
 import Link from "next/link";
@@ -117,10 +119,12 @@ export default async function DynamicBlogPost({
               />
             </div>
           </div>
-          <div
-            className="mx-12 md:mx-28 lg:mx-32 py-8 select-text"
-            dangerouslySetInnerHTML={{ __html: blog.body }}
-          />
+          <div className="flex justify-center overflow-scroll">
+            <div
+              className="ProseMirror px-12 md:px-28 lg:px-32 py-8 select-text prose prose-sm sm:prose md:prose-lg lg:prose-2xl dark:prose-invert sm:dark:prose-invert md:dark:prose-invert lg:dark:prose-invert"
+              dangerouslySetInnerHTML={{ __html: blog.body }}
+            />
+          </div>
           <div className="mx-4 md:mx-8 lg:mx-12 pb-12">
             <Suspense
               fallback={

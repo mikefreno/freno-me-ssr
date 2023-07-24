@@ -121,9 +121,9 @@ export default async function DynamicProjectPost({
               />
             </div>
           </div>
-          <div className="flex justify-center">
+          <div className="flex justify-center overflow-scroll">
             <div
-              className="px-12 md:px-28 lg:px-32 py-8 select-text "
+              className="ProseMirror px-12 md:px-28 lg:px-32 py-8 select-text prose prose-sm sm:prose md:prose-lg lg:prose-2xl dark:prose-invert sm:dark:prose-invert md:dark:prose-invert lg:dark:prose-invert"
               dangerouslySetInnerHTML={{ __html: project.body }}
             />
           </div>
