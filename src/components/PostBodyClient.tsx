@@ -5,7 +5,9 @@ import hljs from "highlight.js/lib/common";
 
 export default function PostBodyClient(props: { body: string }) {
   useEffect(() => {
-    hljs.highlightAll();
+    setTimeout(() => {
+      hljs.highlightAll();
+    }, 500);
   }, []);
 
   return (

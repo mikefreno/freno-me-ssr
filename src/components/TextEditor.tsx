@@ -96,6 +96,58 @@ export default function TextEditor({ updateContent, preSet }: any) {
         >
           <button
             type="button"
+            onClick={() =>
+              editor.chain().focus().toggleHeading({ level: 1 }).run()
+            }
+            className={`${
+              editor.isActive("heading", { level: 1 })
+                ? "bg-zinc-400"
+                : "hover:bg-zinc-400"
+            } mx-1 rounded p-1`}
+          >
+            H1
+          </button>
+          <button
+            type="button"
+            onClick={() =>
+              editor.chain().focus().toggleHeading({ level: 2 }).run()
+            }
+            className={`${
+              editor.isActive("heading", { level: 2 })
+                ? "bg-zinc-400"
+                : "hover:bg-zinc-400"
+            } mx-1 rounded p-1`}
+          >
+            H2
+          </button>
+          <button
+            type="button"
+            onClick={() =>
+              editor.chain().focus().toggleHeading({ level: 3 }).run()
+            }
+            className={`${
+              editor.isActive("heading", { level: 3 })
+                ? "bg-zinc-400"
+                : "hover:bg-zinc-400"
+            } mx-1 rounded p-1`}
+          >
+            H3
+          </button>
+          <button
+            type="button"
+            onClick={() =>
+              editor.chain().focus().toggleHeading({ level: 4 }).run()
+            }
+            className={`${
+              editor.isActive("heading", { level: 4 })
+                ? "bg-zinc-400"
+                : "hover:bg-zinc-400"
+            } mx-1 rounded p-1`}
+          >
+            H4
+          </button>
+          <button
+            type="button"
             onClick={() => editor.chain().focus().toggleBold().run()}
             className={`${
               editor.isActive("bold") ? "bg-white" : "hover:bg-white"
@@ -248,11 +300,12 @@ export default function TextEditor({ updateContent, preSet }: any) {
           >
             Code Block
           </button>
+          <button onClick={addImage}>Add Image</button>
         </FloatingMenu>
       )}
       <EditorContent
         editor={editor}
-        className="w-full ProseMirror dark:text-white rounded-md border px-4 py-2 border-black dark:border-white"
+        className="w-full ProseMirror dark:text-white rounded-md border px-4 py-2 border-black dark:border-white prose prose-sm sm:prose md:prose-base lg:prose-lg xl:prose-xl  dark:prose-invert sm:dark:prose-invert md:dark:prose-invert lg:dark:prose-invert"
       />
     </div>
   );

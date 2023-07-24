@@ -9,6 +9,8 @@ import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import LoadingSpinner from "./LoadingSpinner";
 import AddAttachmentSection from "./AddAttachmentSection";
+import { env } from "@/env.mjs";
+import Link from "next/link";
 
 export default function EditingClient(props: {
   post: Project | Blog;
@@ -50,7 +52,7 @@ export default function EditingClient(props: {
   const editPost = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitButtonLoading(true);
-    if (titleRef.current) {
+    if (titleRef.current?.value) {
       let bannerImageKey = "";
       if (bannerImage) {
         bannerImageKey = await AddImageToS3(
@@ -67,7 +69,7 @@ export default function EditingClient(props: {
             : null,
         subtitle:
           subtitleRef.current?.value !== props.post.subtitle
-            ? titleRef.current.value
+            ? subtitleRef.current?.value
             : null,
         body: editorContent !== "" ? editorContent : null,
         embedded_link: null,
@@ -77,7 +79,7 @@ export default function EditingClient(props: {
             : requestedDeleteImage
             ? "_DELETE_IMAGE_"
             : null,
-        published: publish,
+        published: publish || props.post.published,
       };
 
       await fetch(
@@ -87,14 +89,11 @@ export default function EditingClient(props: {
         { method: "PATCH", body: JSON.stringify(data) }
       );
       const route =
-        `/${props.type}/` + titleRef.current.value !== props.post.title
+        `${env.NEXT_PUBLIC_DOMAIN}/${props.type}/` + titleRef.current.value !==
+        props.post.title
           ? titleRef.current.value
           : props.post.title;
-
-      router.push(route);
     }
-
-    setSubmitButtonLoading(false);
   };
 
   const removeImage = () => {
@@ -220,6 +219,16 @@ export default function EditingClient(props: {
             </button>
           </div>
         </form>
+      </div>
+      <div className="flex justify-center">
+        <Link
+          href={`${env.NEXT_PUBLIC_DOMAIN}/${props.type}/${
+            titleRef.current?.value || props.post.title
+          }`}
+          className="border-blue-500 bg-blue-400 hover:bg-blue-500 dark:bg-blue-700 dark:hover:bg-blue-800 dark:border-blue-700 rounded border text-white shadow-md  active:scale-90 transition-all duration-300 ease-in-out px-4 py-2"
+        >
+          Go to Post
+        </Link>
       </div>
     </div>
   );

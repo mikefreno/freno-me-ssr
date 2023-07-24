@@ -94,6 +94,16 @@ export default async function DynamicProjectPost({
           </div>
         </div>
         <div className="z-40 relative bg-zinc-100 dark:bg-zinc-800 pb-24">
+          {privilegeLevel == "admin" ? (
+            <div className="flex justify-center pt-4 -mb-8">
+              <Link
+                className="border-blue-500 bg-blue-400 hover:bg-blue-500 dark:bg-blue-700 dark:hover:bg-blue-800 dark:border-blue-700 rounded border text-white shadow-md  active:scale-90 transition-all duration-300 ease-in-out px-4 py-2"
+                href={`${env.NEXT_PUBLIC_DOMAIN}/projects/edit/${project.id}`}
+              >
+                Edit
+              </Link>
+            </div>
+          ) : null}
           <div className="flex justify-center md:justify-end md:pr-12 py-4 my-auto">
             <a href="#comments" className="mx-2">
               <div className="flex flex-col tooltip">
