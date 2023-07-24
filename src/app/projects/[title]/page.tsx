@@ -9,16 +9,9 @@ import { cookies } from "next/headers";
 import SessionDependantLike from "@/components/SessionDependantLike";
 import CommentSection from "@/components/CommentSection";
 import { CommentReaction } from "@/types/model-types";
-import { Suspense } from "react";
+import { Suspense, useEffect } from "react";
 import LoadingSpinner from "@/components/LoadingSpinner";
-import css from "highlight.js/lib/languages/css";
-import js from "highlight.js/lib/languages/javascript";
-import ts from "highlight.js/lib/languages/typescript";
-import { lowlight } from "lowlight";
-
-lowlight.registerLanguage("css", css);
-lowlight.registerLanguage("js", js);
-lowlight.registerLanguage("ts", ts);
+import PostBodyClient from "@/components/PostBodyClient";
 
 export default async function DynamicProjectPost({
   params,
@@ -129,12 +122,7 @@ export default async function DynamicProjectPost({
               />
             </div>
           </div>
-          <div className="sm:flex sm:justify-center">
-            <div
-              className="ProseMirror py-8 md:py-12 select-text prose prose-sm sm:prose md:prose-base lg:prose-lg xl:prose-xl  dark:prose-invert sm:dark:prose-invert md:dark:prose-invert lg:dark:prose-invert"
-              dangerouslySetInnerHTML={{ __html: project.body }}
-            />
-          </div>
+          <PostBodyClient body={project.body} />
           <div className="mx-4 md:mx-8 lg:mx-12 pb-12">
             <Suspense
               fallback={

@@ -15,6 +15,7 @@ import css from "highlight.js/lib/languages/css";
 import js from "highlight.js/lib/languages/javascript";
 import ts from "highlight.js/lib/languages/typescript";
 import { lowlight } from "lowlight";
+import PostBodyClient from "@/components/PostBodyClient";
 
 lowlight.registerLanguage("css", css);
 lowlight.registerLanguage("js", js);
@@ -127,12 +128,7 @@ export default async function DynamicBlogPost({
               />
             </div>
           </div>
-          <div className="sm:flex sm:justify-center">
-            <div
-              className="ProseMirror px-12 md:px-28 lg:px-32 py-8 select-text prose prose-sm sm:prose md:prose-lg lg:prose-2xl dark:prose-invert sm:dark:prose-invert md:dark:prose-invert lg:dark:prose-invert"
-              dangerouslySetInnerHTML={{ __html: blog.body }}
-            />
-          </div>
+          <PostBodyClient body={blog.body} />
           <div className="mx-4 md:mx-8 lg:mx-12 pb-12">
             <Suspense
               fallback={
