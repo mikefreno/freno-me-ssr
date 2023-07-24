@@ -18,6 +18,8 @@
     "@t3-oss/env-nextjs": "^0.6.0",
     "@tiptap/extension-code-block-lowlight": "^2.0.4",
     "@tiptap/extension-color": "^2.0.4",
+    "@tiptap/extension-image": "^2.0.4",
+    "@tiptap/extension-link": "^2.0.4",
     "@tiptap/extension-list-item": "^2.0.4",
     "@tiptap/extension-text-style": "^2.0.4",
     "@tiptap/react": "^2.0.3",

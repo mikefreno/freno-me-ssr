@@ -8,6 +8,7 @@ import { Blog, Project } from "@/types/model-types";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import LoadingSpinner from "./LoadingSpinner";
+import AddAttachmentSection from "./AddAttachmentSection";
 
 export default function EditingClient(props: {
   post: Project | Blog;
@@ -85,8 +86,12 @@ export default function EditingClient(props: {
         }/manipulation`,
         { method: "PATCH", body: JSON.stringify(data) }
       );
+      const route =
+        `/${props.type}/` + titleRef.current.value !== props.post.title
+          ? titleRef.current.value
+          : props.post.title;
 
-      router.push(`/${props.type}/${titleRef.current.value}`);
+      router.push(route);
     }
 
     setSubmitButtonLoading(false);
@@ -139,7 +144,8 @@ export default function EditingClient(props: {
             <span className="bar"></span>
             <label className="underlinedInputLabel">Subtitle</label>
           </div>
-          <div className="flex justify-center py-8">
+          <div className="text-center text-xl pt-8">Banner</div>
+          <div className="flex justify-center pb-8">
             <Dropzone
               onDrop={handleBannerImageDrop}
               acceptedFiles={"image/jpg, image/jpeg, image/png"}
@@ -165,6 +171,11 @@ export default function EditingClient(props: {
               />
             </button>
           </div>
+          <AddAttachmentSection
+            type={props.type}
+            post={props.post}
+            postTitle={titleRef.current?.value || props.post.title}
+          />
           <div className="-mx-36">
             <TextEditor
               updateContent={setEditorContent}

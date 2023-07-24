@@ -23,6 +23,7 @@ export const model: { [key: string]: string } = {
       published BOOLEAN NOT NULL,
       author_id varchar(255) NOT NULL,
       reads INT NOT NULL DEFAULT 0,
+      attachments TEXT
       PRIMARY KEY (id),
       INDEX (author_id)
     )
@@ -50,6 +51,7 @@ export const model: { [key: string]: string } = {
       published BOOLEAN NOT NULL,
       author_id varchar(255) NOT NULL,
       reads INT NOT NULL DEFAULT 0,
+      attachments TEXT
       PRIMARY KEY (id),
       INDEX (author_id)
     )

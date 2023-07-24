@@ -8,12 +8,14 @@ import {
   ReactNodeViewRenderer,
 } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
-import React from "react";
+import Link from "@tiptap/extension-link";
+import CodeBlockLowlight from "@tiptap/extension-code-block-lowlight";
+import Image from "@tiptap/extension-image";
+import React, { useCallback } from "react";
 import css from "highlight.js/lib/languages/css";
 import js from "highlight.js/lib/languages/javascript";
 import ts from "highlight.js/lib/languages/typescript";
 import { lowlight } from "lowlight";
-import CodeBlockLowlight from "@tiptap/extension-code-block-lowlight";
 
 lowlight.registerLanguage("css", css);
 lowlight.registerLanguage("js", js);
@@ -30,6 +32,10 @@ export default function TextEditor({ updateContent, preSet }: any) {
           return ReactNodeViewRenderer(CodeBlockComponent);
         },
       }).configure({ lowlight }),
+      Link.configure({
+        openOnClick: true,
+      }),
+      Image,
     ],
     content: preSet
       ? preSet
@@ -46,6 +52,39 @@ export default function TextEditor({ updateContent, preSet }: any) {
       updateContent(editor.getHTML()); // Call updateContent with the new content
     },
   });
+
+  const setLink = useCallback(() => {
+    if (!editor) {
+      return null;
+    }
+    const previousUrl = editor.getAttributes("link").href;
+    const url = window.prompt("URL", previousUrl);
+
+    // cancelled
+    if (url === null) {
+      return;
+    }
+
+    if (url === "") {
+      editor.chain().focus().extendMarkRange("link").unsetLink().run();
+
+      return;
+    }
+
+    // update link
+    editor.chain().focus().extendMarkRange("link").setLink({ href: url }).run();
+  }, [editor]);
+
+  const addImage = useCallback(() => {
+    if (!editor) {
+      return null;
+    }
+    const url = window.prompt("URL");
+
+    if (url) {
+      editor.chain().focus().setImage({ src: url }).run();
+    }
+  }, [editor]);
 
   return (
     <div className="flex justify-center w-full">
@@ -90,6 +129,15 @@ export default function TextEditor({ updateContent, preSet }: any) {
             } mx-1 bg-opacity-30 hover:bg-opacity-30 rounded p-1`}
           >
             Quotation
+          </button>
+          <button
+            type="button"
+            onClick={setLink}
+            className={`${
+              editor.isActive("link") ? "bg-white" : "hover:bg-white"
+            } mx-1 bg-opacity-30 hover:bg-opacity-30 rounded p-1`}
+          >
+            Set Link
           </button>
           <button
             type="button"

@@ -14,7 +14,7 @@ interface InputData {
 
 export async function POST(input: NextRequest) {
   const inputData = (await input.json()) as InputData;
-  const { key, newAttachmentString, type, id } = inputData;
+  const { key } = inputData;
   // Parse the url to get the bucket and key
 
   const s3params = {
@@ -28,9 +28,5 @@ export async function POST(input: NextRequest) {
 
   const command = new DeleteObjectCommand(s3params);
   const res = await client.send(command);
-  const conn = ConnectionFactory();
-  const query = `UPDATE ${type} SET attachments = ? WHERE id = ?`;
-  const dbparams = [newAttachmentString, id];
-  const results = await conn.execute(query, dbparams);
   return NextResponse.json(res);
 }

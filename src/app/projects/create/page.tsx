@@ -1,6 +1,7 @@
 "use client";
 
 import AddImageToS3 from "@/app/s3upload";
+import AddAttachmentSection from "@/components/AddAttachmentSection";
 import Dropzone from "@/components/Dropzone";
 import TextEditor from "@/components/TextEditor";
 import XCircle from "@/icons/XCircle";
@@ -106,7 +107,8 @@ export default function ProjectCreation() {
             <span className="bar"></span>
             <label className="underlinedInputLabel">Subtitle</label>
           </div>
-          <div className="flex justify-center py-8">
+          <div className="text-center text-xl pt-8">Banner</div>
+          <div className="flex justify-center pb-8">
             <Dropzone
               onDrop={handleBannerImageDrop}
               acceptedFiles={"image/jpg, image/jpeg, image/png"}
@@ -127,6 +129,11 @@ export default function ProjectCreation() {
               />
             </button>
           </div>
+          <AddAttachmentSection
+            type={"projects"}
+            post={null}
+            postTitle={titleRef.current?.value}
+          />
           <div className="-mx-36">
             <TextEditor updateContent={setEditorContent} preSet={undefined} />
           </div>

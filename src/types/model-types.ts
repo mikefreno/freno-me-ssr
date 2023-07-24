@@ -19,6 +19,7 @@ export interface Blog {
   published: boolean;
   author_id: string;
   reads: number;
+  attachments: string | undefined;
 }
 
 export interface BlogLike {
@@ -37,6 +38,7 @@ export interface Project {
   published: boolean;
   author_id: string;
   reads: number;
+  attachments: string | undefined;
 }
 
 export interface ProjectLike {
