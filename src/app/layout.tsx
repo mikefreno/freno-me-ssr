@@ -1,5 +1,6 @@
 import Navbar from "@/components/Navbar";
 import "@/styles/globals.css";
+import "@/styles/content.scss";
 import { Analytics } from "@vercel/analytics/react";
 import { Source_Code_Pro } from "next/font/google";
 

@@ -46,7 +46,7 @@ export default function ProjectCreation() {
         bannerImageKey = await AddImageToS3(
           bannerImage,
           titleRef.current!.value,
-          "project"
+          "projects"
         );
       }
       const data = {

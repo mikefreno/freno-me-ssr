@@ -1,5 +1,5 @@
 "use client";
-
+import "@/styles/content.scss";
 import {
   BubbleMenu,
   EditorContent,
@@ -171,11 +171,21 @@ export default function TextEditor({ updateContent, preSet }: any) {
           >
             Horizontal-Rule
           </button>
+          <button
+            type="button"
+            onClick={() => editor.chain().focus().toggleCodeBlock().run()}
+            disabled={!editor.can().chain().focus().toggleCodeBlock().run()}
+            className={`${
+              editor.isActive("codeBlock") ? "bg-white" : "hover:bg-white"
+            } mx-1 bg-opacity-30 hover:bg-opacity-30 rounded p-1`}
+          >
+            Code Block
+          </button>
         </FloatingMenu>
       )}
       <EditorContent
         editor={editor}
-        className="w-full prose lg:prose-lg xl:prose-xl dark:prose-invert dark:text-white rounded-md border px-4 py-2 border-black dark:border-white"
+        className="w-full ProseMirror dark:text-white rounded-md border px-4 py-2 border-black dark:border-white"
       />
     </div>
   );

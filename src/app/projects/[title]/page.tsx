@@ -1,3 +1,5 @@
+import "@/styles/content.scss";
+
 import CommentIcon from "@/icons/CommentIcon";
 import { env } from "@/env.mjs";
 import Link from "next/link";
@@ -119,10 +121,12 @@ export default async function DynamicProjectPost({
               />
             </div>
           </div>
-          <div
-            className="px-12 md:px-28 lg:px-32 py-8 select-text"
-            dangerouslySetInnerHTML={{ __html: project.body }}
-          />
+          <div className="flex justify-center">
+            <div
+              className="px-12 md:px-28 lg:px-32 py-8 select-text "
+              dangerouslySetInnerHTML={{ __html: project.body }}
+            />
+          </div>
           <div className="mx-4 md:mx-8 lg:mx-12 pb-12">
             <Suspense
               fallback={

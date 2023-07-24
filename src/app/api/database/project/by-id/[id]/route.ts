@@ -13,14 +13,14 @@ export async function GET(
     if (results.rows[0]) {
       return NextResponse.json(
         {
-          blog: results.rows[0],
+          project: results.rows[0],
         },
         { status: 200 }
       );
     } else {
       return NextResponse.json(
         {
-          blog: [],
+          project: [],
         },
         { status: 204 }
       );

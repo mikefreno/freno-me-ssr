@@ -7,12 +7,14 @@ import XCircle from "@/icons/XCircle";
 import { Blog, Project } from "@/types/model-types";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
+import LoadingSpinner from "./LoadingSpinner";
+import TextEditor2 from "./TextEditor2";
 
 export default function EditingClient(props: {
   post: Project | Blog;
   type: "projects" | "blog";
 }) {
-  const [publish, setPublish] = useState<boolean>(props.post.published);
+  const [publish, setPublish] = useState<boolean>(false);
   const [bannerImage, setBannerImage] = useState<File | Blob>();
   const [bannerImageHolder, setBannerImageHolder] = useState<
     string | ArrayBuffer | null
@@ -44,6 +46,13 @@ export default function EditingClient(props: {
   const publishToggle = () => {
     setPublish(!publish);
   };
+
+  useEffect(() => {
+    if (props.post) {
+      console.log(props.post);
+      setPublish(props.post.published);
+    }
+  }, [props.post]);
 
   const editPost = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -79,7 +88,9 @@ export default function EditingClient(props: {
       };
 
       await fetch(
-        `${process.env.NEXT_PUBLIC_DOMAIN}/api/database/${props.type}/manipulation`,
+        `${process.env.NEXT_PUBLIC_DOMAIN}/api/database/${
+          props.type == "blog" ? "blog" : "project"
+        }/manipulation`,
         { method: "PATCH", body: JSON.stringify(data) }
       );
 
@@ -94,6 +105,14 @@ export default function EditingClient(props: {
     setBannerImageHolder(null);
     setRequestedDeleteImage(true);
   };
+
+  if (!props.post) {
+    return (
+      <>
+        <LoadingSpinner height={48} width={48} />
+      </>
+    );
+  }
 
   return (
     <div className="px-8 py-32 dark:text-white">
