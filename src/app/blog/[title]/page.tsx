@@ -73,15 +73,16 @@ export default async function DynamicBlogPost({
     );
   } else if (blog) {
     return (
-      <div className="select-none">
+      <div className="select-none overflow-x-hidden">
         <div className="z-30 overflow-hidden">
           <div className="page-fade-in z-20 h-80 sm:h-96 md:h-[50vh] mx-auto">
             <div className="fixed w-full h-80 sm:h-96 md:h-[50vh] brightness-75 image-overlay">
               <Image
                 src={blog.banner_photo ? blog.banner_photo : "/bitcoin.jpg"}
                 alt="post-cover"
-                height={400}
-                width={600}
+                width={1000}
+                height={1000}
+                quality={100}
                 priority={true}
                 className="object-cover w-full h-80 sm:h-96 md:h-[50vh]"
               />
@@ -101,7 +102,7 @@ export default async function DynamicBlogPost({
         </div>
         <div className="z-40 relative bg-zinc-100 dark:bg-zinc-800 pb-24">
           {privilegeLevel == "admin" ? (
-            <div className="flex justify-center pt-4 -mb-8">
+            <div className="flex justify-center pt-4 md:-mb-8">
               <Link
                 className="border-blue-500 bg-blue-400 hover:bg-blue-500 dark:bg-blue-700 dark:hover:bg-blue-800 dark:border-blue-700 rounded border text-white shadow-md  active:scale-90 transition-all duration-300 ease-in-out px-4 py-2"
                 href={`${env.NEXT_PUBLIC_DOMAIN}/blog/edit/${blog.id}`}

@@ -273,7 +273,7 @@ export default function CommentBlock(props: {
         <div className="mr-2 h-8 border-l-2 mt-1 border-black dark:border-white my-auto" />
       </button>
       <div className={commentCollapsed ? "hidden" : "z-[500]"}>
-        <div className="my-4 flex w-full lg:w-3/4 overflow-x-scroll overflow-y-hidden">
+        <div className="my-4 flex w-full lg:w-3/4 overflow-x-auto overflow-y-hidden">
           <div
             className="flex flex-col justify-between"
             style={{ height: toggleHeight }}
@@ -353,7 +353,7 @@ export default function CommentBlock(props: {
           <div className="w-3/4" onClick={showingReactionOptionsToggle}>
             <div
               ref={containerRef}
-              className="flex select-text overflow-x-scroll overflow-y-hidden"
+              className="flex select-text overflow-x-auto overflow-y-hidden"
             >
               {props.comment.body}
             </div>

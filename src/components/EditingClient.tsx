@@ -52,12 +52,12 @@ export default function EditingClient(props: {
   const editPost = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitButtonLoading(true);
-    if (titleRef.current?.value) {
+    if (titleRef.current) {
       let bannerImageKey = "";
       if (bannerImage) {
         bannerImageKey = await AddImageToS3(
           bannerImage,
-          titleRef.current!.value,
+          titleRef.current.value || props.post.title,
           props.type
         );
       }
@@ -88,11 +88,7 @@ export default function EditingClient(props: {
         }/manipulation`,
         { method: "PATCH", body: JSON.stringify(data) }
       );
-      const route =
-        `${env.NEXT_PUBLIC_DOMAIN}/${props.type}/` + titleRef.current.value !==
-        props.post.title
-          ? titleRef.current.value
-          : props.post.title;
+      setSubmitButtonLoading(false);
     }
   };
 

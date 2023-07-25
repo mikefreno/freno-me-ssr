@@ -20,7 +20,7 @@ export default async function ProjectCard(props: {
   const queryResData = (await query.json()) as API_RES_GetCommentAndLikeCount;
 
   return (
-    <div className="relative w-full h-96 bg-white shadow-lg rounded-lg overflow-hidden">
+    <div className="relative w-full md:w-5/6 lg:w-3/4 xl:w-3/5 mx-auto h-96 bg-white shadow-lg rounded-lg overflow-hidden">
       <Image
         src={
           props.project.banner_photo
@@ -30,8 +30,8 @@ export default async function ProjectCard(props: {
             : "/blueprint.jpg"
         }
         alt={props.project.title + " banner"}
-        height={300}
-        width={300}
+        height={1000}
+        width={1000}
         className="w-full h-full object-cover"
       />
       <div className="absolute bottom-0 w-full bg-white bg-opacity-40 backdrop-blur-md border-t border-white border-opacity-20 py-4 px-2 md:px-6">

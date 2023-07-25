@@ -87,13 +87,13 @@ export default function ContactModal(props: ContactModalProps) {
           props.showing
             ? "fade-in flex"
             : "backdrop-brightness-100 backdrop-blur-0 -translate-x-full absolute"
-        } w-full h-screen justify-center overflow-scroll pb-36 pt-24 md:pb-[20vh] md:pt-[15vh] opacity-0 backdrop-blur-sm backdrop-brightness-75`}
+        } w-full h-screen justify-center overflow-scroll md:overflow-hidden pb-36 pt-24 md:pb-[20vh] md:pt-[15vh] opacity-0 backdrop-blur-sm backdrop-brightness-75`}
       >
         <div
           ref={props.contactRef}
           className={`${
             props.showing ? "" : "-translate-y-full"
-          } h-fit w-11/12 rounded border border-white bg-white bg-opacity-10 px-4 py-2 md:w-3/4 lg:w-3/5 md:px-12 md:py-6 xl:w-1/2 transition-all duration-700 ease-in-out`}
+          } h-fit w-11/12 rounded border border-white bg-white bg-opacity-10 px-4 py-2 md:w-2/3 lg:w-1/2 md:px-10 md:py-6 xl:w-5/12 transition-all duration-700 ease-in-out`}
         >
           <div className="-my-6 flex justify-end pt-4 md:pt-2">
             <button onClick={props.contactToggle}>
