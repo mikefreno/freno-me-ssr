@@ -10,7 +10,7 @@ import LoadingSpinner from "@/components/LoadingSpinner";
 export default async function Blog() {
   const allBlogsQuery = await fetch(
     `${env.NEXT_PUBLIC_DOMAIN}/api/database/blog/privilege-dependant/${
-      cookies().get("emailToken")?.value
+      cookies().get("userIDToken")?.value
     }`,
     { method: "GET" }
   );
