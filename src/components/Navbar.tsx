@@ -76,8 +76,9 @@ export default function Navbar() {
   const signOutTrigger = async (e: React.FormEvent) => {
     e.preventDefault();
     await signOut();
-    Cookies.remove("userIDToken");
-    Cookies.remove("emailToken");
+    Cookies.set("userIDToken", "undefined");
+    Cookies.set("emailToken", "undefined");
+    router.refresh();
   };
 
   return (
