@@ -78,7 +78,6 @@ export default function Navbar() {
     await signOut();
     Cookies.remove("userIDToken");
     Cookies.remove("emailToken");
-    router.refresh();
   };
 
   return (
