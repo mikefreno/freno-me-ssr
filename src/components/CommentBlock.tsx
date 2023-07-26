@@ -14,6 +14,9 @@ import { usePathname } from "next/navigation";
 import Cookies from "js-cookie";
 import { API_RES_GetUserDataFromCookie } from "@/types/response-types";
 import debounce from "./Debounce";
+import TrashIcon from "@/icons/TrashIcon";
+import LoadingSpinner from "./LoadingSpinner";
+import { deleteCommentByAdmin, deleteCommentByUser } from "@/app/globalActions";
 
 const fetcher = async (url: string) => {
   const res = await fetch(url);
@@ -45,14 +48,17 @@ export default function CommentBlock(props: {
     useState<boolean>(false);
   const [replyBoxShowing, setReplyBoxShowing] = useState<boolean>(false);
   const [toggleHeight, setToggleHeight] = useState<number>(0);
-  const containerRef = useRef<HTMLDivElement>(null);
   const [reactions, setReactions] = useState<CommentReaction[]>([]);
   const [pointFeedbackOffset, setPointFeedbackOffset] = useState<number>(0);
-  const pathname = usePathname();
-  const commentInputRef = useRef<HTMLDivElement>(null);
   const [immediateLike, setImmediateLike] = useState<boolean>(false);
   const [immediateDislike, setImmediateDislike] = useState<boolean>(false);
   const [windowWidth, setWindowWidth] = useState(0);
+  const [deletionLoading, setDeletionLoading] = useState(false);
+
+  const containerRef = useRef<HTMLDivElement>(null);
+  const commentInputRef = useRef<HTMLDivElement>(null);
+
+  const pathname = usePathname();
 
   useEffect(() => {
     setCommentCollapsed(props.level >= 4 ? true : false);
@@ -264,6 +270,19 @@ export default function CommentBlock(props: {
     }
   };
 
+  const deleteCommentTrigger = async () => {
+    const affirm = window.confirm("Are you sure you want to delete?");
+    if (affirm) {
+      setDeletionLoading(true);
+      if (props.userID == props.comment.commenter_id) {
+        const res = await deleteCommentByUser({ commentID: props.comment.id });
+      } else if (props.privilegeLevel == "admin") {
+        const res = await deleteCommentByAdmin({ commentID: props.comment.id });
+      }
+      setDeletionLoading(false);
+    }
+  };
+
   return (
     <>
       <button
@@ -278,6 +297,23 @@ export default function CommentBlock(props: {
             className="flex flex-col justify-between"
             style={{ height: toggleHeight }}
           >
+            <div className="absolute -ml-6 -mt-1">
+              {props.userID == props.comment.commenter_id ||
+              props.privilegeLevel == "admin" ? (
+                <button onClick={deleteCommentTrigger}>
+                  {deletionLoading ? (
+                    <LoadingSpinner height={24} width={24} />
+                  ) : (
+                    <TrashIcon
+                      height={24}
+                      width={24}
+                      stroke={"red"}
+                      strokeWidth={1.5}
+                    />
+                  )}
+                </button>
+              ) : null}
+            </div>
             <button onClick={(e) => upVoteHandler(e)}>
               <div
                 className={`h-5 w-5 ${

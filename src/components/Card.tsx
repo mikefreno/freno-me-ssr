@@ -1,9 +1,9 @@
-import Link from "next/link";
 import Image from "next/image";
 import { Blog, Project } from "@/types/model-types";
 import { env } from "@/env.mjs";
 import { API_RES_GetCommentAndLikeCount } from "@/types/response-types";
 import CardLinks from "./CardLinks";
+import DeletePostButton from "./DeletePostButton";
 
 export default async function ProjectCard(props: {
   project: Project | Blog;
@@ -21,6 +21,21 @@ export default async function ProjectCard(props: {
 
   return (
     <div className="relative w-full md:w-5/6 lg:w-3/4 xl:w-3/5 mx-auto h-96 bg-white shadow-lg rounded-lg overflow-hidden">
+      {props.privilegeLevel !== "admin" ? null : (
+        <div className="absolute top-0 w-full bg-white bg-opacity-40 backdrop-blur-md border-b border-white border-opacity-20 py-4 px-2 md:px-6">
+          <div className="flex justify-between">
+            {props.project.published ? null : (
+              <div className="text-center whitespace-nowrap text-lg text-black">
+                Not Published
+              </div>
+            )}
+            <DeletePostButton
+              type={props.linkTarget == "blog" ? "Blog" : "Project"}
+              postId={props.project.id}
+            />
+          </div>
+        </div>
+      )}
       <Image
         src={
           props.project.banner_photo

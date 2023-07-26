@@ -4,6 +4,8 @@ import { API_RES_GetPrivilegeDependantBlogs } from "@/types/response-types";
 import { cookies } from "next/headers";
 import Link from "next/link";
 import Image from "next/image";
+import { Suspense } from "react";
+import LoadingSpinner from "@/components/LoadingSpinner";
 
 export default async function Blog() {
   const allBlogsQuery = await fetch(
@@ -25,7 +27,7 @@ export default async function Blog() {
           <div className="page-fade-in z-20 h-80 sm:h-96 md:h-[30vh] mx-auto">
             <div className="fixed w-full h-80 sm:h-96 md:h-[50vh] brightness-75 image-overlay">
               <Image
-                src={"/manhattan-skyline.jpg"}
+                src={"/manhattan-night-skyline.jpg"}
                 alt="post-cover"
                 height={1000}
                 width={1000}
@@ -61,11 +63,19 @@ export default async function Blog() {
             <div className="mx-auto flex w-5/6 md:w-3/4 flex-col">
               {blogs.map((blog) => (
                 <div key={blog.id} className="my-4">
-                  <Card
-                    project={blog}
-                    privilegeLevel={privilegeLevel}
-                    linkTarget={"blog"}
-                  />
+                  <Suspense
+                    fallback={
+                      <div className="mx-auto pt-24">
+                        <LoadingSpinner height={48} width={48} />
+                      </div>
+                    }
+                  >
+                    <Card
+                      project={blog}
+                      privilegeLevel={privilegeLevel}
+                      linkTarget={"blog"}
+                    />
+                  </Suspense>
                 </div>
               ))}
             </div>

@@ -25,6 +25,7 @@ export default function EditingClient(props: {
   const [submitButtonLoading, setSubmitButtonLoading] =
     useState<boolean>(false);
   const router = useRouter();
+  const [postTitle, setPostTitle] = useState<string | undefined>("");
 
   const [requestedDeleteImage, setRequestedDeleteImage] =
     useState<boolean>(false);
@@ -120,6 +121,8 @@ export default function EditingClient(props: {
               required
               name="title"
               placeholder=" "
+              onBlur={() => setPostTitle(titleRef.current?.value)}
+              onChange={() => setPostTitle(titleRef.current?.value)}
               defaultValue={props.post.title ? props.post.title : ""}
               className="bg-transparent underlinedInput w-full"
             />
@@ -169,7 +172,7 @@ export default function EditingClient(props: {
           <AddAttachmentSection
             type={props.type}
             post={props.post}
-            postTitle={titleRef.current?.value || props.post.title}
+            postTitle={postTitle || props.post.title}
           />
           <div className="-mx-36">
             <TextEditor

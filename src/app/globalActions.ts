@@ -2,6 +2,8 @@
 
 import { env } from "@/env.mjs";
 import { cookies } from "next/headers";
+import { ConnectionFactory } from "./api/database/ConnectionFactory";
+import { Comment } from "@/types/model-types";
 
 export async function signOut() {
   cookies().set({
@@ -73,4 +75,68 @@ export async function sendContactRequest({
     return "message too long!";
   }
   return "countdown not expired";
+}
+
+interface deletePostInput {
+  type: string;
+  postId: number;
+}
+export async function deletePost({ type, postId }: deletePostInput) {
+  const cookie = cookies().get("userIDToken");
+  if (cookie && cookie.value == env.ADMIN_ID) {
+    try {
+      const conn = ConnectionFactory();
+      const query = `DELETE FROM ${type} WHERE id = ?`;
+      const params = [postId];
+      const res = await conn.execute(query, params);
+      console.log(res.statement);
+      return "good";
+    } catch (e) {
+      console.log(e);
+      return "failure. check server logs";
+    }
+  } else {
+    console.log("unauthorized");
+    return "unauthorized";
+  }
+}
+interface DeleteCommentInput {
+  commentID: number;
+}
+export async function deleteCommentByUser({ commentID }: DeleteCommentInput) {
+  const cookie = cookies().get("userIDToken");
+  const conn = ConnectionFactory();
+  const query = `SELECT FROM Comment WHERE id = ?`;
+  const params = [cookie?.value];
+  const res = await conn.execute(query, params);
+  if ((res.rows[0] as Comment).commenter_id == cookie?.value) {
+    try {
+      const deletionQuery = `DELETE FROM Comment WHERE id = ?`;
+      const deletionParams = [commentID];
+      const deletionRes = await conn.execute(deletionQuery, deletionParams);
+      console.log(deletionRes.statement);
+      return "good";
+    } catch (e) {
+      console.log(e);
+      return "failure. check server logs";
+    }
+  }
+  return "unauthorized";
+}
+export async function deleteCommentByAdmin({ commentID }: DeleteCommentInput) {
+  const cookie = cookies().get("userIDToken");
+  if (cookie && cookie.value == env.ADMIN_ID) {
+    try {
+      const conn = ConnectionFactory();
+      const deletionQuery = `DELETE FROM Comment WHERE id = ?`;
+      const deletionParams = [commentID];
+      const deletionRes = await conn.execute(deletionQuery, deletionParams);
+      console.log(deletionRes.statement);
+      return "good";
+    } catch (e) {
+      console.log(e);
+      return "failure. check server logs";
+    }
+  }
+  return "unauthorized";
 }

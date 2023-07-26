@@ -65,7 +65,7 @@ export default async function Projects() {
                 <div key={project.id} className="my-4">
                   <Suspense
                     fallback={
-                      <div className="mx-auto pt-24 w-full">
+                      <div className="mx-auto pt-24">
                         <LoadingSpinner height={48} width={48} />
                       </div>
                     }

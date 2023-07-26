@@ -4,7 +4,9 @@ import AddImageToS3 from "@/app/s3upload";
 import AddAttachmentSection from "@/components/AddAttachmentSection";
 import Dropzone from "@/components/Dropzone";
 import TextEditor from "@/components/TextEditor";
+import { env } from "@/env.mjs";
 import XCircle from "@/icons/XCircle";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 
@@ -165,6 +167,14 @@ export default function BlogCreation() {
             </button>
           </div>
         </form>
+      </div>
+      <div className="flex justify-center">
+        <Link
+          href={`${env.NEXT_PUBLIC_DOMAIN}/projects/${titleRef.current?.value}`}
+          className="border-blue-500 bg-blue-400 hover:bg-blue-500 dark:bg-blue-700 dark:hover:bg-blue-800 dark:border-blue-700 rounded border text-white shadow-md  active:scale-90 transition-all duration-300 ease-in-out px-4 py-2"
+        >
+          Go to Post
+        </Link>
       </div>
     </div>
   );
