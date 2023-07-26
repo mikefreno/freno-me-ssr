@@ -90,6 +90,13 @@ export async function deletePost({ type, postId }: deletePostInput) {
       const params = [postId];
       const res = await conn.execute(query, params);
       console.log(res.statement);
+      const commentDeleteQuery = `DELETE FROM Comment WHERE ${type}_id = ?`;
+      const commentDeleteParams = [postId];
+      const commentDeleteConn = await conn.execute(
+        commentDeleteQuery,
+        commentDeleteParams
+      );
+      console.log(commentDeleteConn.statement);
       return "good";
     } catch (e) {
       console.log(e);
@@ -111,8 +118,8 @@ export async function deleteCommentByUser({ commentID }: DeleteCommentInput) {
   const res = await conn.execute(query, params);
   if ((res.rows[0] as Comment).commenter_id == cookie?.value) {
     try {
-      const deletionQuery = `DELETE FROM Comment WHERE id = ?`;
-      const deletionParams = [commentID];
+      const deletionQuery = `UPDATE Comment SET body = ? commenter_id = ? WHERE id = ?`;
+      const deletionParams = ["[comment removed by user]", 0, commentID];
       const deletionRes = await conn.execute(deletionQuery, deletionParams);
       console.log(deletionRes.statement);
       return "good";
@@ -128,8 +135,8 @@ export async function deleteCommentByAdmin({ commentID }: DeleteCommentInput) {
   if (cookie && cookie.value == env.ADMIN_ID) {
     try {
       const conn = ConnectionFactory();
-      const deletionQuery = `DELETE FROM Comment WHERE id = ?`;
-      const deletionParams = [commentID];
+      const deletionQuery = `UPDATE Comment SET body = ? commenter_id = ? WHERE id = ?`;
+      const deletionParams = ["[comment removed by admin]", 0, commentID];
       const deletionRes = await conn.execute(deletionQuery, deletionParams);
       console.log(deletionRes.statement);
       return "good";

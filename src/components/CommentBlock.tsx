@@ -271,7 +271,13 @@ export default function CommentBlock(props: {
   };
 
   const deleteCommentTrigger = async () => {
-    const affirm = window.confirm("Are you sure you want to delete?");
+    const affirm = window.confirm(
+      `Are you sure you want to delete comment "${props.comment.body}" -${
+        userData?.data.displayName
+          ? userData?.data.displayName
+          : userData?.data.email
+      }?`
+    );
     if (affirm) {
       setDeletionLoading(true);
       if (props.userID == props.comment.commenter_id) {
