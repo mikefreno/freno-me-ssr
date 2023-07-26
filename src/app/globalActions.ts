@@ -6,18 +6,22 @@ import { ConnectionFactory } from "./api/database/ConnectionFactory";
 import { Comment } from "@/types/model-types";
 
 export async function signOut() {
-  cookies().set({
-    name: "emailToken",
-    value: "",
-    maxAge: 0,
-    expires: new Date("2016-10-05"),
-  });
-  cookies().set({
-    name: "userIDToken",
-    value: "",
-    maxAge: 0,
-    expires: new Date("2016-10-05"),
-  });
+  try {
+    cookies().set({
+      name: "emailToken",
+      value: "",
+      maxAge: 0,
+      expires: new Date("2016-10-05"),
+    });
+    cookies().set({
+      name: "userIDToken",
+      value: "",
+      maxAge: 0,
+      expires: new Date("2016-10-05"),
+    });
+  } catch (e) {
+    console.log("error in action: " + e);
+  }
 }
 
 interface ContactRequest {

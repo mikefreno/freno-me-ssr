@@ -17,7 +17,6 @@ import InfoIcon from "@/icons/InfoIcon";
 import { useRouter } from "next/navigation";
 import AddImageToS3 from "../s3upload";
 import { env } from "@/env.mjs";
-import Cookies from "js-cookie";
 
 export default function Account() {
   const [profileImage, setProfileImage] = useState<File | Blob>();
@@ -69,10 +68,7 @@ export default function Account() {
   }, []);
 
   const asyncGetUserData = async () => {
-    const res = await fetch(
-      `/api/user-data/cookie/${Cookies.get("userIDToken")}`,
-      { method: "GET" }
-    );
+    const res = await fetch(`/api/user-data/cookie`, { method: "GET" });
     const resData = (await res.json()) as API_RES_GetUserDataFromCookie;
     setUserData(resData);
   };

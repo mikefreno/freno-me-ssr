@@ -8,29 +8,29 @@ import { Suspense } from "react";
 import Image from "next/image";
 
 export default async function Projects() {
+  const userID = cookies().get("userIDToken")?.value;
+
   const allProjectQuery = await fetch(
-    `${env.NEXT_PUBLIC_DOMAIN}/api/database/project/privilege-dependant/${
-      cookies().get("userIDToken")?.value
-    }`,
-    { method: "GET" }
+    `${env.NEXT_PUBLIC_DOMAIN}/api/database/project/privilege-dependant/${userID}`,
+    { method: "GET", cache: "no-store" }
   );
 
   const resData =
     (await allProjectQuery.json()) as API_RES_GetPrivilegeDependantProjects;
   const privilegeLevel = resData.privilegeLevel;
+
   const projects = resData.rows;
 
   return (
     <>
-      <div className="min-h-screen overflow-x-hidden">
+      <div className="min-h-screen overflow-x-hidden bg-white dark:bg-zinc-900">
         <div className="z-30">
           <div className="page-fade-in z-20 h-80 sm:h-96 md:h-[30vh] mx-auto">
             <div className="fixed w-full h-80 sm:h-96 md:h-[50vh] brightness-75 image-overlay">
               <Image
                 src={"/blueprint.jpg"}
                 alt="post-cover"
-                height={1000}
-                width={1000}
+                fill={true}
                 quality={100}
                 priority={true}
                 className="object-cover w-full h-80 sm:h-96 md:h-[50vh]"
@@ -46,7 +46,7 @@ export default async function Projects() {
             </div>
           </div>
         </div>
-        <div className="z-40 relative min-h-screen bg-zinc-100 dark:bg-zinc-800 pt-8 pb-24">
+        <div className="z-40 relative -mt-16 sm:-mt-20 md:mt-0 rounded-lg w-11/12 md:w-3/4 mx-auto min-h-screen shadow-2xl bg-zinc-50 dark:bg-zinc-800 pt-8 pb-24">
           <div>
             {privilegeLevel == "admin" ? (
               <div className="flex justify-end">

@@ -2,18 +2,20 @@ import React, { type RefObject } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
-import { API_RES_GetUserDataFromCookie } from "@/types/response-types";
 import UserDefaultImage from "@/icons/UserDefaultImage";
 
 export default function Menu(props: {
   menuRef: RefObject<HTMLDivElement>;
   setMenuOpen: (open: boolean) => void;
-  userData:
-    | {
-        data: API_RES_GetUserDataFromCookie;
-        status: number;
-      }
-    | undefined;
+  user: {
+    id: string;
+    email: string | undefined;
+    emailVerified: boolean;
+    image: string | null;
+    displayName: string | undefined;
+    provider: string | undefined;
+  } | null;
+  status: number;
 }) {
   const pathname = usePathname();
   const signOut = () => {};
@@ -85,7 +87,7 @@ export default function Menu(props: {
             </Link>
           </li>
 
-          {props.userData?.status == 202 ? (
+          {props.status == 202 ? (
             <>
               <li className="pt-2 text-lg">
                 <Link href="/account">
@@ -100,9 +102,9 @@ export default function Menu(props: {
                         : "hover:bg-blue-400 hover:dark:bg-blue-700"
                     } rounded-lg p-2 px-4 text-center flex text-lg text-zinc-800 dark:text-zinc-100 `}
                   >
-                    {props.userData?.data.image ? (
+                    {props.user?.image ? (
                       <Image
-                        src={props.userData?.data.image}
+                        src={props.user.image}
                         height={28}
                         width={28}
                         alt="user-image"

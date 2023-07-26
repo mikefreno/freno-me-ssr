@@ -9,7 +9,6 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import useOnClickOutside from "@/hooks/ClickOutsideHook";
 import useSWR from "swr";
-import Cookies from "js-cookie";
 import UserDefaultImage from "@/icons/UserDefaultImage";
 import { signOut } from "@/app/globalActions";
 import { API_RES_GetUserDataFromCookie } from "@/types/response-types";
@@ -23,7 +22,7 @@ const fetcher = async (url: string) => {
 
 export default function Navbar() {
   const { data: userData, error: error } = useSWR(
-    `/api/user-data/cookie/${Cookies.get("userIDToken")}`,
+    `/api/user-data/cookie`,
     fetcher
   );
 
@@ -39,6 +38,7 @@ export default function Navbar() {
     displayName: string | undefined;
     provider: string | undefined;
   } | null>(null);
+  const [status, setStatus] = useState<number>(0);
   //ref
   const menuRef = useRef<HTMLDivElement>(null);
   const closeRef = useRef<HTMLButtonElement>(null);
@@ -63,10 +63,22 @@ export default function Navbar() {
   }
 
   useEffect(() => {
+    console.log(pathname);
+    if (pathname == ("/account" || "login")) {
+      asyncGetUserData();
+    }
     if (userData) {
       setUser(userData.data);
+      setStatus(userData.status);
     }
-  }, [userData]);
+  }, [userData, pathname]);
+
+  const asyncGetUserData = async () => {
+    const res = await fetch(`/api/user-data/cookie`, { method: "GET" });
+    const resData = (await res.json()) as API_RES_GetUserDataFromCookie;
+    setStatus(res.status);
+    setUser(resData);
+  };
 
   function menuToggle() {
     setMenuOpen(!menuOpen);
@@ -75,10 +87,14 @@ export default function Navbar() {
 
   const signOutTrigger = async (e: React.FormEvent) => {
     e.preventDefault();
-    await signOut();
-    Cookies.set("userIDToken", "undefined");
-    Cookies.set("emailToken", "undefined");
-    router.refresh();
+    try {
+      await signOut();
+      setUser(null);
+      setStatus(0);
+      router.refresh();
+    } catch (e) {
+      console.log("error here: " + e);
+    }
   };
 
   return (
@@ -137,7 +153,7 @@ export default function Navbar() {
                 Contact
               </Link>
             </li>
-            {userData?.status == 202 ? (
+            {status == 202 ? (
               <>
                 <li className="pl-4">
                   <Link href="/account">
@@ -215,7 +231,8 @@ export default function Navbar() {
               <Menu
                 menuRef={menuRef}
                 setMenuOpen={setMenuOpen}
-                userData={userData}
+                user={user}
+                status={status}
               />
             ) : null}
           </div>

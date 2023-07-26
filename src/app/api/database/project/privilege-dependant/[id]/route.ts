@@ -6,15 +6,16 @@ export async function GET(
   request: Request,
   context: { params: { id: string } }
 ) {
+  console.log("fired");
   try {
     if (context.params.id !== "undefined") {
       if (context.params.id == env.ADMIN_ID) {
         const conn = ConnectionFactory();
         const query = "SELECT * FROM Project";
         const params = [true];
-        const results = await conn.execute(query, params);
+        const res = await conn.execute(query, params);
         return NextResponse.json(
-          { rows: results.rows, privilegeLevel: "admin" },
+          { rows: res.rows, privilegeLevel: "admin" },
           { status: 200 }
         );
       } else {
