@@ -13,6 +13,7 @@ import UserDefaultImage from "@/icons/UserDefaultImage";
 import { signOut } from "@/app/globalActions";
 import { API_RES_GetUserDataFromCookie } from "@/types/response-types";
 import { env } from "@/env.mjs";
+import Cookies from "js-cookie";
 
 const fetcher = async (url: string) => {
   const res = await fetch(url);
@@ -64,9 +65,8 @@ export default function Navbar() {
   }
 
   useEffect(() => {
-    if (pathname == "/account") {
-      asyncGetUserData();
-    }
+    asyncGetUserData();
+
     if (userData) {
       setUser(userData.data);
       setStatus(userData.status);
@@ -91,7 +91,7 @@ export default function Navbar() {
       await signOut();
       setUser(null);
       setStatus(0);
-      router.refresh();
+      setTimeout(() => router.refresh(), 500);
     } catch (e) {
       console.log("error here: " + e);
     }

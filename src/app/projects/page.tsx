@@ -6,20 +6,38 @@ import { cookies } from "next/headers";
 import Link from "next/link";
 import { Suspense } from "react";
 import Image from "next/image";
+import { Project } from "@/types/model-types";
 
 export default async function Projects() {
-  const userID = cookies().get("userIDToken")?.value;
+  let privilegeLevel = "anonymous";
+  let projects: Project[] = [];
+  try {
+    const userIDCookie = cookies().get("userIDToken");
 
-  const allProjectQuery = await fetch(
-    `${env.NEXT_PUBLIC_DOMAIN}/api/database/project/privilege-dependant/${userID}`,
-    { method: "GET", cache: "no-store" }
-  );
+    const allProjectQuery = await fetch(
+      `${env.NEXT_PUBLIC_DOMAIN}/api/database/project/privilege-dependant/${
+        userIDCookie ? userIDCookie.value : "undefined"
+      }`,
+      { method: "GET", cache: "no-store" }
+    );
 
-  const resData =
-    (await allProjectQuery.json()) as API_RES_GetPrivilegeDependantProjects;
-  const privilegeLevel = resData.privilegeLevel;
+    const resData =
+      (await allProjectQuery.json()) as API_RES_GetPrivilegeDependantProjects;
+    privilegeLevel = resData.privilegeLevel;
 
-  const projects = resData.rows;
+    projects = resData.rows;
+  } catch (e) {
+    console.log(e);
+    const allProjectQuery = await fetch(
+      `${env.NEXT_PUBLIC_DOMAIN}/api/database/project/privilege-dependant/undefined`,
+      { method: "GET", cache: "no-store" }
+    );
+    const resData =
+      (await allProjectQuery.json()) as API_RES_GetPrivilegeDependantProjects;
+    privilegeLevel = resData.privilegeLevel;
+
+    projects = resData.rows;
+  }
 
   return (
     <>

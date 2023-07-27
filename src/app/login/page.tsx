@@ -86,7 +86,8 @@ export default function LoginPage() {
           setShowPasswordError(true);
         } else if (res == "success") {
           setShowPasswordSuccess(true);
-          router.push("/account");
+          router.back();
+          router.refresh();
         }
       }
     } else {

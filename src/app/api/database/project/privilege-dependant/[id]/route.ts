@@ -7,7 +7,8 @@ export async function GET(
   context: { params: { id: string } }
 ) {
   try {
-    if (context.params.id !== "undefined") {
+    console.log("param: " + context.params.id);
+    if (context.params.id !== ("undefined" || undefined)) {
       if (context.params.id == env.ADMIN_ID) {
         const conn = ConnectionFactory();
         const query = "SELECT * FROM Project";
@@ -38,7 +39,7 @@ export async function GET(
       );
     }
   } catch (e) {
-    console.error(e);
+    console.log(e);
     return NextResponse.json(
       { rows: [], privilegeLevel: "anonymous" },
       { status: 200 }

@@ -12,7 +12,6 @@ export default async function AccountPage() {
     }
   );
   const resData = (await res.json()) as API_RES_GetUserDataFromCookie;
-  console.log(resData);
 
   return <ClientSideData userData={resData} />;
 }

@@ -6,19 +6,38 @@ import Link from "next/link";
 import Image from "next/image";
 import { Suspense } from "react";
 import LoadingSpinner from "@/components/LoadingSpinner";
+import { Blog } from "@/types/model-types";
 
 export default async function Blog() {
-  const userID = cookies().get("userIDToken")?.value;
+  let privilegeLevel = "anonymous";
+  let blogs: Blog[] = [];
+  try {
+    const userIDCookie = cookies().get("userIDToken");
 
-  const allBlogsQuery = await fetch(
-    `${env.NEXT_PUBLIC_DOMAIN}/api/database/blog/privilege-dependant/${userID}`,
-    { method: "GET", cache: "no-store" }
-  );
+    const allProjectQuery = await fetch(
+      `${env.NEXT_PUBLIC_DOMAIN}/api/database/blog/privilege-dependant/${
+        userIDCookie ? userIDCookie.value : "undefined"
+      }`,
+      { method: "GET", cache: "no-store" }
+    );
 
-  const resData =
-    (await allBlogsQuery.json()) as API_RES_GetPrivilegeDependantBlogs;
-  const privilegeLevel = resData.privilegeLevel;
-  const blogs = resData.rows;
+    const resData =
+      (await allProjectQuery.json()) as API_RES_GetPrivilegeDependantBlogs;
+    privilegeLevel = resData.privilegeLevel;
+
+    blogs = resData.rows;
+  } catch (e) {
+    console.log(e);
+    const allProjectQuery = await fetch(
+      `${env.NEXT_PUBLIC_DOMAIN}/api/database/blog/privilege-dependant/undefined`,
+      { method: "GET", cache: "no-store" }
+    );
+    const resData =
+      (await allProjectQuery.json()) as API_RES_GetPrivilegeDependantBlogs;
+    privilegeLevel = resData.privilegeLevel;
+
+    blogs = resData.rows;
+  }
 
   return (
     <>
