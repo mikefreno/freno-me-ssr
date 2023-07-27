@@ -6,7 +6,6 @@ export async function GET(
   request: Request,
   context: { params: { id: string } }
 ) {
-  console.log("fired");
   try {
     if (context.params.id !== "undefined") {
       if (context.params.id == env.ADMIN_ID) {
