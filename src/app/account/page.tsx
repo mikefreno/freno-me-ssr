@@ -17,8 +17,21 @@ import InfoIcon from "@/icons/InfoIcon";
 import { useRouter } from "next/navigation";
 import AddImageToS3 from "../s3upload";
 import { env } from "@/env.mjs";
+import useSWR from "swr";
 
-export default function Account() {
+const fetcher = async (url: string) => {
+  const res = await fetch(url);
+  const data = (await res.json()) as API_RES_GetUserDataFromCookie;
+
+  return { data, status: res.status };
+};
+
+export default function AccountPage() {
+  const { data: userData, error: error } = useSWR(
+    `/api/user-data/cookie`,
+    fetcher
+  );
+
   const [profileImage, setProfileImage] = useState<File | Blob>();
   const [profileImageHolder, setProfileImageHolder] = useState<
     string | ArrayBuffer | null
@@ -46,7 +59,8 @@ export default function Account() {
     useState<boolean>(false);
   const [preSetHolder, setPresetHolder] = useState<string | null>(null);
   const [showImageSuccess, setShowImageSuccess] = useState<boolean>(false);
-  const [userData, setUserData] = useState<{
+
+  const [user, setUser] = useState<{
     id: string;
     email: string | undefined;
     emailVerified: boolean;
@@ -64,21 +78,8 @@ export default function Account() {
   const deleteAccountPasswordRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    asyncGetUserData();
-  }, []);
-
-  const asyncGetUserData = async () => {
-    const res = await fetch(`/api/user-data/cookie`, {
-      method: "GET",
-      cache: "no-store",
-    });
-    const resData = (await res.json()) as API_RES_GetUserDataFromCookie;
-    setUserData(resData);
-  };
-
-  useEffect(() => {
-    if (userData?.image) {
-      setPresetHolder(userData.image);
+    if (userData) {
+      setUser(userData.data);
     }
   }, [userData]);
 
@@ -111,16 +112,16 @@ export default function Account() {
   const setUserImage = async (e: React.FormEvent) => {
     e.preventDefault();
     setProfileImageSetLoading(true);
-    if (profileImage && userData && userData.id) {
+    if (profileImage && user && user.id) {
       let imageKey: string = "";
       try {
-        imageKey = await AddImageToS3(profileImage, userData.id, "user");
+        imageKey = await AddImageToS3(profileImage, user.id, "user");
       } catch (e) {
         console.log("ERROR: " + e);
         alert("error submitting image! Check Logs!");
       }
       const res = await fetch(
-        `${env.NEXT_PUBLIC_DOMAIN}/api/database/user/user-image/${userData.id}`,
+        `${env.NEXT_PUBLIC_DOMAIN}/api/database/user/user-image/${user.id}`,
         { method: "POST", body: JSON.stringify({ imageURL: imageKey }) }
       );
 
@@ -132,9 +133,9 @@ export default function Account() {
         router.refresh();
         setShowImageSuccess(true);
       }
-    } else if (userData && userData.id) {
+    } else if (user && user.id) {
       const res = await fetch(
-        `${env.NEXT_PUBLIC_DOMAIN}/api/database/user/user-image/${userData.id}`,
+        `${env.NEXT_PUBLIC_DOMAIN}/api/database/user/user-image/${user.id}`,
         { method: "POST", body: JSON.stringify({ imageURL: null }) }
       );
       const resData = await res.json();
@@ -155,7 +156,7 @@ export default function Account() {
       setEmailButtonLoading(true);
       const res = await setEmail(emailRef.current?.value);
 
-      setUserData(res);
+      setUser(res);
       setEmailButtonLoading(false);
     }
   };
@@ -166,7 +167,7 @@ export default function Account() {
       setDisplayNameButtonLoading(true);
       const res = await setDisplayName(displayNameRef.current?.value);
 
-      setUserData(res);
+      setUser(res);
       setDisplayNameButtonLoading(false);
     }
   };
@@ -280,7 +281,7 @@ export default function Account() {
                     onDrop={handleImageDrop}
                     acceptedFiles={"image/jpg, image/jpeg, image/png"}
                     fileHolder={profileImageHolder}
-                    preSet={preSetHolder}
+                    preSet={preSetHolder || user?.image}
                   />
                   <button
                     type="button"
@@ -324,15 +325,15 @@ export default function Account() {
               <div className="text-xl flex justify-center md:justify-normal">
                 <div className="my-auto flex lg:flex-row flex-col justify-start">
                   <div className="whitespace-nowrap pr-1">Current email: </div>
-                  {userData.email ? (
-                    userData.email
+                  {user?.email ? (
+                    user.email
                   ) : (
                     <span className="italic font-light underline underline-offset-4">
                       None Set
                     </span>
                   )}
                 </div>
-                {userData?.emailVerified ? (
+                {user?.emailVerified || !user?.email ? (
                   <div className="my-auto ml-2 tooltip z-10">
                     <CheckCircle
                       strokeWidth={1}
@@ -371,7 +372,11 @@ export default function Account() {
                     ref={emailRef}
                     type="text"
                     required
-                    disabled={emailButtonLoading || !userData?.emailVerified}
+                    disabled={
+                      !user?.email
+                        ? false
+                        : emailButtonLoading || !user?.emailVerified
+                    }
                     name="title"
                     placeholder=" "
                     className="bg-transparent underlinedInput"
@@ -382,9 +387,17 @@ export default function Account() {
                 <div className="flex justify-end">
                   <button
                     type={"submit"}
-                    disabled={emailButtonLoading || !userData?.emailVerified}
+                    disabled={
+                      !user?.email
+                        ? false
+                        : emailButtonLoading || !user?.emailVerified
+                    }
                     className={`${
-                      emailButtonLoading || !userData?.emailVerified
+                      (
+                        !user?.email
+                          ? false
+                          : emailButtonLoading || !user?.emailVerified
+                      )
                         ? "bg-zinc-400"
                         : "bg-blue-400 dark:bg-blue-600 hover:bg-blue-500 dark:hover:bg-blue-700 active:scale-90"
                     } flex justify-center rounded transition-all duration-300 ease-out mt-2 px-4 py-2 text-white`}
@@ -399,8 +412,8 @@ export default function Account() {
                   <div className="whitespace-nowrap pr-1">
                     Current Display Name:
                   </div>
-                  {userData.displayName ? (
-                    userData.displayName
+                  {user?.displayName ? (
+                    user.displayName
                   ) : (
                     <div className="flex">
                       <div className="tooltip">
@@ -434,7 +447,7 @@ export default function Account() {
                   />
                   <span className="bar"></span>
                   <label className="underlinedInputLabel">
-                    Set {userData?.displayName ? "New " : ""}Display Name
+                    Set {user?.displayName ? "New " : ""}Display Name
                   </label>
                 </div>
                 <div className="flex justify-end">
@@ -454,14 +467,14 @@ export default function Account() {
             </div>
             <form
               onSubmit={(e) => {
-                userData.hasPassword
+                user?.hasPassword
                   ? setNewPasswordTrigger(e)
                   : setPasswordTrigger(e);
               }}
               className="mt-4 flex justify-center w-full"
             >
               <div className="flex flex-col justify-center">
-                {!userData.hasPassword ? (
+                {!user?.hasPassword ? (
                   <div className="input-group mx-4">
                     <input
                       ref={oldPasswordRef}
@@ -555,7 +568,7 @@ export default function Account() {
                     passwordError ? "" : "opacity-0 select-none"
                   } transition-opacity text-center text-red-500 duration-200 ease-in-out`}
                 >
-                  {userData.hasPassword
+                  {user?.hasPassword
                     ? "Password did not match record"
                     : "Fatal error: Password already exists! Refresh page!"}
                 </div>
