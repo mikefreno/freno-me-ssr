@@ -67,7 +67,7 @@ export default async function Blog() {
           >
             {blogs && blogs.length > 0 ? (
               <div className="mx-auto flex w-11/12 md:w-5/6 lg:w-3/4 flex-col">
-                {blogs.map((blog) => (
+                {blogs.reverse().map((blog) => (
                   <div key={blog.id} className="my-4">
                     <Card
                       project={blog}

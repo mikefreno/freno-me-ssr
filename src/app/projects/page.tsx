@@ -68,7 +68,7 @@ export default async function Projects() {
           >
             {projects && projects.length > 0 ? (
               <div className="mx-auto flex w-5/6 md:w-3/4 flex-col">
-                {projects.map((project) => (
+                {projects.reverse().map((project) => (
                   <div key={project.id} className="my-4">
                     <Card
                       project={project}
