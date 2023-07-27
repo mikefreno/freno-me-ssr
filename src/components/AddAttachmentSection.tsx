@@ -26,25 +26,28 @@ export default function AddAttachmentSection(props: {
     }
   }, [props.post]);
 
-  const handleImageDrop = useCallback((acceptedFiles: Blob[]) => {
-    if (props.postTitle) {
-      acceptedFiles.forEach(async (file: Blob) => {
-        setImages((prevImages) => [...prevImages, file]);
-        const key = await AddImageToS3(file, props.postTitle!, props.type);
-        setNewImageHolderKeys((prevKeys) => [...prevKeys, key]);
-        const reader = new FileReader();
-        reader.onload = () => {
-          const str = reader.result;
-          if (str)
-            setNewImageHolder((prevHeldImages) => [
-              ...prevHeldImages,
-              str as string,
-            ]);
-        };
-        reader.readAsDataURL(file);
-      });
-    }
-  }, []);
+  const handleImageDrop = useCallback(
+    (acceptedFiles: Blob[]) => {
+      if (props.postTitle) {
+        acceptedFiles.forEach(async (file: Blob) => {
+          setImages((prevImages) => [...prevImages, file]);
+          const key = await AddImageToS3(file, props.postTitle!, props.type);
+          setNewImageHolderKeys((prevKeys) => [...prevKeys, key]);
+          const reader = new FileReader();
+          reader.onload = () => {
+            const str = reader.result;
+            if (str)
+              setNewImageHolder((prevHeldImages) => [
+                ...prevHeldImages,
+                str as string,
+              ]);
+          };
+          reader.readAsDataURL(file);
+        });
+      }
+    },
+    [props.postTitle, props.type]
+  );
 
   const removeImage = async (index: number, key: string) => {
     if (props.post && props.post.attachments) {
