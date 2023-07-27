@@ -31,7 +31,6 @@ export default function AccountPage() {
     `${env.NEXT_PUBLIC_DOMAIN}/api/user-data/cookie`,
     fetcher
   );
-
   const [profileImage, setProfileImage] = useState<File | Blob>();
   const [profileImageHolder, setProfileImageHolder] = useState<
     string | ArrayBuffer | null
@@ -78,7 +77,7 @@ export default function AccountPage() {
   const deleteAccountPasswordRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    if (userData && userData.data) {
+    if (userData?.data) {
       console.log("userData: " + userData.data.id);
       setUser(userData.data);
     }
@@ -268,7 +267,7 @@ export default function AccountPage() {
   return (
     <div className="min-h-screen mx-8 md:mx-24 lg:mx-36">
       <div className="pt-24">
-        {!userData ? (
+        {!user ? (
           <div className="mt-[35vh] w-100% flex justify-center align-middle">
             <LoadingSpinner height={64} width={64} />
           </div>
