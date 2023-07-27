@@ -12,6 +12,7 @@ import useSWR from "swr";
 import UserDefaultImage from "@/icons/UserDefaultImage";
 import { signOut } from "@/app/globalActions";
 import { API_RES_GetUserDataFromCookie } from "@/types/response-types";
+import { env } from "@/env.mjs";
 
 const fetcher = async (url: string) => {
   const res = await fetch(url);
@@ -22,7 +23,7 @@ const fetcher = async (url: string) => {
 
 export default function Navbar() {
   const { data: userData, error: error } = useSWR(
-    `/api/user-data/cookie`,
+    `${env.NEXT_PUBLIC_DOMAIN}/api/user-data/cookie`,
     fetcher
   );
 

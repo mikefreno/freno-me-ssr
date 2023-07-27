@@ -28,7 +28,7 @@ const fetcher = async (url: string) => {
 
 export default function AccountPage() {
   const { data: userData, error: error } = useSWR(
-    `/api/user-data/cookie`,
+    `${env.NEXT_PUBLIC_DOMAIN}/api/user-data/cookie`,
     fetcher
   );
 
@@ -78,7 +78,8 @@ export default function AccountPage() {
   const deleteAccountPasswordRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    if (userData) {
+    if (userData && userData.data) {
+      console.log("userData: " + userData.data.id);
       setUser(userData.data);
     }
   }, [userData]);
@@ -281,7 +282,7 @@ export default function AccountPage() {
                     onDrop={handleImageDrop}
                     acceptedFiles={"image/jpg, image/jpeg, image/png"}
                     fileHolder={profileImageHolder}
-                    preSet={preSetHolder || user?.image}
+                    preSet={preSetHolder || user?.image ? user?.image : null}
                   />
                   <button
                     type="button"
