@@ -465,7 +465,7 @@ export default function ClientSideData(props: {
               className="mt-4 flex justify-center w-full"
             >
               <div className="flex flex-col justify-center">
-                {!user?.hasPassword ? (
+                {user?.hasPassword ? (
                   <div className="input-group mx-4">
                     <input
                       ref={oldPasswordRef}
