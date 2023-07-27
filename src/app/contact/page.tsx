@@ -8,6 +8,7 @@ import LinkedIn from "@/icons/LinkedIn";
 import Cookies from "js-cookie";
 import { CountdownCircleTimer } from "react-countdown-circle-timer";
 import LoadingSpinner from "@/components/LoadingSpinner";
+import { API_RES_GetUserDataFromCookie } from "@/types/response-types";
 
 export default function Contact() {
   const [countDown, setCountDown] = useState<number>(0);
@@ -18,6 +19,15 @@ export default function Contact() {
   const nameRef = useRef<HTMLInputElement>(null);
   const messageRef = useRef<HTMLTextAreaElement>(null);
   const timerIdRef = useRef<number | NodeJS.Timeout | null>(null);
+  const [userData, setUserData] = useState<{
+    id: string;
+    email: string | undefined;
+    emailVerified: boolean;
+    image: string | null;
+    displayName: string | undefined;
+    provider: string | undefined;
+    hasPassword: boolean;
+  }>();
 
   const calcRemainder = (timer: string) => {
     const expires = new Date(timer);
@@ -32,6 +42,16 @@ export default function Contact() {
     } else {
       setCountDown(remainingInSeconds);
     }
+  };
+
+  useEffect(() => {
+    asyncGetUserData();
+  }, []);
+
+  const asyncGetUserData = async () => {
+    const res = await fetch(`/api/user-data/cookie`, { method: "GET" });
+    const resData = (await res.json()) as API_RES_GetUserDataFromCookie;
+    setUserData(resData);
   };
 
   useEffect(() => {
@@ -93,6 +113,9 @@ export default function Contact() {
                     type="text"
                     required
                     name="name"
+                    defaultValue={
+                      userData?.displayName ? userData.displayName : ""
+                    }
                     placeholder=" "
                     className="bg-transparent underlinedInput w-full"
                   />
@@ -104,6 +127,7 @@ export default function Contact() {
                     type="email"
                     required
                     name="email"
+                    defaultValue={userData?.email ? userData.email : ""}
                     placeholder=" "
                     className="bg-transparent underlinedInput w-full"
                   />
@@ -141,9 +165,12 @@ export default function Contact() {
                 ) : (
                   <button
                     type="submit"
+                    disabled={loading}
                     className={`${
-                      loading ? "bg-zinc-400" : "hover:bg-blue-500 bg-blue-400"
-                    } rounded border w-40 text-white shadow-md active:scale-90 transition-all duration-300 ease-in-out py-2`}
+                      loading
+                        ? "bg-zinc-400"
+                        : "bg-blue-400 dark:bg-blue-600 hover:bg-blue-500 dark:hover:bg-blue-700 active:scale-90"
+                    } flex w-36 justify-center rounded transition-all duration-300 ease-out py-3 text-white shadow-lg shadow-blue-300 dark:shadow-blue-700`}
                   >
                     {loading ? (
                       <LoadingSpinner height={24} width={24} />

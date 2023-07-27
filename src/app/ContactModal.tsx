@@ -9,6 +9,7 @@ import LinkedIn from "@/icons/LinkedIn";
 import Cookies from "js-cookie";
 import { CountdownCircleTimer } from "react-countdown-circle-timer";
 import LoadingSpinner from "@/components/LoadingSpinner";
+import { API_RES_GetUserDataFromCookie } from "@/types/response-types";
 
 export default function ContactModal(props: ContactModalProps) {
   const [countDown, setCountDown] = useState<number>(0);
@@ -19,6 +20,15 @@ export default function ContactModal(props: ContactModalProps) {
   const nameRef = useRef<HTMLInputElement>(null);
   const messageRef = useRef<HTMLTextAreaElement>(null);
   const timerIdRef = useRef<number | NodeJS.Timeout | null>(null);
+  const [userData, setUserData] = useState<{
+    id: string;
+    email: string | undefined;
+    emailVerified: boolean;
+    image: string | null;
+    displayName: string | undefined;
+    provider: string | undefined;
+    hasPassword: boolean;
+  }>();
 
   const calcRemainder = (timer: string) => {
     const expires = new Date(timer);
@@ -33,6 +43,16 @@ export default function ContactModal(props: ContactModalProps) {
     } else {
       setCountDown(remainingInSeconds);
     }
+  };
+
+  useEffect(() => {
+    asyncGetUserData();
+  }, []);
+
+  const asyncGetUserData = async () => {
+    const res = await fetch(`/api/user-data/cookie`, { method: "GET" });
+    const resData = (await res.json()) as API_RES_GetUserDataFromCookie;
+    setUserData(resData);
   };
 
   useEffect(() => {
@@ -111,6 +131,9 @@ export default function ContactModal(props: ContactModalProps) {
                     type="text"
                     required
                     ref={nameRef}
+                    defaultValue={
+                      userData?.displayName ? userData.displayName : ""
+                    }
                     name="name"
                     placeholder=" "
                     className="bg-transparent underlinedInput w-full"
@@ -123,6 +146,7 @@ export default function ContactModal(props: ContactModalProps) {
                     type="email"
                     required
                     ref={emailRef}
+                    defaultValue={userData?.email ? userData.email : ""}
                     name="email"
                     placeholder=" "
                     className="bg-transparent underlinedInput w-full"
