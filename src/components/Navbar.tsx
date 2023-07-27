@@ -63,8 +63,7 @@ export default function Navbar() {
   }
 
   useEffect(() => {
-    console.log(pathname);
-    if (pathname == ("/account" || "login")) {
+    if (pathname == "/account") {
       asyncGetUserData();
     }
     if (userData) {
