@@ -7,7 +7,6 @@ export async function GET(
   context: { params: { id: string } }
 ) {
   try {
-    console.log("param: " + context.params.id);
     if (context.params.id !== ("undefined" || undefined)) {
       if (context.params.id == env.ADMIN_ID) {
         const conn = ConnectionFactory();

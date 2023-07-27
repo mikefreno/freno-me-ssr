@@ -1,10 +1,12 @@
+import { env } from "@/env.mjs";
+
 export default async function AddImageToS3(
   file: Blob | File,
   title: string,
   type: string
 ) {
   const getPreSignedResponse = await fetch(
-    `${process.env.NEXT_PUBLIC_DOMAIN}/api/s3/getPreSignedURL`,
+    `${env.NEXT_PUBLIC_DOMAIN}/api/s3/getPreSignedURL`,
     {
       method: "POST",
       body: JSON.stringify({
@@ -18,6 +20,7 @@ export default async function AddImageToS3(
   const { uploadURL, key } =
     (await getPreSignedResponse.json()) as getPreSignedResponseData;
 
+  console.log("url: " + uploadURL, "key: " + key);
   // Update server with image URL
   await fetch(uploadURL, {
     method: "PUT",

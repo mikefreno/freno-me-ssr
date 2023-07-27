@@ -59,12 +59,12 @@ export default async function ProjectCard(props: {
               {props.project.title}
             </div>
           </div>
-          <div className="flex justify-around md:justify-between pt-2 w-full md:pt-0 md:w-1/2">
+          <div className="flex justify-around md:justify-between md:pl-2 pt-2 w-full md:pt-0 md:w-3/5">
             <div>
-              <p className="text-black text-sm">
+              <p className="text-black text-sm whitespace-nowrap">
                 {queryResData.commentCount || 0} Comments
               </p>
-              <p className="text-black text-sm">
+              <p className="text-black text-sm whitespace-nowrap">
                 {queryResData.likeCount || 0} Likes
               </p>
             </div>

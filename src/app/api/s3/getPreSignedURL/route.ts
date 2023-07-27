@@ -13,15 +13,12 @@ export async function POST(input: NextRequest) {
   const inputData = (await input.json()) as InputData;
   const { type, title, filename } = inputData;
 
-  console.log(title);
-
   const client = new S3Client({
     region: env.AWS_REGION,
   });
   const Key = `${type}/${title}/${filename}`;
   const ext = /^.+\.([^.]+)$/.exec(filename);
 
-  console.log(ext);
   const s3params = {
     Bucket: env.AWS_S3_BUCKET_NAME,
     Key,
