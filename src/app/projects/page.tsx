@@ -71,15 +71,15 @@ export default async function Projects({
           </div>
         </div>
         <div className="z-40 relative -mt-16 sm:-mt-20 md:mt-0 rounded-t-lg w-11/12 md:w-3/4 mx-auto min-h-screen shadow-2xl bg-zinc-50 dark:bg-zinc-800 pt-8 pb-24">
-          <div className="flex justify-around">
-            <div className="flex justify-start">
+          <div className="flex md:justify-around md:flex-row flex-col justify-center">
+            <div className="flex justify-center md:justify-start">
               <PostSortingSelect type={"projects"} />
             </div>
             {privilegeLevel == "admin" ? (
-              <div className="flex justify-end">
+              <div className="flex justify-center md:justify-end mt-2 md:mt-0">
                 <Link
                   href="/projects/create"
-                  className="rounded border mr-4 dark:border-white border-zinc-800 px-4 py-2 dark:hover:bg-zinc-700 hover:bg-zinc-200 active:scale-90 transition-all duration-300 ease-out"
+                  className="rounded border md:mr-4 dark:border-white border-zinc-800 px-4 py-2 dark:hover:bg-zinc-700 hover:bg-zinc-200 active:scale-90 transition-all duration-300 ease-out"
                 >
                   Create Post
                 </Link>
@@ -94,7 +94,7 @@ export default async function Projects({
             }
           >
             {projects && projects.length > 0 ? (
-              <div className="mx-auto flex w-5/6 md:w-3/4 flex-col">
+              <div className="mx-auto flex w-11/12 md:w-3/4 flex-col">
                 <PostSorting
                   posts={projects}
                   privilegeLevel={privilegeLevel}

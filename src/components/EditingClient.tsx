@@ -174,12 +174,14 @@ export default function EditingClient(props: {
             post={props.post}
             postTitle={postTitle || props.post.title}
           />
-          <div className="-mx-36">
+
+          <div className="ProseMirror py-8 md:py-12 mx-12 select-text prose prose-sm sm:prose md:prose-base lg:prose-xl xl:prose-2xl dark:prose-invert dark:sm:prose-invert dark:md:prose-invert dark:lg:prose-invert dark:xl:prose-invert">
             <TextEditor
               updateContent={setEditorContent}
               preSet={props.post.body}
             />
           </div>
+
           <div className="flex justify-end pt-4 pb-2">
             <input
               type="checkbox"

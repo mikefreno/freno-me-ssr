@@ -50,7 +50,10 @@ export default function ContactModal(props: ContactModalProps) {
   }, []);
 
   const asyncGetUserData = async () => {
-    const res = await fetch(`/api/user-data/cookie`, { method: "GET" });
+    const res = await fetch(
+      `/api/user-data/cookie/${Cookies.get("userIDToken")}`,
+      { method: "GET" }
+    );
     const resData = (await res.json()) as API_RES_GetUserDataFromCookie;
     setUserData(resData);
   };

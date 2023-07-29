@@ -43,10 +43,6 @@ export default function TextEditor({ updateContent, preSet }: any) {
       <p>
         <em><b>Hello!</b> World</em>
       </p>
-      <br/>
-      <br/>
-      <br/>
-      <br/>
     `,
     onUpdate: ({ editor }) => {
       updateContent(editor.getHTML()); // Call updateContent with the new content
