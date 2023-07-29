@@ -8,7 +8,6 @@ export default async function PostCard(props: {
   privilegeLevel: "anonymous" | "admin" | "user";
   linkTarget: "blog" | "projects";
 }) {
-  console.log("likes" + props.post.total_likes);
   return (
     <div className="relative w-full z-0 md:w-5/6 lg:w-3/4 xl:w-3/5 mx-auto h-96 bg-white shadow-lg rounded-lg overflow-hidden">
       {props.privilegeLevel !== "admin" ? null : (

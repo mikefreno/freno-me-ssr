@@ -29,10 +29,7 @@ export default async function DynamicBlogPost({
 }) {
   const blogQuery = await fetch(
     `${env.NEXT_PUBLIC_DOMAIN}/api/database/blog/by-title/${params.title}`,
-    {
-      method: "GET",
-      cache: "no-store",
-    }
+    { method: "GET", cache: "no-store" }
   );
 
   const parsedQueryRes =

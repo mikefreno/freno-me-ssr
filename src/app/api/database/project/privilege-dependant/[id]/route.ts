@@ -60,7 +60,7 @@ export async function GET(
     LEFT JOIN
         Comment ON Project.id = Comment.project_id
     WHERE
-        Project.published = TRUE;
+        Project.published = TRUE
     GROUP BY
         Project.id, Project.title, Project.subtitle, Project.body, Project.banner_photo, Project.date, Project.published, Project.author_id, Project.reads, Project.attachments;`;
         const results = await conn.execute(query);
@@ -92,7 +92,7 @@ export async function GET(
     LEFT JOIN
         Comment ON Project.id = Comment.project_id
     WHERE
-        Project.published = TRUE;
+        Project.published = TRUE
     GROUP BY
         Project.id, Project.title, Project.subtitle, Project.body, Project.banner_photo, Project.date, Project.published, Project.author_id, Project.reads, Project.attachments;`;
       const results = await conn.execute(query);

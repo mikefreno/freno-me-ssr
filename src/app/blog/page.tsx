@@ -24,7 +24,7 @@ export default async function Blog({
       `${env.NEXT_PUBLIC_DOMAIN}/api/database/blog/privilege-dependant/${
         userIDCookie ? userIDCookie.value : "undefined"
       }`,
-      { method: "GET", cache: "no-store" }
+      { method: "GET", next: { revalidate: 60 } }
     );
 
     const resData =
@@ -36,7 +36,7 @@ export default async function Blog({
     console.log(e);
     const allProjectQuery = await fetch(
       `${env.NEXT_PUBLIC_DOMAIN}/api/database/blog/privilege-dependant/undefined`,
-      { method: "GET", cache: "no-store" }
+      { method: "GET", next: { revalidate: 1800 } }
     );
     const resData =
       (await allProjectQuery.json()) as API_RES_GetPrivilegeDependantBlogs;
@@ -72,7 +72,7 @@ export default async function Blog({
         </div>
         <div className="z-40 relative -mt-16 sm:-mt-20 md:mt-0 rounded-t-lg w-11/12 md:w-3/4 mx-auto min-h-screen shadow-2xl bg-zinc-50 dark:bg-zinc-800 pt-8 pb-24">
           <div className="flex justify-around">
-            <div className="flex justify-start pl-4">
+            <div className="flex justify-start">
               <PostSortingSelect type={"blog"} />
             </div>
             {privilegeLevel == "admin" ? (

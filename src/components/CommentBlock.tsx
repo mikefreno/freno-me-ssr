@@ -303,7 +303,7 @@ export default function CommentBlock(props: {
             className="flex flex-col justify-between"
             style={{ height: toggleHeight }}
           >
-            <div className="absolute -ml-6 -mt-1">
+            <div className="absolute -ml-6">
               {props.userID == props.comment.commenter_id ||
               props.privilegeLevel == "admin" ? (
                 <button onClick={deleteCommentTrigger}>
