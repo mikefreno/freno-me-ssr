@@ -10,18 +10,60 @@ export async function GET(
     if (context.params.id !== ("undefined" || undefined)) {
       if (context.params.id == env.ADMIN_ID) {
         const conn = ConnectionFactory();
-        const query = "SELECT * FROM Project";
-        const params = [true];
-        const res = await conn.execute(query, params);
+        const query = `
+    SELECT
+        Project.id,
+        Project.title,
+        Project.subtitle,
+        Project.body,
+        Project.banner_photo,
+        Project.date,
+        Project.published,
+        Project.author_id,
+        Project.reads,
+        Project.attachments,
+    (SELECT COUNT(*) FROM ProjectLike WHERE Project.id = ProjectLike.project_id) AS total_likes,
+    (SELECT COUNT(*) FROM Comment WHERE Project.id = Comment.project_id) AS total_comments
+    FROM
+        Project
+    LEFT JOIN
+        ProjectLike ON Project.id = ProjectLike.project_id
+    LEFT JOIN
+        Comment ON Project.id = Comment.project_id
+    GROUP BY
+        Project.id, Project.title, Project.subtitle, Project.body, Project.banner_photo, Project.date, Project.published, Project.author_id, Project.reads, Project.attachments;`;
+        const results = await conn.execute(query);
         return NextResponse.json(
-          { rows: res.rows, privilegeLevel: "admin" },
+          { rows: results.rows, privilegeLevel: "admin" },
           { status: 200 }
         );
       } else {
         const conn = ConnectionFactory();
-        const query = "SELECT * FROM Project WHERE Published = ?";
-        const params = [true];
-        const results = await conn.execute(query, params);
+        const query = `
+    SELECT
+        Project.id,
+        Project.title,
+        Project.subtitle,
+        Project.body,
+        Project.banner_photo,
+        Project.date,
+        Project.published,
+        Project.author_id,
+        Project.reads,
+        Project.attachments,
+    (SELECT COUNT(*) FROM ProjectLike WHERE Project.id = ProjectLike.project_id) AS total_likes,
+    (SELECT COUNT(*) FROM Comment WHERE Project.id = Comment.project_id) AS total_comments
+    FROM
+        Project
+    LEFT JOIN
+        ProjectLike ON Project.id = ProjectLike.project_id
+    LEFT JOIN
+        Comment ON Project.id = Comment.project_id
+    WHERE
+        Project.published = TRUE;
+    GROUP BY
+        Project.id, Project.title, Project.subtitle, Project.body, Project.banner_photo, Project.date, Project.published, Project.author_id, Project.reads, Project.attachments;`;
+        const results = await conn.execute(query);
         return NextResponse.json(
           { rows: results.rows, privilegeLevel: "user" },
           { status: 200 }
@@ -29,9 +71,31 @@ export async function GET(
       }
     } else {
       const conn = ConnectionFactory();
-      const query = "SELECT * FROM Project WHERE published = ?";
-      const params = [true];
-      const results = await conn.execute(query, params);
+      const query = `
+    SELECT
+        Project.id,
+        Project.title,
+        Project.subtitle,
+        Project.body,
+        Project.banner_photo,
+        Project.date,
+        Project.published,
+        Project.author_id,
+        Project.reads,
+        Project.attachments,
+    (SELECT COUNT(*) FROM ProjectLike WHERE Project.id = ProjectLike.project_id) AS total_likes,
+    (SELECT COUNT(*) FROM Comment WHERE Project.id = Comment.project_id) AS total_comments
+    FROM
+        Project
+    LEFT JOIN
+        ProjectLike ON Project.id = ProjectLike.project_id
+    LEFT JOIN
+        Comment ON Project.id = Comment.project_id
+    WHERE
+        Project.published = TRUE;
+    GROUP BY
+        Project.id, Project.title, Project.subtitle, Project.body, Project.banner_photo, Project.date, Project.published, Project.author_id, Project.reads, Project.attachments;`;
+      const results = await conn.execute(query);
       return NextResponse.json(
         { rows: results.rows, privilegeLevel: "anonymous" },
         { status: 200 }

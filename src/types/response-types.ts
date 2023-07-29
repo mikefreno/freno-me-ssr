@@ -3,18 +3,19 @@ import {
   BlogLike,
   Comment,
   CommentReaction,
+  PostWithCommentsAndLikes,
   Project,
   ProjectLike,
 } from "./model-types";
 
 export interface API_RES_GetPrivilegeDependantProjects {
   status: number;
-  rows: Project[];
+  rows: PostWithCommentsAndLikes[];
   privilegeLevel: "admin" | "user" | "anonymous";
 }
 export interface API_RES_GetPrivilegeDependantBlogs {
   status: number;
-  rows: Blog[];
+  rows: PostWithCommentsAndLikes[];
   privilegeLevel: "admin" | "user" | "anonymous";
 }
 export interface API_RES_GetBlogWithComments {

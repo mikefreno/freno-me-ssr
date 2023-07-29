@@ -36,8 +36,7 @@ export const model: { [key: string]: string } = {
       PRIMARY KEY (id),
       INDEX (user_id),
       INDEX (blog_id)
-              UNIQUE KEY user_type_unique (user_id, blog_id)
-
+      UNIQUE KEY user_type_unique (user_id, blog_id)
     )
   `,
   Project: `

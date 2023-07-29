@@ -6,11 +6,17 @@ import Link from "next/link";
 import Image from "next/image";
 import { Suspense } from "react";
 import LoadingSpinner from "@/components/LoadingSpinner";
-import { Blog } from "@/types/model-types";
+import { Blog, PostWithCommentsAndLikes } from "@/types/model-types";
+import PostSortingSelect from "@/components/PostSortingSelect";
+import PostSorting from "@/components/PostSorting";
 
-export default async function Blog() {
-  let privilegeLevel = "anonymous";
-  let blogs: Blog[] = [];
+export default async function Blog({
+  searchParams,
+}: {
+  searchParams: { sort: string };
+}) {
+  let privilegeLevel: "anonymous" | "admin" | "user" = "anonymous";
+  let blogs: PostWithCommentsAndLikes[] = [];
   try {
     const userIDCookie = cookies().get("userIDToken");
 
@@ -58,18 +64,21 @@ export default async function Blog() {
               className={`text-shadow fixed top-36 sm:top-44 md:top-[20vh] w-full brightness-150 z-10 select-text text-center tracking-widest text-white`}
               style={{ pointerEvents: "none" }}
             >
-              <div className="z-10 font-light tracking-widest text-3xl">
+              <div className="z-10 font-light tracking-widest text-5xl">
                 Blog
               </div>
             </div>
           </div>
         </div>
-        <div className="z-40 relative -mt-16 sm:-mt-20 md:mt-0 rounded-lg w-11/12 md:w-3/4 mx-auto min-h-screen shadow-2xl bg-zinc-50 dark:bg-zinc-800 pt-8 pb-24">
-          <div>
+        <div className="z-40 relative -mt-16 sm:-mt-20 md:mt-0 rounded-t-lg w-11/12 md:w-3/4 mx-auto min-h-screen shadow-2xl bg-zinc-50 dark:bg-zinc-800 pt-8 pb-24">
+          <div className="flex justify-around">
+            <div className="flex justify-start pl-4">
+              <PostSortingSelect type={"blog"} />
+            </div>
             {privilegeLevel == "admin" ? (
               <div className="flex justify-end">
                 <Link
-                  href="/blog/create"
+                  href="/projects/create"
                   className="rounded border mr-4 dark:border-white border-zinc-800 px-4 py-2 dark:hover:bg-zinc-700 hover:bg-zinc-200 active:scale-90 transition-all duration-300 ease-out"
                 >
                   Create Post
@@ -85,19 +94,15 @@ export default async function Blog() {
             }
           >
             {blogs && blogs.length > 0 ? (
-              <div className="mx-auto flex w-11/12 md:w-5/6 lg:w-3/4 flex-col">
-                {blogs.reverse().map((blog) => (
-                  <div key={blog.id} className="my-4">
-                    <Card
-                      project={blog}
-                      privilegeLevel={privilegeLevel}
-                      linkTarget={"blog"}
-                    />
-                  </div>
-                ))}
+              <div className="mx-auto flex w-5/6 md:w-3/4 flex-col">
+                <PostSorting
+                  posts={blogs}
+                  privilegeLevel={privilegeLevel}
+                  type={"blog"}
+                />
               </div>
             ) : (
-              <div className="text-center">No blogs yet!</div>
+              <div className="text-center">No projects yet!</div>
             )}
           </Suspense>
         </div>

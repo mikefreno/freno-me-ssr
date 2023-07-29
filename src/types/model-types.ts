@@ -62,3 +62,17 @@ export interface CommentReaction {
   comment_id: number;
   user_id: string;
 }
+export interface PostWithCommentsAndLikes {
+  id: number;
+  title: string;
+  subtitle: string;
+  body: string;
+  banner_photo: string;
+  date: string;
+  published: number;
+  author_id: string;
+  reads: number;
+  attachments: string;
+  total_likes: number;
+  total_comments: number;
+}

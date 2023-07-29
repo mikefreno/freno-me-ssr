@@ -5,8 +5,8 @@ import { useState } from "react";
 import LoadingSpinner from "./LoadingSpinner";
 
 export default function CardLinks(props: {
-  projectTitle: string;
-  projectID: number;
+  postTitle: string;
+  postID: number;
   linkTarget: string;
   privilegeLevel: string;
 }) {
@@ -16,7 +16,7 @@ export default function CardLinks(props: {
     <div className="flex flex-row">
       <Link
         onClick={() => setReadingLoading(true)}
-        href={`/${props.linkTarget}/${props.projectTitle}`}
+        href={`/${props.linkTarget}/${props.postTitle}`}
         className={`${
           readLoading
             ? "bg-zinc-400"
@@ -31,7 +31,7 @@ export default function CardLinks(props: {
       {props.privilegeLevel === "admin" && (
         <Link
           onClick={() => setEditLoading(true)}
-          href={`/${props.linkTarget}/edit/${props.projectID}`}
+          href={`/${props.linkTarget}/edit/${props.postID}`}
           className={`${
             editLoading ? "bg-zinc-400" : "bg-green-400 hover:bg-green-500"
           } active:scale-90 flex h-fit transition-all duration-300 ease-out text-white rounded px-4 py-2 ml-2`}

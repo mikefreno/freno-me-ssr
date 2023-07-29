@@ -6,11 +6,17 @@ import { cookies } from "next/headers";
 import Link from "next/link";
 import { Suspense } from "react";
 import Image from "next/image";
-import { Project } from "@/types/model-types";
+import { PostWithCommentsAndLikes, Project } from "@/types/model-types";
+import PostSortingSelect from "@/components/PostSortingSelect";
+import PostSorting from "@/components/PostSorting";
 
-export default async function Projects() {
-  let privilegeLevel = "anonymous";
-  let projects: Project[] = [];
+export default async function Projects({
+  searchParams,
+}: {
+  searchParams: { sort: string };
+}) {
+  let privilegeLevel: "anonymous" | "admin" | "user" = "anonymous";
+  let projects: PostWithCommentsAndLikes[] = [];
   try {
     const userIDCookie = cookies().get("userIDToken");
 
@@ -58,14 +64,17 @@ export default async function Projects() {
               className={`text-shadow fixed top-36 sm:top-48 md:top-[15vh] w-full brightness-150 z-10 select-text text-center tracking-widest text-white`}
               style={{ pointerEvents: "none" }}
             >
-              <div className="z-10 font-light tracking-widest text-3xl">
+              <div className="z-10 font-light tracking-widest text-5xl">
                 Projects
               </div>
             </div>
           </div>
         </div>
-        <div className="z-40 relative -mt-16 sm:-mt-20 md:mt-0 rounded-lg w-11/12 md:w-3/4 mx-auto min-h-screen shadow-2xl bg-zinc-50 dark:bg-zinc-800 pt-8 pb-24">
-          <div>
+        <div className="z-40 relative -mt-16 sm:-mt-20 md:mt-0 rounded-t-lg w-11/12 md:w-3/4 mx-auto min-h-screen shadow-2xl bg-zinc-50 dark:bg-zinc-800 pt-8 pb-24">
+          <div className="flex justify-around">
+            <div className="flex justify-start pl-4">
+              <PostSortingSelect type={"projects"} />
+            </div>
             {privilegeLevel == "admin" ? (
               <div className="flex justify-end">
                 <Link
@@ -86,15 +95,11 @@ export default async function Projects() {
           >
             {projects && projects.length > 0 ? (
               <div className="mx-auto flex w-5/6 md:w-3/4 flex-col">
-                {projects.reverse().map((project) => (
-                  <div key={project.id} className="my-4">
-                    <Card
-                      project={project}
-                      privilegeLevel={privilegeLevel}
-                      linkTarget={"projects"}
-                    />
-                  </div>
-                ))}
+                <PostSorting
+                  posts={projects}
+                  privilegeLevel={privilegeLevel}
+                  type={"projects"}
+                />
               </div>
             ) : (
               <div className="text-center">No projects yet!</div>

@@ -12,6 +12,7 @@ import { CommentReaction } from "@/types/model-types";
 import { Suspense, useEffect } from "react";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import PostBodyClient from "@/components/PostBodyClient";
+import { incrementReads } from "@/app/globalActions";
 
 export default async function DynamicProjectPost({
   params,
@@ -64,6 +65,7 @@ export default async function DynamicProjectPost({
       </>
     );
   } else if (project) {
+    incrementReads({ postID: project.id, postType: "Project" });
     return (
       <div className="select-none overflow-x-hidden">
         <div className="z-30">

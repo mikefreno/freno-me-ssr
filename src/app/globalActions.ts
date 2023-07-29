@@ -151,3 +151,16 @@ export async function deleteCommentByAdmin({ commentID }: DeleteCommentInput) {
   }
   return "unauthorized";
 }
+interface incrementReadsInput {
+  postID: number;
+  postType: "Blog" | "Project";
+}
+export async function incrementReads({
+  postID,
+  postType,
+}: incrementReadsInput) {
+  const conn = ConnectionFactory();
+  const query = `UPDATE ${postType} SET reads = reads + 1 WHERE id=?`;
+  const params = [postID];
+  await conn.execute(query, params);
+}

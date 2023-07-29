@@ -16,6 +16,7 @@ import js from "highlight.js/lib/languages/javascript";
 import ts from "highlight.js/lib/languages/typescript";
 import { lowlight } from "lowlight";
 import PostBodyClient from "@/components/PostBodyClient";
+import { incrementReads } from "@/app/globalActions";
 
 lowlight.registerLanguage("css", css);
 lowlight.registerLanguage("js", js);
@@ -72,6 +73,7 @@ export default async function DynamicBlogPost({
       </>
     );
   } else if (blog) {
+    incrementReads({ postID: blog.id, postType: "Blog" });
     return (
       <div className="select-none overflow-x-hidden">
         <div className="z-30 overflow-hidden">
