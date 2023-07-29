@@ -4,6 +4,7 @@ import { v4 as uuidV4 } from "uuid";
 import { env } from "@/env.mjs";
 import { cookies } from "next/headers";
 import { User } from "@/types/model-types";
+import jwt from "jsonwebtoken";
 
 export async function GET(request: NextRequest) {
   const params = request.nextUrl.searchParams;
@@ -41,35 +42,24 @@ export async function GET(request: NextRequest) {
     const email = userData.email;
     const email_verified = userData.email_verified;
 
-    console.log(
-      "name: " +
-        name +
-        " image: " +
-        image +
-        " email: " +
-        email +
-        " email_verified: " +
-        email_verified
-    );
-
     const conn = ConnectionFactory();
 
     const query = `SELECT * FROM User WHERE provider = ? AND email = ?`;
     const params = ["google", email];
     const res = await conn.execute(query, params);
     if (res.rows[0]) {
+      const token = jwt.sign(
+        { id: (res.rows[0] as User).id },
+        env.JWT_SECRET_KEY,
+        {
+          expiresIn: 60 * 60 * 24 * 14, // expires in 14 days
+        }
+      );
       cookies().set({
         name: "userIDToken",
-        value: (res.rows[0] as User).id,
+        value: token,
         maxAge: 60 * 60 * 24 * 14,
       });
-      if ((res.rows[0] as User).email) {
-        cookies().set({
-          name: "emailToken",
-          value: (res.rows[0] as User).email!,
-          maxAge: 60 * 60 * 24 * 14,
-        });
-      }
     } else {
       const userId = uuidV4();
 
@@ -83,20 +73,14 @@ export async function GET(request: NextRequest) {
         image,
       ];
       const insertRes = await conn.execute(insertQuery, insertParams);
-      console.log(insertRes);
-
+      const token = jwt.sign({ id: userId }, env.JWT_SECRET_KEY, {
+        expiresIn: 60 * 60 * 24 * 14, // expires in 14 days
+      });
       cookies().set({
         name: "userIDToken",
-        value: userId,
+        value: token,
         maxAge: 60 * 60 * 24 * 14,
       });
-      if (email) {
-        cookies().set({
-          name: "emailToken",
-          value: email,
-          maxAge: 60 * 60 * 24 * 14,
-        });
-      }
     }
 
     return NextResponse.redirect(`${env.NEXT_PUBLIC_DOMAIN}/account`);

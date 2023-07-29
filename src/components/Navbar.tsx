@@ -23,7 +23,7 @@ export default async function Navbar() {
       { method: "GET", cache: "no-store" }
     );
     status = res.status;
-    userData = (await res.json()) as API_RES_GetUserDataFromCookie;
+    userData = await res.json();
   } catch (e) {
     console.log(e);
   }

@@ -55,26 +55,24 @@ export async function emailPasswordLogin(
       if (user) {
         const passwordHash = user.password_hash;
         const passwordMatch = await checkPassword(password, passwordHash!);
+
         if (passwordMatch) {
+          const token = jwt.sign({ id: user.id }, env.JWT_SECRET_KEY, {
+            expiresIn: 60 * 60 * 24 * 14, // expires in 14 days
+          });
           if (rememberMe) {
             cookies().set({
-              name: "emailToken",
-              value: email,
-              maxAge: 60 * 60 * 24 * 14,
-            });
-            cookies().set({
               name: "userIDToken",
-              value: user.id,
-              maxAge: 60 * 60 * 24 * 14,
+              value: token,
+              maxAge: 60 * 60 * 24 * 14, // expires in 14 days
             });
           } else {
-            cookies().set({
-              name: "emailToken",
-              value: email,
+            const token = jwt.sign({ id: user.id }, env.JWT_SECRET_KEY, {
+              expiresIn: 60 * 60 * 12, // expires in 12 hrs
             });
             cookies().set({
               name: "userIDToken",
-              value: user.id,
+              value: token,
             });
           }
           return "success";

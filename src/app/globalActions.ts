@@ -4,7 +4,7 @@ import { env } from "@/env.mjs";
 import { cookies } from "next/headers";
 import { ConnectionFactory } from "./api/database/ConnectionFactory";
 import { Comment } from "@/types/model-types";
-
+import jwt, { JwtPayload } from "jsonwebtoken";
 export async function signOut() {
   try {
     cookies().set({
@@ -87,7 +87,33 @@ interface deletePostInput {
 }
 export async function deletePost({ type, postId }: deletePostInput) {
   const cookie = cookies().get("userIDToken");
-  if (cookie && cookie.value == env.ADMIN_ID) {
+
+  if (!cookie) {
+    console.log("unauthorized");
+    return "unauthorized";
+  }
+
+  let userID: string;
+
+  try {
+    userID = (
+      await new Promise<JwtPayload>((resolve, reject) => {
+        jwt.verify(cookie.value, env.JWT_SECRET_KEY, (err, decoded) => {
+          if (err) {
+            console.log("Failed to authenticate token.");
+            reject(err);
+          } else {
+            resolve(decoded as JwtPayload);
+          }
+        });
+      })
+    ).id;
+  } catch (e) {
+    console.log(e);
+    return "unauthorized";
+  }
+
+  if (userID == env.ADMIN_ID) {
     try {
       const conn = ConnectionFactory();
       const query = `DELETE FROM ${type} WHERE id = ?`;
@@ -111,18 +137,46 @@ export async function deletePost({ type, postId }: deletePostInput) {
     return "unauthorized";
   }
 }
+
 interface DeleteCommentInput {
   commentID: number;
 }
 export async function deleteCommentByUser({ commentID }: DeleteCommentInput) {
   const cookie = cookies().get("userIDToken");
+
+  if (!cookie) {
+    console.log("unauthorized");
+    return "unauthorized";
+  }
+
+  let userID: string;
+
+  try {
+    userID = (
+      await new Promise<JwtPayload>((resolve, reject) => {
+        jwt.verify(cookie.value, env.JWT_SECRET_KEY, (err, decoded) => {
+          if (err) {
+            console.log("Failed to authenticate token.");
+            reject(err);
+          } else {
+            resolve(decoded as JwtPayload);
+          }
+        });
+      })
+    ).id;
+  } catch (e) {
+    console.log(e);
+    return "unauthorized";
+  }
+
   const conn = ConnectionFactory();
   const query = `SELECT FROM Comment WHERE id = ?`;
-  const params = [cookie?.value];
+  const params = [userID];
   const res = await conn.execute(query, params);
-  if ((res.rows[0] as Comment).commenter_id == cookie?.value) {
+
+  if ((res.rows[0] as Comment).commenter_id == userID) {
     try {
-      const deletionQuery = `UPDATE Comment SET body = ? commenter_id = ? WHERE id = ?`;
+      const deletionQuery = `UPDATE Comment SET body = ?, commenter_id = ? WHERE id = ?`;
       const deletionParams = ["[comment removed by user]", 0, commentID];
       const deletionRes = await conn.execute(deletionQuery, deletionParams);
       console.log(deletionRes.statement);
@@ -136,10 +190,36 @@ export async function deleteCommentByUser({ commentID }: DeleteCommentInput) {
 }
 export async function deleteCommentByAdmin({ commentID }: DeleteCommentInput) {
   const cookie = cookies().get("userIDToken");
-  if (cookie && cookie.value == env.ADMIN_ID) {
+
+  if (!cookie) {
+    console.log("unauthorized");
+    return "unauthorized";
+  }
+
+  let userID: string;
+
+  try {
+    userID = (
+      await new Promise<JwtPayload>((resolve, reject) => {
+        jwt.verify(cookie.value, env.JWT_SECRET_KEY, (err, decoded) => {
+          if (err) {
+            console.log("Failed to authenticate token.");
+            reject(err);
+          } else {
+            resolve(decoded as JwtPayload);
+          }
+        });
+      })
+    ).id;
+  } catch (e) {
+    console.log(e);
+    return "unauthorized";
+  }
+
+  if (userID == env.ADMIN_ID) {
     try {
       const conn = ConnectionFactory();
-      const deletionQuery = `UPDATE Comment SET body = ? commenter_id = ? WHERE id = ?`;
+      const deletionQuery = `UPDATE Comment SET body = ?, commenter_id = ? WHERE id = ?`;
       const deletionParams = ["[comment removed by admin]", 0, commentID];
       const deletionRes = await conn.execute(deletionQuery, deletionParams);
       console.log(deletionRes.statement);

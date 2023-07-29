@@ -4,6 +4,7 @@ import { v4 as uuidV4 } from "uuid";
 import { env } from "@/env.mjs";
 import { cookies } from "next/headers";
 import { User } from "@/types/model-types";
+import jwt from "jsonwebtoken";
 
 export async function GET(request: NextRequest) {
   const params = request.nextUrl.searchParams;
@@ -40,18 +41,18 @@ export async function GET(request: NextRequest) {
     const params = ["github", login];
     const res = await conn.execute(query, params);
     if (res.rows[0]) {
+      const token = jwt.sign(
+        { id: (res.rows[0] as User).id },
+        env.JWT_SECRET_KEY,
+        {
+          expiresIn: 60 * 60 * 24 * 14, // expires in 14 days
+        }
+      );
       cookies().set({
         name: "userIDToken",
-        value: (res.rows[0] as User).id,
+        value: token,
         maxAge: 60 * 60 * 24 * 14,
       });
-      if ((res.rows[0] as User).email) {
-        cookies().set({
-          name: "emailToken",
-          value: (res.rows[0] as User).email!,
-          maxAge: 60 * 60 * 24 * 14,
-        });
-      }
     } else {
       const icon = user.avatar_url;
       const email = user.email;
@@ -60,20 +61,14 @@ export async function GET(request: NextRequest) {
       const insertQuery = `INSERT INTO User (id, email, display_name, provider, image) VALUES (?, ?, ?, ?, ?)`;
       const insertParams = [userId, email, login, "github", icon];
       const insertRes = await conn.execute(insertQuery, insertParams);
-      console.log(insertRes);
-
+      const token = jwt.sign({ id: userId }, env.JWT_SECRET_KEY, {
+        expiresIn: 60 * 60 * 24 * 14, // expires in 14 days
+      });
       cookies().set({
         name: "userIDToken",
-        value: userId,
+        value: token,
         maxAge: 60 * 60 * 24 * 14,
       });
-      if (email) {
-        cookies().set({
-          name: "emailToken",
-          value: email,
-          maxAge: 60 * 60 * 24 * 14,
-        });
-      }
     }
 
     return NextResponse.redirect(`${env.NEXT_PUBLIC_DOMAIN}/account`);

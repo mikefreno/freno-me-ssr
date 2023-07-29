@@ -24,7 +24,7 @@ export default async function Projects({
       `${env.NEXT_PUBLIC_DOMAIN}/api/database/project/privilege-dependant/${
         userIDCookie ? userIDCookie.value : "undefined"
       }`,
-      { method: "GET", next: { revalidate: 60 } }
+      { method: "GET", cache: "no-store" }
     );
 
     const resData =
@@ -33,10 +33,9 @@ export default async function Projects({
 
     projects = resData.rows;
   } catch (e) {
-    console.log(e);
     const allProjectQuery = await fetch(
       `${env.NEXT_PUBLIC_DOMAIN}/api/database/project/privilege-dependant/undefined`,
-      { method: "GET", next: { revalidate: 1800 } }
+      { method: "GET", cache: "no-store" }
     );
     const resData =
       (await allProjectQuery.json()) as API_RES_GetPrivilegeDependantProjects;

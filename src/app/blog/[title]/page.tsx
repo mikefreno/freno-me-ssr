@@ -17,6 +17,7 @@ import ts from "highlight.js/lib/languages/typescript";
 import { lowlight } from "lowlight";
 import PostBodyClient from "@/components/PostBodyClient";
 import { incrementReads } from "@/app/globalActions";
+import jwt, { JwtPayload } from "jsonwebtoken";
 
 lowlight.registerLanguage("css", css);
 lowlight.registerLanguage("js", js);
@@ -35,9 +36,30 @@ export default async function DynamicBlogPost({
   const parsedQueryRes =
     (await blogQuery.json()) as API_RES_GetBlogWithComments;
 
-  const currentUserIDCookie = cookies().get("userIDToken");
-  const privilegeLevel = currentUserIDCookie
-    ? currentUserIDCookie.value == env.ADMIN_ID
+  let userID: string | null = null;
+  try {
+    const currentUserIDCookie = cookies().get("userIDToken");
+    if (currentUserIDCookie) {
+      console.log(currentUserIDCookie.value);
+      jwt.verify(
+        currentUserIDCookie.value,
+        env.JWT_SECRET_KEY,
+        async (err, decoded) => {
+          if (err) {
+            console.log("Failed to authenticate token.");
+          } else {
+            console.log("User ID:", (decoded as JwtPayload).id);
+            userID = (decoded as JwtPayload).id;
+          }
+        }
+      );
+    }
+  } catch (e) {
+    userID = null;
+  }
+
+  const privilegeLevel = userID
+    ? userID == env.ADMIN_ID
       ? "admin"
       : "user"
     : "anonymous";
@@ -130,7 +152,7 @@ export default async function DynamicBlogPost({
             </a>
             <div className="mx-2">
               <SessionDependantLike
-                currentUserID={currentUserIDCookie?.value}
+                currentUserID={userID}
                 privilegeLevel={privilegeLevel}
                 likes={likes}
                 type={"blog"}
@@ -154,7 +176,7 @@ export default async function DynamicBlogPost({
                 id={blog.id}
                 type={"blog"}
                 reactionMap={reactionMap}
-                currentUserID={currentUserIDCookie?.value || ""}
+                currentUserID={userID || ""}
               />
             </Suspense>
           </div>

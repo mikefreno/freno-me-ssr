@@ -8,7 +8,7 @@ import { env } from "@/env.mjs";
 import { set } from "zod";
 
 export default function SessionDependantLike(props: {
-  currentUserID: string | undefined;
+  currentUserID: string | undefined | null;
   privilegeLevel: "admin" | "user" | "anonymous";
   likes: ProjectLike[] | BlogLike[];
   type: "blog" | "project";

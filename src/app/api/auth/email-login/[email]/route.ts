@@ -21,27 +21,25 @@ export async function GET(
       if (decoded.email == userEmail) {
         const conn = ConnectionFactory();
         const query = `SELECT * FROM User WHERE email = ?`;
-        const params = [decoded.email, userEmail];
+        const params = [decoded.email];
         const res = await conn.execute(query, params);
+        const token = jwt.sign(
+          { id: (res.rows[0] as User).id },
+          env.JWT_SECRET_KEY,
+          {
+            expiresIn: 60 * 60 * 24 * 14, // expires in 14 days
+          }
+        );
         if (decoded.rememberMe) {
           cookies().set({
-            name: "emailToken",
-            value: decoded.email,
-            maxAge: 60 * 60 * 24 * 14,
-          });
-          cookies().set({
             name: "userIDToken",
-            value: (res.rows[0] as User).id,
+            value: token,
             maxAge: 60 * 60 * 24 * 14,
           });
         } else {
           cookies().set({
-            name: "emailToken",
-            value: decoded.email,
-          });
-          cookies().set({
             name: "userIDToken",
-            value: (res.rows[0] as User).id,
+            value: token,
           });
         }
         return NextResponse.redirect(`${env.NEXT_PUBLIC_DOMAIN}/account`);

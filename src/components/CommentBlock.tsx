@@ -39,7 +39,7 @@ export default function CommentBlock(props: {
   level: number;
 }) {
   const { data: userData, error: reactionError } = useSWR(
-    `/api/user-data/cookie/${props.comment.commenter_id}`,
+    `/api/user-data/get-from-raw-id/${props.comment.commenter_id}`,
     fetcher
   );
 
