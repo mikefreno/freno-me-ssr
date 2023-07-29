@@ -175,7 +175,7 @@ export default function EditingClient(props: {
             postTitle={postTitle || props.post.title}
           />
 
-          <div className="ProseMirror py-8 md:py-12 mx-12 select-text prose prose-sm sm:prose md:prose-base lg:prose-xl xl:prose-2xl dark:prose-invert dark:sm:prose-invert dark:md:prose-invert dark:lg:prose-invert dark:xl:prose-invert">
+          <div className="md:-mx-36">
             <TextEditor
               updateContent={setEditorContent}
               preSet={props.post.body}
@@ -221,7 +221,7 @@ export default function EditingClient(props: {
           </div>
         </form>
       </div>
-      <div className="flex justify-center">
+      <div className="flex justify-center mt-2">
         <Link
           href={`${env.NEXT_PUBLIC_DOMAIN}/${props.type}/${
             titleRef.current?.value || props.post.title
