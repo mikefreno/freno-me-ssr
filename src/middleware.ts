@@ -1,7 +1,6 @@
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 import { env } from "./env.mjs";
-import jwt, { JwtPayload } from "jsonwebtoken";
 export async function middleware(request: NextRequest) {
   if (request.nextUrl.pathname.match("/login")) {
     let token = request.cookies.get("userIDToken");
@@ -25,15 +24,13 @@ export async function middleware(request: NextRequest) {
     let id: string | null = null;
     try {
       if (cookie) {
-        jwt.verify(cookie?.value, env.JWT_SECRET_KEY, async (err, decoded) => {
-          if (err) {
-            console.log("Failed to authenticate token.");
-          } else {
-            id = (decoded as JwtPayload).id;
-          }
-        });
+        const res = await fetch(
+          `${env.NEXT_PUBLIC_DOMAIN}/api/user-data/parse-cookie/${cookie.value}`
+        );
+        id = (await res.json()).id;
       }
       if (!(id && id == env.ADMIN_ID)) {
+        console.log(id);
         return new NextResponse(
           JSON.stringify({ success: false, message: "authentication failed" }),
           { status: 401, headers: { "content-type": "application/json" } }
@@ -50,9 +47,3 @@ export async function middleware(request: NextRequest) {
     }
   }
 }
-export const config = {
-  runtime: "experimental-edge",
-  unstable_allowDynamic: [
-    "**/node_modules/.pnpm/lodash@4.17.21/node_modules/lodash/**.js",
-  ],
-};
