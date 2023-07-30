@@ -8,12 +8,6 @@ import jwt, { JwtPayload } from "jsonwebtoken";
 export async function signOut() {
   try {
     cookies().set({
-      name: "emailToken",
-      value: "",
-      maxAge: 0,
-      expires: new Date("2016-10-05"),
-    });
-    cookies().set({
       name: "userIDToken",
       value: "",
       maxAge: 0,

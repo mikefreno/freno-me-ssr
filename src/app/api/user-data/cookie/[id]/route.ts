@@ -3,6 +3,7 @@ import { ConnectionFactory } from "@/app/api/database/ConnectionFactory";
 import { NextResponse } from "next/server";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { env } from "@/env.mjs";
+import { cookies } from "next/headers";
 
 export async function GET(
   request: Request,
@@ -15,6 +16,12 @@ export async function GET(
           jwt.verify(context.params.id, env.JWT_SECRET_KEY, (err, decoded) => {
             if (err) {
               console.log("Failed to authenticate token.");
+              cookies().set({
+                name: "userIDToken",
+                value: "",
+                maxAge: 0,
+                expires: new Date("2016-10-05"),
+              });
               reject(err);
             } else {
               resolve(decoded as JwtPayload);
