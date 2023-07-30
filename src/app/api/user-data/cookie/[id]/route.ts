@@ -4,6 +4,7 @@ import { NextResponse } from "next/server";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { env } from "@/env.mjs";
 import { cookies } from "next/headers";
+import { signOut } from "@/app/globalActions";
 
 export async function GET(
   request: Request,
@@ -13,20 +14,19 @@ export async function GET(
     try {
       const decoded = await new Promise<JwtPayload | undefined>(
         (resolve, reject) => {
-          jwt.verify(context.params.id, env.JWT_SECRET_KEY, (err, decoded) => {
-            if (err) {
-              console.log("Failed to authenticate token.");
-              cookies().set({
-                name: "userIDToken",
-                value: "",
-                maxAge: 0,
-                expires: new Date("2016-10-05"),
-              });
-              reject(err);
-            } else {
-              resolve(decoded as JwtPayload);
+          jwt.verify(
+            context.params.id,
+            env.JWT_SECRET_KEY,
+            async (err, decoded) => {
+              if (err) {
+                console.log("Failed to authenticate token.");
+                await signOut();
+                reject(err);
+              } else {
+                resolve(decoded as JwtPayload);
+              }
             }
-          });
+          );
         }
       );
 
