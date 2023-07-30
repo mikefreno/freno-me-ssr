@@ -19,7 +19,12 @@ export async function GET(
             async (err, decoded) => {
               if (err) {
                 console.log("Failed to authenticate token.");
-                reject(err);
+                return new Response("", {
+                  status: 200,
+                  headers: {
+                    "Set-Cookie": `userIDToken=""; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/`,
+                  },
+                });
               } else {
                 resolve(decoded as JwtPayload);
               }
@@ -53,12 +58,6 @@ export async function GET(
       }
     } catch (err) {
       console.error(err);
-      return new Response("deleting invalid cookie", {
-        status: 200,
-        headers: {
-          "Set-Cookie": `userIDToken=; expires=Thu, 01 Jan 1970 00:00:00 GMT`,
-        },
-      });
     }
   }
   return NextResponse.json({}, { status: 200 });
