@@ -317,7 +317,7 @@ export default function LoginPage() {
               </Link>
               <div className="px-4"></div>
               <Link
-                href={`https://github.com/login/oauth/authorize?client_id=${env.NEXT_PUBLIC_GITHUB_CLIENT_ID}&redirect_uri=https://freno.me/api/auth/callback/github&scope=user`}
+                href={`https://github.com/login/oauth/authorize?client_id=${env.NEXT_PUBLIC_GITHUB_CLIENT_ID}&redirect_uri=https://www.freno.me/api/auth/callback/github&scope=user`}
                 className="my-4 flex w-80 shadow-md flex-row justify-between rounded bg-zinc-600 px-4 py-2 text-white hover:bg-zinc-700 active:scale-95 transition-all duration-300 ease-out"
               >
                 {!register ? "Sign in " : "Register "} with Github
