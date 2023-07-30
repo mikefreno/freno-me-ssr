@@ -13,17 +13,14 @@ export async function GET(
     try {
       const decoded = await new Promise<JwtPayload | undefined>(
         (resolve, reject) => {
-          jwt.verify(
-            context.params.id,
-            env.JWT_SECRET_KEY,
-            async (err, decoded) => {
-              if (err) {
-                console.log("Failed to authenticate token.");
-              } else {
-                resolve(decoded as JwtPayload);
-              }
+          jwt.verify(context.params.id, env.JWT_SECRET_KEY, (err, decoded) => {
+            if (err) {
+              console.log("Failed to authenticate token.");
+              reject(err);
+            } else {
+              resolve(decoded as JwtPayload);
             }
-          );
+          });
         }
       );
 
@@ -52,6 +49,7 @@ export async function GET(
       }
     } catch (err) {
       console.error(err);
+      await signOut();
     }
   }
   return NextResponse.json({}, { status: 200 });
