@@ -3,7 +3,6 @@ import { ConnectionFactory } from "@/app/api/database/ConnectionFactory";
 import { NextResponse } from "next/server";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { env } from "@/env.mjs";
-import { cookies } from "next/headers";
 import { signOut } from "@/app/globalActions";
 
 export async function GET(
@@ -20,7 +19,6 @@ export async function GET(
             async (err, decoded) => {
               if (err) {
                 console.log("Failed to authenticate token.");
-                await signOut();
                 reject(err);
               } else {
                 resolve(decoded as JwtPayload);
@@ -55,6 +53,12 @@ export async function GET(
       }
     } catch (err) {
       console.error(err);
+      return new Response("deleting invalid cookie", {
+        status: 200,
+        headers: {
+          "Set-Cookie": `userIDToken=; expires=Thu, 01 Jan 1970 00:00:00 GMT`,
+        },
+      });
     }
   }
   return NextResponse.json({}, { status: 200 });
