@@ -11,6 +11,7 @@ import useOnClickOutside from "@/hooks/ClickOutsideHook";
 import UserDefaultImage from "@/icons/UserDefaultImage";
 import { signOut } from "@/app/globalActions";
 import { API_RES_GetUserDataFromCookie } from "@/types/response-types";
+import LoadingSpinner from "./LoadingSpinner";
 
 export default function NavbarClient(props: {
   user: {
@@ -24,6 +25,7 @@ export default function NavbarClient(props: {
   } | null;
   status: number;
 }) {
+  const [signOutLoading, setSignOutLoading] = useState<boolean>(false);
   const router = useRouter();
   const pathname = usePathname();
   //state
@@ -76,8 +78,13 @@ export default function NavbarClient(props: {
     rotateBars();
   }
 
+  useEffect(() => {
+    setSignOutLoading(false);
+  }, [props.user]);
+
   const signOutTrigger = async (e: React.FormEvent) => {
     e.preventDefault();
+    setSignOutLoading(true);
     try {
       await signOut();
       setTimeout(() => router.refresh(), 500);
@@ -177,14 +184,17 @@ export default function NavbarClient(props: {
                   </Link>
                 </li>
                 <li className="my-auto pl-4">
-                  <form onSubmit={signOutTrigger}>
+                  {signOutLoading ? (
+                    <LoadingSpinner height={24} width={24} />
+                  ) : (
                     <button
+                      onClick={signOutTrigger}
                       className="hover-underline-animation cursor-pointer border-zinc-900 text-zinc-900 underline-offset-4 dark:border-zinc-200 dark:text-zinc-200"
                       type="submit"
                     >
                       Sign out
                     </button>
-                  </form>
+                  )}
                 </li>
               </>
             ) : (
@@ -222,6 +232,8 @@ export default function NavbarClient(props: {
                 setMenuOpen={setMenuOpen}
                 user={props.user}
                 status={props.status}
+                signOutTrigger={signOutTrigger}
+                signOutLoading={signOutLoading}
               />
             ) : null}
           </div>

@@ -1,8 +1,9 @@
-import React, { type RefObject } from "react";
+import React, { useState, type RefObject } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
 import UserDefaultImage from "@/icons/UserDefaultImage";
+import LoadingSpinner from "./LoadingSpinner";
 
 export default function Menu(props: {
   menuRef: RefObject<HTMLDivElement>;
@@ -16,9 +17,11 @@ export default function Menu(props: {
     provider: string | undefined;
   } | null;
   status: number;
+  signOutTrigger: (e: React.FormEvent) => Promise<void>;
+  signOutLoading: boolean;
 }) {
   const pathname = usePathname();
-  const signOut = () => {};
+
   return (
     <div
       id="menu"
@@ -124,16 +127,20 @@ export default function Menu(props: {
                 </Link>
               </li>
               <li className="pt-2 text-lg flex justify-center">
-                <button
-                  onClick={signOut}
-                  className={`${
-                    pathname.split("/")[1] == "blog"
-                      ? "hover:bg-yellow-400 hover:dark:bg-yellow-700"
-                      : "hover:bg-blue-400 hover:dark:bg-blue-700"
-                  } rounded-lg p-2 px-4 text-center text-lg text-zinc-800 dark:text-zinc-100`}
-                >
-                  Sign out
-                </button>
+                {props.signOutLoading ? (
+                  <LoadingSpinner height={24} width={24} />
+                ) : (
+                  <button
+                    onClick={props.signOutTrigger}
+                    className={`${
+                      pathname.split("/")[1] == "blog"
+                        ? "hover:bg-yellow-400 hover:dark:bg-yellow-700"
+                        : "hover:bg-blue-400 hover:dark:bg-blue-700"
+                    } rounded-lg p-2 px-4 text-center text-lg text-zinc-800 dark:text-zinc-100`}
+                  >
+                    Sign out
+                  </button>
+                )}
               </li>
             </>
           ) : (
