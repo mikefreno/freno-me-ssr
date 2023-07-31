@@ -4,7 +4,7 @@ import AddImageToS3 from "@/app/s3upload";
 import Dropzone from "@/components/Dropzone";
 import TextEditor from "@/components/TextEditor";
 import XCircle from "@/icons/XCircle";
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import AddAttachmentSection from "./AddAttachmentSection";
 import { env } from "@/env.mjs";
 import Link from "next/link";
@@ -22,6 +22,47 @@ export default function CreationClient(props: { type: "projects" | "blog" }) {
 
   const titleRef = useRef<HTMLInputElement>(null);
   const subtitleRef = useRef<HTMLInputElement>(null);
+  const autosaveRef = useRef<NodeJS.Timeout | null>(null);
+
+  const autoSave = async () => {
+    if (titleRef.current) {
+      let bannerImageKey = "";
+      if (bannerImage) {
+        bannerImageKey = await AddImageToS3(
+          bannerImage,
+          titleRef.current!.value,
+          props.type == "blog" ? "blog" : "projects"
+        );
+      }
+      const data = {
+        title: titleRef.current.value,
+        subtitle: subtitleRef.current?.value,
+        body: editorContent,
+        embedded_link: null,
+        banner_photo: bannerImageKey !== "" ? bannerImageKey : null,
+        published: publish,
+      };
+
+      await fetch(
+        `${process.env.NEXT_PUBLIC_DOMAIN}/api/database/${
+          props.type == "blog" ? "blog" : "project"
+        }/manipulation`,
+        { method: "POST", body: JSON.stringify(data) }
+      );
+    }
+  };
+
+  useEffect(() => {
+    autosaveRef.current = setInterval(() => {
+      autoSave();
+    }, 2 * 60 * 1000);
+
+    return () => {
+      if (autosaveRef.current) {
+        clearInterval(autosaveRef.current);
+      }
+    };
+  }, []);
 
   const handleBannerImageDrop = useCallback((acceptedFiles: Blob[]) => {
     acceptedFiles.forEach((file: Blob) => {

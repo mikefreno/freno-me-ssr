@@ -32,6 +32,59 @@ export default function EditingClient(props: {
 
   const titleRef = useRef<HTMLInputElement>(null);
   const subtitleRef = useRef<HTMLInputElement>(null);
+  const autosaveRef = useRef<NodeJS.Timeout | null>(null);
+
+  const autoSave = async () => {
+    if (titleRef.current) {
+      let bannerImageKey = "";
+      if (bannerImage) {
+        bannerImageKey = await AddImageToS3(
+          bannerImage,
+          titleRef.current.value || props.post.title,
+          props.type
+        );
+      }
+      const data = {
+        id: props.post.id,
+        title:
+          titleRef.current.value !== props.post.title
+            ? titleRef.current.value
+            : null,
+        subtitle:
+          subtitleRef.current?.value !== props.post.subtitle
+            ? subtitleRef.current?.value
+            : null,
+        body: editorContent !== "" ? editorContent : null,
+        embedded_link: null,
+        banner_photo:
+          bannerImageKey !== ""
+            ? bannerImageKey
+            : requestedDeleteImage
+            ? "_DELETE_IMAGE_"
+            : null,
+        published: publish || props.post.published,
+      };
+
+      await fetch(
+        `${process.env.NEXT_PUBLIC_DOMAIN}/api/database/${
+          props.type == "blog" ? "blog" : "project"
+        }/manipulation`,
+        { method: "PATCH", body: JSON.stringify(data) }
+      );
+    }
+  };
+
+  useEffect(() => {
+    autosaveRef.current = setInterval(() => {
+      autoSave();
+    }, 2 * 60 * 1000);
+
+    return () => {
+      if (autosaveRef.current) {
+        clearInterval(autosaveRef.current);
+      }
+    };
+  }, []);
 
   const handleBannerImageDrop = useCallback((acceptedFiles: Blob[]) => {
     acceptedFiles.forEach((file: Blob) => {
