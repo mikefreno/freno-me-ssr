@@ -17,7 +17,8 @@ export async function middleware(request: NextRequest) {
   if (
     request.nextUrl.pathname.match("/blog/create") ||
     request.nextUrl.pathname.match("/projects/create") ||
-    request.nextUrl.pathname.match(/^\/_debug/)
+    request.nextUrl.pathname.match(/^\/_debug/) ||
+    request.nextUrl.pathname.match("/databaseMGMT")
   ) {
     let cookie = request.cookies.get("userIDToken");
     let id: string | null = null;
