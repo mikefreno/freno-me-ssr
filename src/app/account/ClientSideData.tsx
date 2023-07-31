@@ -17,6 +17,8 @@ import InfoIcon from "@/icons/InfoIcon";
 import { useRouter } from "next/navigation";
 import AddImageToS3 from "../s3upload";
 import { env } from "@/env.mjs";
+import Eye from "@/icons/Eye";
+import EyeSlash from "@/icons/EyeSlash";
 
 export default function ClientSideData(props: {
   userData: {
@@ -66,6 +68,11 @@ export default function ClientSideData(props: {
     provider: string | undefined;
     hasPassword: boolean;
   }>(props.userData);
+  const [showOldPasswordInput, setShowOldPasswordInput] =
+    useState<boolean>(false);
+  const [showPasswordInput, setShowPasswordInput] = useState<boolean>(false);
+  const [showPasswordConfInput, setShowPasswordConfInput] =
+    useState<boolean>(false);
 
   const oldPasswordRef = useRef<HTMLInputElement>(null);
   const newPasswordRef = useRef<HTMLInputElement>(null);
@@ -470,7 +477,7 @@ export default function ClientSideData(props: {
                     <input
                       ref={oldPasswordRef}
                       name="oldPassword"
-                      type="password"
+                      type={showOldPasswordInput ? "text" : "password"}
                       required
                       disabled={passwordChangeLoading}
                       placeholder=" "
@@ -478,6 +485,30 @@ export default function ClientSideData(props: {
                     />
                     <span className="bar"></span>
                     <label className="underlinedInputLabel">Old Password</label>
+                    <button
+                      onClick={() => {
+                        setShowOldPasswordInput(!showOldPasswordInput);
+                        oldPasswordRef.current?.focus();
+                      }}
+                      className="absolute ml-[17.5rem] -mt-8"
+                      type="button"
+                    >
+                      {showOldPasswordInput ? (
+                        <Eye
+                          height={24}
+                          width={24}
+                          strokeWidth={1}
+                          className="stroke-zinc-900 dark:stroke-white"
+                        />
+                      ) : (
+                        <EyeSlash
+                          height={24}
+                          width={24}
+                          strokeWidth={1}
+                          className="stroke-zinc-900 dark:stroke-white"
+                        />
+                      )}
+                    </button>
                   </div>
                 ) : (
                   <div className="flex justify-center">
@@ -495,7 +526,7 @@ export default function ClientSideData(props: {
                   <input
                     ref={newPasswordRef}
                     name="newPassword"
-                    type="password"
+                    type={showPasswordInput ? "text" : "password"}
                     required
                     onChange={handleNewPasswordChange}
                     onBlur={handlePasswordBlur}
@@ -505,6 +536,30 @@ export default function ClientSideData(props: {
                   />
                   <span className="bar"></span>
                   <label className="underlinedInputLabel">New Password</label>
+                  <button
+                    onClick={() => {
+                      setShowPasswordInput(!showPasswordInput);
+                      newPasswordRef.current?.focus();
+                    }}
+                    className="absolute ml-[17.5rem] -mt-9"
+                    type="button"
+                  >
+                    {showPasswordInput ? (
+                      <Eye
+                        height={24}
+                        width={24}
+                        strokeWidth={1}
+                        className="stroke-zinc-900 dark:stroke-white"
+                      />
+                    ) : (
+                      <EyeSlash
+                        height={24}
+                        width={24}
+                        strokeWidth={1}
+                        className="stroke-zinc-900 dark:stroke-white"
+                      />
+                    )}
+                  </button>
                 </div>
                 <div
                   className={`${
@@ -519,7 +574,7 @@ export default function ClientSideData(props: {
                       ref={newPasswordConfRef}
                       name="newPasswordConf"
                       onChange={handlePasswordConfChange}
-                      type="password"
+                      type={showPasswordConfInput ? "text" : "password"}
                       required
                       disabled={passwordChangeLoading}
                       placeholder=" "
@@ -529,6 +584,30 @@ export default function ClientSideData(props: {
                     <label className="underlinedInputLabel">
                       Password Confirmation
                     </label>
+                    <button
+                      onClick={() => {
+                        setShowPasswordConfInput(!showPasswordConfInput);
+                        newPasswordConfRef.current?.focus();
+                      }}
+                      className="absolute ml-[17.5rem] -mt-9"
+                      type="button"
+                    >
+                      {showPasswordConfInput ? (
+                        <Eye
+                          height={24}
+                          width={24}
+                          strokeWidth={1}
+                          className="stroke-zinc-900 dark:stroke-white"
+                        />
+                      ) : (
+                        <EyeSlash
+                          height={24}
+                          width={24}
+                          strokeWidth={1}
+                          className="stroke-zinc-900 dark:stroke-white"
+                        />
+                      )}
+                    </button>
                   </div>
                 </div>
                 <div
