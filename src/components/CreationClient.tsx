@@ -65,28 +65,16 @@ export default function CreationClient(props: { type: "projects" | "blog" }) {
   };
 
   useEffect(() => {
-    // Clear the interval when component unmounts
-    return () => {
-      if (autosaveRef.current) {
-        clearInterval(autosaveRef.current);
-      }
-    };
-  }, []);
-
-  useEffect(() => {
-    // Set up interval
     autosaveRef.current = setInterval(() => {
       autoSave();
-    }, 2 * 60 * 1000); // Save every 2 minutes
+    }, 2 * 60 * 1000);
 
-    // Clear the interval when dependencies change
     return () => {
       if (autosaveRef.current) {
         clearInterval(autosaveRef.current);
       }
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [bannerImage, editorContent, publish]);
+  });
 
   const handleBannerImageDrop = useCallback((acceptedFiles: Blob[]) => {
     acceptedFiles.forEach((file: Blob) => {
