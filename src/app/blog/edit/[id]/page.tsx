@@ -1,6 +1,8 @@
 import EditingClient from "@/components/EditingClient";
+import LoadingSpinner from "@/components/LoadingSpinner";
 import { env } from "@/env.mjs";
 import { Blog } from "@/types/model-types";
+import { Suspense } from "react";
 
 export default async function ProjectEditing({
   params,
@@ -14,7 +16,15 @@ export default async function ProjectEditing({
   const post = (await res.json()).blog as Blog;
   return (
     <>
-      <EditingClient post={post} type={"blog"} />
+      <Suspense
+        fallback={
+          <div className="pt-48">
+            <LoadingSpinner height={48} width={48} />
+          </div>
+        }
+      >
+        <EditingClient post={post} type={"blog"} />
+      </Suspense>
     </>
   );
 }

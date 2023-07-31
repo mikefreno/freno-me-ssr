@@ -83,232 +83,230 @@ export default function TextEditor({ updateContent, preSet }: any) {
   }, [editor]);
 
   return (
-    <div className="flex justify-center">
-      <div className="w-fit dark:text-white rounded-md border px-4 py-2 border-black dark:border-white ">
-        {editor && (
-          <BubbleMenu
-            className="bg-black rounded text-white p-2 mt-4 w-fit whitespace-nowrap text-sm"
-            tippyOptions={{ duration: 100 }}
-            editor={editor}
-          >
-            <div className="overflow-x-scroll w-64 md:w-fit">
-              <button
-                type="button"
-                onClick={() =>
-                  editor.chain().focus().toggleHeading({ level: 1 }).run()
-                }
-                className={`${
-                  editor.isActive("heading", { level: 1 })
-                    ? "bg-zinc-400"
-                    : "hover:bg-zinc-400"
-                } mx-1 rounded p-1`}
-              >
-                H1
-              </button>
-              <button
-                type="button"
-                onClick={() =>
-                  editor.chain().focus().toggleHeading({ level: 2 }).run()
-                }
-                className={`${
-                  editor.isActive("heading", { level: 2 })
-                    ? "bg-zinc-400"
-                    : "hover:bg-zinc-400"
-                } mx-1 rounded p-1`}
-              >
-                H2
-              </button>
-              <button
-                type="button"
-                onClick={() =>
-                  editor.chain().focus().toggleHeading({ level: 3 }).run()
-                }
-                className={`${
-                  editor.isActive("heading", { level: 3 })
-                    ? "bg-zinc-400"
-                    : "hover:bg-zinc-400"
-                } mx-1 rounded p-1`}
-              >
-                H3
-              </button>
-              <button
-                type="button"
-                onClick={() =>
-                  editor.chain().focus().toggleHeading({ level: 4 }).run()
-                }
-                className={`${
-                  editor.isActive("heading", { level: 4 })
-                    ? "bg-zinc-400"
-                    : "hover:bg-zinc-400"
-                } mx-1 rounded p-1`}
-              >
-                H4
-              </button>
-              <button
-                type="button"
-                onClick={() => editor.chain().focus().toggleBold().run()}
-                className={`${
-                  editor.isActive("bold") ? "bg-white" : "hover:bg-white"
-                } mx-1 bg-opacity-30 hover:bg-opacity-30 rounded p-1`}
-              >
-                Bold
-              </button>
-              <button
-                type="button"
-                onClick={() => editor.chain().focus().toggleItalic().run()}
-                className={`${
-                  editor.isActive("italic") ? "bg-white" : "hover:bg-white"
-                } mx-1 bg-opacity-30 hover:bg-opacity-30 rounded p-1`}
-              >
-                Italic
-              </button>
-              <button
-                type="button"
-                onClick={() => editor.chain().focus().toggleStrike().run()}
-                className={`${
-                  editor.isActive("strike") ? "bg-white" : "hover:bg-white"
-                } mx-1 bg-opacity-30 hover:bg-opacity-30 rounded p-1`}
-              >
-                Strike
-              </button>
-              <button
-                type="button"
-                onClick={() => editor.chain().focus().toggleBlockquote().run()}
-                className={`${
-                  editor.isActive("orderedList") ? "bg-white" : "hover:bg-white"
-                } mx-1 bg-opacity-30 hover:bg-opacity-30 rounded p-1`}
-              >
-                Quotation
-              </button>
-              <button
-                type="button"
-                onClick={setLink}
-                className={`${
-                  editor.isActive("link") ? "bg-white" : "hover:bg-white"
-                } mx-1 bg-opacity-30 hover:bg-opacity-30 rounded p-1`}
-              >
-                Set Link
-              </button>
-              <button
-                type="button"
-                onClick={() => editor.chain().focus().toggleCode().run()}
-                disabled={!editor.can().chain().focus().toggleCode().run()}
-                className={`${
-                  editor.isActive("code") ? "bg-white" : "hover:bg-white"
-                } mx-1 bg-opacity-30 hover:bg-opacity-30 rounded p-1`}
-              >
-                Code
-              </button>
-            </div>
-          </BubbleMenu>
-        )}
-        {editor && (
-          <FloatingMenu
-            className="bg-zinc-200 rounded text-black p-1 mt-4 w-fit whitespace-nowrap text-sm"
-            tippyOptions={{ duration: 100 }}
-            editor={editor}
-          >
-            <div className="overflow-x-scroll w-64 md:w-fit">
-              <button
-                type="button"
-                onClick={() =>
-                  editor.chain().focus().toggleHeading({ level: 1 }).run()
-                }
-                className={`${
-                  editor.isActive("heading", { level: 1 })
-                    ? "bg-zinc-400"
-                    : "hover:bg-zinc-400"
-                } mx-1 rounded p-1`}
-              >
-                H1
-              </button>
-              <button
-                type="button"
-                onClick={() =>
-                  editor.chain().focus().toggleHeading({ level: 2 }).run()
-                }
-                className={`${
-                  editor.isActive("heading", { level: 2 })
-                    ? "bg-zinc-400"
-                    : "hover:bg-zinc-400"
-                } mx-1 rounded p-1`}
-              >
-                H2
-              </button>
-              <button
-                type="button"
-                onClick={() =>
-                  editor.chain().focus().toggleHeading({ level: 3 }).run()
-                }
-                className={`${
-                  editor.isActive("heading", { level: 3 })
-                    ? "bg-zinc-400"
-                    : "hover:bg-zinc-400"
-                } mx-1 rounded p-1`}
-              >
-                H3
-              </button>
-              <button
-                type="button"
-                onClick={() =>
-                  editor.chain().focus().toggleHeading({ level: 4 }).run()
-                }
-                className={`${
-                  editor.isActive("heading", { level: 4 })
-                    ? "bg-zinc-400"
-                    : "hover:bg-zinc-400"
-                } mx-1 rounded p-1`}
-              >
-                H4
-              </button>
-              <button
-                type="button"
-                onClick={() => editor.chain().focus().toggleBulletList().run()}
-                className={`${
-                  editor.isActive("bulletList")
-                    ? "bg-zinc-400"
-                    : "hover:bg-zinc-400"
-                } mx-1 rounded p-1`}
-              >
-                <div className="whitespace-nowrap">Bullet-List</div>
-              </button>
-              <button
-                type="button"
-                onClick={() => editor.chain().focus().toggleOrderedList().run()}
-                className={`${
-                  editor.isActive("orderedList")
-                    ? "bg-zinc-400"
-                    : "hover:bg-zinc-400"
-                } mx-1 rounded p-1`}
-              >
-                <div className="whitespace-nowrap">Ordered-List</div>
-              </button>
-              <button
-                type="button"
-                onClick={() => editor.chain().focus().setHorizontalRule().run()}
-                className="mx-1 rounded p-1 hover:bg-zinc-400"
-              >
-                Horizontal-Rule
-              </button>
-              <button
-                type="button"
-                onClick={() => editor.chain().focus().toggleCodeBlock().run()}
-                disabled={!editor.can().chain().focus().toggleCodeBlock().run()}
-                className={`${
-                  editor.isActive("codeBlock") ? "bg-white" : "hover:bg-white"
-                } mx-1 bg-opacity-30 hover:bg-opacity-30 rounded p-1`}
-              >
-                Code Block
-              </button>
-              <button onClick={addImage}>Add Image</button>
-            </div>
-          </FloatingMenu>
-        )}
-        <EditorContent
+    <div className="dark:text-white rounded-md border px-4 py-2 border-black dark:border-white w-full">
+      {editor && (
+        <BubbleMenu
+          className="bg-black rounded text-white p-2 mt-4 w-fit whitespace-nowrap text-sm"
+          tippyOptions={{ duration: 100 }}
           editor={editor}
-          className="prose prose-sm sm:prose-base md:prose-xl lg:prose-xl xl:prose-2xl dark:prose-invert dark:sm:prose-base dark:md:prose-xl dark:lg:prose-xl dark:xl:prose-2xl md:mx-12"
-        />
-      </div>
+        >
+          <div className="overflow-x-scroll w-64 md:w-fit">
+            <button
+              type="button"
+              onClick={() =>
+                editor.chain().focus().toggleHeading({ level: 1 }).run()
+              }
+              className={`${
+                editor.isActive("heading", { level: 1 })
+                  ? "bg-zinc-400"
+                  : "hover:bg-zinc-400"
+              } mx-1 rounded p-1`}
+            >
+              H1
+            </button>
+            <button
+              type="button"
+              onClick={() =>
+                editor.chain().focus().toggleHeading({ level: 2 }).run()
+              }
+              className={`${
+                editor.isActive("heading", { level: 2 })
+                  ? "bg-zinc-400"
+                  : "hover:bg-zinc-400"
+              } mx-1 rounded p-1`}
+            >
+              H2
+            </button>
+            <button
+              type="button"
+              onClick={() =>
+                editor.chain().focus().toggleHeading({ level: 3 }).run()
+              }
+              className={`${
+                editor.isActive("heading", { level: 3 })
+                  ? "bg-zinc-400"
+                  : "hover:bg-zinc-400"
+              } mx-1 rounded p-1`}
+            >
+              H3
+            </button>
+            <button
+              type="button"
+              onClick={() =>
+                editor.chain().focus().toggleHeading({ level: 4 }).run()
+              }
+              className={`${
+                editor.isActive("heading", { level: 4 })
+                  ? "bg-zinc-400"
+                  : "hover:bg-zinc-400"
+              } mx-1 rounded p-1`}
+            >
+              H4
+            </button>
+            <button
+              type="button"
+              onClick={() => editor.chain().focus().toggleBold().run()}
+              className={`${
+                editor.isActive("bold") ? "bg-white" : "hover:bg-white"
+              } mx-1 bg-opacity-30 hover:bg-opacity-30 rounded p-1`}
+            >
+              Bold
+            </button>
+            <button
+              type="button"
+              onClick={() => editor.chain().focus().toggleItalic().run()}
+              className={`${
+                editor.isActive("italic") ? "bg-white" : "hover:bg-white"
+              } mx-1 bg-opacity-30 hover:bg-opacity-30 rounded p-1`}
+            >
+              Italic
+            </button>
+            <button
+              type="button"
+              onClick={() => editor.chain().focus().toggleStrike().run()}
+              className={`${
+                editor.isActive("strike") ? "bg-white" : "hover:bg-white"
+              } mx-1 bg-opacity-30 hover:bg-opacity-30 rounded p-1`}
+            >
+              Strike
+            </button>
+            <button
+              type="button"
+              onClick={() => editor.chain().focus().toggleBlockquote().run()}
+              className={`${
+                editor.isActive("orderedList") ? "bg-white" : "hover:bg-white"
+              } mx-1 bg-opacity-30 hover:bg-opacity-30 rounded p-1`}
+            >
+              Quotation
+            </button>
+            <button
+              type="button"
+              onClick={setLink}
+              className={`${
+                editor.isActive("link") ? "bg-white" : "hover:bg-white"
+              } mx-1 bg-opacity-30 hover:bg-opacity-30 rounded p-1`}
+            >
+              Set Link
+            </button>
+            <button
+              type="button"
+              onClick={() => editor.chain().focus().toggleCode().run()}
+              disabled={!editor.can().chain().focus().toggleCode().run()}
+              className={`${
+                editor.isActive("code") ? "bg-white" : "hover:bg-white"
+              } mx-1 bg-opacity-30 hover:bg-opacity-30 rounded p-1`}
+            >
+              Code
+            </button>
+          </div>
+        </BubbleMenu>
+      )}
+      {editor && (
+        <FloatingMenu
+          className="bg-zinc-200 rounded text-black p-1 mt-4 w-fit whitespace-nowrap text-sm"
+          tippyOptions={{ duration: 100 }}
+          editor={editor}
+        >
+          <div className="overflow-x-scroll w-64 md:w-fit">
+            <button
+              type="button"
+              onClick={() =>
+                editor.chain().focus().toggleHeading({ level: 1 }).run()
+              }
+              className={`${
+                editor.isActive("heading", { level: 1 })
+                  ? "bg-zinc-400"
+                  : "hover:bg-zinc-400"
+              } mx-1 rounded p-1`}
+            >
+              H1
+            </button>
+            <button
+              type="button"
+              onClick={() =>
+                editor.chain().focus().toggleHeading({ level: 2 }).run()
+              }
+              className={`${
+                editor.isActive("heading", { level: 2 })
+                  ? "bg-zinc-400"
+                  : "hover:bg-zinc-400"
+              } mx-1 rounded p-1`}
+            >
+              H2
+            </button>
+            <button
+              type="button"
+              onClick={() =>
+                editor.chain().focus().toggleHeading({ level: 3 }).run()
+              }
+              className={`${
+                editor.isActive("heading", { level: 3 })
+                  ? "bg-zinc-400"
+                  : "hover:bg-zinc-400"
+              } mx-1 rounded p-1`}
+            >
+              H3
+            </button>
+            <button
+              type="button"
+              onClick={() =>
+                editor.chain().focus().toggleHeading({ level: 4 }).run()
+              }
+              className={`${
+                editor.isActive("heading", { level: 4 })
+                  ? "bg-zinc-400"
+                  : "hover:bg-zinc-400"
+              } mx-1 rounded p-1`}
+            >
+              H4
+            </button>
+            <button
+              type="button"
+              onClick={() => editor.chain().focus().toggleBulletList().run()}
+              className={`${
+                editor.isActive("bulletList")
+                  ? "bg-zinc-400"
+                  : "hover:bg-zinc-400"
+              } mx-1 rounded p-1`}
+            >
+              <div className="whitespace-nowrap">Bullet-List</div>
+            </button>
+            <button
+              type="button"
+              onClick={() => editor.chain().focus().toggleOrderedList().run()}
+              className={`${
+                editor.isActive("orderedList")
+                  ? "bg-zinc-400"
+                  : "hover:bg-zinc-400"
+              } mx-1 rounded p-1`}
+            >
+              <div className="whitespace-nowrap">Ordered-List</div>
+            </button>
+            <button
+              type="button"
+              onClick={() => editor.chain().focus().setHorizontalRule().run()}
+              className="mx-1 rounded p-1 hover:bg-zinc-400"
+            >
+              Horizontal-Rule
+            </button>
+            <button
+              type="button"
+              onClick={() => editor.chain().focus().toggleCodeBlock().run()}
+              disabled={!editor.can().chain().focus().toggleCodeBlock().run()}
+              className={`${
+                editor.isActive("codeBlock") ? "bg-white" : "hover:bg-white"
+              } mx-1 bg-opacity-30 hover:bg-opacity-30 rounded p-1`}
+            >
+              Code Block
+            </button>
+            <button onClick={addImage}>Add Image</button>
+          </div>
+        </FloatingMenu>
+      )}
+      <EditorContent
+        editor={editor}
+        className="prose prose-sm min-w-full sm:prose-base md:prose-xl lg:prose-xl xl:prose-2xl dark:prose-invert dark:sm:prose-base dark:md:prose-xl dark:lg:prose-xl dark:xl:prose-2xl mx-auto"
+      />
     </div>
   );
 }

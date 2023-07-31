@@ -17,7 +17,13 @@ export default async function ProjectEditing({
 
   return (
     <>
-      <Suspense fallback={<LoadingSpinner height={48} width={48} />}>
+      <Suspense
+        fallback={
+          <div className="pt-48">
+            <LoadingSpinner height={48} width={48} />
+          </div>
+        }
+      >
         <EditingClient post={post} type={"projects"} />
       </Suspense>
     </>
