@@ -29,7 +29,8 @@ export default function EditingClient(props: {
 
   const [requestedDeleteImage, setRequestedDeleteImage] =
     useState<boolean>(false);
-  const [showAutoSaveMessage, setShowAutoSaveMessage] = useState<boolean>(true);
+  const [showAutoSaveMessage, setShowAutoSaveMessage] =
+    useState<boolean>(false);
 
   const titleRef = useRef<HTMLInputElement>(null);
   const subtitleRef = useRef<HTMLInputElement>(null);
