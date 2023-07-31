@@ -19,6 +19,7 @@ export default function CreationClient(props: { type: "projects" | "blog" }) {
   const [submitButtonLoading, setSubmitButtonLoading] =
     useState<boolean>(false);
   const [showLink, setShowLink] = useState<boolean>(false);
+  const [showAutoSaveMessage, setShowAutoSaveMessage] = useState<boolean>(true);
 
   const titleRef = useRef<HTMLInputElement>(null);
   const subtitleRef = useRef<HTMLInputElement>(null);
@@ -43,13 +44,23 @@ export default function CreationClient(props: { type: "projects" | "blog" }) {
         published: publish,
       };
 
-      await fetch(
+      const res = await fetch(
         `${process.env.NEXT_PUBLIC_DOMAIN}/api/database/${
           props.type == "blog" ? "blog" : "project"
         }/manipulation`,
         { method: "POST", body: JSON.stringify(data) }
       );
+      if (res.status == 201) {
+        showAutoSaveTrigger();
+      }
     }
+  };
+
+  const showAutoSaveTrigger = () => {
+    setShowAutoSaveMessage(true);
+    setTimeout(() => {
+      setShowAutoSaveMessage(false);
+    }, 5000);
   };
 
   useEffect(() => {
@@ -62,7 +73,7 @@ export default function CreationClient(props: { type: "projects" | "blog" }) {
         clearInterval(autosaveRef.current);
       }
     };
-  }, []);
+  });
 
   const handleBannerImageDrop = useCallback((acceptedFiles: Blob[]) => {
     acceptedFiles.forEach((file: Blob) => {
@@ -178,9 +189,16 @@ export default function CreationClient(props: { type: "projects" | "blog" }) {
             post={null}
             postTitle={titleRef.current?.value}
           />
-
-          <TextEditor updateContent={setEditorContent} preSet={undefined} />
-
+          <div className="md:-mx-36">
+            <TextEditor updateContent={setEditorContent} preSet={undefined} />
+          </div>
+          <div
+            className={`${
+              showAutoSaveMessage ? "" : "user-select opacity-0"
+            } text-green-400 text-center italic transition-opacity flex justify-center duration-500 ease-in-out min-h-[16px]`}
+          >
+            {showAutoSaveMessage ? "Auto save success!" : ""}
+          </div>
           <div className="flex justify-end pt-4 pb-2">
             <input
               type="checkbox"

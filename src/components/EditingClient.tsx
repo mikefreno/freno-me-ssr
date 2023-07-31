@@ -29,6 +29,7 @@ export default function EditingClient(props: {
 
   const [requestedDeleteImage, setRequestedDeleteImage] =
     useState<boolean>(false);
+  const [showAutoSaveMessage, setShowAutoSaveMessage] = useState<boolean>(true);
 
   const titleRef = useRef<HTMLInputElement>(null);
   const subtitleRef = useRef<HTMLInputElement>(null);
@@ -65,13 +66,23 @@ export default function EditingClient(props: {
         published: publish || props.post.published,
       };
 
-      await fetch(
+      const res = await fetch(
         `${process.env.NEXT_PUBLIC_DOMAIN}/api/database/${
           props.type == "blog" ? "blog" : "project"
         }/manipulation`,
         { method: "PATCH", body: JSON.stringify(data) }
       );
+      if (res.status == 201) {
+        showAutoSaveTrigger();
+      }
     }
+  };
+
+  const showAutoSaveTrigger = () => {
+    setShowAutoSaveMessage(true);
+    setTimeout(() => {
+      setShowAutoSaveMessage(false);
+    }, 5000);
   };
 
   useEffect(() => {
@@ -84,7 +95,7 @@ export default function EditingClient(props: {
         clearInterval(autosaveRef.current);
       }
     };
-  }, []);
+  });
 
   const handleBannerImageDrop = useCallback((acceptedFiles: Blob[]) => {
     acceptedFiles.forEach((file: Blob) => {
@@ -234,7 +245,13 @@ export default function EditingClient(props: {
               preSet={props.post.body}
             />
           </div>
-
+          <div
+            className={`${
+              showAutoSaveMessage ? "" : "user-select opacity-0"
+            } text-green-400 text-center italic transition-opacity flex justify-center duration-500 ease-in-out min-h-[16px]`}
+          >
+            {showAutoSaveMessage ? "Auto save success!" : ""}
+          </div>
           <div className="flex justify-end pt-4 pb-2">
             <input
               type="checkbox"
