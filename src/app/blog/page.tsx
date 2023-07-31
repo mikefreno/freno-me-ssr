@@ -78,7 +78,7 @@ export default async function Blog({
             {privilegeLevel == "admin" ? (
               <div className="flex justify-center md:justify-end mt-2 md:mt-0">
                 <Link
-                  href="/projects/create"
+                  href="/blog/create"
                   className="rounded border md:mr-4 dark:border-white border-zinc-800 px-4 py-2 dark:hover:bg-zinc-700 hover:bg-zinc-200 active:scale-90 transition-all duration-300 ease-out"
                 >
                   Create Post
