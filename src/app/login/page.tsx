@@ -12,6 +12,9 @@ import { env } from "@/env.mjs";
 import Cookies from "js-cookie";
 import { CountdownCircleTimer } from "react-countdown-circle-timer";
 import { useRouter } from "next/navigation";
+import Eye from "@/icons/Eye";
+import EyeSlash from "@/icons/EyeSlash";
+import { setPassword } from "../account/actions";
 
 export default function LoginPage() {
   const [register, setRegister] = useState<boolean>(false);
@@ -23,6 +26,15 @@ export default function LoginPage() {
   const [showPasswordError, setShowPasswordError] = useState<boolean>(false);
   const [showPasswordSuccess, setShowPasswordSuccess] =
     useState<boolean>(false);
+  const [showPasswordInput, setShowPasswordInput] = useState<boolean>(false);
+  const [showPasswordConfInput, setShowPasswordConfInput] =
+    useState<boolean>(false);
+  const [passwordsMatch, setPasswordsMatch] = useState<boolean>(false);
+  const [showPasswordLengthWarning, setShowPasswordLengthWarning] =
+    useState<boolean>(false);
+  const [passwordLengthSufficient, setPasswordLengthSufficient] =
+    useState<boolean>(false);
+  const [passwordBlurred, setPasswordBlurred] = useState(false);
   const rememberMeRef = useRef<HTMLInputElement>(null);
   const emailRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
@@ -120,6 +132,51 @@ export default function LoginPage() {
     );
   };
 
+  const checkForMatch = (newPassword: string, newPasswordConf: string) => {
+    if (newPassword === newPasswordConf) {
+      setPasswordsMatch(true);
+    } else {
+      setPasswordsMatch(false);
+    }
+  };
+
+  const checkPasswordLength = (password: string) => {
+    if (password.length >= 8) {
+      setPasswordLengthSufficient(true);
+      setShowPasswordLengthWarning(false);
+    } else {
+      setPasswordLengthSufficient(false);
+      if (passwordBlurred) {
+        setShowPasswordLengthWarning(true);
+      }
+    }
+  };
+
+  const passwordLengthBlurCheck = () => {
+    if (
+      !passwordLengthSufficient &&
+      passwordRef.current &&
+      passwordRef.current.value !== ""
+    ) {
+      setShowPasswordLengthWarning(true);
+    }
+    setPasswordBlurred(true);
+  };
+
+  const handleNewPasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    checkPasswordLength(e.target.value);
+  };
+
+  const handlePasswordConfChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (passwordRef.current) {
+      checkForMatch(passwordRef.current.value, e.target.value);
+    }
+  };
+
+  const handlePasswordBlur = () => {
+    passwordLengthBlurCheck();
+  };
+
   return (
     <>
       <div className="flex h-[100dvh] flex-row justify-evenly">
@@ -187,38 +244,111 @@ export default function LoginPage() {
               </div>
             </div>
             {usePassword || register ? (
-              <div className="-mt-4 flex justify-center">
-                <div className="input-group mx-4">
-                  <input
-                    type="password"
-                    required
-                    minLength={8}
-                    ref={passwordRef}
-                    placeholder=" "
-                    className="bg-transparent underlinedInput"
-                  />
-                  <span className="bar"></span>
-                  <label className="underlinedInputLabel">Password</label>
+              <>
+                <div className="-mt-4 flex justify-center">
+                  <div className="input-group mx-4 flex">
+                    <input
+                      type={showPasswordInput ? "text" : "password"}
+                      required
+                      minLength={8}
+                      ref={passwordRef}
+                      onChange={register ? handleNewPasswordChange : () => null}
+                      onBlur={register ? handlePasswordBlur : () => null}
+                      placeholder=" "
+                      className="bg-transparent underlinedInput"
+                    />
+                    <span className="bar"></span>
+                    <label className="underlinedInputLabel">Password</label>
+                  </div>
+                  <button
+                    onClick={() => {
+                      setShowPasswordInput(!showPasswordInput);
+                      passwordRef.current?.focus();
+                    }}
+                    className="absolute ml-60 mt-14"
+                    type="button"
+                  >
+                    {showPasswordInput ? (
+                      <Eye
+                        height={24}
+                        width={24}
+                        strokeWidth={1}
+                        className="stroke-zinc-900 dark:stroke-white"
+                      />
+                    ) : (
+                      <EyeSlash
+                        height={24}
+                        width={24}
+                        strokeWidth={1}
+                        className="stroke-zinc-900 dark:stroke-white"
+                      />
+                    )}
+                  </button>
                 </div>
-              </div>
+                <div
+                  className={`${
+                    showPasswordLengthWarning ? "" : "opacity-0 select-none"
+                  } transition-opacity text-center text-red-500 duration-200 ease-in-out`}
+                >
+                  Password too short! Min Length: 8
+                </div>
+              </>
             ) : null}
             {register ? (
-              <div className="-mt-4 flex justify-center">
-                <div className="input-group mx-4">
-                  <input
-                    type="password"
-                    required
-                    minLength={8}
-                    ref={passwordConfRef}
-                    placeholder=" "
-                    className="bg-transparent underlinedInput"
-                  />
-                  <span className="bar"></span>
-                  <label className="underlinedInputLabel">
-                    Password Confirmation
-                  </label>
+              <>
+                <div className="-mt-4 flex justify-center">
+                  <div className="input-group mx-4">
+                    <input
+                      type={showPasswordConfInput ? "text" : "password"}
+                      required
+                      minLength={8}
+                      ref={passwordConfRef}
+                      onChange={handlePasswordConfChange}
+                      placeholder=" "
+                      className="bg-transparent underlinedInput"
+                    />
+                    <span className="bar"></span>
+                    <label className="underlinedInputLabel">
+                      Confirm Password
+                    </label>
+                  </div>
+                  <button
+                    onClick={() => {
+                      setShowPasswordConfInput(!showPasswordConfInput);
+                      passwordConfRef.current?.focus();
+                    }}
+                    className="absolute ml-60 mt-14"
+                    type="button"
+                  >
+                    {showPasswordConfInput ? (
+                      <Eye
+                        height={24}
+                        width={24}
+                        strokeWidth={1}
+                        className="stroke-zinc-900 dark:stroke-white"
+                      />
+                    ) : (
+                      <EyeSlash
+                        height={24}
+                        width={24}
+                        strokeWidth={1}
+                        className="stroke-zinc-900 dark:stroke-white"
+                      />
+                    )}
+                  </button>
                 </div>
-              </div>
+                <div
+                  className={`${
+                    !passwordsMatch &&
+                    passwordLengthSufficient &&
+                    passwordConfRef.current!.value.length >= 6
+                      ? ""
+                      : "opacity-0 select-none"
+                  } transition-opacity text-center text-red-500 duration-200 ease-in-out`}
+                >
+                  Passwords do not match!
+                </div>
+              </>
             ) : null}
             <div className="flex pt-4 mx-auto">
               <input type="checkbox" className="my-auto" ref={rememberMeRef} />
@@ -233,11 +363,13 @@ export default function LoginPage() {
                   : showPasswordSuccess
                   ? "text-green-500"
                   : "opacity-0 select-none"
-              }  italic transition-opacity flex justify-center duration-300 ease-in-out`}
+              }  italic transition-opacity flex justify-center duration-300 ease-in-out min-h-[16px]`}
             >
               {showPasswordError
                 ? "Credentials did not match any record"
-                : "Login Success! Redirecting..."}
+                : showPasswordSuccess
+                ? "Login Success! Redirecting..."
+                : ""}
             </div>
             <div className="flex justify-center py-4">
               {!register && !usePassword && countDown > 0 ? (
@@ -299,9 +431,9 @@ export default function LoginPage() {
           <div
             className={`${
               emailSent ? "" : "user-select opacity-0"
-            } text-green-400 text-center italic transition-opacity flex justify-center duration-300 ease-in-out`}
+            } text-green-400 text-center italic transition-opacity flex justify-center duration-300 ease-in-out min-h-[16px]`}
           >
-            Email Sent!
+            {emailSent ? "Email Sent!" : ""}
           </div>
           <div className="rule-around text-center">Or</div>
           <div className="my-2 flex justify-center">
