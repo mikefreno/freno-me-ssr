@@ -15,7 +15,7 @@ export default function Error({
   }, [error]);
 
   return (
-    <div className="pt-36 flex justify-center">
+    <div className="pt-36 flex justify-center w-full">
       <div className="text-xl">Something went wrong!</div>
       <button
         className="bg-blue-400 dark:bg-blue-600 hover:bg-blue-500 dark:hover:bg-blue-700 active:scale-90 flex w-36 justify-center rounded transition-all duration-300 ease-out py-3 text-white shadow-lg shadow-blue-300 dark:shadow-blue-700"
