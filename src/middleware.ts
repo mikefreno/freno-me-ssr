@@ -1,4 +1,3 @@
-import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 import { env } from "./env.mjs";
 export async function middleware(request: NextRequest) {
@@ -30,7 +29,6 @@ export async function middleware(request: NextRequest) {
         id = (await res.json()).id;
       }
       if (!(id && id == env.ADMIN_ID)) {
-        console.log(id);
         return new NextResponse(
           JSON.stringify({ success: false, message: "authentication failed" }),
           { status: 401, headers: { "content-type": "application/json" } }
