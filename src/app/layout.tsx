@@ -8,8 +8,9 @@ import NextTopLoader from "nextjs-toploader";
 const SCP = Source_Code_Pro({ subsets: ["latin"] });
 
 export const metadata = {
-  title: "Michael Freno",
-  description: "Software Engineer - Portfolio",
+  title: "Michael Freno - Portfolio",
+  description:
+    "Michael Freno's Portfolio - Software Engineer: Explore his projects, blog, and more.",
 };
 
 export default function RootLayout({
@@ -24,7 +25,6 @@ export default function RootLayout({
         className={`${SCP.className} bg-zinc-50 dark:bg-zinc-800 text-black dark:text-white`}
       >
         <NextTopLoader showSpinner={false} color="#3b82f6" />
-        <Navbar />
         {children}
         <Analytics />
       </body>

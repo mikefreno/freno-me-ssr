@@ -2,8 +2,8 @@ import Navbar from "@/components/Navbar";
 import NextTopLoader from "nextjs-toploader";
 
 export const metadata = {
-  title: "Projects | Michael Freno",
-  description: "Project Pages",
+  title: "Debug | Michael Freno",
+  description: "view data - debugging",
 };
 
 export default async function NonRootLayout({
@@ -13,7 +13,6 @@ export default async function NonRootLayout({
 }) {
   return (
     <section>
-      <link rel="preload" as="image" href="/blueprint.jpg" />
       <NextTopLoader showSpinner={false} color="#3b82f6" />
       <Navbar />
       {children}
