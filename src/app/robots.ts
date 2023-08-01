@@ -7,6 +7,6 @@ export default function robots(): MetadataRoute.Robots {
       allow: ["/", "/blog", "/projects"],
       disallow: ["/login", "/debug/**", "/databaseMGMT"],
     },
-    sitemap: "https://acme.com/sitemap.xml",
+    sitemap: "https://www.freno.me/sitemap.xml",
   };
 }
