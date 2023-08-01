@@ -34,12 +34,12 @@ export default function CreationClient(props: { type: "projects" | "blog" }) {
       if (bannerImage) {
         bannerImageKey = await AddImageToS3(
           bannerImage,
-          titleRef.current!.value,
+          titleRef.current!.value.replace(" ", "-"),
           props.type == "blog" ? "blog" : "projects"
         );
       }
       const data = {
-        title: titleRef.current.value,
+        title: titleRef.current.value.replace(" ", "-"),
         subtitle: subtitleRef.current?.value,
         body: editorContent,
         embedded_link: null,
@@ -109,12 +109,12 @@ export default function CreationClient(props: { type: "projects" | "blog" }) {
       if (bannerImage) {
         bannerImageKey = await AddImageToS3(
           bannerImage,
-          titleRef.current!.value,
+          titleRef.current!.value.replace(" ", "-"),
           props.type == "blog" ? "blog" : "projects"
         );
       }
       const data = {
-        title: titleRef.current.value,
+        title: titleRef.current.value.replace(" ", "-"),
         subtitle: subtitleRef.current?.value,
         body: editorContent,
         embedded_link: null,

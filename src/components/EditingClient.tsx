@@ -43,15 +43,15 @@ export default function EditingClient(props: {
       if (bannerImage) {
         bannerImageKey = await AddImageToS3(
           bannerImage,
-          titleRef.current.value || props.post.title,
+          titleRef.current.value.replace(" ", "-") || props.post.title,
           props.type
         );
       }
       const data = {
         id: props.post.id,
         title:
-          titleRef.current.value !== props.post.title
-            ? titleRef.current.value
+          titleRef.current.value.replace(" ", "-") !== props.post.title
+            ? titleRef.current.value.replace(" ", "-")
             : null,
         subtitle:
           subtitleRef.current?.value !== props.post.subtitle
@@ -130,15 +130,15 @@ export default function EditingClient(props: {
       if (bannerImage) {
         bannerImageKey = await AddImageToS3(
           bannerImage,
-          titleRef.current.value || props.post.title,
+          titleRef.current.value.replace(" ", "-") || props.post.title,
           props.type
         );
       }
       const data = {
         id: props.post.id,
         title:
-          titleRef.current.value !== props.post.title
-            ? titleRef.current.value
+          titleRef.current.value.replace(" ", "-") !== props.post.title
+            ? titleRef.current.value.replace(" ", "-")
             : null,
         subtitle:
           subtitleRef.current?.value !== props.post.subtitle
