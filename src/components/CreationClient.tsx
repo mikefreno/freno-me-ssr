@@ -21,6 +21,8 @@ export default function CreationClient(props: { type: "projects" | "blog" }) {
   const [showLink, setShowLink] = useState<boolean>(false);
   const [showAutoSaveMessage, setShowAutoSaveMessage] =
     useState<boolean>(false);
+  const [hasSaved, setHasSaved] = useState<boolean>(false);
+  const [showSaveMessage, setShowSaveMessage] = useState<boolean>(false);
 
   const titleRef = useRef<HTMLInputElement>(null);
   const subtitleRef = useRef<HTMLInputElement>(null);
@@ -49,9 +51,10 @@ export default function CreationClient(props: { type: "projects" | "blog" }) {
         `${process.env.NEXT_PUBLIC_DOMAIN}/api/database/${
           props.type == "blog" ? "blog" : "project"
         }/manipulation`,
-        { method: "POST", body: JSON.stringify(data) }
+        { method: hasSaved ? "PATCH" : "POST", body: JSON.stringify(data) }
       );
       if (res.status == 201) {
+        setHasSaved(true);
         showAutoSaveTrigger();
       }
     }
@@ -61,6 +64,12 @@ export default function CreationClient(props: { type: "projects" | "blog" }) {
     setShowAutoSaveMessage(true);
     setTimeout(() => {
       setShowAutoSaveMessage(false);
+    }, 5000);
+  };
+  const showSaveTrigger = () => {
+    setShowSaveMessage(true);
+    setTimeout(() => {
+      setShowSaveMessage(false);
     }, 5000);
   };
 
@@ -118,6 +127,8 @@ export default function CreationClient(props: { type: "projects" | "blog" }) {
         { method: "POST", body: JSON.stringify(data) }
       );
       if (res.status == 201) {
+        setHasSaved(true);
+        showSaveTrigger();
         setShowLink(true);
       } else {
         alert((await res.json()).error);
@@ -195,10 +206,16 @@ export default function CreationClient(props: { type: "projects" | "blog" }) {
           </div>
           <div
             className={`${
-              showAutoSaveMessage ? "" : "user-select opacity-0"
+              showAutoSaveMessage || showSaveMessage
+                ? ""
+                : "user-select opacity-0"
             } text-green-400 text-center italic transition-opacity flex justify-center duration-500 ease-in-out min-h-[16px]`}
           >
-            {showAutoSaveMessage ? "Auto save success!" : ""}
+            {showSaveMessage
+              ? "Save success!"
+              : showAutoSaveMessage
+              ? "Auto save success!"
+              : ""}
           </div>
           <div className="flex justify-end pt-4 pb-2">
             <input
