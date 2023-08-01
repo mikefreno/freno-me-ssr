@@ -33,7 +33,7 @@ export default async function PostCard(props: {
             ? "/bitcoin.jpg"
             : "/blueprint.jpg"
         }
-        alt={props.post.title.replace("-+-", " ") + " banner"}
+        alt={props.post.title.replaceAll("_", " ") + " banner"}
         height={1000}
         width={1000}
         className="w-full h-full object-cover"
@@ -45,7 +45,7 @@ export default async function PostCard(props: {
               {props.post.subtitle}
             </div>
             <div className="text-2xl md:text-3xl text-black">
-              {props.post.title.replace("-+-", " ")}
+              {props.post.title.replaceAll("_", " ")}
             </div>
           </div>
           <div className="flex justify-around md:justify-between md:pl-2 pt-2 w-full md:pt-0 md:w-3/5">

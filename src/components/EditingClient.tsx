@@ -49,7 +49,7 @@ export default function EditingClient(props: {
       }
       const data = {
         id: props.post.id,
-        title: titleRef.current.value.replaceAll(" ", "-+-"),
+        title: titleRef.current.value.replaceAll(" ", "_"),
         subtitle:
           subtitleRef.current?.value !== props.post.subtitle
             ? subtitleRef.current?.value
@@ -133,7 +133,7 @@ export default function EditingClient(props: {
       }
       const data = {
         id: props.post.id,
-        title: titleRef.current.value.replaceAll(" ", "-+-"),
+        title: titleRef.current.value.replaceAll(" ", "_"),
         subtitle:
           subtitleRef.current?.value !== props.post.subtitle
             ? subtitleRef.current?.value
@@ -192,7 +192,9 @@ export default function EditingClient(props: {
               placeholder=" "
               onBlur={() => setPostTitle(titleRef.current?.value)}
               onChange={() => setPostTitle(titleRef.current?.value)}
-              defaultValue={props.post.title ? props.post.title : ""}
+              defaultValue={
+                props.post.title ? props.post.title.replaceAll("_", " ") : ""
+              }
               className="bg-transparent underlinedInput w-full"
             />
             <span className="bar"></span>

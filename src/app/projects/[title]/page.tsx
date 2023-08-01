@@ -119,7 +119,7 @@ export default async function DynamicProjectPost({
               style={{ pointerEvents: "none" }}
             >
               <div className="z-10 font-light tracking-widest text-3xl">
-                {project.title.replace("-+-", " ")}
+                {project.title.replaceAll("_", " ")}
                 <div className="py-8 font-light tracking-widest text-xl">
                   {project.subtitle}
                 </div>
