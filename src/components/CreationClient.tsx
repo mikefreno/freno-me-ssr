@@ -39,7 +39,7 @@ export default function CreationClient(props: { type: "projects" | "blog" }) {
         );
       }
       const data = {
-        title: titleRef.current.value,
+        title: titleRef.current.value.replaceAll(" ", "-+-"),
         subtitle: subtitleRef.current?.value,
         body: editorContent,
         embedded_link: null,
@@ -114,7 +114,7 @@ export default function CreationClient(props: { type: "projects" | "blog" }) {
         );
       }
       const data = {
-        title: titleRef.current.value,
+        title: titleRef.current.value.replaceAll(" ", "-+-"),
         subtitle: subtitleRef.current?.value,
         body: editorContent,
         embedded_link: null,
