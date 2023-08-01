@@ -13,6 +13,7 @@ import { Suspense, useEffect } from "react";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import PostBodyClient from "@/components/PostBodyClient";
 import { incrementReads } from "@/app/globalActions";
+import jwt, { JwtPayload } from "jsonwebtoken";
 
 export default async function DynamicProjectPost({
   params,
@@ -30,12 +31,42 @@ export default async function DynamicProjectPost({
   const parsedQueryRes =
     (await projectQuery.json()) as API_RES_GetProjectWithComments;
 
-  const currentUserIDCookie = cookies().get("userIDToken");
-  const privilegeLevel = currentUserIDCookie
-    ? currentUserIDCookie.value == env.ADMIN_ID
-      ? "admin"
-      : "user"
-    : "anonymous";
+  let userID: string | null = null;
+
+  let privilegeLevel: "admin" | "user" | "anonymous" = "anonymous";
+  try {
+    const currentUserIDCookie = cookies().get("userIDToken");
+    if (currentUserIDCookie) {
+      try {
+        const decoded = await new Promise<JwtPayload | undefined>(
+          (resolve, reject) => {
+            jwt.verify(
+              currentUserIDCookie.value,
+              env.JWT_SECRET_KEY,
+              (err, decoded) => {
+                if (err) {
+                  console.log("Failed to authenticate token.");
+                  cookies().set({
+                    name: "userIDToken",
+                    value: "",
+                    maxAge: 0,
+                    expires: new Date("2016-10-05"),
+                  });
+                  resolve(undefined);
+                } else {
+                  resolve(decoded as JwtPayload);
+                }
+              }
+            );
+          }
+        );
+        if (decoded) {
+          userID = decoded.id;
+          privilegeLevel = decoded.id === env.ADMIN_ID ? "admin" : "user";
+        }
+      } catch (e) {}
+    }
+  } catch (e) {}
 
   const project = parsedQueryRes.project[0];
 
@@ -127,7 +158,7 @@ export default async function DynamicProjectPost({
             </a>
             <div className="mx-2">
               <SessionDependantLike
-                currentUserID={currentUserIDCookie?.value}
+                currentUserID={userID}
                 privilegeLevel={privilegeLevel}
                 likes={likes}
                 type={"project"}
@@ -151,7 +182,7 @@ export default async function DynamicProjectPost({
                 id={project.id}
                 type={"project"}
                 reactionMap={reactionMap}
-                currentUserID={currentUserIDCookie?.value || ""}
+                currentUserID={userID || ""}
               />
             </Suspense>
           </div>

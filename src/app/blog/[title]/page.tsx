@@ -37,32 +37,41 @@ export default async function DynamicBlogPost({
     (await blogQuery.json()) as API_RES_GetBlogWithComments;
 
   let userID: string | null = null;
+
+  let privilegeLevel: "admin" | "user" | "anonymous" = "anonymous";
   try {
     const currentUserIDCookie = cookies().get("userIDToken");
     if (currentUserIDCookie) {
-      console.log(currentUserIDCookie.value);
-      jwt.verify(
-        currentUserIDCookie.value,
-        env.JWT_SECRET_KEY,
-        async (err, decoded) => {
-          if (err) {
-            console.log("Failed to authenticate token.");
-          } else {
-            console.log("User ID:", (decoded as JwtPayload).id);
-            userID = (decoded as JwtPayload).id;
+      try {
+        const decoded = await new Promise<JwtPayload | undefined>(
+          (resolve, reject) => {
+            jwt.verify(
+              currentUserIDCookie.value,
+              env.JWT_SECRET_KEY,
+              (err, decoded) => {
+                if (err) {
+                  console.log("Failed to authenticate token.");
+                  cookies().set({
+                    name: "userIDToken",
+                    value: "",
+                    maxAge: 0,
+                    expires: new Date("2016-10-05"),
+                  });
+                  resolve(undefined);
+                } else {
+                  resolve(decoded as JwtPayload);
+                }
+              }
+            );
           }
+        );
+        if (decoded) {
+          userID = decoded.id;
+          privilegeLevel = decoded.id === env.ADMIN_ID ? "admin" : "user";
         }
-      );
+      } catch (e) {}
     }
-  } catch (e) {
-    userID = null;
-  }
-
-  const privilegeLevel = userID
-    ? userID == env.ADMIN_ID
-      ? "admin"
-      : "user"
-    : "anonymous";
+  } catch (e) {}
 
   const blog = parsedQueryRes.blog[0];
 
