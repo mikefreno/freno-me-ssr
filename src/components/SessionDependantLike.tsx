@@ -21,41 +21,48 @@ export default function SessionDependantLike(props: {
     props.likes.some((like) => like.user_id == props.currentUserID)
   );
 
-  useEffect(() => {
-    setHasLiked(likes.some((like) => like.user_id == props.currentUserID));
-  }, [likes, props.currentUserID]);
-
   const giveProjectLike = async () => {
     const data = {
       user_id: props.currentUserID,
       post_id: props.projectID,
       post_type: props.type == "blog" ? "Blog" : "Project",
     };
-    if (hasLiked) {
-      setHasLiked(false);
-      setInstantOffset(-1);
-      const res = await fetch(
-        `${env.NEXT_PUBLIC_DOMAIN}/api/database/generic/post-like/remove`,
-        {
-          method: "POST",
-          body: JSON.stringify(data),
-        }
-      );
+
+    const initialHasLiked = hasLiked;
+    const initialInstantOffset = hasLiked ? -1 : 1;
+
+    setHasLiked(!hasLiked);
+    setInstantOffset(initialInstantOffset);
+
+    try {
+      let res;
+      if (initialHasLiked) {
+        res = await fetch(
+          `${env.NEXT_PUBLIC_DOMAIN}/api/database/generic/post-like/remove`,
+          {
+            method: "POST",
+            body: JSON.stringify(data),
+          }
+        );
+      } else {
+        res = await fetch(
+          `${env.NEXT_PUBLIC_DOMAIN}/api/database/generic/post-like/add`,
+          {
+            method: "POST",
+            body: JSON.stringify(data),
+          }
+        );
+      }
+
       const resData = await res.json();
       setLikes(resData.newLikes);
       setInstantOffset(0);
-    } else {
-      setHasLiked(true);
-      setInstantOffset(1);
-      const res = await fetch(
-        `${env.NEXT_PUBLIC_DOMAIN}/api/database/generic/post-like/add`,
-        {
-          method: "POST",
-          body: JSON.stringify(data),
-        }
+    } catch (error) {
+      console.error(
+        "There has been a problem with your fetch operation:",
+        error
       );
-      const resData = await res.json();
-      setLikes(resData.newLikes);
+      setHasLiked(initialHasLiked);
       setInstantOffset(0);
     }
   };
