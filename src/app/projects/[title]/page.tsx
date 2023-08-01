@@ -166,6 +166,11 @@ export default async function DynamicProjectPost({
               />
             </div>
           </div>
+          <div className="md:pl-24 flex md:justify-start justify-center italic">
+            Written {`${new Date(project.date).toDateString()}`}
+            <br />
+            By Michael Freno
+          </div>
           <PostBodyClient body={project.body} />
           <div className="mx-4 md:mx-8 lg:mx-12 pb-12">
             <Suspense

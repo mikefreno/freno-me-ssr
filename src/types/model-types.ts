@@ -15,7 +15,7 @@ export interface Blog {
   subtitle: string | null;
   body: string;
   banner_photo: string | null;
-  date: Date;
+  date: string;
   published: boolean;
   author_id: string;
   reads: number;
@@ -34,7 +34,7 @@ export interface Project {
   subtitle: string | null;
   body: string;
   banner_photo: string | null;
-  date: Date;
+  date: string;
   published: boolean;
   author_id: string;
   reads: number;

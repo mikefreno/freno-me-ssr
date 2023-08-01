@@ -169,6 +169,11 @@ export default async function DynamicBlogPost({
               />
             </div>
           </div>
+          <div className="md:pl-24 flex md:justify-start justify-center italic">
+            Written {`${new Date(blog.date).toDateString()}`}
+            <br />
+            By Michael Freno
+          </div>
           <PostBodyClient body={blog.body} />
           <div className="mx-4 md:mx-8 lg:mx-12 pb-12">
             <Suspense
