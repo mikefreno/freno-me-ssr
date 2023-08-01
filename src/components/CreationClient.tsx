@@ -258,7 +258,9 @@ export default function CreationClient(props: { type: "projects" | "blog" }) {
       {showLink ? (
         <div className="flex justify-center mt-2">
           <Link
-            href={`${env.NEXT_PUBLIC_DOMAIN}/${props.type}/${titleRef.current?.value}`}
+            href={`${env.NEXT_PUBLIC_DOMAIN}/${
+              props.type
+            }/${titleRef.current?.value.replaceAll(" ", "_")}`}
             className="border-blue-500 bg-blue-400 hover:bg-blue-500 dark:bg-blue-700 dark:hover:bg-blue-800 dark:border-blue-700 rounded border text-white shadow-md  active:scale-90 transition-all duration-300 ease-in-out px-4 py-2"
           >
             Go to Post
