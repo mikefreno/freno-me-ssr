@@ -195,9 +195,7 @@ export default function EditingClient(props: {
               placeholder=" "
               onBlur={() => setPostTitle(titleRef.current?.value)}
               onChange={() => setPostTitle(titleRef.current?.value)}
-              defaultValue={
-                props.post.title ? props.post.title.replace("-+-", " ") : ""
-              }
+              defaultValue={props.post.title ? props.post.title : ""}
               className="bg-transparent underlinedInput w-full"
             />
             <span className="bar"></span>
