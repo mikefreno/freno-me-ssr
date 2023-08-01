@@ -29,7 +29,9 @@ export default async function DynamicBlogPost({
   params: { title: string };
 }) {
   const blogQuery = await fetch(
-    `${env.NEXT_PUBLIC_DOMAIN}/api/database/blog/by-title/${params.title}`,
+    `${
+      env.NEXT_PUBLIC_DOMAIN
+    }/api/database/blog/by-title/${params.title.replace("-+-", " ")}`,
     { method: "GET", cache: "no-store" }
   );
 
@@ -113,7 +115,7 @@ export default async function DynamicBlogPost({
               style={{ pointerEvents: "none" }}
             >
               <div className="z-10 font-light tracking-widest text-3xl">
-                {blog.title.replace("-+-", " ")}
+                {blog.title}
                 <div className="py-8 font-light tracking-widest text-xl">
                   {blog.subtitle}
                 </div>
