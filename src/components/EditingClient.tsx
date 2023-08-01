@@ -49,10 +49,7 @@ export default function EditingClient(props: {
       }
       const data = {
         id: props.post.id,
-        title:
-          titleRef.current.value.replace(" ", "-+-") !== props.post.title
-            ? titleRef.current.value.replace(" ", "-+-")
-            : null,
+        title: titleRef.current.value.replace(" ", "-+-"),
         subtitle:
           subtitleRef.current?.value !== props.post.subtitle
             ? subtitleRef.current?.value
