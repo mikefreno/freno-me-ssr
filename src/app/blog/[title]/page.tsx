@@ -4,24 +4,16 @@ import CommentIcon from "@/icons/CommentIcon";
 import { env } from "@/env.mjs";
 import Link from "next/link";
 import { API_RES_GetBlogWithComments } from "@/types/response-types";
+import Image from "next/image";
 import { cookies } from "next/headers";
 import SessionDependantLike from "@/components/SessionDependantLike";
 import CommentSection from "@/components/CommentSection";
 import { CommentReaction } from "@/types/model-types";
-import { Suspense } from "react";
+import { Suspense, useEffect } from "react";
 import LoadingSpinner from "@/components/LoadingSpinner";
-import Image from "next/image";
-import css from "highlight.js/lib/languages/css";
-import js from "highlight.js/lib/languages/javascript";
-import ts from "highlight.js/lib/languages/typescript";
-import { lowlight } from "lowlight";
 import PostBodyClient from "@/components/PostBodyClient";
 import { incrementReads } from "@/app/globalActions";
 import jwt, { JwtPayload } from "jsonwebtoken";
-
-lowlight.registerLanguage("css", css);
-lowlight.registerLanguage("js", js);
-lowlight.registerLanguage("ts", ts);
 
 export default async function DynamicBlogPost({
   params,
@@ -30,7 +22,10 @@ export default async function DynamicBlogPost({
 }) {
   const blogQuery = await fetch(
     `${env.NEXT_PUBLIC_DOMAIN}/api/database/blog/by-title/${params.title}`,
-    { method: "GET", cache: "no-store" }
+    {
+      method: "GET",
+      cache: "no-store",
+    }
   );
 
   const parsedQueryRes =
@@ -88,11 +83,11 @@ export default async function DynamicBlogPost({
     return (
       <>
         <div className="pt-[20vh] flex w-full justify-center text-4xl">
-          No project found!
+          No blog found!
         </div>
         <div className="flex justify-center pt-12">
           <Link
-            href="/blog"
+            href="/blogs"
             className="rounded border text-white shadow-md border-blue-500 bg-blue-400 hover:bg-blue-500 dark: dark:bg-blue-700 dark:hover:bg-blue-800 dark:border-blue-700 active:scale-90 transition-all duration-300 ease-in-out px-4 py-2"
           >
             Back to blog main page
@@ -104,11 +99,11 @@ export default async function DynamicBlogPost({
     incrementReads({ postID: blog.id, postType: "Blog" });
     return (
       <div className="select-none overflow-x-hidden">
-        <div className="z-30 overflow-hidden">
+        <div className="z-30">
           <div className="page-fade-in z-20 h-80 sm:h-96 md:h-[50vh] mx-auto">
             <div className="fixed w-full h-80 sm:h-96 md:h-[50vh] brightness-75 image-overlay">
               <Image
-                src={blog.banner_photo ? blog.banner_photo : "/bitcoin.jpg"}
+                src={blog.banner_photo ? blog.banner_photo : "/blueprint.jpg"}
                 alt="post-cover"
                 width={1000}
                 height={1000}
@@ -135,7 +130,7 @@ export default async function DynamicBlogPost({
             <div className="flex justify-center pt-4 md:-mb-8">
               <Link
                 className="border-blue-500 bg-blue-400 hover:bg-blue-500 dark:bg-blue-700 dark:hover:bg-blue-800 dark:border-blue-700 rounded border text-white shadow-md  active:scale-90 transition-all duration-300 ease-in-out px-4 py-2"
-                href={`${env.NEXT_PUBLIC_DOMAIN}/blog/edit/${blog.id}`}
+                href={`${env.NEXT_PUBLIC_DOMAIN}/blogs/edit/${blog.id}`}
               >
                 Edit
               </Link>
@@ -174,7 +169,7 @@ export default async function DynamicBlogPost({
             <br />
             By Michael Freno
           </div>
-          <PostBodyClient body={blog.body} />
+          <PostBodyClient body={blog.body} type="blog" />
           <div className="mx-4 md:mx-8 lg:mx-12 pb-12">
             <Suspense
               fallback={
