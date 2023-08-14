@@ -36,7 +36,7 @@ export default async function DynamicBlogPost({
   let privilegeLevel: "admin" | "user" | "anonymous" = "anonymous";
 
   function hasCodeBlock(str: string): boolean {
-    return str.includes("<Code>") && str.includes("</Code>");
+    return str.includes("<code") && str.includes("</code>");
   }
 
   try {
