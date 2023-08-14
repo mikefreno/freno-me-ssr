@@ -130,7 +130,7 @@ export default async function DynamicBlogPost({
             <div className="flex justify-center pt-4 md:-mb-8">
               <Link
                 className="border-blue-500 bg-blue-400 hover:bg-blue-500 dark:bg-blue-700 dark:hover:bg-blue-800 dark:border-blue-700 rounded border text-white shadow-md  active:scale-90 transition-all duration-300 ease-in-out px-4 py-2"
-                href={`${env.NEXT_PUBLIC_DOMAIN}/blogs/edit/${blog.id}`}
+                href={`${env.NEXT_PUBLIC_DOMAIN}/blog/edit/${blog.id}`}
               >
                 Edit
               </Link>
