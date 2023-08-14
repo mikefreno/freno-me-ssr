@@ -171,7 +171,7 @@ export default async function DynamicProjectPost({
             <br />
             By Michael Freno
           </div>
-          <PostBodyClient body={project.body} />
+          <PostBodyClient body={project.body} hasCodeBlock={true} />
           <div className="mx-4 md:mx-8 lg:mx-12 pb-12">
             <Suspense
               fallback={

@@ -34,6 +34,11 @@ export default async function DynamicBlogPost({
   let userID: string | null = null;
 
   let privilegeLevel: "admin" | "user" | "anonymous" = "anonymous";
+
+  function hasCodeBlock(str: string): boolean {
+    return str.includes("<Code>") && str.includes("</Code>");
+  }
+
   try {
     const currentUserIDCookie = cookies().get("userIDToken");
     if (currentUserIDCookie) {
@@ -78,6 +83,8 @@ export default async function DynamicBlogPost({
   const reactionMap = new Map<number, CommentReaction[]>(
     parsedQueryRes.reactionArray
   );
+
+  const containsCodeBlock = hasCodeBlock(blog.body);
 
   if (!blog) {
     return (
@@ -169,7 +176,7 @@ export default async function DynamicBlogPost({
             <br />
             By Michael Freno
           </div>
-          <PostBodyClient body={blog.body} type="blog" />
+          <PostBodyClient body={blog.body} hasCodeBlock={containsCodeBlock} />
           <div className="mx-4 md:mx-8 lg:mx-12 pb-12">
             <Suspense
               fallback={
