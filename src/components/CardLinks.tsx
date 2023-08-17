@@ -13,7 +13,7 @@ export default function CardLinks(props: {
   const [readLoading, setReadingLoading] = useState<boolean>(false);
   const [editLoading, setEditLoading] = useState<boolean>(false);
   return (
-    <div className="flex flex-col mx-auto content-between">
+    <div className="flex flex-col">
       <Link
         onClick={() => setReadingLoading(true)}
         href={`/${props.linkTarget}/${props.postTitle}`}
