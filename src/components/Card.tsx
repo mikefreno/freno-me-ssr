@@ -48,8 +48,8 @@ export default async function PostCard(props: {
               {props.post.title.replaceAll("_", " ")}
             </div>
           </div>
-          <div className="flex justify-around md:justify-between md:pl-2 pt-2 w-full md:pt-0 md:w-3/5">
-            <div>
+          <div className="flex justify-around md:justify-between md:pl-2 pt-2 w-full md:pt-0 md:w-1/3">
+            <div className="md:h-full my-auto">
               <p className="text-black text-sm whitespace-nowrap">
                 {props.post.total_comments || 0} Comments
               </p>
