@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import hljs from "highlight.js/lib/common";
+import hljs from "highlight.js";
 
 export default function PostBodyClient(props: {
   body: string;

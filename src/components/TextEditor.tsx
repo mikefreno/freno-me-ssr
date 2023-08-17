@@ -15,11 +15,15 @@ import React, { useCallback } from "react";
 import css from "highlight.js/lib/languages/css";
 import js from "highlight.js/lib/languages/javascript";
 import ts from "highlight.js/lib/languages/typescript";
+import ocaml from "highlight.js/lib/languages/ocaml";
+import rust from "highlight.js/lib/languages/rust";
 import { lowlight } from "lowlight";
 
 lowlight.registerLanguage("css", css);
 lowlight.registerLanguage("js", js);
 lowlight.registerLanguage("ts", ts);
+lowlight.registerLanguage("ocaml", ocaml);
+lowlight.registerLanguage("rust", rust);
 
 import CodeBlockComponent from "./CodeBlockComponent";
 
