@@ -246,7 +246,7 @@ export default function EditingClient(props: {
             postTitle={postTitle || props.post.title}
           />
 
-          <div className="md:-mx-36">
+          <div className="-mx-6 md:-mx-36">
             <TextEditor
               updateContent={setEditorContent}
               preSet={props.post.body}
