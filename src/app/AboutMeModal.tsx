@@ -16,7 +16,7 @@ export default function AboutMeModal({
           showing
             ? "fade-in flex"
             : "backdrop-brightness-100 backdrop-blur-0 -translate-x-full absolute"
-        } w-full h-screen justify-center overflow-scroll md:overflow-hidden pb-36 pt-24 md:pb-[20vh] md:pt-[15vh] opacity-0 backdrop-blur-sm backdrop-brightness-75`}
+        } w-full h-screen justify-center overflow-scroll pb-36 pt-24 md:pb-[20vh] md:pt-[10vh] opacity-0 backdrop-blur-sm backdrop-brightness-75`}
       >
         <div
           ref={aboutRef}
