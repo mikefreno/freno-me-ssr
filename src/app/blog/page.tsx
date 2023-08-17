@@ -94,7 +94,7 @@ export default async function Blog({
             }
           >
             {blogs && blogs.length > 0 ? (
-              <div className="mx-auto flex w-11/12 md:w-3/4 flex-col">
+              <div className="mx-auto flex w-11/12 flex-col">
                 <PostSorting
                   posts={blogs}
                   privilegeLevel={privilegeLevel}
