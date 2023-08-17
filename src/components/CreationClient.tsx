@@ -29,13 +29,13 @@ export default function CreationClient(props: { type: "projects" | "blog" }) {
   const autosaveRef = useRef<NodeJS.Timeout | null>(null);
 
   const autoSave = async () => {
-    if (titleRef.current) {
+    if (titleRef.current && editorContent !== "") {
       let bannerImageKey = "";
       if (bannerImage) {
         bannerImageKey = await AddImageToS3(
           bannerImage,
           titleRef.current!.value,
-          props.type == "blog" ? "blog" : "projects"
+          props.type
         );
       }
       const data = {
@@ -48,7 +48,7 @@ export default function CreationClient(props: { type: "projects" | "blog" }) {
       };
 
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_DOMAIN}/api/database/${
+        `/api/database/${
           props.type == "blog" ? "blog" : "project"
         }/manipulation`,
         { method: hasSaved ? "PATCH" : "POST", body: JSON.stringify(data) }
@@ -109,8 +109,8 @@ export default function CreationClient(props: { type: "projects" | "blog" }) {
       if (bannerImage) {
         bannerImageKey = await AddImageToS3(
           bannerImage,
-          titleRef.current!.value,
-          props.type == "blog" ? "blog" : "projects"
+          titleRef.current.value,
+          props.type
         );
       }
       const data = {
@@ -123,18 +123,16 @@ export default function CreationClient(props: { type: "projects" | "blog" }) {
       };
 
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_DOMAIN}/api/database/${props.type}/manipulation`,
+        `${env.NEXT_PUBLIC_DOMAIN}/api/database/${
+          props.type == "blog" ? "blog" : "project"
+        }/manipulation`,
         { method: "POST", body: JSON.stringify(data) }
       );
       if (res.status == 201) {
-        setHasSaved(true);
         showSaveTrigger();
-        setShowLink(true);
-      } else {
-        alert((await res.json()).error);
       }
+      setSubmitButtonLoading(false);
     }
-    setSubmitButtonLoading(false);
   };
 
   const removeImage = () => {

@@ -12,9 +12,13 @@ interface InputData {
 export async function POST(input: NextRequest) {
   const inputData = (await input.json()) as InputData;
   const { type, title, filename } = inputData;
-
+  const credentials = {
+    accessKeyId: env.AWS_ACCESS_KEY,
+    secretAccessKey: env.AWS_SECRET_KEY,
+  };
   const client = new S3Client({
     region: env.AWS_REGION,
+    credentials: credentials,
   });
   const Key = `${type}/${title}/${filename}`;
   const ext = /^.+\.([^.]+)$/.exec(filename);
@@ -24,7 +28,7 @@ export async function POST(input: NextRequest) {
     Key,
     ContentType: `image/${ext![1]}`,
   };
-
+  3;
   const command = new PutObjectCommand(s3params);
 
   const signedUrl = await getSignedUrl(client, command, { expiresIn: 120 });

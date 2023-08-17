@@ -25,7 +25,10 @@ export async function POST(input: NextRequest) {
     const inputData = (await input.json()) as POSTInputData;
     const { title, subtitle, body, banner_photo, published } = inputData;
     const userIDCookie = cookies().get("userIDToken");
-    const fullURL = env.NEXT_PUBLIC_AWS_BUCKET_STRING + banner_photo;
+    let fullURL = "";
+    if (banner_photo !== null) {
+      fullURL = env.NEXT_PUBLIC_AWS_BUCKET_STRING + banner_photo;
+    }
 
     if (userIDCookie) {
       const author_id = userIDCookie.value;
@@ -38,12 +41,16 @@ export async function POST(input: NextRequest) {
         title,
         subtitle,
         body,
-        banner_photo ? fullURL : null,
+        fullURL !== "" ? fullURL : null,
         published,
         author_id,
       ];
-      const results = await conn.execute(query, params);
-      return NextResponse.json({ data: results.insertId }, { status: 201 });
+      try {
+        const results = await conn.execute(query, params);
+        return NextResponse.json({ data: results.insertId }, { status: 201 });
+      } catch (e) {
+        console.log(e);
+      }
     }
   } catch (e) {
     return NextResponse.json({ error: e }, { status: 400 });

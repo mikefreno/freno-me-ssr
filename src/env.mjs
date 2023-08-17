@@ -21,6 +21,8 @@ export const env = createEnv({
     EMAIL_FROM: z.string().min(1),
     SENDINBLUE_KEY: z.string().min(1),
     AWS_S3_BUCKET_NAME: z.string().min(1),
+    AWS_ACCESS_KEY: z.string().min(1),
+    AWS_SECRET_KEY: z.string().min(1),
   },
 
   /**
@@ -57,6 +59,8 @@ export const env = createEnv({
     EMAIL_FROM: process.env.EMAIL_FROM,
     SENDINBLUE_KEY: process.env.SENDINBLUE_KEY,
     AWS_S3_BUCKET_NAME: process.env.AWS_S3_BUCKET_NAME,
+    AWS_ACCESS_KEY: process.env.MY_AWS_ACCESS_KEY,
+    AWS_SECRET_KEY: process.env.MY_AWS_SECRET_KEY,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation.
