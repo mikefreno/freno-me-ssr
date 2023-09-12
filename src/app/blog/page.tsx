@@ -24,7 +24,10 @@ export default async function Blog({
       `${env.NEXT_PUBLIC_DOMAIN}/api/database/blog/privilege-dependant/${
         userIDCookie ? userIDCookie.value : "undefined"
       }`,
-      { method: "GET", next: { revalidate: 60 } }
+      {
+        method: "GET",
+        cache: "no-store",
+      }
     );
 
     const resData =
