@@ -80,9 +80,6 @@ dependencies:
   eslint-config-next:
     specifier: 13.4.9
     version: 13.4.9(eslint@8.44.0)(typescript@5.1.6)
-  fslightbox-react:
-    specifier: ^1.7.6
-    version: 1.7.6(prop-types@15.8.1)(react-dom@18.2.0)(react@18.2.0)
   highlight.js:
     specifier: ^11.8.0
     version: 11.8.0
@@ -131,6 +128,9 @@ dependencies:
   uuid:
     specifier: ^9.0.0
     version: 9.0.0
+  yet-another-react-lightbox:
+    specifier: ^3.12.2
+    version: 3.12.2(react-dom@18.2.0)(react@18.2.0)
   zod:
     specifier: ^3.21.4
     version: 3.21.4
@@ -4979,18 +4979,6 @@ packages:
     requiresBuild: true
     optional: true
 
-  /fslightbox-react@1.7.6(prop-types@15.8.1)(react-dom@18.2.0)(react@18.2.0):
-    resolution: {integrity: sha512-7LN2GZRLHo2vZGKdH+BZDJUoUDkCRCLlZ5hOwtLtZplmGZQ9nqzpG54cTax7XNjbYGTWLT6BHdMiL5zOEhiRlA==}
-    peerDependencies:
-      prop-types: '>=15.6.2'
-      react: '>=16.8.0'
-      react-dom: '>=16.8.0'
-    dependencies:
-      prop-types: 15.8.1
-      react: 18.2.0
-      react-dom: 18.2.0(react@18.2.0)
-    dev: false
-
   /fstream@1.0.12:
     resolution: {integrity: sha512-WvJ193OHa0GHPEL+AycEJgxvBEwyfRkN1vhjca23OaPVMCaLCXTd5qAu82AjTcgP1UJmytkOKb63Ypde7raDIg==}
     engines: {node: '>=0.6'}
@@ -7519,6 +7507,17 @@ packages:
       string-width: 1.0.2
       window-size: 0.1.4
       y18n: 3.2.2
+    dev: false
+
+  /yet-another-react-lightbox@3.12.2(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-sFypE74Rjjl7WbzKSrGeZ7lbcgduOam/BKj8kqzx/ciC4dJyYdE1SG0dur9oDq/gZiY3VGJh+PYGbq6ZwmPFmA==}
+    engines: {node: '>=14'}
+    peerDependencies:
+      react: '>=16.8.0'
+      react-dom: '>=16.8.0'
+    dependencies:
+      react: 18.2.0
+      react-dom: 18.2.0(react@18.2.0)
     dev: false
 
   /yocto-queue@0.1.0:

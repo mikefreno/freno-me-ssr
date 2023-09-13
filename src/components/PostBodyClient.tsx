@@ -2,14 +2,16 @@
 
 import { useEffect, useState, useRef } from "react";
 import hljs from "highlight.js";
-import FsLightbox from "fslightbox-react";
+import Lightbox from "yet-another-react-lightbox";
+import "yet-another-react-lightbox/styles.css";
+import Zoom from "yet-another-react-lightbox/plugins/zoom";
 
 export default function PostBodyClient(props: {
   body: string;
   hasCodeBlock: boolean;
   banner_photo: string | null;
 }) {
-  const [attachmentArray, setAttachmentArray] = useState<string[]>([]);
+  const [attachmentArray, setAttachmentArray] = useState<{ src: string }[]>([]);
   const [showingLightbox, setShowingLightbox] = useState<boolean>(false);
   const contentRef = useRef<HTMLDivElement>(null);
 
@@ -28,19 +30,18 @@ export default function PostBodyClient(props: {
     if (imgTags && imgTags.length > 0) {
       let attachments = [];
       for (let i = 0; i < imgTags.length; i++) {
-        attachments.push(imgTags[i].getAttribute("src"));
+        let src = imgTags[i].getAttribute("src");
+        if (src) {
+          attachments.push({ src: src });
+        }
       }
 
       if (props.banner_photo) {
-        attachments.push(props.banner_photo);
+        attachments.push({ src: props.banner_photo });
       }
 
       console.log("Attachments: ", attachments);
-      setAttachmentArray(
-        attachments.filter(
-          (attachment): attachment is string => attachment !== null,
-        ),
-      );
+      setAttachmentArray(attachments);
     }
   }, [props.banner_photo, props.body]);
 
@@ -80,10 +81,11 @@ export default function PostBodyClient(props: {
           />
         </div>
       </div>
-      <FsLightbox
-        type="image"
-        toggler={showingLightbox}
-        sources={attachmentArray.filter((img) => img !== null)}
+      <Lightbox
+        open={showingLightbox}
+        close={() => setShowingLightbox(false)}
+        slides={attachmentArray}
+        plugins={[Zoom]}
       />
     </>
   );
