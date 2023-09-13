@@ -1,6 +1,9 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+ol {
+    margin-left: 20px;
+}
 .center-box-growth {
   height: 0%;
   animation: box_grow 1.5s forwards;

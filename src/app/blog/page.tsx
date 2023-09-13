@@ -1,4 +1,3 @@
-import Card from "@/components/Card";
 import { env } from "@/env.mjs";
 import { API_RES_GetPrivilegeDependantBlogs } from "@/types/response-types";
 import { cookies } from "next/headers";

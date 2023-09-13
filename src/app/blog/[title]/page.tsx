@@ -1,5 +1,4 @@
 import "@/styles/content.scss";
-
 import CommentIcon from "@/icons/CommentIcon";
 import { env } from "@/env.mjs";
 import Link from "next/link";
@@ -9,7 +8,7 @@ import { cookies } from "next/headers";
 import SessionDependantLike from "@/components/SessionDependantLike";
 import CommentSection from "@/components/CommentSection";
 import { CommentReaction } from "@/types/model-types";
-import { Suspense, useEffect } from "react";
+import { Suspense } from "react";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import PostBodyClient from "@/components/PostBodyClient";
 import { incrementReads } from "@/app/globalActions";
@@ -25,7 +24,7 @@ export default async function DynamicBlogPost({
     {
       method: "GET",
       cache: "no-store",
-    }
+    },
   );
 
   const parsedQueryRes =
@@ -61,9 +60,9 @@ export default async function DynamicBlogPost({
                 } else {
                   resolve(decoded as JwtPayload);
                 }
-              }
+              },
             );
-          }
+          },
         );
         if (decoded) {
           userID = decoded.id;
@@ -77,11 +76,11 @@ export default async function DynamicBlogPost({
 
   const comments = parsedQueryRes.comments;
   const topLevelComments = parsedQueryRes.comments.filter(
-    (comment) => comment.parent_comment_id == null
+    (comment) => comment.parent_comment_id == null,
   );
   const likes = parsedQueryRes.likes;
   const reactionMap = new Map<number, CommentReaction[]>(
-    parsedQueryRes.reactionArray
+    parsedQueryRes.reactionArray,
   );
 
   const containsCodeBlock = hasCodeBlock(blog.body);
@@ -176,7 +175,11 @@ export default async function DynamicBlogPost({
             <br />
             By Michael Freno
           </div>
-          <PostBodyClient body={blog.body} hasCodeBlock={containsCodeBlock} />
+          <PostBodyClient
+            body={blog.body}
+            hasCodeBlock={containsCodeBlock}
+            banner_photo={blog.banner_photo}
+          />
           <div className="mx-4 md:mx-8 lg:mx-12 pb-12">
             <Suspense
               fallback={

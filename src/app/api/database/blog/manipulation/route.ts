@@ -47,6 +47,7 @@ export async function POST(input: NextRequest) {
       return NextResponse.json({ data: results.insertId }, { status: 201 });
     }
   } catch (e) {
+    console.error(e)
     return NextResponse.json({ error: e }, { status: 400 });
   }
 }
@@ -60,6 +61,7 @@ export async function PATCH(input: NextRequest) {
     const results = await conn.execute(query, params);
     return NextResponse.json({ data: results.insertId }, { status: 201 });
   } catch (e) {
+    console.error(e)
     return NextResponse.json({ error: e }, { status: 400 });
   }
 }

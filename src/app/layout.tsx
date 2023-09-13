@@ -1,7 +1,5 @@
-import Navbar from "@/components/Navbar";
 import "@/styles/globals.css";
 import "@/styles/content.scss";
-import { Analytics } from "@vercel/analytics/react";
 import { Source_Code_Pro } from "next/font/google";
 import NextTopLoader from "nextjs-toploader";
 
@@ -26,7 +24,6 @@ export default function RootLayout({
       >
         <NextTopLoader showSpinner={false} color="#3b82f6" />
         {children}
-        <Analytics />
       </body>
     </html>
   );

@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import { env } from "@/env.mjs";
 import { ConnectionFactory } from "@/app/api/database/ConnectionFactory";
 import { Blog, Comment, CommentReaction } from "@/types/model-types";
 

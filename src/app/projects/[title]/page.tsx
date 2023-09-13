@@ -9,7 +9,7 @@ import { cookies } from "next/headers";
 import SessionDependantLike from "@/components/SessionDependantLike";
 import CommentSection from "@/components/CommentSection";
 import { CommentReaction } from "@/types/model-types";
-import { Suspense, useEffect } from "react";
+import { Suspense } from "react";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import PostBodyClient from "@/components/PostBodyClient";
 import { incrementReads } from "@/app/globalActions";
@@ -25,7 +25,7 @@ export default async function DynamicProjectPost({
     {
       method: "GET",
       cache: "no-store",
-    }
+    },
   );
 
   const parsedQueryRes =
@@ -56,9 +56,9 @@ export default async function DynamicProjectPost({
                 } else {
                   resolve(decoded as JwtPayload);
                 }
-              }
+              },
             );
-          }
+          },
         );
         if (decoded) {
           userID = decoded.id;
@@ -72,11 +72,11 @@ export default async function DynamicProjectPost({
 
   const comments = parsedQueryRes.comments;
   const topLevelComments = parsedQueryRes.comments.filter(
-    (comment) => comment.parent_comment_id == null
+    (comment) => comment.parent_comment_id == null,
   );
   const likes = parsedQueryRes.likes;
   const reactionMap = new Map<number, CommentReaction[]>(
-    parsedQueryRes.reactionArray
+    parsedQueryRes.reactionArray,
   );
 
   if (!project) {
@@ -171,7 +171,11 @@ export default async function DynamicProjectPost({
             <br />
             By Michael Freno
           </div>
-          <PostBodyClient body={project.body} hasCodeBlock={true} />
+          <PostBodyClient
+            body={project.body}
+            hasCodeBlock={true}
+            banner_photo={project.banner_photo}
+          />
           <div className="mx-4 md:mx-8 lg:mx-12 pb-12">
             <Suspense
               fallback={
