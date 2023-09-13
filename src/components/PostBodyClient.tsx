@@ -81,6 +81,7 @@ export default function PostBodyClient(props: {
         </div>
       </div>
       <FsLightbox
+        type="image"
         toggler={showingLightbox}
         sources={attachmentArray.filter((img) => img !== null)}
       />
