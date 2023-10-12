@@ -3,7 +3,6 @@ import "@/styles/content.scss";
 import CommentIcon from "@/icons/CommentIcon";
 import { env } from "@/env.mjs";
 import Link from "next/link";
-import { API_RES_GetProjectWithComments } from "@/types/response-types";
 import Image from "next/image";
 import { cookies } from "next/headers";
 import SessionDependantLike from "@/components/SessionDependantLike";
@@ -19,7 +18,7 @@ import LoadingSpinner from "@/components/LoadingSpinner";
 import PostBodyClient from "@/components/PostBodyClient";
 import { incrementReads } from "@/app/globalActions";
 import jwt, { JwtPayload } from "jsonwebtoken";
-import { ConnectionFactory } from "@/app/api/database/ConnectionFactory";
+import { ConnectionFactory } from "@/app/utils";
 
 function hasCodeBlock(str: string): boolean {
   return str.includes("<code") && str.includes("</code>");

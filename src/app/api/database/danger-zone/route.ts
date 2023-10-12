@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { ConnectionFactory } from "../ConnectionFactory";
+import { ConnectionFactory } from "@/app/utils";
 import { env } from "@/env.mjs";
 
 interface InputData {
@@ -116,7 +116,7 @@ export async function POST(input: NextRequest) {
       .then(() => {
         return NextResponse.json(
           { message: "project initialized" },
-          { status: 201 }
+          { status: 201 },
         );
       })
       .catch((e) => {
@@ -125,6 +125,8 @@ export async function POST(input: NextRequest) {
   } else {
     return NextResponse.json({ message: "password err" }, { status: 401 });
   }
+
+  return NextResponse.json({ error: "unknown" }, { status: 401 });
 }
 
 export async function DELETE(input: NextRequest) {
@@ -152,7 +154,7 @@ export async function DELETE(input: NextRequest) {
       .then(() => {
         return NextResponse.json(
           { message: tables ? "tables dropped" : "table dropped" },
-          { status: 201 }
+          { status: 201 },
         );
       })
       .catch((e) => {
@@ -161,4 +163,5 @@ export async function DELETE(input: NextRequest) {
   } else {
     return NextResponse.json({ message: "password err" }, { status: 401 });
   }
+  return NextResponse.json({ error: "unknown" }, { status: 401 });
 }

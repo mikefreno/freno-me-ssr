@@ -1,14 +1,14 @@
 "use server";
-import { ConnectionFactory } from "@/app/api/database/ConnectionFactory";
 import { hashPassword } from "@/app/api/passwordHashing";
 import { env } from "@/env.mjs";
 import { cookies } from "next/headers";
 import jwt, { JwtPayload } from "jsonwebtoken";
+import { ConnectionFactory } from "@/app/utils";
 
 export async function passwordReset(
   newPassword: string,
   newPasswordConfirmation: string,
-  token: string
+  token: string,
 ) {
   if (newPassword == newPasswordConfirmation) {
     try {

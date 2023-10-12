@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { ConnectionFactory } from "../../ConnectionFactory";
 import { cookies } from "next/headers";
 import { env } from "@/env.mjs";
+import { ConnectionFactory } from "@/app/utils";
 
 interface POSTInputData {
   title: string;
@@ -46,6 +46,7 @@ export async function POST(input: NextRequest) {
       console.log(results);
       return NextResponse.json({ data: results.insertId }, { status: 201 });
     }
+    return NextResponse.json({ error: "no cookie" }, { status: 401 });
   } catch (e) {
     console.error(e);
     return NextResponse.json({ error: e }, { status: 400 });

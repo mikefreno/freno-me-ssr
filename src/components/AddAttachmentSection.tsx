@@ -31,7 +31,11 @@ export default function AddAttachmentSection(props: {
       if (props.postTitle) {
         acceptedFiles.forEach(async (file: Blob) => {
           setImages((prevImages) => [...prevImages, file]);
-          const key = await AddImageToS3(file, props.postTitle!, props.type);
+          const key = (await AddImageToS3(
+            file,
+            props.postTitle!,
+            props.type,
+          )) as string;
           setNewImageHolderKeys((prevKeys) => [...prevKeys, key]);
           const reader = new FileReader();
           reader.onload = () => {
@@ -46,7 +50,7 @@ export default function AddAttachmentSection(props: {
         });
       }
     },
-    [props.postTitle, props.type]
+    [props.postTitle, props.type],
   );
 
   const removeImage = async (index: number, key: string) => {
@@ -63,10 +67,10 @@ export default function AddAttachmentSection(props: {
       });
       console.log(res.json());
       setImages((prevImages) =>
-        prevImages.filter((image, i) => i !== index - imageHolder.length)
+        prevImages.filter((image, i) => i !== index - imageHolder.length),
       );
       setImageHolder((prevHeldImages) =>
-        prevHeldImages.filter((image, i) => i !== index)
+        prevHeldImages.filter((image, i) => i !== index),
       );
     }
   };
@@ -74,7 +78,7 @@ export default function AddAttachmentSection(props: {
   const removeNewImage = async (index: number, key: string) => {
     setImages((prevImages) => prevImages.filter((image, i) => i !== index));
     setNewImageHolder((prevHeldImages) =>
-      prevHeldImages.filter((image, i) => i !== index)
+      prevHeldImages.filter((image, i) => i !== index),
     );
     const res = await fetch("/api/s3/simpleDeleteImage", {
       method: "POST",
@@ -87,7 +91,7 @@ export default function AddAttachmentSection(props: {
   const copyToClipboard = async (key: string) => {
     try {
       await navigator.clipboard.writeText(
-        env.NEXT_PUBLIC_AWS_BUCKET_STRING + key
+        env.NEXT_PUBLIC_AWS_BUCKET_STRING + key,
       );
       console.log("Text copied to clipboard");
     } catch (err) {

@@ -1,5 +1,5 @@
 import { User } from "@/types/model-types";
-import { ConnectionFactory } from "@/app/api/database/ConnectionFactory";
+import { ConnectionFactory } from "@/app/utils";
 import { NextResponse } from "next/server";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { env } from "@/env.mjs";
@@ -7,7 +7,7 @@ import { signOut } from "@/app/globalActions";
 
 export async function GET(
   request: Request,
-  context: { params: { id: string } }
+  context: { params: { id: string } },
 ) {
   if (context.params.id !== "undefined") {
     try {
@@ -21,7 +21,7 @@ export async function GET(
               resolve(decoded as JwtPayload);
             }
           });
-        }
+        },
       );
 
       if (decoded) {
@@ -42,7 +42,7 @@ export async function GET(
                 provider: user.provider,
                 hasPassword: !!user.password_hash,
               },
-              { status: 202 }
+              { status: 202 },
             );
           }
         }

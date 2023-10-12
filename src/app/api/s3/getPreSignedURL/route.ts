@@ -36,5 +36,6 @@ export async function POST(input: NextRequest) {
     return NextResponse.json({ uploadURL: signedUrl, key: Key });
   } catch (e) {
     console.log(e);
+    return NextResponse.json({ error: e }, { status: 400 });
   }
 }

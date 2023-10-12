@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
-import { ConnectionFactory } from "../../ConnectionFactory";
+import { ConnectionFactory } from "@/app/utils";
 
 export async function GET(
   request: Request,
-  context: { params: { commentID: string } }
+  context: { params: { commentID: string } },
 ) {
   const commentID = context.params.commentID;
   const conn = ConnectionFactory();
@@ -12,6 +12,6 @@ export async function GET(
   const commentResults = await conn.execute(commentQuery, commentParams);
   return NextResponse.json(
     { commentReactions: commentResults.rows },
-    { status: 202 }
+    { status: 202 },
   );
 }

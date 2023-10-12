@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
-import { ConnectionFactory } from "../../../database/ConnectionFactory";
 import { v4 as uuidV4 } from "uuid";
 import { env } from "@/env.mjs";
 import { cookies } from "next/headers";
 import { User } from "@/types/model-types";
 import jwt from "jsonwebtoken";
+import { ConnectionFactory } from "@/app/utils";
 
 export async function GET(request: NextRequest) {
   const params = request.nextUrl.searchParams;
@@ -32,7 +32,7 @@ export async function GET(request: NextRequest) {
         headers: {
           Authorization: `Bearer ${access_token}`,
         },
-      }
+      },
     );
 
     const userData = await userResponse.json();
@@ -53,7 +53,7 @@ export async function GET(request: NextRequest) {
         env.JWT_SECRET_KEY,
         {
           expiresIn: 60 * 60 * 24 * 14, // expires in 14 days
-        }
+        },
       );
       cookies().set({
         name: "userIDToken",
@@ -85,6 +85,12 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.redirect(`${env.NEXT_PUBLIC_DOMAIN}/account`);
   } else {
-    console.log("no code on callback");
+    return NextResponse.json(
+      JSON.stringify({
+        success: false,
+        message: `authentication failed: no code on callback`,
+      }),
+      { status: 401, headers: { "content-type": "application/json" } },
+    );
   }
 }

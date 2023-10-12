@@ -1,4 +1,4 @@
-import { ConnectionFactory } from "@/app/api/database/ConnectionFactory";
+import { ConnectionFactory } from "@/app/utils";
 import { NextRequest, NextResponse } from "next/server";
 
 interface InputData {
@@ -9,7 +9,7 @@ interface InputData {
 
 export async function POST(
   input: NextRequest,
-  context: { params: { type: string; post_id: string } }
+  context: { params: { type: string; post_id: string } },
 ) {
   const data = (await input.json()) as InputData;
   const { body, parent_comment_id, commenter_id } = data;

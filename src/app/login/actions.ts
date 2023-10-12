@@ -1,17 +1,17 @@
 "use server";
 
 import { env } from "@/env.mjs";
-import { ConnectionFactory } from "@/app/api/database/ConnectionFactory";
 import { User } from "@/types/model-types";
 import { checkPassword, hashPassword } from "../api/passwordHashing";
 import { cookies } from "next/headers";
 import { v4 as uuidV4 } from "uuid";
 import jwt from "jsonwebtoken";
+import { ConnectionFactory } from "../utils";
 
 export async function emailRegistration(
   email: string,
   password: string,
-  passwordConfirmation: string
+  passwordConfirmation: string,
 ) {
   if (email && password && passwordConfirmation) {
     if (password == passwordConfirmation) {
@@ -43,7 +43,7 @@ export async function emailRegistration(
 export async function emailPasswordLogin(
   email: string,
   password: string,
-  rememberMe: boolean
+  rememberMe: boolean,
 ) {
   if (email && password) {
     const conn = ConnectionFactory();

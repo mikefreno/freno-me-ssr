@@ -1,8 +1,7 @@
 import { S3Client, DeleteObjectCommand } from "@aws-sdk/client-s3";
 import { NextRequest } from "next/dist/server/web/spec-extension/request";
 import { NextResponse } from "next/server";
-
-import { ConnectionFactory } from "../../database/ConnectionFactory";
+import { ConnectionFactory } from "@/app/utils";
 import { env } from "@/env.mjs";
 
 interface InputData {
@@ -31,6 +30,6 @@ export async function POST(input: NextRequest) {
   const conn = ConnectionFactory();
   const query = `UPDATE ${type} SET attachments = ? WHERE id = ?`;
   const dbparams = [newAttachmentString, id];
-  const results = await conn.execute(query, dbparams);
+  await conn.execute(query, dbparams);
   return NextResponse.json(res);
 }

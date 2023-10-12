@@ -8,12 +8,12 @@ import { PostWithCommentsAndLikes } from "@/types/model-types";
 import PostSortingSelect from "@/components/PostSortingSelect";
 import PostSorting from "@/components/PostSorting";
 import jwt, { JwtPayload } from "jsonwebtoken";
-import { ConnectionFactory } from "../api/database/ConnectionFactory";
+import { ConnectionFactory, getUserIDCookieData } from "../utils";
 
 export default async function Projects() {
   let privilegeLevel: "anonymous" | "admin" | "user" = "anonymous";
   try {
-    let cookie = cookies().get("userIDToken");
+    let cookie = await getUserIDCookieData();
     if (cookie && cookie.value) {
       const decoded = await new Promise<JwtPayload | undefined>(
         (resolve, _) => {

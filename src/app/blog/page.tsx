@@ -7,13 +7,13 @@ import LoadingSpinner from "@/components/LoadingSpinner";
 import { Blog, PostWithCommentsAndLikes } from "@/types/model-types";
 import PostSortingSelect from "@/components/PostSortingSelect";
 import PostSorting from "@/components/PostSorting";
-import { ConnectionFactory } from "../api/database/ConnectionFactory";
 import jwt, { JwtPayload } from "jsonwebtoken";
+import { ConnectionFactory, getUserIDCookieData } from "../utils";
 
 export default async function Blog() {
   let privilegeLevel: "anonymous" | "admin" | "user" = "anonymous";
   try {
-    let cookie = cookies().get("userIDToken");
+    let cookie = await getUserIDCookieData();
     if (cookie && cookie.value) {
       const decoded = await new Promise<JwtPayload | undefined>(
         (resolve, _) => {

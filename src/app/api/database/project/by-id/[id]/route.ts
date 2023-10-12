@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
-import { ConnectionFactory } from "@/app/api/database/ConnectionFactory";
+import { ConnectionFactory } from "@/app/utils";
 
 export async function GET(
   request: NextRequest,
-  context: { params: { id: string } }
+  context: { params: { id: string } },
 ) {
   try {
     const conn = ConnectionFactory();
@@ -15,14 +15,14 @@ export async function GET(
         {
           project: results.rows[0],
         },
-        { status: 200 }
+        { status: 200 },
       );
     } else {
       return NextResponse.json(
         {
           project: [],
         },
-        { status: 204 }
+        { status: 204 },
       );
     }
   } catch (e) {

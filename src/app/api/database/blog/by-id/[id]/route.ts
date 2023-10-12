@@ -1,11 +1,9 @@
+import { ConnectionFactory } from "@/app/utils";
 import { NextRequest, NextResponse } from "next/server";
-import { env } from "@/env.mjs";
-import { ConnectionFactory } from "@/app/api/database/ConnectionFactory";
-import { Blog, Comment, CommentReaction } from "@/types/model-types";
 
 export async function GET(
   request: NextRequest,
-  context: { params: { id: string } }
+  context: { params: { id: string } },
 ) {
   try {
     const conn = ConnectionFactory();
@@ -17,14 +15,14 @@ export async function GET(
         {
           blog: blogResults.rows[0],
         },
-        { status: 200 }
+        { status: 200 },
       );
     } else {
       return NextResponse.json(
         {
           blog: [],
         },
-        { status: 204 }
+        { status: 204 },
       );
     }
   } catch (e) {

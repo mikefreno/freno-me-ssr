@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { ConnectionFactory } from "../../ConnectionFactory";
+import { ConnectionFactory } from "@/app/utils";
 import { cookies } from "next/headers";
 import { env } from "@/env.mjs";
 
@@ -52,6 +52,7 @@ export async function POST(input: NextRequest) {
         console.log(e);
       }
     }
+    return NextResponse.json({ error: "no cookie" }, { status: 401 });
   } catch (e) {
     return NextResponse.json({ error: e }, { status: 400 });
   }

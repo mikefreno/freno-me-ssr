@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { ConnectionFactory } from "../../database/ConnectionFactory";
+import { ConnectionFactory } from "@/app/utils";
 
 export async function GET() {
   const conn = ConnectionFactory();

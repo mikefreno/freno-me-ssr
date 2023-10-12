@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { env } from "@/env.mjs";
-import { ConnectionFactory } from "@/app/api/database/ConnectionFactory";
-import { Blog, Project } from "@/types/model-types";
+import { ConnectionFactory } from "@/app/utils";
+import { Project } from "@/types/model-types";
 
 export async function GET(
   request: NextRequest,
-  context: { params: { title: string } }
+  context: { params: { title: string } },
 ) {
   try {
     let privilegeLevel = "anonymous";
@@ -29,7 +29,7 @@ export async function GET(
       const projectLikeQuery = "SELECT * FROM ProjectLike WHERE project_id = ?";
       const projectLikeResults = await conn.execute(
         projectLikeQuery,
-        commentParams
+        commentParams,
       );
       return NextResponse.json(
         {
@@ -38,7 +38,7 @@ export async function GET(
           likes: projectLikeResults.rows,
           privilegeLevel: privilegeLevel,
         },
-        { status: 200 }
+        { status: 200 },
       );
     }
 
@@ -49,7 +49,7 @@ export async function GET(
         likes: [],
         privilegeLevel: privilegeLevel,
       },
-      { status: 200 }
+      { status: 200 },
     );
   } catch (e) {
     return NextResponse.json({ error: e }, { status: 400 });

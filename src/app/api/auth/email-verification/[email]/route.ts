@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { env } from "@/env.mjs";
-import { ConnectionFactory } from "@/app/api/database/ConnectionFactory";
+import { ConnectionFactory } from "@/app/utils";
 
 export async function GET(
   request: NextRequest,
-  context: { params: { email: string } }
+  context: { params: { email: string } },
 ) {
   const secretKey = env.JWT_SECRET_KEY;
   const params = request.nextUrl.searchParams;
@@ -26,10 +26,17 @@ export async function GET(
             success: true,
             message: "email verification success, you may close this window",
           }),
-          { status: 202, headers: { "content-type": "application/json" } }
+          { status: 202, headers: { "content-type": "application/json" } },
         );
       }
     }
+    return NextResponse.json(
+      JSON.stringify({
+        success: false,
+        message: `authentication failed: no token`,
+      }),
+      { status: 401, headers: { "content-type": "application/json" } },
+    );
   } catch (err) {
     console.error("Invalid token:", err);
     return new NextResponse(
@@ -37,7 +44,7 @@ export async function GET(
         success: false,
         message: "authentication failed: Invalid token",
       }),
-      { status: 401, headers: { "content-type": "application/json" } }
+      { status: 401, headers: { "content-type": "application/json" } },
     );
   }
 }

@@ -1,4 +1,4 @@
-import { ConnectionFactory } from "@/app/api/database/ConnectionFactory";
+import { ConnectionFactory } from "@/app/utils";
 import { NextResponse } from "next/server";
 
 export async function GET(

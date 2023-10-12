@@ -1,4 +1,4 @@
-import { ConnectionFactory } from "@/app/api/database/ConnectionFactory";
+import { ConnectionFactory } from "@/app/utils";
 import { NextRequest, NextResponse } from "next/server";
 
 interface InputData {

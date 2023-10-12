@@ -32,11 +32,11 @@ export default function CreationClient(props: { type: "projects" | "blog" }) {
     if (titleRef.current && editorContent !== "") {
       let bannerImageKey = "";
       if (bannerImage) {
-        bannerImageKey = await AddImageToS3(
+        bannerImageKey = (await AddImageToS3(
           bannerImage,
           titleRef.current!.value,
-          props.type
-        );
+          props.type,
+        )) as string;
       }
       const data = {
         title: titleRef.current.value.replaceAll(" ", "_"),
@@ -51,7 +51,7 @@ export default function CreationClient(props: { type: "projects" | "blog" }) {
         `/api/database/${
           props.type == "blog" ? "blog" : "project"
         }/manipulation`,
-        { method: hasSaved ? "PATCH" : "POST", body: JSON.stringify(data) }
+        { method: hasSaved ? "PATCH" : "POST", body: JSON.stringify(data) },
       );
       if (res.status == 201) {
         setHasSaved(true);
@@ -74,9 +74,12 @@ export default function CreationClient(props: { type: "projects" | "blog" }) {
   };
 
   useEffect(() => {
-    autosaveRef.current = setInterval(() => {
-      autoSave();
-    }, 2 * 60 * 1000);
+    autosaveRef.current = setInterval(
+      () => {
+        autoSave();
+      },
+      2 * 60 * 1000,
+    );
 
     return () => {
       if (autosaveRef.current) {
@@ -107,11 +110,11 @@ export default function CreationClient(props: { type: "projects" | "blog" }) {
     if (titleRef.current) {
       let bannerImageKey = "";
       if (bannerImage) {
-        bannerImageKey = await AddImageToS3(
+        bannerImageKey = (await AddImageToS3(
           bannerImage,
           titleRef.current.value,
-          props.type
-        );
+          props.type,
+        )) as string;
       }
       const data = {
         title: titleRef.current.value.replaceAll(" ", "_"),
@@ -126,7 +129,7 @@ export default function CreationClient(props: { type: "projects" | "blog" }) {
         `${env.NEXT_PUBLIC_DOMAIN}/api/database/${
           props.type == "blog" ? "blog" : "project"
         }/manipulation`,
-        { method: "POST", body: JSON.stringify(data) }
+        { method: "POST", body: JSON.stringify(data) },
       );
       if (res.status == 201) {
         showSaveTrigger();

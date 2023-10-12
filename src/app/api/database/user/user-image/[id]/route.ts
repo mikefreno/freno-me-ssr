@@ -1,12 +1,11 @@
-import { ConnectionFactory } from "@/app/api/database/ConnectionFactory";
+import { ConnectionFactory } from "@/app/utils";
 import { env } from "@/env.mjs";
 import { changeImageInput } from "@/types/input-types";
-import { User } from "@/types/model-types";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(
   request: Request,
-  context: { params: { id: string } }
+  context: { params: { id: string } },
 ) {
   const conn = ConnectionFactory();
   const query = "SELECT * FROM User WHERE id = ?";
@@ -16,7 +15,7 @@ export async function GET(
 }
 export async function POST(
   request: NextRequest,
-  context: { params: { id: string } }
+  context: { params: { id: string } },
 ) {
   const inputData = (await request.json()) as changeImageInput;
   const { imageURL } = inputData;

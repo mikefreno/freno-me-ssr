@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
-import { ConnectionFactory } from "../../../database/ConnectionFactory";
 import { v4 as uuidV4 } from "uuid";
 import { env } from "@/env.mjs";
 import { cookies } from "next/headers";
 import { User } from "@/types/model-types";
 import jwt from "jsonwebtoken";
+import { ConnectionFactory } from "@/app/utils";
 
 export async function GET(request: NextRequest) {
   const params = request.nextUrl.searchParams;
@@ -23,7 +23,7 @@ export async function GET(request: NextRequest) {
           client_secret: process.env.GITHUB_CLIENT_SECRET,
           code,
         }),
-      }
+      },
     );
     const { access_token } = await tokenResponse.json();
 
@@ -46,7 +46,7 @@ export async function GET(request: NextRequest) {
         env.JWT_SECRET_KEY,
         {
           expiresIn: 60 * 60 * 24 * 14, // expires in 14 days
-        }
+        },
       );
       cookies().set({
         name: "userIDToken",
@@ -60,7 +60,7 @@ export async function GET(request: NextRequest) {
 
       const insertQuery = `INSERT INTO User (id, email, display_name, provider, image) VALUES (?, ?, ?, ?, ?)`;
       const insertParams = [userId, email, login, "github", icon];
-      const insertRes = await conn.execute(insertQuery, insertParams);
+      await conn.execute(insertQuery, insertParams);
       const token = jwt.sign({ id: userId }, env.JWT_SECRET_KEY, {
         expiresIn: 60 * 60 * 24 * 14, // expires in 14 days
       });
@@ -73,6 +73,12 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.redirect(`${env.NEXT_PUBLIC_DOMAIN}/account`);
   } else {
-    console.log("no code on callback");
+    return NextResponse.json(
+      JSON.stringify({
+        success: false,
+        message: `authentication failed: no code on callback`,
+      }),
+      { status: 401, headers: { "content-type": "application/json" } },
+    );
   }
 }

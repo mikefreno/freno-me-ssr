@@ -41,11 +41,11 @@ export default function EditingClient(props: {
     if (titleRef.current) {
       let bannerImageKey = "";
       if (bannerImage) {
-        bannerImageKey = await AddImageToS3(
+        bannerImageKey = (await AddImageToS3(
           bannerImage,
           titleRef.current.value || props.post.title,
-          props.type
-        );
+          props.type,
+        )) as string;
       }
       const data = {
         id: props.post.id,
@@ -69,7 +69,7 @@ export default function EditingClient(props: {
         `${process.env.NEXT_PUBLIC_DOMAIN}/api/database/${
           props.type == "blog" ? "blog" : "project"
         }/manipulation`,
-        { method: "PATCH", body: JSON.stringify(data) }
+        { method: "PATCH", body: JSON.stringify(data) },
       );
       if (res.status == 201) {
         showAutoSaveTrigger();
@@ -91,9 +91,12 @@ export default function EditingClient(props: {
   };
 
   useEffect(() => {
-    autosaveRef.current = setInterval(() => {
-      autoSave();
-    }, 2 * 60 * 1000);
+    autosaveRef.current = setInterval(
+      () => {
+        autoSave();
+      },
+      2 * 60 * 1000,
+    );
 
     return () => {
       if (autosaveRef.current) {
@@ -125,11 +128,11 @@ export default function EditingClient(props: {
     if (titleRef.current) {
       let bannerImageKey = "";
       if (bannerImage) {
-        bannerImageKey = await AddImageToS3(
+        bannerImageKey = (await AddImageToS3(
           bannerImage,
           titleRef.current.value || props.post.title,
-          props.type
-        );
+          props.type,
+        )) as string;
       }
       const data = {
         id: props.post.id,
@@ -153,7 +156,7 @@ export default function EditingClient(props: {
         `${process.env.NEXT_PUBLIC_DOMAIN}/api/database/${
           props.type == "blog" ? "blog" : "project"
         }/manipulation`,
-        { method: "PATCH", body: JSON.stringify(data) }
+        { method: "PATCH", body: JSON.stringify(data) },
       );
       if (res.status == 201) {
         showSaveTrigger();

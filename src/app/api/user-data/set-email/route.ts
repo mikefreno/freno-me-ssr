@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { ConnectionFactory } from "../../database/ConnectionFactory";
 import { cookies } from "next/headers";
 import { newEmailInput } from "@/types/input-types";
+import { ConnectionFactory } from "@/app/utils";
 
 export async function POST(input: NextRequest) {
   const inputData = (await input.json()) as newEmailInput;

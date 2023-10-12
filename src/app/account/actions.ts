@@ -3,10 +3,10 @@
 import { env } from "@/env.mjs";
 import { cookies } from "next/headers";
 import jwt from "jsonwebtoken";
-import { ConnectionFactory } from "../api/database/ConnectionFactory";
 import { User } from "@/types/model-types";
 import { checkPassword, hashPassword } from "../api/passwordHashing";
 import { signOut } from "../globalActions";
+import { ConnectionFactory } from "../utils";
 
 export async function sendEmailVerification() {
   const requestedEmail = cookies().get("emailVerificationRequested")?.value;
@@ -174,7 +174,7 @@ export async function deleteAccount(password: string) {
 export async function changePassword(
   newPassword: string,
   newPasswordConfirmation: string,
-  oldPassword: string
+  oldPassword: string,
 ) {
   if (newPassword == newPasswordConfirmation) {
     const userID = cookies().get("userIDToken")?.value;
@@ -212,7 +212,7 @@ export async function changePassword(
 }
 export async function setPassword(
   newPassword: string,
-  newPasswordConfirmation: string
+  newPasswordConfirmation: string,
 ) {
   if (newPassword == newPasswordConfirmation) {
     const userID = cookies().get("userIDToken")?.value;

@@ -1,6 +1,6 @@
-import { ConnectionFactory } from "@/app/api/database/ConnectionFactory";
 import { env } from "@/env.mjs";
 import { model } from "@/types/modelKV";
+import { ConnectionFactory } from "../utils";
 
 export default function DatabasePage() {
   async function ProjInit(input: FormData) {

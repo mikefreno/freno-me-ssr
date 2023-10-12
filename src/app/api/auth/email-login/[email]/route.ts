@@ -3,13 +3,12 @@ import { NextRequest, NextResponse } from "next/server";
 import jwt from "jsonwebtoken";
 import { env } from "@/env.mjs";
 import { cookies } from "next/headers";
-import { ConnectionFactory } from "@/app/api/database/ConnectionFactory";
 import { User } from "@/types/model-types";
-import { redirect } from "next/navigation";
+import { ConnectionFactory } from "@/app/utils";
 
 export async function GET(
   request: NextRequest,
-  context: { params: { email: string } }
+  context: { params: { email: string } },
 ) {
   const secretKey = env.JWT_SECRET_KEY;
   const params = request.nextUrl.searchParams;
@@ -28,7 +27,7 @@ export async function GET(
           env.JWT_SECRET_KEY,
           {
             expiresIn: 60 * 60 * 24 * 14, // expires in 14 days
-          }
+          },
         );
         if (decoded.rememberMe) {
           cookies().set({
@@ -45,13 +44,20 @@ export async function GET(
         return NextResponse.redirect(`${env.NEXT_PUBLIC_DOMAIN}/account`);
       }
     }
+    return NextResponse.json(
+      JSON.stringify({
+        success: false,
+        message: `authentication failed: no token`,
+      }),
+      { status: 401, headers: { "content-type": "application/json" } },
+    );
   } catch (err) {
-    return new NextResponse(
+    return NextResponse.json(
       JSON.stringify({
         success: false,
         message: `authentication failed: ${err}`,
       }),
-      { status: 401, headers: { "content-type": "application/json" } }
+      { status: 401, headers: { "content-type": "application/json" } },
     );
   }
 }

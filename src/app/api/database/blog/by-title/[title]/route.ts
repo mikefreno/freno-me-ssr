@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
-import { ConnectionFactory } from "@/app/api/database/ConnectionFactory";
+import { ConnectionFactory } from "@/app/utils";
 import { Blog, Comment, CommentReaction } from "@/types/model-types";
 
 export async function GET(
   request: NextRequest,
-  context: { params: { title: string } }
+  context: { params: { title: string } },
 ) {
   try {
     const conn = ConnectionFactory();
@@ -18,7 +18,7 @@ export async function GET(
       const blogLikesQuery = "SELECT * FROM BlogLike WHERE blog_id = ?";
       const blogLikesResults = await conn.execute(
         blogLikesQuery,
-        commentParams
+        commentParams,
       );
       const reactionArray: [number, CommentReaction[]][] = [];
       for (const comment of commentResults.rows as Comment[]) {
@@ -35,7 +35,7 @@ export async function GET(
           likes: blogLikesResults.rows || [],
           reactionArray: reactionArray,
         },
-        { status: 200 }
+        { status: 200 },
       );
     }
 
@@ -46,7 +46,7 @@ export async function GET(
         likes: [],
         reactionMap: [],
       },
-      { status: 200 }
+      { status: 200 },
     );
   } catch (e) {
     return NextResponse.json({ error: e }, { status: 400 });

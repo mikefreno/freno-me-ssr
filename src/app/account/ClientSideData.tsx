@@ -2,8 +2,7 @@
 import Dropzone from "@/components/Dropzone";
 import CheckCircle from "@/icons/CheckCircle";
 import XCircle from "@/icons/XCircle";
-import { API_RES_GetUserDataFromCookie } from "@/types/response-types";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import {
   changePassword,
   deleteAccount,
@@ -113,14 +112,18 @@ export default function ClientSideData(props: {
     if (profileImage && user && user.id) {
       let imageKey: string = "";
       try {
-        imageKey = await AddImageToS3(profileImage, user.id, "user");
+        imageKey = (await AddImageToS3(
+          profileImage,
+          user.id,
+          "user",
+        )) as string;
       } catch (e) {
         console.log("ERROR: " + e);
         alert("error submitting image! Check Logs!");
       }
       const res = await fetch(
         `${env.NEXT_PUBLIC_DOMAIN}/api/database/user/user-image/${user.id}`,
-        { method: "POST", body: JSON.stringify({ imageURL: imageKey }) }
+        { method: "POST", body: JSON.stringify({ imageURL: imageKey }) },
       );
 
       const resData = await res.json();
@@ -134,7 +137,7 @@ export default function ClientSideData(props: {
     } else if (user && user.id) {
       const res = await fetch(
         `${env.NEXT_PUBLIC_DOMAIN}/api/database/user/user-image/${user.id}`,
-        { method: "POST", body: JSON.stringify({ imageURL: null }) }
+        { method: "POST", body: JSON.stringify({ imageURL: null }) },
       );
       const resData = await res.json();
       if (resData.status == 500) {
@@ -193,7 +196,7 @@ export default function ClientSideData(props: {
       const res = await changePassword(
         newPasswordRef.current.value,
         newPasswordConfRef.current.value,
-        oldPasswordRef.current.value
+        oldPasswordRef.current.value,
       );
       if (res != "success") {
         setPasswordError(true);
@@ -208,7 +211,7 @@ export default function ClientSideData(props: {
       setPasswordChangeLoading(true);
       const res = await setPassword(
         newPasswordRef.current.value,
-        newPasswordConfRef.current.value
+        newPasswordConfRef.current.value,
       );
       if (res != "success") {
         setPasswordError(true);

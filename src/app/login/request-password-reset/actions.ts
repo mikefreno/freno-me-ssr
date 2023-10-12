@@ -1,10 +1,10 @@
 "use server";
 
-import { ConnectionFactory } from "@/app/api/database/ConnectionFactory";
 import { env } from "@/env.mjs";
 import { User } from "@/types/model-types";
 import { cookies } from "next/headers";
 import jwt from "jsonwebtoken";
+import { ConnectionFactory } from "@/app/utils";
 
 export async function requestPasswordReset(email: string) {
   const requestedPasswordReset = cookies().get("passwordResetRequested");

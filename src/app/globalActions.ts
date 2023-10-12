@@ -2,9 +2,9 @@
 
 import { env } from "@/env.mjs";
 import { cookies } from "next/headers";
-import { ConnectionFactory } from "./api/database/ConnectionFactory";
 import { Comment } from "@/types/model-types";
 import jwt, { JwtPayload } from "jsonwebtoken";
+import { ConnectionFactory } from "./utils";
 export async function signOut() {
   try {
     cookies().set({

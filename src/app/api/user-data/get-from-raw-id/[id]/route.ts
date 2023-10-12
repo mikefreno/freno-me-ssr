@@ -1,9 +1,9 @@
 import { User } from "@/types/model-types";
-import { ConnectionFactory } from "@/app/api/database/ConnectionFactory";
+import { ConnectionFactory } from "@/app/utils";
 import { NextResponse } from "next/server";
 export async function GET(
   request: Request,
-  context: { params: { id: string } }
+  context: { params: { id: string } },
 ) {
   try {
     const conn = ConnectionFactory();
@@ -23,7 +23,7 @@ export async function GET(
             provider: user.provider,
             hasPassword: !!user.password_hash,
           },
-          { status: 202 }
+          { status: 202 },
         );
     }
     return NextResponse.json({}, { status: 200 });
