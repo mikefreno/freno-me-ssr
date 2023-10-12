@@ -118,7 +118,7 @@ export async function deletePost({ type, postId }: deletePostInput) {
       const commentDeleteParams = [postId];
       const commentDeleteConn = await conn.execute(
         commentDeleteQuery,
-        commentDeleteParams
+        commentDeleteParams,
       );
       console.log(commentDeleteConn.statement);
       return "good";
@@ -164,8 +164,8 @@ export async function deleteCommentByUser({ commentID }: DeleteCommentInput) {
   }
 
   const conn = ConnectionFactory();
-  const query = `SELECT FROM Comment WHERE id = ?`;
-  const params = [userID];
+  const query = `SELECT * FROM Comment WHERE id = ?`;
+  const params = [commentID];
   const res = await conn.execute(query, params);
 
   if ((res.rows[0] as Comment).commenter_id == userID) {
@@ -182,6 +182,50 @@ export async function deleteCommentByUser({ commentID }: DeleteCommentInput) {
   }
   return "unauthorized";
 }
+
+export async function trueDeleteComment({ commentID }: DeleteCommentInput) {
+  const cookie = cookies().get("userIDToken");
+
+  if (!cookie) {
+    console.log("unauthorized");
+    return "unauthorized";
+  }
+
+  let userID: string;
+
+  try {
+    userID = (
+      await new Promise<JwtPayload>((resolve, reject) => {
+        jwt.verify(cookie.value, env.JWT_SECRET_KEY, (err, decoded) => {
+          if (err) {
+            console.log("Failed to authenticate token.");
+            reject(err);
+          } else {
+            resolve(decoded as JwtPayload);
+          }
+        });
+      })
+    ).id;
+  } catch (e) {
+    console.log(e);
+    return "unauthorized";
+  }
+
+  if (userID == env.ADMIN_ID) {
+    try {
+      const conn = ConnectionFactory();
+      const deletionQuery = `DELETE FROM Comment WHERE id = ?`;
+      const deletionRes = await conn.execute(deletionQuery, [commentID]);
+      console.log(deletionRes.statement);
+      return "good";
+    } catch (e) {
+      console.log(e);
+      return "failure. check server logs";
+    }
+  }
+  return "unauthorized";
+}
+
 export async function deleteCommentByAdmin({ commentID }: DeleteCommentInput) {
   const cookie = cookies().get("userIDToken");
 

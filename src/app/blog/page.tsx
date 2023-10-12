@@ -1,5 +1,4 @@
 import { env } from "@/env.mjs";
-import { API_RES_GetPrivilegeDependantBlogs } from "@/types/response-types";
 import { cookies } from "next/headers";
 import Link from "next/link";
 import Image from "next/image";
@@ -8,44 +7,70 @@ import LoadingSpinner from "@/components/LoadingSpinner";
 import { Blog, PostWithCommentsAndLikes } from "@/types/model-types";
 import PostSortingSelect from "@/components/PostSortingSelect";
 import PostSorting from "@/components/PostSorting";
+import { ConnectionFactory } from "../api/database/ConnectionFactory";
+import jwt, { JwtPayload } from "jsonwebtoken";
 
-export default async function Blog({
-  searchParams,
-}: {
-  searchParams: { sort: string };
-}) {
+export default async function Blog() {
   let privilegeLevel: "anonymous" | "admin" | "user" = "anonymous";
-  let blogs: PostWithCommentsAndLikes[] = [];
   try {
-    const userIDCookie = cookies().get("userIDToken");
-
-    const allProjectQuery = await fetch(
-      `${env.NEXT_PUBLIC_DOMAIN}/api/database/blog/privilege-dependant/${
-        userIDCookie ? userIDCookie.value : "undefined"
-      }`,
-      {
-        method: "GET",
-        cache: "no-store",
+    let cookie = cookies().get("userIDToken");
+    if (cookie && cookie.value) {
+      const decoded = await new Promise<JwtPayload | undefined>(
+        (resolve, _) => {
+          jwt.verify(
+            cookies().get("userIDToken")!.value,
+            env.JWT_SECRET_KEY,
+            (err, decoded) => {
+              if (err) {
+                console.log("Failed to authenticate token.");
+                cookies().set({
+                  name: "userIDToken",
+                  value: "",
+                  maxAge: 0,
+                  expires: new Date("2016-10-05"),
+                });
+                resolve(undefined);
+              } else {
+                resolve(decoded as JwtPayload);
+              }
+            },
+          );
+        },
+      );
+      if (decoded) {
+        privilegeLevel = decoded.id === env.ADMIN_ID ? "admin" : "user";
       }
-    );
-
-    const resData =
-      (await allProjectQuery.json()) as API_RES_GetPrivilegeDependantBlogs;
-    privilegeLevel = resData.privilegeLevel;
-
-    blogs = resData.rows;
+    }
   } catch (e) {
-    console.log(e);
-    const allProjectQuery = await fetch(
-      `${env.NEXT_PUBLIC_DOMAIN}/api/database/blog/privilege-dependant/undefined`,
-      { method: "GET", next: { revalidate: 1800 } }
-    );
-    const resData =
-      (await allProjectQuery.json()) as API_RES_GetPrivilegeDependantBlogs;
-    privilegeLevel = resData.privilegeLevel;
-
-    blogs = resData.rows;
+    console.log("An error occurred during JWT verification:", e);
   }
+  let query = `
+    SELECT
+        Blog.id,
+        Blog.title,
+        Blog.subtitle,
+        Blog.body,
+        Blog.banner_photo,
+        Blog.date,
+        Blog.published,
+        Blog.author_id,
+        Blog.reads,
+        Blog.attachments,
+    (SELECT COUNT(*) FROM BlogLike WHERE Blog.id = BlogLike.blog_id) AS total_likes,
+    (SELECT COUNT(*) FROM Comment WHERE Blog.id = Comment.blog_id) AS total_comments
+    FROM
+        Blog
+    LEFT JOIN
+        BlogLike ON Blog.id = BlogLike.blog_id
+    LEFT JOIN
+        Comment ON Blog.id = Comment.blog_id`;
+  if (privilegeLevel != "admin") {
+    query += ` WHERE Blog.published = TRUE`;
+  }
+  query += ` GROUP BY Blog.id, Blog.title, Blog.subtitle, Blog.body, Blog.banner_photo, Blog.date, Blog.published, Blog.author_id, Blog.reads, Blog.attachments;`;
+  const conn = ConnectionFactory();
+  const results = await conn.execute(query);
+  let blogs = results.rows as PostWithCommentsAndLikes[];
 
   return (
     <>

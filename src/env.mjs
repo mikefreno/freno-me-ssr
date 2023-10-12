@@ -12,7 +12,6 @@ export const env = createEnv({
     ADMIN_EMAIL: z.string().min(1),
     ADMIN_ID: z.string().min(1),
     JWT_SECRET_KEY: z.string().min(1),
-    DATABASE_URL: z.string().min(1),
     DANGEROUS_DBCOMMAND_PASSWORD: z.string().min(1),
     AWS_REGION: z.string().min(1),
     GOOGLE_CLIENT_SECRET: z.string().min(1),
@@ -23,6 +22,9 @@ export const env = createEnv({
     AWS_S3_BUCKET_NAME: z.string().min(1),
     AWS_ACCESS_KEY: z.string().min(1),
     AWS_SECRET_KEY: z.string().min(1),
+    DATABASE_HOST: z.string().min(1),
+    DATABASE_USERNAME: z.string().min(1),
+    DATABASE_PASSWORD: z.string().min(1),
   },
 
   /**
@@ -35,6 +37,7 @@ export const env = createEnv({
     NEXT_PUBLIC_AWS_BUCKET_STRING: z.string().min(1),
     NEXT_PUBLIC_GOOGLE_CLIENT_ID: z.string().min(1),
     NEXT_PUBLIC_GITHUB_CLIENT_ID: z.string().min(1),
+    NEXT_PUBLIC_WEBSOCKET: z.string().min(1),
   },
 
   /**
@@ -46,7 +49,9 @@ export const env = createEnv({
     ADMIN_EMAIL: process.env.ADMIN_EMAIL,
     ADMIN_ID: process.env.ADMIN_ID,
     JWT_SECRET_KEY: process.env.JWT_SECRET_KEY,
-    DATABASE_URL: process.env.DATABASE_URL,
+    DATABASE_HOST: process.env.DATABASE_HOST,
+    DATABASE_USERNAME: process.env.DATABASE_USERNAME,
+    DATABASE_PASSWORD: process.env.DATABASE_PASSWORD,
     DANGEROUS_DBCOMMAND_PASSWORD: process.env.DANGEROUS_DBCOMMAND_PASSWORD,
     AWS_REGION: process.env.AWS_REGION,
     NEXT_PUBLIC_AWS_BUCKET_STRING: process.env.NEXT_PUBLIC_AWS_BUCKET_STRING,
@@ -61,6 +66,7 @@ export const env = createEnv({
     AWS_S3_BUCKET_NAME: process.env.AWS_S3_BUCKET_NAME,
     AWS_ACCESS_KEY: process.env.MY_AWS_ACCESS_KEY,
     AWS_SECRET_KEY: process.env.MY_AWS_SECRET_KEY,
+    NEXT_PUBLIC_WEBSOCKET: process.env.NEXT_PUBLIC_WEBSOCKET,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation.

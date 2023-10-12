@@ -1,48 +1,78 @@
-import Card from "@/components/Card";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import { env } from "@/env.mjs";
-import { API_RES_GetPrivilegeDependantProjects } from "@/types/response-types";
 import { cookies } from "next/headers";
 import Link from "next/link";
 import { Suspense } from "react";
 import Image from "next/image";
-import { PostWithCommentsAndLikes, Project } from "@/types/model-types";
+import { PostWithCommentsAndLikes } from "@/types/model-types";
 import PostSortingSelect from "@/components/PostSortingSelect";
 import PostSorting from "@/components/PostSorting";
+import jwt, { JwtPayload } from "jsonwebtoken";
+import { ConnectionFactory } from "../api/database/ConnectionFactory";
 
-export default async function Projects({
-  searchParams,
-}: {
-  searchParams: { sort: string };
-}) {
+export default async function Projects() {
   let privilegeLevel: "anonymous" | "admin" | "user" = "anonymous";
-  let projects: PostWithCommentsAndLikes[] = [];
   try {
-    const userIDCookie = cookies().get("userIDToken");
-
-    const allProjectQuery = await fetch(
-      `${env.NEXT_PUBLIC_DOMAIN}/api/database/project/privilege-dependant/${
-        userIDCookie ? userIDCookie.value : "undefined"
-      }`,
-      { method: "GET", cache: "no-store" }
-    );
-
-    const resData =
-      (await allProjectQuery.json()) as API_RES_GetPrivilegeDependantProjects;
-    privilegeLevel = resData.privilegeLevel;
-
-    projects = resData.rows;
+    let cookie = cookies().get("userIDToken");
+    if (cookie && cookie.value) {
+      const decoded = await new Promise<JwtPayload | undefined>(
+        (resolve, _) => {
+          jwt.verify(
+            cookies().get("userIDToken")!.value,
+            env.JWT_SECRET_KEY,
+            (err, decoded) => {
+              if (err) {
+                console.log("Failed to authenticate token.");
+                cookies().set({
+                  name: "userIDToken",
+                  value: "",
+                  maxAge: 0,
+                  expires: new Date("2016-10-05"),
+                });
+                resolve(undefined);
+              } else {
+                resolve(decoded as JwtPayload);
+              }
+            },
+          );
+        },
+      );
+      if (decoded) {
+        privilegeLevel = decoded.id === env.ADMIN_ID ? "admin" : "user";
+      }
+    }
   } catch (e) {
-    const allProjectQuery = await fetch(
-      `${env.NEXT_PUBLIC_DOMAIN}/api/database/project/privilege-dependant/undefined`,
-      { method: "GET", cache: "no-store" }
-    );
-    const resData =
-      (await allProjectQuery.json()) as API_RES_GetPrivilegeDependantProjects;
-    privilegeLevel = resData.privilegeLevel;
-
-    projects = resData.rows;
+    console.log("An error occurred during JWT verification:", e);
   }
+  let query = `
+    SELECT
+        Project.id,
+        Project.title,
+        Project.subtitle,
+        Project.body,
+        Project.banner_photo,
+        Project.date,
+        Project.published,
+        Project.author_id,
+        Project.reads,
+        Project.attachments,
+    (SELECT COUNT(*) FROM ProjectLike WHERE Project.id = ProjectLike.project_id) AS total_likes,
+    (SELECT COUNT(*) FROM Comment WHERE Project.id = Comment.project_id) AS total_comments
+    FROM
+        Project
+    LEFT JOIN
+        ProjectLike ON Project.id = ProjectLike.project_id
+    LEFT JOIN
+        Comment ON Project.id = Comment.project_id`;
+  if (privilegeLevel != "admin") {
+    query += ` WHERE Project.published = TRUE`;
+  } else {
+    privilegeLevel = "admin";
+  }
+  query += ` GROUP BY Project.id, Project.title, Project.subtitle, Project.body, Project.banner_photo, Project.date, Project.published, Project.author_id, Project.reads, Project.attachments;`;
+  const conn = ConnectionFactory();
+  const results = await conn.execute(query);
+  let projects = results.rows as PostWithCommentsAndLikes[];
 
   return (
     <>

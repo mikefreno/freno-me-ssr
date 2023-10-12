@@ -8,76 +8,73 @@ import Image from "next/image";
 import { cookies } from "next/headers";
 import SessionDependantLike from "@/components/SessionDependantLike";
 import CommentSection from "@/components/CommentSection";
-import { CommentReaction } from "@/types/model-types";
+import {
+  CommentReaction,
+  Project,
+  Comment,
+  BlogLike,
+} from "@/types/model-types";
 import { Suspense } from "react";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import PostBodyClient from "@/components/PostBodyClient";
 import { incrementReads } from "@/app/globalActions";
 import jwt, { JwtPayload } from "jsonwebtoken";
+import { ConnectionFactory } from "@/app/api/database/ConnectionFactory";
+
+function hasCodeBlock(str: string): boolean {
+  return str.includes("<code") && str.includes("</code>");
+}
 
 export default async function DynamicProjectPost({
   params,
 }: {
   params: { title: string };
 }) {
-  const projectQuery = await fetch(
-    `${env.NEXT_PUBLIC_DOMAIN}/api/database/project/by-title/${params.title}`,
-    {
-      method: "GET",
-      cache: "no-store",
-    },
-  );
-
-  const parsedQueryRes =
-    (await projectQuery.json()) as API_RES_GetProjectWithComments;
-
   let userID: string | null = null;
-
   let privilegeLevel: "admin" | "user" | "anonymous" = "anonymous";
+
   try {
     const currentUserIDCookie = cookies().get("userIDToken");
     if (currentUserIDCookie) {
-      try {
-        const decoded = await new Promise<JwtPayload | undefined>(
-          (resolve, reject) => {
-            jwt.verify(
-              currentUserIDCookie.value,
-              env.JWT_SECRET_KEY,
-              (err, decoded) => {
-                if (err) {
-                  console.log("Failed to authenticate token.");
-                  cookies().set({
-                    name: "userIDToken",
-                    value: "",
-                    maxAge: 0,
-                    expires: new Date("2016-10-05"),
-                  });
-                  resolve(undefined);
-                } else {
-                  resolve(decoded as JwtPayload);
-                }
-              },
-            );
-          },
-        );
-        if (decoded) {
-          userID = decoded.id;
-          privilegeLevel = decoded.id === env.ADMIN_ID ? "admin" : "user";
-        }
-      } catch (e) {}
+      const decoded = await new Promise<JwtPayload | undefined>(
+        (resolve, _) => {
+          jwt.verify(
+            currentUserIDCookie.value,
+            env.JWT_SECRET_KEY,
+            (err, decoded) => {
+              if (err) {
+                console.log("Failed to authenticate token.");
+                cookies().set({
+                  name: "userIDToken",
+                  value: "",
+                  maxAge: 0,
+                  expires: new Date("2016-10-05"),
+                });
+                resolve(undefined);
+              } else {
+                resolve(decoded as JwtPayload);
+              }
+            },
+          );
+        },
+      );
+      if (decoded) {
+        userID = decoded.id;
+        privilegeLevel = decoded.id === env.ADMIN_ID ? "admin" : "user";
+      }
     }
   } catch (e) {}
 
-  const project = parsedQueryRes.project[0];
+  let query = "SELECT * FROM Project WHERE title = ?";
+  if (privilegeLevel !== "admin") {
+    query += ` AND published = TRUE`;
+  }
+  const conn = ConnectionFactory();
+  const project = (
+    await conn.execute(query, [decodeURIComponent(params.title)])
+  ).rows[0] as Project;
 
-  const comments = parsedQueryRes.comments;
-  const topLevelComments = parsedQueryRes.comments.filter(
-    (comment) => comment.parent_comment_id == null,
-  );
-  const likes = parsedQueryRes.likes;
-  const reactionMap = new Map<number, CommentReaction[]>(
-    parsedQueryRes.reactionArray,
-  );
+  const containsCodeBlock = hasCodeBlock(project.body);
 
   if (!project) {
     return (
@@ -96,6 +93,25 @@ export default async function DynamicProjectPost({
       </>
     );
   } else if (project) {
+    let comments: Comment[];
+    let likes;
+    let reactionMap: Map<number, CommentReaction[]> = new Map();
+    const commentQuery = "SELECT * FROM Comment WHERE project_id = ?";
+    comments = (await conn.execute(commentQuery, [project.id]))
+      .rows as Comment[];
+    const topLevelComments = comments.filter(
+      (comment) => comment.parent_comment_id == null,
+    );
+    const blogLikesQuery = "SELECT * FROM ProjectLike WHERE project_id = ?";
+    likes = (await conn.execute(blogLikesQuery, [project.id]))
+      .rows as BlogLike[];
+    for (const comment of comments) {
+      const reactionQuery =
+        "SELECT * FROM CommentReaction WHERE comment_id = ?";
+      const reactionParam = [comment.id];
+      const res = await conn.execute(reactionQuery, reactionParam);
+      reactionMap.set(comment.id, res.rows as CommentReaction[]);
+    }
     incrementReads({ postID: project.id, postType: "Project" });
     return (
       <div className="select-none overflow-x-hidden">

@@ -16,21 +16,25 @@ export async function POST(input: NextRequest) {
     accessKeyId: env.AWS_ACCESS_KEY,
     secretAccessKey: env.AWS_SECRET_KEY,
   };
-  const client = new S3Client({
-    region: env.AWS_REGION,
-    credentials: credentials,
-  });
-  const Key = `${type}/${title}/${filename}`;
-  const ext = /^.+\.([^.]+)$/.exec(filename);
+  try {
+    const client = new S3Client({
+      region: env.AWS_REGION,
+      credentials: credentials,
+    });
+    const Key = `${type}/${title}/${filename}`;
+    const ext = /^.+\.([^.]+)$/.exec(filename);
 
-  const s3params = {
-    Bucket: env.AWS_S3_BUCKET_NAME,
-    Key,
-    ContentType: `image/${ext![1]}`,
-  };
-  3;
-  const command = new PutObjectCommand(s3params);
+    const s3params = {
+      Bucket: env.AWS_S3_BUCKET_NAME,
+      Key,
+      ContentType: `image/${ext![1]}`,
+    };
+    3;
+    const command = new PutObjectCommand(s3params);
 
-  const signedUrl = await getSignedUrl(client, command, { expiresIn: 120 });
-  return NextResponse.json({ uploadURL: signedUrl, key: Key });
+    const signedUrl = await getSignedUrl(client, command, { expiresIn: 120 });
+    return NextResponse.json({ uploadURL: signedUrl, key: Key });
+  } catch (e) {
+    console.log(e);
+  }
 }

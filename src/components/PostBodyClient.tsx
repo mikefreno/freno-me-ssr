@@ -40,7 +40,7 @@ export default function PostBodyClient(props: {
         attachments.push({ src: props.banner_photo });
       }
 
-      console.log("Attachments: ", attachments);
+      //console.log("Attachments: ", attachments);
       setAttachmentArray(attachments);
     }
   }, [props.banner_photo, props.body]);

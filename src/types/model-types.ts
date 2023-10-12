@@ -76,3 +76,10 @@ export interface PostWithCommentsAndLikes {
   total_likes: number;
   total_comments: number;
 }
+export interface Connection {
+  id: number;
+  connection_id: string;
+  blog_id: number;
+  project_id: number;
+  user_id: string;
+}

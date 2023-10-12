@@ -5,7 +5,7 @@ export async function GET(
   request: Request,
   context: {
     params: { type: string; post_id: string };
-  }
+  },
 ) {
   const conn = ConnectionFactory();
   const query = `SELECT * FROM Comment WHERE ${context.params.type}_id = ?`;

@@ -16,7 +16,11 @@ import { API_RES_GetUserDataFromCookie } from "@/types/response-types";
 import debounce from "./Debounce";
 import TrashIcon from "@/icons/TrashIcon";
 import LoadingSpinner from "./LoadingSpinner";
-import { deleteCommentByAdmin, deleteCommentByUser } from "@/app/globalActions";
+import {
+  deleteCommentByAdmin,
+  deleteCommentByUser,
+  trueDeleteComment,
+} from "@/app/globalActions";
 
 const fetcher = async (url: string) => {
   const res = await fetch(url);
@@ -26,7 +30,7 @@ const fetcher = async (url: string) => {
 };
 
 export default function CommentBlock(props: {
-  commentRefreshTrigger: () => void;
+  commentRefreshTrigger: () => Promise<void>;
   comment: Comment;
   category: "project" | "blog";
   projectID: number;
@@ -37,10 +41,14 @@ export default function CommentBlock(props: {
   userID: string;
   reactionMap: Map<number, CommentReaction[]>;
   level: number;
+  newComment: (
+    body: string,
+    parent_comment_id: number | undefined,
+  ) => Promise<void>;
 }) {
   const { data: userData, error: reactionError } = useSWR(
     `/api/user-data/get-from-raw-id/${props.comment.commenter_id}`,
-    fetcher
+    fetcher,
   );
 
   const [commentCollapsed, setCommentCollapsed] = useState<boolean>(false);
@@ -128,7 +136,7 @@ export default function CommentBlock(props: {
         setImmediateLike(false);
         const removeRes = await fetch(
           `${env.NEXT_PUBLIC_DOMAIN}/api/database/comment-reactions/remove/upVote`,
-          { method: "POST", body: JSON.stringify(data) }
+          { method: "POST", body: JSON.stringify(data) },
         );
         const resData = await removeRes.json();
         setReactions(resData.commentReactions);
@@ -145,11 +153,11 @@ export default function CommentBlock(props: {
         setImmediateDislike(false);
         const removeRes = await fetch(
           `${env.NEXT_PUBLIC_DOMAIN}/api/database/comment-reactions/remove/downVote`,
-          { method: "POST", body: JSON.stringify(data) }
+          { method: "POST", body: JSON.stringify(data) },
         );
         const addRes = await fetch(
           `${env.NEXT_PUBLIC_DOMAIN}/api/database/comment-reactions/add/upVote`,
-          { method: "POST", body: JSON.stringify(data) }
+          { method: "POST", body: JSON.stringify(data) },
         );
 
         const resData = await addRes.json();
@@ -162,7 +170,7 @@ export default function CommentBlock(props: {
         setImmediateLike(true);
         const addRes = await fetch(
           `${env.NEXT_PUBLIC_DOMAIN}/api/database/comment-reactions/add/upVote`,
-          { method: "POST", body: JSON.stringify(data) }
+          { method: "POST", body: JSON.stringify(data) },
         );
         const resData = await addRes.json();
         setReactions(resData.commentReactions);
@@ -172,6 +180,7 @@ export default function CommentBlock(props: {
       }
     }
   };
+
   const downVoteHandler = async (event: React.MouseEvent) => {
     event.stopPropagation();
     event.preventDefault();
@@ -190,7 +199,7 @@ export default function CommentBlock(props: {
         setImmediateDislike(false);
         const removeRes = await fetch(
           `${env.NEXT_PUBLIC_DOMAIN}/api/database/comment-reactions/remove/downVote`,
-          { method: "POST", body: JSON.stringify(data) }
+          { method: "POST", body: JSON.stringify(data) },
         );
         const resData = await removeRes.json();
         setReactions(resData.commentReactions);
@@ -207,11 +216,11 @@ export default function CommentBlock(props: {
         setImmediateLike(true);
         const removeRes = await fetch(
           `${env.NEXT_PUBLIC_DOMAIN}/api/database/comment-reactions/remove/upVote`,
-          { method: "POST", body: JSON.stringify(data) }
+          { method: "POST", body: JSON.stringify(data) },
         );
         const addRes = await fetch(
           `${env.NEXT_PUBLIC_DOMAIN}/api/database/comment-reactions/add/downVote`,
-          { method: "POST", body: JSON.stringify(data) }
+          { method: "POST", body: JSON.stringify(data) },
         );
 
         const resData = await addRes.json();
@@ -224,7 +233,7 @@ export default function CommentBlock(props: {
         setImmediateDislike(true);
         const addRes = await fetch(
           `${env.NEXT_PUBLIC_DOMAIN}/api/database/comment-reactions/add/downVote`,
-          { method: "POST", body: JSON.stringify(data) }
+          { method: "POST", body: JSON.stringify(data) },
         );
         const resData = await addRes.json();
         setReactions(resData.commentReactions);
@@ -237,7 +246,7 @@ export default function CommentBlock(props: {
 
   const genericReactionHandler = async (
     event: React.MouseEvent,
-    type: string
+    type: string,
   ) => {
     event.stopPropagation();
     if (props.privilegeLevel !== "anonymous") {
@@ -248,13 +257,13 @@ export default function CommentBlock(props: {
       if (
         reactions.some(
           (reaction) =>
-            reaction.type == type && reaction.user_id == props.userID
+            reaction.type == type && reaction.user_id == props.userID,
         )
       ) {
         //user has given this reaction, need to remove
         const res = await fetch(
           `${env.NEXT_PUBLIC_DOMAIN}/api/database/comment-reactions/remove/${type}`,
-          { method: "POST", body: JSON.stringify(data) }
+          { method: "POST", body: JSON.stringify(data) },
         );
         const resData = await res.json();
         setReactions(resData.commentReactions);
@@ -262,7 +271,7 @@ export default function CommentBlock(props: {
         //create new reaction
         const res = await fetch(
           `${env.NEXT_PUBLIC_DOMAIN}/api/database/comment-reactions/add/${type}`,
-          { method: "POST", body: JSON.stringify(data) }
+          { method: "POST", body: JSON.stringify(data) },
         );
         const resData = await res.json();
         setReactions(resData.commentReactions);
@@ -276,14 +285,26 @@ export default function CommentBlock(props: {
         userData?.data.displayName
           ? userData?.data.displayName
           : userData?.data.email
-      }?`
+      }?`,
     );
     if (affirm) {
       setDeletionLoading(true);
       if (props.userID == props.comment.commenter_id) {
-        const res = await deleteCommentByUser({ commentID: props.comment.id });
+        await deleteCommentByUser({ commentID: props.comment.id });
+        await props.commentRefreshTrigger();
       } else if (props.privilegeLevel == "admin") {
-        const res = await deleteCommentByAdmin({ commentID: props.comment.id });
+        const trueDeleteAffirm = window.confirm(
+          `Would you like to full delete the comment (Remove from DB)?`,
+        );
+        if (trueDeleteAffirm) {
+          await trueDeleteComment({ commentID: props.comment.id });
+          await props.commentRefreshTrigger();
+        } else {
+          await deleteCommentByAdmin({
+            commentID: props.comment.id,
+          });
+          await props.commentRefreshTrigger();
+        }
       }
       setDeletionLoading(false);
     }
@@ -325,11 +346,11 @@ export default function CommentBlock(props: {
                 className={`h-5 w-5 ${
                   reactions
                     .filter(
-                      (commentReaction) => commentReaction.type == "upVote"
+                      (commentReaction) => commentReaction.type == "upVote",
                     )
                     .some(
                       (commentReaction) =>
-                        commentReaction.user_id == props.userID
+                        commentReaction.user_id == props.userID,
                     ) || immediateLike
                     ? "fill-emerald-500"
                     : `fill-black dark:fill-white hover:fill-emerald-500 ${
@@ -349,10 +370,10 @@ export default function CommentBlock(props: {
             </button>
             <div className="mx-auto">
               {reactions.filter(
-                (commentReaction) => commentReaction.type == "upVote"
+                (commentReaction) => commentReaction.type == "upVote",
               ).length -
                 reactions.filter(
-                  (commentReaction) => commentReaction.type == "downVote"
+                  (commentReaction) => commentReaction.type == "downVote",
                 ).length +
                 pointFeedbackOffset}
             </div>
@@ -361,11 +382,11 @@ export default function CommentBlock(props: {
                 className={`h-5 w-5 ${
                   reactions
                     .filter(
-                      (commentReaction) => commentReaction.type == "downVote"
+                      (commentReaction) => commentReaction.type == "downVote",
                     )
                     .some(
                       (commentReaction) =>
-                        commentReaction.user_id == props.userID
+                        commentReaction.user_id == props.userID,
                     ) || immediateDislike
                     ? "fill-rose-500"
                     : `fill-black dark:fill-white hover:fill-rose-500 ${
@@ -460,6 +481,7 @@ export default function CommentBlock(props: {
             parent_id={props.comment.id}
             type={props.category}
             post_id={props.projectID}
+            newComment={props.newComment}
           />
         </div>
         <div className="pl-2 sm:pl-6 md:pl-12 lg:pl-16">
@@ -472,13 +494,14 @@ export default function CommentBlock(props: {
               recursionCount={1}
               allComments={props.allComments}
               child_comments={props.allComments.filter(
-                (comment) => comment.parent_comment_id == this_comment.id
+                (comment) => comment.parent_comment_id == this_comment.id,
               )}
               privilegeLevel={props.privilegeLevel}
               userID={props.userID}
               commentRefreshTrigger={props.commentRefreshTrigger}
               reactionMap={props.reactionMap}
               level={props.level + 1}
+              newComment={props.newComment}
             />
           ))}
         </div>

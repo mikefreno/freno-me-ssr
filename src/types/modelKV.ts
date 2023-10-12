@@ -1,6 +1,7 @@
 export const model: { [key: string]: string } = {
   User: `
-    CREATE TABLE User (
+  CREATE TABLE User 
+    (
       id varchar(255) NOT NULL,
       email varchar(255) UNIQUE,
       email_verified boolean NOT NULL DEFAULT FALSE,
@@ -13,7 +14,8 @@ export const model: { [key: string]: string } = {
     )
   `,
   Blog: `
-    CREATE TABLE Blog (
+  CREATE TABLE Blog 
+    (
       id INT AUTO_INCREMENT NOT NULL,
       title varchar(255) NOT NULL UNIQUE,
       subtitle varchar(255),
@@ -29,7 +31,8 @@ export const model: { [key: string]: string } = {
     )
   `,
   BlogLike: `
-    CREATE TABLE BlogLike (
+  CREATE TABLE BlogLike 
+    (
       id INT AUTO_INCREMENT NOT NULL,
       user_id varchar(255) NOT NULL,
       blog_id INT NOT NULL,
@@ -40,7 +43,8 @@ export const model: { [key: string]: string } = {
     )
   `,
   Project: `
-    CREATE TABLE Project (
+  CREATE TABLE Project 
+    (
       id INT AUTO_INCREMENT NOT NULL,
       title varchar(255) NOT NULL UNIQUE,
       subtitle varchar(255),
@@ -56,7 +60,8 @@ export const model: { [key: string]: string } = {
     )
   `,
   ProjectLike: `
-    CREATE TABLE ProjectLike (
+  CREATE TABLE ProjectLike 
+    (
       id INT AUTO_INCREMENT NOT NULL,
       user_id varchar(255) NOT NULL,
       project_id INT NOT NULL,
@@ -67,7 +72,8 @@ export const model: { [key: string]: string } = {
     )
   `,
   Comment: `
-    CREATE TABLE Comment (
+  CREATE TABLE Comment 
+    (
       id INT AUTO_INCREMENT NOT NULL,
       body varchar(255) NOT NULL,
       blog_id INT,
@@ -82,14 +88,24 @@ export const model: { [key: string]: string } = {
     )
   `,
   CommentReaction: `
-CREATE TABLE CommentReaction (
-  id INT AUTO_INCREMENT NOT NULL,
-  type varchar(255) NOT NULL,
-  comment_id INT NOT NULL,
-  user_id varchar(255) NOT NULL,
-  PRIMARY KEY (id),
-  INDEX (comment_id),
-  UNIQUE KEY user_type_unique (user_id, type)
-)
-  `,
+  CREATE TABLE CommentReaction 
+  (
+    id INT AUTO_INCREMENT NOT NULL,
+    type varchar(255) NOT NULL,
+    comment_id INT NOT NULL,
+    user_id varchar(255) NOT NULL,
+    PRIMARY KEY (id),
+    INDEX (comment_id),
+    UNIQUE KEY user_type_unique (user_id, type)
+  )`,
+  Connection: `
+  CREATE TABLE Connection 
+  (
+    id INT AUTO_INCREMENT NOT NULL,
+    user_id varchar(255) NOT NULL,
+    connection_id varchar(255) NOT NULL,
+    blog_id INT,
+    project_id INT,
+    PRIMARY KEY (id)
+  )`,
 };

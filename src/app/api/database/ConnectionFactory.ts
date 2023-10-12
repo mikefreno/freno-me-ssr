@@ -3,9 +3,10 @@ import { env } from "@/env.mjs";
 
 export function ConnectionFactory() {
   const config = {
-    url: env.DATABASE_URL,
+    host: env.DATABASE_HOST,
+    username: env.DATABASE_USERNAME,
+    password: env.DATABASE_PASSWORD,
   };
-
   const conn = connect(config);
   return conn;
 }

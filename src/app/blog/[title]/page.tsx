@@ -2,87 +2,69 @@ import "@/styles/content.scss";
 import CommentIcon from "@/icons/CommentIcon";
 import { env } from "@/env.mjs";
 import Link from "next/link";
-import { API_RES_GetBlogWithComments } from "@/types/response-types";
 import Image from "next/image";
 import { cookies } from "next/headers";
 import SessionDependantLike from "@/components/SessionDependantLike";
 import CommentSection from "@/components/CommentSection";
-import { CommentReaction } from "@/types/model-types";
+import { Blog, CommentReaction, Comment, BlogLike } from "@/types/model-types";
 import { Suspense } from "react";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import PostBodyClient from "@/components/PostBodyClient";
 import { incrementReads } from "@/app/globalActions";
 import jwt, { JwtPayload } from "jsonwebtoken";
+import { ConnectionFactory } from "@/app/api/database/ConnectionFactory";
+
+function hasCodeBlock(str: string): boolean {
+  return str.includes("<code") && str.includes("</code>");
+}
 
 export default async function DynamicBlogPost({
   params,
 }: {
   params: { title: string };
 }) {
-  const blogQuery = await fetch(
-    `${env.NEXT_PUBLIC_DOMAIN}/api/database/blog/by-title/${params.title}`,
-    {
-      method: "GET",
-      cache: "no-store",
-    },
-  );
-
-  const parsedQueryRes =
-    (await blogQuery.json()) as API_RES_GetBlogWithComments;
-
   let userID: string | null = null;
-
   let privilegeLevel: "admin" | "user" | "anonymous" = "anonymous";
-
-  function hasCodeBlock(str: string): boolean {
-    return str.includes("<code") && str.includes("</code>");
-  }
 
   try {
     const currentUserIDCookie = cookies().get("userIDToken");
     if (currentUserIDCookie) {
-      try {
-        const decoded = await new Promise<JwtPayload | undefined>(
-          (resolve, reject) => {
-            jwt.verify(
-              currentUserIDCookie.value,
-              env.JWT_SECRET_KEY,
-              (err, decoded) => {
-                if (err) {
-                  console.log("Failed to authenticate token.");
-                  cookies().set({
-                    name: "userIDToken",
-                    value: "",
-                    maxAge: 0,
-                    expires: new Date("2016-10-05"),
-                  });
-                  resolve(undefined);
-                } else {
-                  resolve(decoded as JwtPayload);
-                }
-              },
-            );
-          },
-        );
-        if (decoded) {
-          userID = decoded.id;
-          privilegeLevel = decoded.id === env.ADMIN_ID ? "admin" : "user";
-        }
-      } catch (e) {}
+      const decoded = await new Promise<JwtPayload | undefined>(
+        (resolve, _) => {
+          jwt.verify(
+            currentUserIDCookie.value,
+            env.JWT_SECRET_KEY,
+            (err, decoded) => {
+              if (err) {
+                console.log("Failed to authenticate token.");
+                cookies().set({
+                  name: "userIDToken",
+                  value: "",
+                  maxAge: 0,
+                  expires: new Date("2016-10-05"),
+                });
+                resolve(undefined);
+              } else {
+                resolve(decoded as JwtPayload);
+              }
+            },
+          );
+        },
+      );
+      if (decoded) {
+        userID = decoded.id;
+        privilegeLevel = decoded.id === env.ADMIN_ID ? "admin" : "user";
+      }
     }
   } catch (e) {}
 
-  const blog = parsedQueryRes.blog[0];
-
-  const comments = parsedQueryRes.comments;
-  const topLevelComments = parsedQueryRes.comments.filter(
-    (comment) => comment.parent_comment_id == null,
-  );
-  const likes = parsedQueryRes.likes;
-  const reactionMap = new Map<number, CommentReaction[]>(
-    parsedQueryRes.reactionArray,
-  );
-
+  let query = "SELECT * FROM Blog WHERE title = ?";
+  if (privilegeLevel !== "admin") {
+    query += ` AND published = TRUE`;
+  }
+  const conn = ConnectionFactory();
+  const blog = (await conn.execute(query, [decodeURIComponent(params.title)]))
+    .rows[0] as Blog;
   const containsCodeBlock = hasCodeBlock(blog.body);
 
   if (!blog) {
@@ -93,7 +75,7 @@ export default async function DynamicBlogPost({
         </div>
         <div className="flex justify-center pt-12">
           <Link
-            href="/blogs"
+            href="/blog"
             className="rounded border text-white shadow-md border-blue-500 bg-blue-400 hover:bg-blue-500 dark: dark:bg-blue-700 dark:hover:bg-blue-800 dark:border-blue-700 active:scale-90 transition-all duration-300 ease-in-out px-4 py-2"
           >
             Back to blog main page
@@ -102,6 +84,23 @@ export default async function DynamicBlogPost({
       </>
     );
   } else if (blog) {
+    let comments: Comment[];
+    let likes;
+    let reactionMap: Map<number, CommentReaction[]> = new Map();
+    const commentQuery = "SELECT * FROM Comment WHERE blog_id = ?";
+    comments = (await conn.execute(commentQuery, [blog.id])).rows as Comment[];
+    const topLevelComments = comments.filter(
+      (comment) => comment.parent_comment_id == null,
+    );
+    const blogLikesQuery = "SELECT * FROM BlogLike WHERE blog_id = ?";
+    likes = (await conn.execute(blogLikesQuery, [blog.id])).rows as BlogLike[];
+    for (const comment of comments) {
+      const reactionQuery =
+        "SELECT * FROM CommentReaction WHERE comment_id = ?";
+      const reactionParam = [comment.id];
+      const res = await conn.execute(reactionQuery, reactionParam);
+      reactionMap.set(comment.id, res.rows as CommentReaction[]);
+    }
     incrementReads({ postID: blog.id, postType: "Blog" });
     return (
       <div className="select-none overflow-x-hidden">
