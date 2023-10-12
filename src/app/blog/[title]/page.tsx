@@ -3,7 +3,6 @@ import CommentIcon from "@/icons/CommentIcon";
 import { env } from "@/env.mjs";
 import Link from "next/link";
 import Image from "next/image";
-import { cookies } from "next/headers";
 import SessionDependantLike from "@/components/SessionDependantLike";
 import CommentSection from "@/components/CommentSection";
 import { Blog, CommentReaction, Comment, BlogLike } from "@/types/model-types";
@@ -11,8 +10,7 @@ import { Suspense } from "react";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import PostBodyClient from "@/components/PostBodyClient";
 import { incrementReads } from "@/app/globalActions";
-import jwt, { JwtPayload } from "jsonwebtoken";
-import { ConnectionFactory } from "@/app/utils";
+import { ConnectionFactory, getPrivilegeLevel } from "@/app/utils";
 
 function hasCodeBlock(str: string): boolean {
   return str.includes("<code") && str.includes("</code>");
@@ -24,40 +22,7 @@ export default async function DynamicBlogPost({
   params: { title: string };
 }) {
   let userID: string | null = null;
-  let privilegeLevel: "admin" | "user" | "anonymous" = "anonymous";
-
-  try {
-    const currentUserIDCookie = cookies().get("userIDToken");
-    if (currentUserIDCookie) {
-      const decoded = await new Promise<JwtPayload | undefined>(
-        (resolve, _) => {
-          jwt.verify(
-            currentUserIDCookie.value,
-            env.JWT_SECRET_KEY,
-            (err, decoded) => {
-              if (err) {
-                console.log("Failed to authenticate token.");
-                cookies().set({
-                  name: "userIDToken",
-                  value: "",
-                  maxAge: 0,
-                  expires: new Date("2016-10-05"),
-                });
-                resolve(undefined);
-              } else {
-                resolve(decoded as JwtPayload);
-              }
-            },
-          );
-        },
-      );
-      if (decoded) {
-        userID = decoded.id;
-        privilegeLevel = decoded.id === env.ADMIN_ID ? "admin" : "user";
-      }
-    }
-  } catch (e) {}
-
+  const privilegeLevel = await getPrivilegeLevel();
   let query = "SELECT * FROM Blog WHERE title = ?";
   if (privilegeLevel !== "admin") {
     query += ` AND published = TRUE`;

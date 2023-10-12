@@ -14,7 +14,6 @@ import { CountdownCircleTimer } from "react-countdown-circle-timer";
 import { useRouter } from "next/navigation";
 import Eye from "@/icons/Eye";
 import EyeSlash from "@/icons/EyeSlash";
-import { setPassword } from "../account/actions";
 
 export default function LoginPage() {
   const [register, setRegister] = useState<boolean>(false);
@@ -79,7 +78,7 @@ export default function LoginPage() {
         const res = await emailRegistration(
           emailRef.current.value,
           passwordRef.current.value,
-          passwordConfRef.current.value
+          passwordConfRef.current.value,
         );
         if (res && res !== "success") {
           setError(res);
@@ -92,7 +91,7 @@ export default function LoginPage() {
         const res = await emailPasswordLogin(
           emailRef.current.value,
           passwordRef.current.value,
-          rememberMeRef.current.checked
+          rememberMeRef.current.checked,
         );
         if (res == "no-match") {
           setShowPasswordError(true);
@@ -106,7 +105,7 @@ export default function LoginPage() {
       if (emailRef.current && rememberMeRef.current) {
         const res = await emailLinkLogin(
           emailRef.current.value,
-          rememberMeRef.current.checked
+          rememberMeRef.current.checked,
         );
         if (res == "email sent") {
           setEmailSent(true);

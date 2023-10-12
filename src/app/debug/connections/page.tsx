@@ -1,6 +1,5 @@
 import { env } from "@/env.mjs";
 import { Connection } from "@/types/model-types";
-import { notFound } from "next/navigation";
 
 export default async function UsersDebugPage() {
   if (env.NEXT_PUBLIC_DOMAIN == "http://localhost:3000") {
@@ -36,7 +35,5 @@ export default async function UsersDebugPage() {
         </div>
       </>
     );
-  } else {
-    return notFound;
   }
 }

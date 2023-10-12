@@ -1,45 +1,12 @@
-import { ConnectionFactory, getUserIDCookieData } from "@/app/utils";
+import { ConnectionFactory, getPrivilegeLevel } from "@/app/utils";
 import { env } from "@/env.mjs";
 import { PostWithCommentsAndLikes } from "@/types/model-types";
-import jwt, { JwtPayload } from "jsonwebtoken";
-import { cookies } from "next/headers";
-import { notFound } from "next/navigation";
 
 export default async function UsersDebugPage() {
   if (env.NEXT_PUBLIC_DOMAIN == "http://localhost:3000") {
     let privilegeLevel: "anonymous" | "admin" | "user" = "anonymous";
-    try {
-      let cookie = await getUserIDCookieData();
-      if (cookie && cookie.value) {
-        const decoded = await new Promise<JwtPayload | undefined>(
-          (resolve, _) => {
-            jwt.verify(
-              cookies().get("userIDToken")!.value,
-              env.JWT_SECRET_KEY,
-              (err, decoded) => {
-                if (err) {
-                  console.log("Failed to authenticate token.");
-                  cookies().set({
-                    name: "userIDToken",
-                    value: "",
-                    maxAge: 0,
-                    expires: new Date("2016-10-05"),
-                  });
-                  resolve(undefined);
-                } else {
-                  resolve(decoded as JwtPayload);
-                }
-              },
-            );
-          },
-        );
-        if (decoded) {
-          privilegeLevel = decoded.id === env.ADMIN_ID ? "admin" : "user";
-        }
-      }
-    } catch (e) {
-      console.log("An error occurred during JWT verification:", e);
-    }
+    privilegeLevel = await getPrivilegeLevel();
+
     let query = `
     SELECT
         Blog.id,
@@ -94,7 +61,5 @@ export default async function UsersDebugPage() {
         </div>
       </>
     );
-  } else {
-    return notFound;
   }
 }

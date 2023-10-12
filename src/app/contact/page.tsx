@@ -2,30 +2,21 @@ import { env } from "@/env.mjs";
 import { API_RES_GetUserDataFromCookie } from "@/types/response-types";
 import { cookies } from "next/headers";
 import ContactClient from "./ContactClient";
+import { getUserID } from "../utils";
 
 export default async function ContactPage() {
-  let userData: {
-    id: string;
-    email: string | undefined;
-    emailVerified: boolean;
-    image: string | null;
-    displayName: string | undefined;
-    provider: string | undefined;
-    hasPassword: boolean;
-  } | null = null;
   let status = 0;
-  try {
-    const userIDCookie = cookies().get("userIDToken");
+  const userID = await getUserID();
+  if (userID) {
     const res = await fetch(
-      `${env.NEXT_PUBLIC_DOMAIN}/api/user-data/cookie/${
-        userIDCookie ? userIDCookie.value : "undefined"
-      }`,
-      { method: "GET", cache: "no-store" }
+      `${env.NEXT_PUBLIC_DOMAIN}/api/user-data/cookie/${userID}`,
+      {
+        method: "GET",
+      },
     );
+    const resData = (await res.json()) as API_RES_GetUserDataFromCookie;
     status = res.status;
-    userData = (await res.json()) as API_RES_GetUserDataFromCookie;
-  } catch (e) {
-    console.log(e);
+    return <ContactClient user={resData} status={status} />;
   }
-  return <ContactClient user={userData} status={status} />;
+  return <ContactClient user={null} status={status} />;
 }

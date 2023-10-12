@@ -2,7 +2,6 @@ import { env } from "@/env.mjs";
 import UserDefaultImage from "@/icons/UserDefaultImage";
 import { User } from "@/types/model-types";
 import Image from "next/image";
-import { notFound } from "next/navigation";
 
 export default async function UsersDebugPage() {
   if (env.NEXT_PUBLIC_DOMAIN == "http://localhost:3000") {
@@ -48,7 +47,5 @@ export default async function UsersDebugPage() {
         </div>
       </>
     );
-  } else {
-    return notFound;
   }
 }

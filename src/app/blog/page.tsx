@@ -1,5 +1,3 @@
-import { env } from "@/env.mjs";
-import { cookies } from "next/headers";
 import Link from "next/link";
 import Image from "next/image";
 import { Suspense } from "react";
@@ -7,43 +5,11 @@ import LoadingSpinner from "@/components/LoadingSpinner";
 import { Blog, PostWithCommentsAndLikes } from "@/types/model-types";
 import PostSortingSelect from "@/components/PostSortingSelect";
 import PostSorting from "@/components/PostSorting";
-import jwt, { JwtPayload } from "jsonwebtoken";
-import { ConnectionFactory, getUserIDCookieData } from "../utils";
+import { ConnectionFactory, getPrivilegeLevel } from "../utils";
 
 export default async function Blog() {
   let privilegeLevel: "anonymous" | "admin" | "user" = "anonymous";
-  try {
-    let cookie = await getUserIDCookieData();
-    if (cookie && cookie.value) {
-      const decoded = await new Promise<JwtPayload | undefined>(
-        (resolve, _) => {
-          jwt.verify(
-            cookies().get("userIDToken")!.value,
-            env.JWT_SECRET_KEY,
-            (err, decoded) => {
-              if (err) {
-                console.log("Failed to authenticate token.");
-                cookies().set({
-                  name: "userIDToken",
-                  value: "",
-                  maxAge: 0,
-                  expires: new Date("2016-10-05"),
-                });
-                resolve(undefined);
-              } else {
-                resolve(decoded as JwtPayload);
-              }
-            },
-          );
-        },
-      );
-      if (decoded) {
-        privilegeLevel = decoded.id === env.ADMIN_ID ? "admin" : "user";
-      }
-    }
-  } catch (e) {
-    console.log("An error occurred during JWT verification:", e);
-  }
+  privilegeLevel = await getPrivilegeLevel();
   let query = `
     SELECT
         Blog.id,
