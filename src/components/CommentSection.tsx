@@ -1,11 +1,9 @@
-"use client";
-
 import CommentInputBlock from "@/components/CommentInputBlock";
 import CommentBlock from "@/components/CommentBlock";
 import { Comment, CommentReaction } from "@/types/model-types";
-import { useEffect, useRef, useState } from "react";
+import { MutableRefObject, useEffect, useState } from "react";
 import { env } from "@/env.mjs";
-import { usePathname } from "next/navigation";
+import CommentSortingSelect from "./CommentSortingSelect";
 
 export default function CommentSection(props: {
   privilegeLevel: "admin" | "user" | "anonymous";
@@ -15,7 +13,27 @@ export default function CommentSection(props: {
   type: "blog" | "project";
   reactionMap: Map<number, CommentReaction[]>;
   currentUserID: string;
+  socket: MutableRefObject<WebSocket | null>;
+  userCommentMap: Map<
+    {
+      email?: string | undefined;
+      display_name?: string | undefined;
+      image?: string | undefined;
+    },
+    number[]
+  >;
+  newComment: (commentBody: string, parentCommentID?: number) => Promise<void>;
+  commentSubmitLoading: boolean;
+  toggleDeletePrompt: (
+    commentID: number,
+    commenterID: string,
+    commentBody: string,
+    commenterImage?: string,
+    commenterEmail?: string,
+    commenterDisplayName?: string,
+  ) => void;
 }) {
+  const { socket } = props;
   const [comments, setComments] = useState<Comment[]>(props.allComments);
   const [topLevelComments, setTopLevelComments] = useState<Comment[]>(
     props.topLevelComments,
@@ -24,76 +42,6 @@ export default function CommentSection(props: {
   const [showingBlock, setShowingBlock] = useState<Map<number, boolean>>(
     new Map(topLevelComments.map((comment) => [comment.id, true])),
   );
-  const [updateCounter, setUpdateCounter] = useState<number>(0);
-  let socket = useRef<WebSocket | null>(null);
-
-  const commentRefreshTrigger = async () => {
-    const res = await fetch(
-      `${env.NEXT_PUBLIC_DOMAIN}/api/database/comments/get-all/${props.type}/${props.id}`,
-    );
-    const resData = await res.json();
-    //console.log(resData);
-    if (res.status == 302) {
-      setComments(resData.comments);
-    }
-  };
-
-  const pathname = usePathname();
-  //socket top level mgmt
-  useEffect(() => {
-    //no ws create a new one
-    if (!socket.current) {
-      const newSocket = new WebSocket(env.NEXT_PUBLIC_WEBSOCKET);
-      socket.current = newSocket;
-    }
-    if (socket.current) {
-      socket.current.onopen = () => {
-        console.log("Socket opened");
-        updateChannel();
-      };
-      socket.current.onclose = () => {
-        console.log("socket closed");
-        if (socket.current?.readyState !== WebSocket.OPEN) {
-          socket.current = null;
-        }
-      };
-      socket.current.onmessage = (messageEvent) => {
-        console.log("message recieved");
-        const handleMessage = async () => {
-          console.log("message data: ", messageEvent.data);
-          await commentRefreshTrigger();
-        };
-        handleMessage();
-      };
-      socket.current.onerror = (errorEvent) => {
-        console.error("WebSocket Error: ", errorEvent);
-      };
-    }
-    //return () => {
-    //socket.current?.close();
-    //socket.current = null;
-    //};
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pathname]);
-
-  const updateChannel = () => {
-    if (socket.current?.readyState == WebSocket.OPEN) {
-      console.log("channelUpdate firing");
-      socket.current?.send(
-        JSON.stringify({
-          postType: props.type,
-          blog_id: props.type == "blog" ? props.id : undefined,
-          project_id: props.type == "project" ? props.id : undefined,
-          invoker_id: props.currentUserID,
-        }),
-      );
-    }
-  };
-  //socket channel mgmt
-  useEffect(() => {
-    updateChannel();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pathname, props.currentUserID, props.id, props.type, socket.current]);
 
   useEffect(() => {
     const newTopLevelComments = comments.filter(
@@ -108,6 +56,17 @@ export default function CommentSection(props: {
     }
   }, [clickedOnce]);
 
+  const commentRefreshTrigger = async () => {
+    const res = await fetch(
+      `${env.NEXT_PUBLIC_DOMAIN}/api/database/comments/get-all/${props.type}/${props.id}`,
+    );
+    const resData = await res.json();
+    //console.log(resData);
+    if (res.status == 302) {
+      setComments(resData.comments);
+    }
+  };
+
   const checkForDoubleClick = (id: number) => {
     if (clickedOnce) {
       setShowingBlock((prev) => new Map(prev).set(id, !prev.get(id)));
@@ -116,120 +75,65 @@ export default function CommentSection(props: {
     }
   };
 
-  const newComment = async (body: string, parent_comment_id?: number) => {
-    //send to websocket
-    if (socket.current?.OPEN) {
-      console.log("sending via websocket");
-      socket.current.send(
-        JSON.stringify({
-          action: "createComment",
-          commentType: "create",
-          commentBody: body,
-          postType: props.type,
-          blog_id: props.type == "blog" ? props.id : undefined,
-          project_id: props.type == "project" ? props.id : undefined,
-          parent_comment_id: parent_comment_id,
-          invoker_id: props.currentUserID,
-        }),
-      );
-    } else {
-      // fallback
-      const res = await fetch(
-        `${env.NEXT_PUBLIC_DOMAIN}/api/database/comments/create/${props.type}/${props.id}`,
-        {
-          method: "POST",
-          body: JSON.stringify({
-            body: body,
-            parent_comment_id: parent_comment_id,
-            commenter_id: props.currentUserID,
-          }),
-        },
-      );
-      await commentRefreshTrigger();
-      //console.log(await res.json());
-    }
-  };
-
-  const updateComment = async (body: string, comment_id: number) => {
-    if (socket.current) {
-      socket.current.send(
-        JSON.stringify({
-          action: "updateComment",
-          messageType: "comment",
-          commentType: "update",
-          commentBody: body,
-          postType: props.type,
-          blog_id: props.type == "blog" ? props.id : undefined,
-          project_id: props.type == "project" ? props.id : undefined,
-          comment_id: comment_id,
-          invoker_id: props.currentUserID,
-        }),
-      );
-    } else {
-      //fallback
-      const res = await fetch(
-        `${env.NEXT_PUBLIC_DOMAIN}/api/database/comments/update`,
-        {
-          method: "POST",
-          body: JSON.stringify({ body: body, comment_id: comment_id }),
-        },
-      );
-      commentRefreshTrigger();
-      console.log(await res.json());
-    }
-  };
-
-  const commentReaction = () => {};
-
   return (
-    <div className="w-full">
-      <div
-        className="text-center text-2xl font-light tracking-widest underline underline-offset-8"
-        id="comments"
-      >
-        Comments
+    <>
+      <div className="w-full">
+        <div
+          className="text-center text-2xl font-light tracking-widest underline underline-offset-8"
+          id="comments"
+        >
+          Comments
+        </div>
+        <div>
+          <CommentInputBlock
+            isReply={false}
+            privilegeLevel={props.privilegeLevel}
+            commentRefreshTrigger={commentRefreshTrigger}
+            type={props.type}
+            post_id={props.id}
+            socket={socket}
+            currentUserID={props.currentUserID}
+            newComment={props.newComment}
+            commentSubmitLoading={false}
+          />
+        </div>
+        <CommentSortingSelect type={props.type} />
+        <div className="" id="comments">
+          {topLevelComments?.map((topLevelComment) => (
+            <div
+              onClick={() => checkForDoubleClick(topLevelComment.id)}
+              key={topLevelComment.id}
+              className="mt-4 max-w-full select-none rounded bg-white py-2 pl-2 shadow dark:bg-zinc-900 sm:pl-4 md:pl-8 lg:pl-12"
+            >
+              {showingBlock.get(topLevelComment.id) ? (
+                <CommentBlock
+                  comment={topLevelComment}
+                  category={"blog"}
+                  projectID={props.id}
+                  recursionCount={1}
+                  allComments={comments}
+                  child_comments={props.allComments.filter(
+                    (comment) =>
+                      comment.parent_comment_id == topLevelComment.id,
+                  )}
+                  privilegeLevel={props.privilegeLevel}
+                  currentUserID={props.currentUserID}
+                  commentRefreshTrigger={commentRefreshTrigger}
+                  reactionMap={props.reactionMap}
+                  level={0}
+                  socket={socket}
+                  userCommentMap={props.userCommentMap}
+                  toggleDeletePrompt={props.toggleDeletePrompt}
+                  newComment={props.newComment}
+                  commentSubmitLoading={props.commentSubmitLoading}
+                />
+              ) : (
+                <div className="h-4"></div>
+              )}
+            </div>
+          ))}
+        </div>
       </div>
-      <div>
-        <CommentInputBlock
-          isReply={false}
-          privilegeLevel={props.privilegeLevel}
-          commentRefreshTrigger={commentRefreshTrigger}
-          parent_id={null}
-          type={props.type}
-          post_id={props.id}
-          newComment={newComment}
-        />
-      </div>
-      <div className="" id="comments">
-        {topLevelComments?.map((topLevelComment) => (
-          <div
-            onClick={() => checkForDoubleClick(topLevelComment.id)}
-            key={topLevelComment.id}
-            className="bg-white select-none dark:bg-zinc-900 rounded shadow mt-4 pl-2 sm:pl-6 md:pl-12 lg:pl-16 max-w-full py-2"
-          >
-            {showingBlock.get(topLevelComment.id) ? (
-              <CommentBlock
-                comment={topLevelComment}
-                category={"blog"}
-                projectID={props.id}
-                recursionCount={1}
-                allComments={comments}
-                child_comments={props.allComments.filter(
-                  (comment) => comment.parent_comment_id == topLevelComment.id,
-                )}
-                privilegeLevel={props.privilegeLevel}
-                userID={props.currentUserID}
-                commentRefreshTrigger={commentRefreshTrigger}
-                reactionMap={props.reactionMap}
-                newComment={newComment}
-                level={0}
-              />
-            ) : (
-              <div className="h-4"></div>
-            )}
-          </div>
-        ))}
-      </div>
-    </div>
+    </>
   );
 }

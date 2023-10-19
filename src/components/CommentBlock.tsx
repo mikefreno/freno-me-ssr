@@ -1,33 +1,23 @@
-"use client";
-
 import UserDefaultImage from "@/icons/UserDefaultImage";
-import React, { useEffect, useRef, useState } from "react";
+import React, {
+  FormEvent,
+  MutableRefObject,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import ReplyIcon from "@/icons/ReplyIcon";
 import CommentInputBlock from "./CommentInputBlock";
 import ReactionBar from "./ReactionBar";
 import ThumbsUpEmoji from "@/icons/emojis/ThumbsUp.svg";
 import { Comment, CommentReaction } from "@/types/model-types";
-import useSWR from "swr";
 import { env } from "@/env.mjs";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import Cookies from "js-cookie";
-import { API_RES_GetUserDataFromCookie } from "@/types/response-types";
 import debounce from "./Debounce";
 import TrashIcon from "@/icons/TrashIcon";
 import LoadingSpinner from "./LoadingSpinner";
-import {
-  deleteCommentByAdmin,
-  deleteCommentByUser,
-  trueDeleteComment,
-} from "@/app/globalActions";
-
-const fetcher = async (url: string) => {
-  const res = await fetch(url);
-  const data = (await res.json()) as API_RES_GetUserDataFromCookie;
-
-  return { data, status: res.status };
-};
 
 export default function CommentBlock(props: {
   commentRefreshTrigger: () => Promise<void>;
@@ -38,19 +28,29 @@ export default function CommentBlock(props: {
   allComments: Comment[];
   child_comments: Comment[];
   privilegeLevel: "admin" | "user" | "anonymous";
-  userID: string;
+  currentUserID: string;
   reactionMap: Map<number, CommentReaction[]>;
   level: number;
-  newComment: (
-    body: string,
-    parent_comment_id: number | undefined,
-  ) => Promise<void>;
+  socket: MutableRefObject<WebSocket | null>;
+  userCommentMap: Map<
+    {
+      email?: string | undefined;
+      display_name?: string | undefined;
+      image?: string | undefined;
+    },
+    number[]
+  >;
+  newComment: (commentBody: string, parentCommentID?: number) => Promise<void>;
+  commentSubmitLoading: boolean;
+  toggleDeletePrompt: (
+    commentID: number,
+    commenterID: string,
+    commentBody: string,
+    commenterImage?: string,
+    commenterEmail?: string,
+    commenterDisplayName?: string,
+  ) => void;
 }) {
-  const { data: userData, error: reactionError } = useSWR(
-    `/api/user-data/get-from-raw-id/${props.comment.commenter_id}`,
-    fetcher,
-  );
-
   const [commentCollapsed, setCommentCollapsed] = useState<boolean>(false);
   const [showingReactionOptions, setShowingReactionOptions] =
     useState<boolean>(false);
@@ -60,8 +60,13 @@ export default function CommentBlock(props: {
   const [pointFeedbackOffset, setPointFeedbackOffset] = useState<number>(0);
   const [immediateLike, setImmediateLike] = useState<boolean>(false);
   const [immediateDislike, setImmediateDislike] = useState<boolean>(false);
-  const [windowWidth, setWindowWidth] = useState(0);
-  const [deletionLoading, setDeletionLoading] = useState(false);
+  const [windowWidth, setWindowWidth] = useState<number>(0);
+  const [deletionLoading, setDeletionLoading] = useState<boolean>(false);
+  const [userData, setUserData] = useState<{
+    email?: string | undefined;
+    display_name?: string | undefined;
+    image?: string | undefined;
+  } | null>(null);
 
   const containerRef = useRef<HTMLDivElement>(null);
   const commentInputRef = useRef<HTMLDivElement>(null);
@@ -83,6 +88,14 @@ export default function CommentBlock(props: {
       window.removeEventListener("resize", handleResize);
     };
   }, []);
+
+  useEffect(() => {
+    props.userCommentMap.forEach((v, k) => {
+      if (v.includes(props.comment.id)) {
+        setUserData(k);
+      }
+    });
+  }, [props.comment.id, props.userCommentMap]);
 
   useEffect(() => {
     if (containerRef.current) {
@@ -130,7 +143,9 @@ export default function CommentBlock(props: {
       if (
         reactions
           .filter((commentReaction) => commentReaction.type == "upVote")
-          .some((commentReaction) => commentReaction.user_id == props.userID)
+          .some(
+            (commentReaction) => commentReaction.user_id == props.currentUserID,
+          )
       ) {
         setPointFeedbackOffset(-1);
         setImmediateLike(false);
@@ -146,7 +161,9 @@ export default function CommentBlock(props: {
       } else if (
         reactions
           .filter((commentReaction) => commentReaction.type == "downVote")
-          .some((commentReaction) => commentReaction.user_id == props.userID)
+          .some(
+            (commentReaction) => commentReaction.user_id == props.currentUserID,
+          )
       ) {
         setPointFeedbackOffset(2);
         setImmediateLike(true);
@@ -193,7 +210,9 @@ export default function CommentBlock(props: {
       if (
         reactions
           .filter((commentReaction) => commentReaction.type == "downVote")
-          .some((commentReaction) => commentReaction.user_id == props.userID)
+          .some(
+            (commentReaction) => commentReaction.user_id == props.currentUserID,
+          )
       ) {
         setPointFeedbackOffset(1);
         setImmediateDislike(false);
@@ -209,12 +228,14 @@ export default function CommentBlock(props: {
       } else if (
         reactions
           .filter((commentReaction) => commentReaction.type == "upVote")
-          .some((commentReaction) => commentReaction.user_id == props.userID)
+          .some(
+            (commentReaction) => commentReaction.user_id == props.currentUserID,
+          )
       ) {
         setPointFeedbackOffset(-2);
         setImmediateDislike(false);
         setImmediateLike(true);
-        const removeRes = await fetch(
+        await fetch(
           `${env.NEXT_PUBLIC_DOMAIN}/api/database/comment-reactions/remove/upVote`,
           { method: "POST", body: JSON.stringify(data) },
         );
@@ -252,12 +273,12 @@ export default function CommentBlock(props: {
     if (props.privilegeLevel !== "anonymous") {
       const data = {
         comment_id: props.comment.id,
-        user_id: props.userID,
+        user_id: props.currentUserID,
       };
       if (
         reactions.some(
           (reaction) =>
-            reaction.type == type && reaction.user_id == props.userID,
+            reaction.type == type && reaction.user_id == props.currentUserID,
         )
       ) {
         //user has given this reaction, need to remove
@@ -279,68 +300,34 @@ export default function CommentBlock(props: {
     }
   };
 
-  const deleteCommentTrigger = async () => {
-    const affirm = window.confirm(
-      `Are you sure you want to delete comment "${props.comment.body}" -${
-        userData?.data.displayName
-          ? userData?.data.displayName
-          : userData?.data.email
-      }?`,
+  const deleteCommentTrigger = async (e: FormEvent) => {
+    e.stopPropagation();
+    setDeletionLoading(true);
+    props.toggleDeletePrompt(
+      props.comment.id,
+      props.comment.commenter_id,
+      props.comment.body,
+      userData?.image,
+      userData?.email,
+      userData?.display_name,
     );
-    if (affirm) {
-      setDeletionLoading(true);
-      if (props.userID == props.comment.commenter_id) {
-        await deleteCommentByUser({ commentID: props.comment.id });
-        await props.commentRefreshTrigger();
-      } else if (props.privilegeLevel == "admin") {
-        const trueDeleteAffirm = window.confirm(
-          `Would you like to full delete the comment (Remove from DB)?`,
-        );
-        if (trueDeleteAffirm) {
-          await trueDeleteComment({ commentID: props.comment.id });
-          await props.commentRefreshTrigger();
-        } else {
-          await deleteCommentByAdmin({
-            commentID: props.comment.id,
-          });
-          await props.commentRefreshTrigger();
-        }
-      }
-      setDeletionLoading(false);
-    }
+    setDeletionLoading(false);
   };
 
   return (
     <>
       <button
         onClick={collapseCommentToggle}
-        className={!commentCollapsed ? "hidden" : "ml-5 w-full lg:w-3/4 px-2"}
+        className={!commentCollapsed ? "hidden" : "ml-5 w-full px-2 lg:w-3/4"}
       >
-        <div className="mr-2 h-8 border-l-2 mt-1 border-black dark:border-white my-auto" />
+        <div className="my-auto mr-2 mt-1 h-8 border-l-2 border-black dark:border-white" />
       </button>
       <div className={commentCollapsed ? "hidden" : "z-[500]"}>
-        <div className="my-4 flex w-full lg:w-3/4 overflow-x-auto overflow-y-hidden">
+        <div className="my-4 flex w-full overflow-x-auto overflow-y-hidden lg:w-3/4">
           <div
             className="flex flex-col justify-between"
             style={{ height: toggleHeight }}
           >
-            <div className="absolute -ml-6">
-              {props.userID == props.comment.commenter_id ||
-              props.privilegeLevel == "admin" ? (
-                <button onClick={deleteCommentTrigger}>
-                  {deletionLoading ? (
-                    <LoadingSpinner height={24} width={24} />
-                  ) : (
-                    <TrashIcon
-                      height={24}
-                      width={24}
-                      stroke={"red"}
-                      strokeWidth={1.5}
-                    />
-                  )}
-                </button>
-              ) : null}
-            </div>
             <button onClick={(e) => upVoteHandler(e)}>
               <div
                 className={`h-5 w-5 ${
@@ -350,7 +337,7 @@ export default function CommentBlock(props: {
                     )
                     .some(
                       (commentReaction) =>
-                        commentReaction.user_id == props.userID,
+                        commentReaction.user_id == props.currentUserID,
                     ) || immediateLike
                     ? "fill-emerald-500"
                     : `fill-black dark:fill-white hover:fill-emerald-500 ${
@@ -362,7 +349,7 @@ export default function CommentBlock(props: {
               >
                 <ThumbsUpEmoji />
                 {props.privilegeLevel == "anonymous" ? (
-                  <div className="tooltip-text w-32 -ml-16 text-white">
+                  <div className="tooltip-text -ml-16 w-32 text-white">
                     You must be logged in
                   </div>
                 ) : null}
@@ -386,7 +373,7 @@ export default function CommentBlock(props: {
                     )
                     .some(
                       (commentReaction) =>
-                        commentReaction.user_id == props.userID,
+                        commentReaction.user_id == props.currentUserID,
                     ) || immediateDislike
                     ? "fill-rose-500"
                     : `fill-black dark:fill-white hover:fill-rose-500 ${
@@ -400,16 +387,16 @@ export default function CommentBlock(props: {
                   <ThumbsUpEmoji />
                 </div>
                 {props.privilegeLevel == "anonymous" ? (
-                  <div className="tooltip-text w-32 -ml-16">
+                  <div className="tooltip-text -ml-16 w-32">
                     You must be logged in
                   </div>
                 ) : null}
               </div>
             </button>
           </div>
-          <button onClick={collapseCommentToggle} className="px-2 z-0">
+          <button onClick={collapseCommentToggle} className="z-0 px-2">
             <div
-              className="border-l-2 border-black dark:border-white transition-all duration-300 ease-in-out"
+              className="border-l-2 border-black transition-all duration-300 ease-in-out dark:border-white"
               style={{ height: toggleHeight }}
             />
           </button>
@@ -421,27 +408,48 @@ export default function CommentBlock(props: {
               {props.comment.body}
             </div>
             <div className="flex pl-2">
-              {userData?.data.image ? (
+              {userData?.image ? (
                 <Image
-                  src={userData.data.image}
+                  src={userData.image}
                   height={24}
                   width={24}
                   alt="user-image"
-                  className="rounded-full w-6 h-6 object-cover object-center"
+                  className="h-6 w-6 rounded-full object-cover object-center"
                 />
               ) : (
                 <UserDefaultImage strokeWidth={1} height={24} width={24} />
               )}
               <div className="px-1">
-                {userData?.data.displayName
-                  ? userData?.data.displayName
-                  : userData?.data.email}
+                {userData?.display_name
+                  ? userData?.display_name
+                  : userData?.email
+                  ? userData.email
+                  : "[removed]"}
+              </div>
+              <div>
+                {props.currentUserID == props.comment.commenter_id ||
+                props.privilegeLevel == "admin" ? (
+                  <button onClick={(e) => deleteCommentTrigger(e)}>
+                    {deletionLoading ? (
+                      <LoadingSpinner height={24} width={24} />
+                    ) : (
+                      <TrashIcon
+                        height={24}
+                        width={24}
+                        stroke={"red"}
+                        strokeWidth={1.5}
+                      />
+                    )}
+                  </button>
+                ) : null}
               </div>
             </div>
-            {props.userID == props.comment.commenter_id ? <div></div> : null}
+            {props.currentUserID == props.comment.commenter_id ? (
+              <div></div>
+            ) : null}
             <button
               onClick={(event) => toggleCommentReplyBox(event)}
-              className="z-30 absolute"
+              className="absolute z-30"
             >
               <ReplyIcon
                 color={pathname.split("/")[1] == "blog" ? "#fb923c" : "#60a5fa"}
@@ -458,7 +466,7 @@ export default function CommentBlock(props: {
             >
               <ReactionBar
                 commentID={props.comment.id}
-                currentUserID={props.userID}
+                currentUserID={props.currentUserID}
                 genericReactionHandler={genericReactionHandler}
                 reactions={reactions}
                 showingReactionOptions={showingReactionOptions}
@@ -481,10 +489,13 @@ export default function CommentBlock(props: {
             parent_id={props.comment.id}
             type={props.category}
             post_id={props.projectID}
+            currentUserID={props.currentUserID}
+            socket={props.socket}
             newComment={props.newComment}
+            commentSubmitLoading={props.commentSubmitLoading}
           />
         </div>
-        <div className="pl-2 sm:pl-6 md:pl-12 lg:pl-16">
+        <div className="pl-2 sm:pl-4 md:pl-8 lg:pl-12">
           {props.child_comments.map((this_comment) => (
             <CommentBlock
               key={this_comment.id}
@@ -497,11 +508,15 @@ export default function CommentBlock(props: {
                 (comment) => comment.parent_comment_id == this_comment.id,
               )}
               privilegeLevel={props.privilegeLevel}
-              userID={props.userID}
+              currentUserID={props.currentUserID}
               commentRefreshTrigger={props.commentRefreshTrigger}
               reactionMap={props.reactionMap}
               level={props.level + 1}
+              socket={props.socket}
+              userCommentMap={props.userCommentMap}
+              toggleDeletePrompt={props.toggleDeletePrompt}
               newComment={props.newComment}
+              commentSubmitLoading={props.commentSubmitLoading}
             />
           ))}
         </div>
