@@ -10,18 +10,13 @@ import { usePathname, useRouter } from "next/navigation";
 import useOnClickOutside from "@/hooks/ClickOutsideHook";
 import UserDefaultImage from "@/icons/UserDefaultImage";
 import { signOut } from "@/app/globalActions";
-import { API_RES_GetUserDataFromCookie } from "@/types/response-types";
 import LoadingSpinner from "./LoadingSpinner";
 
 export default function NavbarClient(props: {
   user: {
-    id: string;
-    email: string | undefined;
-    emailVerified: boolean;
-    image: string | null;
-    displayName: string | undefined;
-    provider: string | undefined;
-    hasPassword: boolean;
+    email?: string;
+    image?: string;
+    displayName?: string;
   } | null;
   status: number;
 }) {
@@ -30,7 +25,6 @@ export default function NavbarClient(props: {
   const pathname = usePathname();
   //state
   const [menuOpen, setMenuOpen] = useState<boolean>(false);
-  // const [status, setStatus] = useState<number>(0);
   //ref
   const menuRef = useRef<HTMLDivElement>(null);
   const closeRef = useRef<HTMLButtonElement>(null);
@@ -53,25 +47,6 @@ export default function NavbarClient(props: {
       document.getElementById("LineB")?.classList.remove("LineB");
     }
   }
-
-  // useEffect(() => {
-  //   asyncGetUserData();
-
-  //   if (userData) {
-  //     setUser(userData.data);
-  //     setStatus(userData.status);
-  //   }
-  // }, [userData, pathname]);
-
-  // const asyncGetUserData = async () => {
-  //   const res = await fetch(`/api/user-data/cookie`, {
-  //     method: "GET",
-  //     cache: "no-store",
-  //   });
-  //   const resData = (await res.json()) as API_RES_GetUserDataFromCookie;
-  //   setStatus(res.status);
-  //   setUser(resData);
-  // };
 
   function menuToggle() {
     setMenuOpen(!menuOpen);
@@ -96,7 +71,7 @@ export default function NavbarClient(props: {
   return (
     <nav className="fixed z-50 flex w-screen bg-white bg-opacity-50 p-2 backdrop-blur dark:bg-opacity-5">
       <div className={`mx-4 my-2 flex flex-1`}>
-        <Link href={"/"} className="flex z-50">
+        <Link href={"/"} className="z-50 flex">
           <picture className="logoSpinner">
             <source
               srcSet="/WhiteLogo.png"
@@ -107,7 +82,7 @@ export default function NavbarClient(props: {
         </Link>
       </div>
       <div className="my-auto flex justify-end" style={{ flex: 3 }}>
-        <ul className="hidden text-sm text-zinc-900 dark:text-zinc-200 pr-2 md:flex">
+        <ul className="hidden pr-2 text-sm text-zinc-900 dark:text-zinc-200 md:flex">
           <li className="my-auto pl-4">
             <Link
               href="/projects"
@@ -115,7 +90,7 @@ export default function NavbarClient(props: {
               className={`
                   ${
                     pathname.match("/projects")
-                      ? "underline under"
+                      ? "under underline"
                       : "hover-underline-animation"
                   } border-zinc-900 text-zinc-900 underline-offset-4  dark:border-zinc-200 dark:text-zinc-200`}
             >
@@ -128,7 +103,7 @@ export default function NavbarClient(props: {
               shallow={false}
               className={`${
                 pathname.match("/blog")
-                  ? "underline under"
+                  ? "under underline"
                   : "hover-underline-animation"
               } border-zinc-900 text-zinc-900 underline-offset-4 dark:border-zinc-200 dark:text-zinc-200`}
             >
@@ -141,7 +116,7 @@ export default function NavbarClient(props: {
               href="/contact"
               className={`${
                 pathname.match("/contact")
-                  ? "underline under"
+                  ? "under underline"
                   : "hover-underline-animation"
               } border-zinc-900 text-zinc-900 underline-offset-4 dark:border-zinc-200 dark:text-zinc-200`}
             >
@@ -159,10 +134,10 @@ export default function NavbarClient(props: {
                         height={36}
                         width={36}
                         alt="user-image"
-                        className="rounded-full w-9 h-9 object-cover object-center"
+                        className="h-9 w-9 rounded-full object-cover object-center"
                       />
                     ) : (
-                      <div className="border border-black dark:border-white rounded-full p-0.5 mr-1">
+                      <div className="mr-1 rounded-full border border-black p-0.5 dark:border-white">
                         <UserDefaultImage
                           strokeWidth={1}
                           height={36}
@@ -202,7 +177,7 @@ export default function NavbarClient(props: {
                 href="/login"
                 className={`${
                   pathname == "login"
-                    ? "underline under"
+                    ? "under underline"
                     : "hover-underline-animation"
                 } border-zinc-900 text-zinc-900 underline-offset-4 dark:border-zinc-200 dark:text-zinc-200`}
               >
@@ -213,7 +188,7 @@ export default function NavbarClient(props: {
         </ul>
         <div
           className={`${
-            menuOpen ? "-mt-4 -mr-2" : ""
+            menuOpen ? "-mr-2 -mt-4" : ""
           } my-auto transition-all duration-300 ease-in md:hidden`}
         >
           <button

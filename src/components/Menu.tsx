@@ -9,12 +9,9 @@ export default function Menu(props: {
   menuRef: RefObject<HTMLDivElement>;
   setMenuOpen: (open: boolean) => void;
   user: {
-    id: string;
-    email: string | undefined;
-    emailVerified: boolean;
-    image: string | null;
-    displayName: string | undefined;
-    provider: string | undefined;
+    email?: string;
+    image?: string;
+    displayName?: string;
   } | null;
   status: number;
   signOutTrigger: (e: React.FormEvent) => Promise<void>;
@@ -37,7 +34,7 @@ export default function Menu(props: {
             : "border-blue-400 dark:border-blue-700"
         } rounded-b-3xl rounded-tl-3xl rounded-tr-sm border bg-zinc-50 shadow-inner dark:bg-zinc-900`}
       >
-        <ul className="px-6 pt-8 pb-4">
+        <ul className="px-6 pb-4 pt-8">
           <li className="pt-2 text-lg">
             <Link href="/projects">
               <div
@@ -111,10 +108,10 @@ export default function Menu(props: {
                         height={28}
                         width={28}
                         alt="user-image"
-                        className="rounded-full w-9 -ml-2 h-9 object-cover object-center"
+                        className="-ml-2 h-9 w-9 rounded-full object-cover object-center"
                       />
                     ) : (
-                      <div className="border border-black dark:border-white rounded-full p-0.5 mr-1">
+                      <div className="mr-1 rounded-full border border-black p-0.5 dark:border-white">
                         <UserDefaultImage
                           strokeWidth={1}
                           height={28}
@@ -126,7 +123,7 @@ export default function Menu(props: {
                   </div>
                 </Link>
               </li>
-              <li className="pt-2 text-lg flex justify-center">
+              <li className="flex justify-center pt-2 text-lg">
                 {props.signOutLoading ? (
                   <LoadingSpinner height={24} width={24} />
                 ) : (

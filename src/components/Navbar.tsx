@@ -1,29 +1,25 @@
 import { env } from "@/env.mjs";
-import { API_RES_GetUserDataFromCookie } from "@/types/response-types";
-import { cookies } from "next/headers";
 import NavbarClient from "./NavbarClient";
+import { getUserID } from "@/app/utils";
 
 export default async function Navbar() {
   let userData: {
-    id: string;
-    email: string | undefined;
-    emailVerified: boolean;
-    image: string | null;
-    displayName: string | undefined;
-    provider: string | undefined;
-    hasPassword: boolean;
+    email?: string;
+    image?: string;
+    displayName?: string;
   } | null = null;
   let status = 0;
   try {
-    const userIDCookie = cookies().get("userIDToken");
+    const userID = await getUserID();
     const res = await fetch(
-      `${env.NEXT_PUBLIC_DOMAIN}/api/user-data/cookie/${
-        userIDCookie ? userIDCookie.value : "undefined"
-      }`,
-      { method: "GET", cache: "no-store" }
+      `${env.NEXT_PUBLIC_DOMAIN}/api/database/user/public-data/${userID}`,
+      {
+        method: "GET",
+      },
     );
-    status = res.status;
     userData = await res.json();
+
+    status = res.status;
   } catch (e) {
     console.log(e);
   }
