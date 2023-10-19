@@ -104,8 +104,8 @@ export const model: { [key: string]: string } = {
     id INT AUTO_INCREMENT NOT NULL,
     user_id varchar(255) NOT NULL,
     connection_id varchar(255) NOT NULL,
-    blog_id INT,
-    project_id INT,
+    post_type varchar(255),
+    post_id INT,
     PRIMARY KEY (id)
   )`,
 };

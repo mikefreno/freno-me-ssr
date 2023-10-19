@@ -9,12 +9,12 @@ export default async function PostCard(props: {
   linkTarget: "blog" | "projects";
 }) {
   return (
-    <div className="relative w-full z-0 md:w-5/6 lg:w-3/4 xl:w-3/5 mx-auto h-96 bg-white shadow-lg rounded-lg overflow-hidden">
+    <div className="relative z-0 mx-auto h-96 w-full overflow-hidden rounded-lg bg-white shadow-lg md:w-5/6 lg:w-3/4 xl:w-3/5">
       {props.privilegeLevel !== "admin" ? null : (
-        <div className="absolute top-0 w-full bg-white bg-opacity-40 backdrop-blur-md border-b border-white border-opacity-20 py-4 px-2 md:px-6">
+        <div className="absolute top-0 w-full border-b border-white border-opacity-20 bg-white bg-opacity-40 px-2 py-4 backdrop-blur-md md:px-6">
           <div className="flex justify-between">
             {props.post.published ? null : (
-              <div className="text-center whitespace-nowrap text-lg text-black">
+              <div className="whitespace-nowrap text-center text-lg text-black">
                 Not Published
               </div>
             )}
@@ -36,24 +36,24 @@ export default async function PostCard(props: {
         alt={props.post.title.replaceAll("_", " ") + " banner"}
         height={1000}
         width={1000}
-        className="w-full h-full object-cover"
+        className="h-full w-full object-cover"
       />
-      <div className="absolute bottom-0 w-full bg-white bg-opacity-40 backdrop-blur-md border-t border-white border-opacity-20 py-4 px-2 md:px-6">
-        <div className="flex md:flex-row flex-col justify-between items-center">
+      <div className="absolute bottom-0 w-full border-t border-white border-opacity-20 bg-white bg-opacity-40 px-2 py-4 backdrop-blur-md md:px-6">
+        <div className="flex flex-col items-center justify-between md:flex-row">
           <div className="text-center md:text-left">
-            <div className="text-lg md:text-xl text-black">
+            <div className="text-lg text-black md:text-xl">
               {props.post.subtitle}
             </div>
-            <div className="text-2xl md:text-3xl text-black">
+            <div className="text-2xl text-black md:text-3xl">
               {props.post.title.replaceAll("_", " ")}
             </div>
           </div>
-          <div className="flex justify-around md:justify-between md:pl-2 pt-2 w-full md:pt-0 md:w-1/3">
-            <div className="md:h-full my-auto">
-              <p className="text-black text-sm whitespace-nowrap">
+          <div className="flex w-full justify-around pt-2 md:w-1/3 md:justify-between md:pl-2 md:pt-0">
+            <div className="my-auto md:h-full">
+              <p className="whitespace-nowrap text-sm text-black">
                 {props.post.total_comments || 0} Comments
               </p>
-              <p className="text-black text-sm whitespace-nowrap">
+              <p className="whitespace-nowrap text-sm text-black">
                 {props.post.total_likes || 0} Likes
               </p>
             </div>

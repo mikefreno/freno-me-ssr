@@ -36,7 +36,7 @@ export default function PasswordResetPage() {
       const res = await passwordReset(
         newPasswordRef.current.value,
         newPasswordConfRef.current.value,
-        token as string
+        token as string,
       );
       if (res == "success") {
         setCountDown(true);
@@ -99,7 +99,7 @@ export default function PasswordResetPage() {
     return (
       <div className="timer text-center">
         <div className="text-sm">Change Successful!</div>
-        <div className="value text-3xl py-1">{timeRemaining}</div>
+        <div className="value py-1 text-3xl">{timeRemaining}</div>
         <div className="text-sm">Redirecting...</div>
       </div>
     );
@@ -107,10 +107,10 @@ export default function PasswordResetPage() {
 
   return (
     <div>
-      <div className="text-center text-xl pt-24">Set New Password</div>
+      <div className="pt-24 text-center text-xl">Set New Password</div>
       <form
         onSubmit={(e) => setNewPasswordTrigger(e)}
-        className="mt-4 flex justify-center w-full"
+        className="mt-4 flex w-full justify-center"
       >
         <div className="flex flex-col justify-center">
           <div className="input-group mx-4">
@@ -123,7 +123,7 @@ export default function PasswordResetPage() {
               onBlur={handlePasswordBlur}
               disabled={passwordChangeLoading}
               placeholder=" "
-              className="bg-transparent underlinedInput w-full"
+              className="underlinedInput w-full bg-transparent"
             />
             <span className="bar"></span>
             <label className="underlinedInputLabel">New Password</label>
@@ -131,7 +131,7 @@ export default function PasswordResetPage() {
 
           <div
             className={`${
-              showPasswordLengthWarning ? "" : "opacity-0 select-none"
+              showPasswordLengthWarning ? "" : "select-none opacity-0"
             } transition-opacity text-center text-red-500 duration-200 ease-in-out`}
           >
             Password too short! Min Length: 8
@@ -146,7 +146,7 @@ export default function PasswordResetPage() {
                 required
                 disabled={passwordChangeLoading}
                 placeholder=" "
-                className="bg-transparent underlinedInput w-full"
+                className="underlinedInput w-full bg-transparent"
               />
               <span className="bar"></span>
               <label className="underlinedInputLabel">
@@ -161,14 +161,14 @@ export default function PasswordResetPage() {
               passwordLengthSufficient &&
               newPasswordConfRef.current!.value.length >= 6
                 ? ""
-                : "opacity-0 select-none"
+                : "select-none opacity-0"
             } transition-opacity text-center text-red-500 duration-200 ease-in-out`}
           >
             Passwords do not match!
           </div>
 
           {countDown ? (
-            <div className="pt-4 mx-auto">
+            <div className="mx-auto pt-4">
               <CountdownCircleTimer
                 isPlaying={countDown}
                 duration={5}
@@ -188,7 +188,7 @@ export default function PasswordResetPage() {
               className={`${
                 passwordChangeLoading || !passwordsMatch
                   ? "bg-zinc-400"
-                  : "bg-blue-400 dark:bg-blue-600 hover:bg-blue-500 dark:hover:bg-blue-700 active:scale-90"
+                  : "bg-blue-400 hover:bg-blue-500 active:scale-90 dark:bg-blue-600 dark:hover:bg-blue-700"
               } flex justify-center rounded transition-all duration-300 ease-out my-6 px-4 py-2 text-white`}
             >
               Set
@@ -198,12 +198,12 @@ export default function PasswordResetPage() {
       </form>
       <div
         className={`${
-          showRequestNewEmail ? "" : "opacity-0 select-none"
+          showRequestNewEmail ? "" : "select-none opacity-0"
         } text-red-500 italic transition-opacity flex justify-center duration-300 ease-in-out`}
       >
         Token has expired, request a new one{" "}
         <Link
-          className="underline underline-offset-4 pl-1 text-blue-500 hover:text-blue-400"
+          className="pl-1 text-blue-500 underline underline-offset-4 hover:text-blue-400"
           href={"/login/request-password-reset"}
         >
           here

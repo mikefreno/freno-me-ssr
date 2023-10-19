@@ -191,38 +191,38 @@ export default function LoginPage() {
           </div>
         </div>
         <div className="pt-24 md:pt-48">
-          <div className="text-center text-3xl absolute -mt-12 italic text-red-400">
+          <div className="absolute -mt-12 text-center text-3xl italic text-red-400">
             {error == "passwordMismatch"
               ? "Passwords did not match!"
               : error == "duplicate"
               ? "Email Already Exists!"
               : null}
           </div>
-          <div className="py-2 pl-6 md:pl-0 text-2xl">
+          <div className="py-2 pl-6 text-2xl md:pl-0">
             {register ? "Register" : "Login"}
           </div>
           {!register ? (
-            <div className="text-center py-4 md:min-w-[475px]">
+            <div className="py-4 text-center md:min-w-[475px]">
               Don&apos;t have an account yet?
               <button
                 onClick={() => {
                   setRegister(true);
                   setUsePassword(false);
                 }}
-                className="pl-1 text-blue-400 dark:text-blue-600 underline"
+                className="pl-1 text-blue-400 underline dark:text-blue-600"
               >
                 Click here to Register
               </button>
             </div>
           ) : (
-            <div className="text-center py-4 md:min-w-[475px]">
+            <div className="py-4 text-center md:min-w-[475px]">
               Already have an account?
               <button
                 onClick={() => {
                   setRegister(false);
                   setUsePassword(false);
                 }}
-                className="pl-1 text-blue-400 dark:text-blue-600 underline"
+                className="pl-1 text-blue-400 underline dark:text-blue-600"
               >
                 Click here to Login
               </button>
@@ -236,7 +236,7 @@ export default function LoginPage() {
                   required
                   ref={emailRef}
                   placeholder=" "
-                  className="bg-transparent underlinedInput"
+                  className="underlinedInput bg-transparent"
                 />
                 <span className="bar"></span>
                 <label className="underlinedInputLabel">Email</label>
@@ -254,7 +254,7 @@ export default function LoginPage() {
                       onChange={register ? handleNewPasswordChange : () => null}
                       onBlur={register ? handlePasswordBlur : () => null}
                       placeholder=" "
-                      className="bg-transparent underlinedInput"
+                      className="underlinedInput bg-transparent"
                     />
                     <span className="bar"></span>
                     <label className="underlinedInputLabel">Password</label>
@@ -286,7 +286,7 @@ export default function LoginPage() {
                 </div>
                 <div
                   className={`${
-                    showPasswordLengthWarning ? "" : "opacity-0 select-none"
+                    showPasswordLengthWarning ? "" : "select-none opacity-0"
                   } transition-opacity text-center text-red-500 duration-200 ease-in-out`}
                 >
                   Password too short! Min Length: 8
@@ -304,7 +304,7 @@ export default function LoginPage() {
                       ref={passwordConfRef}
                       onChange={handlePasswordConfChange}
                       placeholder=" "
-                      className="bg-transparent underlinedInput"
+                      className="underlinedInput bg-transparent"
                     />
                     <span className="bar"></span>
                     <label className="underlinedInputLabel">
@@ -342,14 +342,14 @@ export default function LoginPage() {
                     passwordLengthSufficient &&
                     passwordConfRef.current!.value.length >= 6
                       ? ""
-                      : "opacity-0 select-none"
+                      : "select-none opacity-0"
                   } transition-opacity text-center text-red-500 duration-200 ease-in-out`}
                 >
                   Passwords do not match!
                 </div>
               </>
             ) : null}
-            <div className="flex pt-4 mx-auto">
+            <div className="mx-auto flex pt-4">
               <input type="checkbox" className="my-auto" ref={rememberMeRef} />
               <div className="my-auto px-2 text-sm font-normal">
                 Remember Me
@@ -361,7 +361,7 @@ export default function LoginPage() {
                   ? "text-red-500"
                   : showPasswordSuccess
                   ? "text-green-500"
-                  : "opacity-0 select-none"
+                  : "select-none opacity-0"
               }  italic transition-opacity flex justify-center duration-300 ease-in-out min-h-[16px]`}
             >
               {showPasswordError
@@ -391,7 +391,7 @@ export default function LoginPage() {
                   className={`${
                     loading
                       ? "bg-zinc-400"
-                      : "bg-blue-400 dark:bg-blue-600 hover:bg-blue-500 dark:hover:bg-blue-700 active:scale-90"
+                      : "bg-blue-400 hover:bg-blue-500 active:scale-90 dark:bg-blue-600 dark:hover:bg-blue-700"
                   } flex w-36 justify-center rounded transition-all duration-300 ease-out py-3 text-white shadow-lg shadow-blue-300 dark:shadow-blue-700`}
                 >
                   {register ? "Sign Up" : usePassword ? "Sign In" : "Get Link"}
@@ -401,7 +401,7 @@ export default function LoginPage() {
                 <button
                   type="button"
                   onClick={() => setUsePassword(true)}
-                  className="px-2 ml-2 text-sm hover-underline-animation my-auto"
+                  className="hover-underline-animation my-auto ml-2 px-2 text-sm"
                 >
                   Use Password
                 </button>
@@ -409,7 +409,7 @@ export default function LoginPage() {
                 <button
                   type="button"
                   onClick={() => setUsePassword(false)}
-                  className="px-2 ml-2 text-sm hover-underline-animation my-auto"
+                  className="hover-underline-animation my-auto ml-2 px-2 text-sm"
                 >
                   Use Email Link
                 </button>
@@ -417,10 +417,10 @@ export default function LoginPage() {
             </div>
           </form>
           {usePassword ? (
-            <div className="text-center text-sm pb-4">
+            <div className="pb-4 text-center text-sm">
               Trouble Logging In?{" "}
               <Link
-                className="underline underline-offset-4 text-blue-500 hover:text-blue-400"
+                className="text-blue-500 underline underline-offset-4 hover:text-blue-400"
                 href={"/login/request-password-reset"}
               >
                 Reset Password
@@ -439,7 +439,7 @@ export default function LoginPage() {
             <div className="mx-auto mb-4 flex flex-col">
               <Link
                 href={`https://accounts.google.com/o/oauth2/v2/auth?client_id=${env.NEXT_PUBLIC_GOOGLE_CLIENT_ID}&redirect_uri=https://www.freno.me/api/auth/callback/google&response_type=code&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email`}
-                className="my-4 flex w-80 shadow-md flex-row bg-white hover:bg-zinc-100 justify-between dark:border-zinc-50 dark:border rounded text-black border dark:text-white border-zinc-800 dark:bg-zinc-800 px-4 py-2 dark:hover:bg-zinc-700 active:scale-95 transition-all duration-300 ease-out"
+                className="my-4 flex w-80 flex-row justify-between rounded border border-zinc-800 bg-white px-4 py-2 text-black shadow-md transition-all duration-300 ease-out hover:bg-zinc-100 active:scale-95 dark:border dark:border-zinc-50 dark:bg-zinc-800 dark:text-white dark:hover:bg-zinc-700"
               >
                 {!register ? "Sign in " : "Register "} with Google
                 <span className="my-auto">
@@ -449,7 +449,7 @@ export default function LoginPage() {
               <div className="px-4"></div>
               <Link
                 href={`https://github.com/login/oauth/authorize?client_id=${env.NEXT_PUBLIC_GITHUB_CLIENT_ID}&redirect_uri=https://www.freno.me/api/auth/callback/github&scope=user`}
-                className="my-4 flex w-80 shadow-md flex-row justify-between rounded bg-zinc-600 px-4 py-2 text-white hover:bg-zinc-700 active:scale-95 transition-all duration-300 ease-out"
+                className="my-4 flex w-80 flex-row justify-between rounded bg-zinc-600 px-4 py-2 text-white shadow-md transition-all duration-300 ease-out hover:bg-zinc-700 active:scale-95"
               >
                 {!register ? "Sign in " : "Register "} with Github
                 <span className="my-auto">

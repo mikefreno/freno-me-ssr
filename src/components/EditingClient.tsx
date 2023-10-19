@@ -5,7 +5,6 @@ import Dropzone from "@/components/Dropzone";
 import TextEditor from "@/components/TextEditor";
 import XCircle from "@/icons/XCircle";
 import { Blog, Project } from "@/types/model-types";
-import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import LoadingSpinner from "./LoadingSpinner";
 import AddAttachmentSection from "./AddAttachmentSection";
@@ -24,7 +23,6 @@ export default function EditingClient(props: {
   const [editorContent, setEditorContent] = useState<string>("");
   const [submitButtonLoading, setSubmitButtonLoading] =
     useState<boolean>(false);
-  const router = useRouter();
   const [postTitle, setPostTitle] = useState<string | undefined>("");
 
   const [requestedDeleteImage, setRequestedDeleteImage] =
@@ -198,7 +196,7 @@ export default function EditingClient(props: {
               defaultValue={
                 props.post.title ? props.post.title.replaceAll("_", " ") : ""
               }
-              className="bg-transparent underlinedInput w-full"
+              className="underlinedInput w-full bg-transparent"
             />
             <span className="bar"></span>
             <label className="underlinedInputLabel">Title</label>
@@ -211,12 +209,12 @@ export default function EditingClient(props: {
               name="subtitle"
               placeholder=" "
               defaultValue={props.post.subtitle ? props.post.subtitle : ""}
-              className="bg-transparent underlinedInput w-full"
+              className="underlinedInput w-full bg-transparent"
             />
             <span className="bar"></span>
             <label className="underlinedInputLabel">Subtitle</label>
           </div>
-          <div className="text-center text-xl pt-8">Banner</div>
+          <div className="pt-8 text-center text-xl">Banner</div>
           <div className="flex justify-center pb-8">
             <Dropzone
               onDrop={handleBannerImageDrop}
@@ -232,7 +230,7 @@ export default function EditingClient(props: {
             />
             <button
               type="button"
-              className="rounded-full h-fit -ml-6 z-50"
+              className="z-50 -ml-6 h-fit rounded-full"
               onClick={removeImage}
             >
               <XCircle
@@ -268,7 +266,7 @@ export default function EditingClient(props: {
               ? "Auto save success!"
               : ""}
           </div>
-          <div className="flex justify-end pt-4 pb-2">
+          <div className="flex justify-end pb-2 pt-4">
             <input
               type="checkbox"
               className="my-auto"
@@ -295,7 +293,7 @@ export default function EditingClient(props: {
                     }-500 dark:hover:bg-${
                       props.type == "blog" ? "orange" : "blue"
                     }-700`
-                  : "bg-green-400 dark:bg-green-600 hover:bg-green-500 dark:hover:bg-green-700"
+                  : "bg-green-400 hover:bg-green-500 dark:bg-green-600 dark:hover:bg-green-700"
               } active:scale-90 text-white flex w-36 justify-center rounded transition-all duration-300 ease-out py-3 text-white"`}
             >
               {submitButtonLoading
@@ -307,12 +305,12 @@ export default function EditingClient(props: {
           </div>
         </form>
       </div>
-      <div className="flex justify-center mt-2">
+      <div className="mt-2 flex justify-center">
         <Link
           href={`${env.NEXT_PUBLIC_DOMAIN}/${props.type}/${
             titleRef.current?.value.replaceAll(" ", "_") || props.post.title
           }`}
-          className="border-blue-500 bg-blue-400 hover:bg-blue-500 dark:bg-blue-700 dark:hover:bg-blue-800 dark:border-blue-700 rounded border text-white shadow-md  active:scale-90 transition-all duration-300 ease-in-out px-4 py-2"
+          className="rounded border border-blue-500 bg-blue-400 px-4 py-2 text-white shadow-md transition-all duration-300  ease-in-out hover:bg-blue-500 active:scale-90 dark:border-blue-700 dark:bg-blue-700 dark:hover:bg-blue-800"
         >
           Go to Post
         </Link>

@@ -1,25 +1,25 @@
 export interface User {
   id: string;
-  email: string | undefined;
+  email?: string;
   email_verified: boolean;
-  display_name: string | undefined;
-  provider: string | undefined;
-  image: string | null;
-  password_hash: string | null;
+  display_name?: string;
+  provider?: string;
+  image?: string;
+  password_hash?: string;
   registered_at: string;
 }
 
 export interface Blog {
   id: number;
   title: string;
-  subtitle: string | null;
+  subtitle?: string;
   body: string;
-  banner_photo: string | null;
+  banner_photo?: string;
   date: string;
   published: boolean;
   author_id: string;
   reads: number;
-  attachments: string | undefined;
+  attachments?: string;
 }
 
 export interface BlogLike {
@@ -31,14 +31,14 @@ export interface BlogLike {
 export interface Project {
   id: number;
   title: string;
-  subtitle: string | null;
+  subtitle?: string;
   body: string;
-  banner_photo: string | null;
+  banner_photo?: string;
   date: string;
   published: boolean;
   author_id: string;
   reads: number;
-  attachments: string | undefined;
+  attachments?: string;
 }
 
 export interface ProjectLike {
@@ -50,9 +50,9 @@ export interface ProjectLike {
 export interface Comment {
   id: number;
   body: string;
-  blog_id: number | null;
-  project_id: number | null;
-  parent_comment_id: number | null;
+  blog_id?: number;
+  project_id?: number;
+  parent_comment_id?: number;
   commenter_id: string;
 }
 

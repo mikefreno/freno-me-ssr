@@ -80,7 +80,7 @@ export default function Home() {
       <>
         <link rel="preload" as="image" href="/blur_SH_water.jpg" />
         <link rel="preload" as="image" href="/me_in_flannel.jpg" />
-        <div className="bg-black h-full w-full page-fade-in"></div>
+        <div className="page-fade-in h-full w-full bg-black"></div>
       </>
     );
   } else {
@@ -105,7 +105,7 @@ export default function Home() {
                 />
                 <div
                   ref={centerDiv}
-                  className="max-h-0 transform bg-transparent overflow-hidden transition-all duration-[1500ms] ease-out"
+                  className="max-h-0 transform overflow-hidden bg-transparent transition-all duration-[1500ms] ease-out"
                 >
                   <div className="py-12">
                     <div
@@ -145,7 +145,7 @@ export default function Home() {
                 {windowWidth == 0 || windowWidth > 768 ? (
                   <div
                     ref={linkRef}
-                    className="flex w-fit flex-row transition-all duration-400 ease-in-out"
+                    className="duration-400 flex w-fit flex-row transition-all ease-in-out"
                   >
                     <button
                       ref={aboutButtonRef}
@@ -183,7 +183,7 @@ export default function Home() {
                     </button>
                   </div>
                 ) : (
-                  <div ref={linkRef} className="flex flex-col mt-5">
+                  <div ref={linkRef} className="mt-5 flex flex-col">
                     <button
                       ref={aboutButtonRef}
                       onClick={aboutToggle}

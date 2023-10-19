@@ -42,37 +42,37 @@ export default async function Blog() {
     <>
       <div className="min-h-screen overflow-x-hidden bg-white dark:bg-zinc-900">
         <div className="z-30">
-          <div className="page-fade-in z-20 h-80 sm:h-96 md:h-[30vh] mx-auto">
-            <div className="fixed w-full h-80 sm:h-96 md:h-[50vh] brightness-75 image-overlay">
+          <div className="page-fade-in z-20 mx-auto h-80 sm:h-96 md:h-[30vh]">
+            <div className="image-overlay fixed h-80 w-full brightness-75 sm:h-96 md:h-[50vh]">
               <Image
                 src={"/manhattan-night-skyline.jpg"}
                 alt="post-cover"
                 fill={true}
                 quality={100}
                 priority={true}
-                className="object-cover w-full h-80 sm:h-96 md:h-[50vh]"
+                className="h-80 w-full object-cover sm:h-96 md:h-[50vh]"
               />
             </div>
             <div
               className={`text-shadow fixed top-36 sm:top-44 md:top-[20vh] w-full brightness-150 z-10 select-text text-center tracking-widest text-white`}
               style={{ pointerEvents: "none" }}
             >
-              <div className="z-10 font-light tracking-widest text-5xl">
+              <div className="z-10 text-5xl font-light tracking-widest">
                 Blog
               </div>
             </div>
           </div>
         </div>
-        <div className="z-40 relative -mt-16 sm:-mt-20 md:mt-0 rounded-t-lg w-11/12 md:w-3/4 mx-auto min-h-screen shadow-2xl bg-zinc-50 dark:bg-zinc-800 pt-8 pb-24">
-          <div className="flex md:justify-around md:flex-row flex-col justify-center">
+        <div className="relative z-40 mx-auto -mt-16 min-h-screen w-11/12 rounded-t-lg bg-zinc-50 pb-24 pt-8 shadow-2xl dark:bg-zinc-800 sm:-mt-20 md:mt-0 md:w-3/4">
+          <div className="flex flex-col justify-center md:flex-row md:justify-around">
             <div className="flex justify-center md:justify-start">
               <PostSortingSelect type={"blog"} />
             </div>
             {privilegeLevel == "admin" ? (
-              <div className="flex justify-center md:justify-end mt-2 md:mt-0">
+              <div className="mt-2 flex justify-center md:mt-0 md:justify-end">
                 <Link
                   href="/blog/create"
-                  className="rounded border md:mr-4 dark:border-white border-zinc-800 px-4 py-2 dark:hover:bg-zinc-700 hover:bg-zinc-200 active:scale-90 transition-all duration-300 ease-out"
+                  className="rounded border border-zinc-800 px-4 py-2 transition-all duration-300 ease-out hover:bg-zinc-200 active:scale-90 dark:border-white dark:hover:bg-zinc-700 md:mr-4"
                 >
                   Create Post
                 </Link>

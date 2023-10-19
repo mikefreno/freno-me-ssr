@@ -76,7 +76,7 @@ export async function requestPasswordReset(email: string) {
 `,
         subject: `password reset`,
       };
-      const res = await fetch(apiUrl, {
+      await fetch(apiUrl, {
         method: "POST",
         headers: {
           accept: "application/json",

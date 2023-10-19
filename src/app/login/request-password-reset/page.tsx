@@ -72,10 +72,10 @@ export default function PasswordResetPage() {
 
   return (
     <div>
-      <div className="text-center text-xl pt-24">Password Reset Request</div>
+      <div className="pt-24 text-center text-xl">Password Reset Request</div>
       <form
         onSubmit={(e) => requestPasswordResetTrigger(e)}
-        className="mt-4 flex justify-center w-full"
+        className="mt-4 flex w-full justify-center"
       >
         <div className="flex flex-col justify-center">
           <div className="input-group mx-4">
@@ -86,13 +86,13 @@ export default function PasswordResetPage() {
               required
               disabled={loading}
               placeholder=" "
-              className="bg-transparent underlinedInput w-full"
+              className="underlinedInput w-full bg-transparent"
             />
             <span className="bar"></span>
             <label className="underlinedInputLabel">Enter Email</label>
           </div>
           {countDown > 0 ? (
-            <div className="pt-4 mx-auto">
+            <div className="mx-auto pt-4">
               <CountdownCircleTimer
                 isPlaying
                 duration={300}
@@ -113,7 +113,7 @@ export default function PasswordResetPage() {
               className={`${
                 loading
                   ? "bg-zinc-400"
-                  : "bg-blue-400 dark:bg-blue-600 hover:bg-blue-500 dark:hover:bg-blue-700 active:scale-90"
+                  : "bg-blue-400 hover:bg-blue-500 active:scale-90 dark:bg-blue-600 dark:hover:bg-blue-700"
               } flex justify-center rounded transition-all duration-300 ease-out my-6 px-4 py-2 text-white`}
             >
               Request Password Reset
@@ -123,7 +123,7 @@ export default function PasswordResetPage() {
       </form>
       <div
         className={`${
-          showSuccessMessage ? "" : "opacity-0 select-none"
+          showSuccessMessage ? "" : "select-none opacity-0"
         } text-green-500 italic transition-opacity flex justify-center duration-300 ease-in-out`}
       >
         If email exists, you will receive an email shortly!

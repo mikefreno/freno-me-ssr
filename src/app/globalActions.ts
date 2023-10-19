@@ -5,6 +5,7 @@ import { cookies } from "next/headers";
 import { Comment } from "@/types/model-types";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { ConnectionFactory } from "./utils";
+
 export async function signOut() {
   try {
     cookies().set({
@@ -53,7 +54,7 @@ export async function sendContactRequest({
         subject: `freno.me Contact Request`,
       };
       try {
-        const res = await fetch(apiUrl, {
+        await fetch(apiUrl, {
           method: "POST",
           headers: {
             accept: "application/json",
@@ -132,10 +133,7 @@ export async function deletePost({ type, postId }: deletePostInput) {
   }
 }
 
-interface DeleteCommentInput {
-  commentID: number;
-}
-export async function deleteCommentByUser({ commentID }: DeleteCommentInput) {
+export async function deleteCommentByUser(commentID: number) {
   const cookie = cookies().get("userIDToken");
 
   if (!cookie) {
@@ -183,7 +181,7 @@ export async function deleteCommentByUser({ commentID }: DeleteCommentInput) {
   return "unauthorized";
 }
 
-export async function trueDeleteComment({ commentID }: DeleteCommentInput) {
+export async function trueDeleteComment(commentID: number) {
   const cookie = cookies().get("userIDToken");
 
   if (!cookie) {
@@ -226,7 +224,7 @@ export async function trueDeleteComment({ commentID }: DeleteCommentInput) {
   return "unauthorized";
 }
 
-export async function deleteCommentByAdmin({ commentID }: DeleteCommentInput) {
+export async function deleteCommentByAdmin(commentID: number) {
   const cookie = cookies().get("userIDToken");
 
   if (!cookie) {

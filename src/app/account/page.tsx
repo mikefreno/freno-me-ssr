@@ -7,12 +7,12 @@ export default async function AccountPage() {
   const userID = await getUserID();
   if (userID) {
     const res = await fetch(
-      `${env.NEXT_PUBLIC_DOMAIN}/api/user-data/cookie/${userID}`,
+      `${env.NEXT_PUBLIC_DOMAIN}/api/database/user/from-id/${userID}`,
       {
         method: "GET",
       },
     );
-    const resData = (await res.json()) as API_RES_GetUserDataFromCookie;
+    const resData = await res.json();
 
     return <ClientSideData userData={resData} />;
   }

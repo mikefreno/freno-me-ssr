@@ -23,7 +23,7 @@ export default function DeletePostButton(props: {
     }
   };
   return (
-    <form onSubmit={deletePostTrigger} className="flex justify-end w-full">
+    <form onSubmit={deletePostTrigger} className="flex w-full justify-end">
       <button type="submit">
         {loading ? (
           <LoadingSpinner height={24} width={24} />

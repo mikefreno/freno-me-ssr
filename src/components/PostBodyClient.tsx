@@ -9,7 +9,7 @@ import Zoom from "yet-another-react-lightbox/plugins/zoom";
 export default function PostBodyClient(props: {
   body: string;
   hasCodeBlock: boolean;
-  banner_photo: string | null;
+  banner_photo?: string;
 }) {
   const [attachmentArray, setAttachmentArray] = useState<{ src: string }[]>([]);
   const [showingLightbox, setShowingLightbox] = useState<boolean>(false);

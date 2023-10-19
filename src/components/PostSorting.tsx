@@ -18,7 +18,7 @@ export default function PostSorting(props: {
     if (
       sortParam &&
       ["newest", "oldest", "most liked", "most read", "most comments"].includes(
-        sortParam
+        sortParam,
       )
     ) {
       setSort(sortParam);

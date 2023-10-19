@@ -1,11 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import LoadingSpinner from "./LoadingSpinner";
+import { useState } from "react";
 import LikeIcon from "@/icons/LikeIcon";
 import { BlogLike, ProjectLike } from "@/types/model-types";
 import { env } from "@/env.mjs";
-import { set } from "zod";
 
 export default function SessionDependantLike(props: {
   currentUserID: string | undefined | null;
@@ -18,7 +16,7 @@ export default function SessionDependantLike(props: {
   const [likes, setLikes] = useState<ProjectLike[] | BlogLike[]>(props.likes);
   const [instantOffset, setInstantOffset] = useState<number>(0);
   const [hasLiked, setHasLiked] = useState<boolean>(
-    props.likes.some((like) => like.user_id == props.currentUserID)
+    props.likes.some((like) => like.user_id == props.currentUserID),
   );
 
   const giveProjectLike = async () => {
@@ -42,7 +40,7 @@ export default function SessionDependantLike(props: {
           {
             method: "POST",
             body: JSON.stringify(data),
-          }
+          },
         );
       } else {
         res = await fetch(
@@ -50,7 +48,7 @@ export default function SessionDependantLike(props: {
           {
             method: "POST",
             body: JSON.stringify(data),
-          }
+          },
         );
       }
 
@@ -60,7 +58,7 @@ export default function SessionDependantLike(props: {
     } catch (error) {
       console.error(
         "There has been a problem with your fetch operation:",
-        error
+        error,
       );
       setHasLiked(initialHasLiked);
       setInstantOffset(0);
@@ -142,22 +140,22 @@ export default function SessionDependantLike(props: {
   } else {
     return (
       <>
-        <button className="flex tooltip flex-col">
+        <button className="tooltip flex flex-col">
           <div className="mx-auto">
             <LikeIcon
               strokeWidth={1}
-              color={"dark:fill-white fill-black"}
+              color={"fill-black dark:fill-white"}
               height={32}
               width={32}
             />
           </div>
           <div
-            className="my-auto pt-0.5 pl-2
-              text-black dark:text-white text-sm"
+            className="my-auto pl-2 pt-0.5
+              text-sm text-black dark:text-white"
           >
             {likes.length} {likes.length == 1 ? "Like" : "Likes"}
           </div>
-          <div className="tooltip-text w-12 -ml-12">Must be logged in</div>
+          <div className="tooltip-text -ml-12 w-12">Must be logged in</div>
         </button>
       </>
     );

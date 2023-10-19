@@ -22,11 +22,11 @@ import EyeSlash from "@/icons/EyeSlash";
 export default function ClientSideData(props: {
   userData: {
     id: string;
-    email: string | undefined;
+    email?: string;
     emailVerified: boolean;
-    image: string | null;
-    displayName: string | undefined;
-    provider: string | undefined;
+    image?: string;
+    displayName?: string;
+    provider?: string;
     hasPassword: boolean;
   };
 }) {
@@ -60,13 +60,14 @@ export default function ClientSideData(props: {
 
   const [user, setUser] = useState<{
     id: string;
-    email: string | undefined;
+    email?: string;
     emailVerified: boolean;
-    image: string | null;
-    displayName: string | undefined;
-    provider: string | undefined;
+    image?: string;
+    displayName?: string;
+    provider?: string;
     hasPassword: boolean;
   }>(props.userData);
+
   const [showOldPasswordInput, setShowOldPasswordInput] =
     useState<boolean>(false);
   const [showPasswordInput, setShowPasswordInput] = useState<boolean>(false);
@@ -122,7 +123,7 @@ export default function ClientSideData(props: {
         alert("error submitting image! Check Logs!");
       }
       const res = await fetch(
-        `${env.NEXT_PUBLIC_DOMAIN}/api/database/user/user-image/${user.id}`,
+        `${env.NEXT_PUBLIC_DOMAIN}/api/database/user/image/${user.id}`,
         { method: "POST", body: JSON.stringify({ imageURL: imageKey }) },
       );
 
@@ -136,7 +137,7 @@ export default function ClientSideData(props: {
       }
     } else if (user && user.id) {
       const res = await fetch(
-        `${env.NEXT_PUBLIC_DOMAIN}/api/database/user/user-image/${user.id}`,
+        `${env.NEXT_PUBLIC_DOMAIN}/api/database/user/image/${user.id}`,
         { method: "POST", body: JSON.stringify({ imageURL: null }) },
       );
       const resData = await res.json();
@@ -266,10 +267,10 @@ export default function ClientSideData(props: {
   };
 
   return (
-    <div className="min-h-screen mx-8 md:mx-24 lg:mx-36">
+    <div className="mx-8 min-h-screen md:mx-24 lg:mx-36">
       <div className="pt-24">
         {!user ? (
-          <div className="mt-[35vh] w-100% flex justify-center align-middle">
+          <div className="w-100% mt-[35vh] flex justify-center align-middle">
             <LoadingSpinner height={64} width={64} />
           </div>
         ) : (
@@ -286,7 +287,7 @@ export default function ClientSideData(props: {
                   />
                   <button
                     type="button"
-                    className="rounded-full h-fit -ml-6 z-20"
+                    className="z-20 -ml-6 h-fit rounded-full"
                     onClick={removeImage}
                   >
                     <XCircle
@@ -307,7 +308,7 @@ export default function ClientSideData(props: {
                     className={`${
                       profileImageSetLoading || !profileImageStateChange
                         ? "bg-zinc-400"
-                        : "bg-blue-400 dark:bg-blue-600 hover:bg-blue-500 dark:hover:bg-blue-700 active:scale-90"
+                        : "bg-blue-400 hover:bg-blue-500 active:scale-90 dark:bg-blue-600 dark:hover:bg-blue-700"
                     } flex justify-center w-full rounded transition-all duration-300 -ml-[6px] ease-out mt-2 px-4 py-2 text-white`}
                   >
                     Set
@@ -315,27 +316,27 @@ export default function ClientSideData(props: {
                 </form>
                 <div
                   className={`${
-                    showImageSuccess ? "" : "opacity-0 select-none"
+                    showImageSuccess ? "" : "select-none opacity-0"
                   } transition-opacity text-center text-green-500 duration-200 ease-in-out`}
                 >
                   Image Set Success!
                 </div>
               </div>
             </div>
-            <div className="flex flex-col mx-auto md:grid md:grid-cols-2">
-              <div className="text-xl flex justify-center md:justify-normal">
-                <div className="my-auto flex lg:flex-row flex-col justify-start">
+            <div className="mx-auto flex flex-col md:grid md:grid-cols-2">
+              <div className="flex justify-center text-xl md:justify-normal">
+                <div className="my-auto flex flex-col justify-start lg:flex-row">
                   <div className="whitespace-nowrap pr-1">Current email: </div>
                   {user?.email ? (
                     user.email
                   ) : (
-                    <span className="italic font-light underline underline-offset-4">
+                    <span className="font-light italic underline underline-offset-4">
                       None Set
                     </span>
                   )}
                 </div>
                 {user?.emailVerified || !user?.email ? (
-                  <div className="my-auto ml-2 tooltip z-10">
+                  <div className="tooltip z-10 my-auto ml-2">
                     <CheckCircle
                       strokeWidth={1}
                       height={24}
@@ -343,8 +344,8 @@ export default function ClientSideData(props: {
                       fillColor={"#22c55e"}
                       strokeColor={null}
                     />
-                    <div className="bg-green-500 rounded-full w-4 -mt-5 ml-1 h-4" />
-                    <div className="tooltip-text mt-1 w-10 -ml-12">
+                    <div className="-mt-5 ml-1 h-4 w-4 rounded-full bg-green-500" />
+                    <div className="tooltip-text -ml-12 mt-1 w-10">
                       <div className="px-1">Email Verified</div>
                     </div>
                   </div>
@@ -358,7 +359,7 @@ export default function ClientSideData(props: {
                         strokeWidth={1}
                         fill={"#f87171"}
                       />
-                      <div className="tooltip-text w-12 -ml-6">
+                      <div className="tooltip-text -ml-6 w-12">
                         <div className="px-1">
                           Click to start email verification
                         </div>
@@ -367,7 +368,7 @@ export default function ClientSideData(props: {
                   </form>
                 )}
               </div>
-              <form onSubmit={setEmailTrigger} className="-mt-4 mx-auto">
+              <form onSubmit={setEmailTrigger} className="mx-auto -mt-4">
                 <div className="input-group mx-4">
                   <input
                     ref={emailRef}
@@ -380,7 +381,7 @@ export default function ClientSideData(props: {
                     }
                     name="title"
                     placeholder=" "
-                    className="bg-transparent underlinedInput"
+                    className="underlinedInput bg-transparent"
                   />
                   <span className="bar"></span>
                   <label className="underlinedInputLabel">Set New Email</label>
@@ -400,7 +401,7 @@ export default function ClientSideData(props: {
                           : emailButtonLoading || !user?.emailVerified
                       )
                         ? "bg-zinc-400"
-                        : "bg-blue-400 dark:bg-blue-600 hover:bg-blue-500 dark:hover:bg-blue-700 active:scale-90"
+                        : "bg-blue-400 hover:bg-blue-500 active:scale-90 dark:bg-blue-600 dark:hover:bg-blue-700"
                     } flex justify-center rounded transition-all duration-300 ease-out mt-2 px-4 py-2 text-white`}
                   >
                     Submit
@@ -408,8 +409,8 @@ export default function ClientSideData(props: {
                 </div>
               </form>
 
-              <div className="text-xl flex justify-center md:justify-normal">
-                <div className="my-auto flex lg:flex-row flex-col justify-start">
+              <div className="flex justify-center text-xl md:justify-normal">
+                <div className="my-auto flex flex-col justify-start lg:flex-row">
                   <div className="whitespace-nowrap pr-1">
                     Current Display Name:
                   </div>
@@ -419,13 +420,13 @@ export default function ClientSideData(props: {
                     <div className="flex">
                       <div className="tooltip">
                         <InfoIcon height={24} width={24} strokeWidth={1} />
-                        <div className="tooltip-text w-40 -ml-20">
+                        <div className="tooltip-text -ml-20 w-40">
                           <div className="px-1">
                             This will show instead of your email in comments
                           </div>
                         </div>
                       </div>
-                      <span className="italic font-light underline underline-offset-4">
+                      <span className="font-light italic underline underline-offset-4">
                         None Set
                       </span>
                     </div>
@@ -434,7 +435,7 @@ export default function ClientSideData(props: {
               </div>
               <form
                 onSubmit={(e) => setDisplayNameTrigger(e)}
-                className="-mt-4 mx-auto"
+                className="mx-auto -mt-4"
               >
                 <div className="input-group mx-4">
                   <input
@@ -444,7 +445,7 @@ export default function ClientSideData(props: {
                     disabled={displayNameButtonLoading}
                     name="title"
                     placeholder=" "
-                    className="bg-transparent underlinedInput"
+                    className="underlinedInput bg-transparent"
                   />
                   <span className="bar"></span>
                   <label className="underlinedInputLabel">
@@ -458,7 +459,7 @@ export default function ClientSideData(props: {
                     className={`${
                       displayNameButtonLoading
                         ? "bg-zinc-400"
-                        : "bg-blue-400 dark:bg-blue-600 hover:bg-blue-500 dark:hover:bg-blue-700 active:scale-90"
+                        : "bg-blue-400 hover:bg-blue-500 active:scale-90 dark:bg-blue-600 dark:hover:bg-blue-700"
                     } flex justify-center rounded transition-all duration-300 ease-out mt-2 px-4 py-2 text-white`}
                   >
                     Submit
@@ -472,7 +473,7 @@ export default function ClientSideData(props: {
                   ? setNewPasswordTrigger(e)
                   : setPasswordTrigger(e);
               }}
-              className="mt-4 flex justify-center w-full"
+              className="mt-4 flex w-full justify-center"
             >
               <div className="flex flex-col justify-center">
                 {user?.hasPassword ? (
@@ -484,7 +485,7 @@ export default function ClientSideData(props: {
                       required
                       disabled={passwordChangeLoading}
                       placeholder=" "
-                      className="bg-transparent underlinedInput w-full"
+                      className="underlinedInput w-full bg-transparent"
                     />
                     <span className="bar"></span>
                     <label className="underlinedInputLabel">Old Password</label>
@@ -493,7 +494,7 @@ export default function ClientSideData(props: {
                         setShowOldPasswordInput(!showOldPasswordInput);
                         oldPasswordRef.current?.focus();
                       }}
-                      className="absolute ml-[17.5rem] -mt-8"
+                      className="absolute -mt-8 ml-[17.5rem]"
                       type="button"
                     >
                       {showOldPasswordInput ? (
@@ -517,7 +518,7 @@ export default function ClientSideData(props: {
                   <div className="flex justify-center">
                     <div className="tooltip -mb-8">
                       <InfoIcon height={24} width={24} strokeWidth={1} />
-                      <div className="tooltip-text w-36 -ml-[4.5rem]">
+                      <div className="tooltip-text -ml-[4.5rem] w-36">
                         <div className="px-1">
                           This will allow you to sign in with a password
                         </div>
@@ -535,7 +536,7 @@ export default function ClientSideData(props: {
                     onBlur={handlePasswordBlur}
                     disabled={passwordChangeLoading}
                     placeholder=" "
-                    className="bg-transparent underlinedInput w-full"
+                    className="underlinedInput w-full bg-transparent"
                   />
                   <span className="bar"></span>
                   <label className="underlinedInputLabel">New Password</label>
@@ -544,7 +545,7 @@ export default function ClientSideData(props: {
                       setShowPasswordInput(!showPasswordInput);
                       newPasswordRef.current?.focus();
                     }}
-                    className="absolute ml-[17.5rem] -mt-9"
+                    className="absolute -mt-9 ml-[17.5rem]"
                     type="button"
                   >
                     {showPasswordInput ? (
@@ -566,7 +567,7 @@ export default function ClientSideData(props: {
                 </div>
                 <div
                   className={`${
-                    showPasswordLengthWarning ? "" : "opacity-0 select-none"
+                    showPasswordLengthWarning ? "" : "select-none opacity-0"
                   } transition-opacity text-center text-red-500 duration-200 ease-in-out`}
                 >
                   Password too short! Min Length: 8
@@ -581,7 +582,7 @@ export default function ClientSideData(props: {
                       required
                       disabled={passwordChangeLoading}
                       placeholder=" "
-                      className="bg-transparent underlinedInput w-full"
+                      className="underlinedInput w-full bg-transparent"
                     />
                     <span className="bar"></span>
                     <label className="underlinedInputLabel">
@@ -592,7 +593,7 @@ export default function ClientSideData(props: {
                         setShowPasswordConfInput(!showPasswordConfInput);
                         newPasswordConfRef.current?.focus();
                       }}
-                      className="absolute ml-[17.5rem] -mt-9"
+                      className="absolute -mt-9 ml-[17.5rem]"
                       type="button"
                     >
                       {showPasswordConfInput ? (
@@ -619,7 +620,7 @@ export default function ClientSideData(props: {
                     passwordLengthSufficient &&
                     newPasswordConfRef.current!.value.length >= 6
                       ? ""
-                      : "opacity-0 select-none"
+                      : "select-none opacity-0"
                   } transition-opacity text-center text-red-500 duration-200 ease-in-out`}
                 >
                   Passwords do not match!
@@ -631,14 +632,14 @@ export default function ClientSideData(props: {
                   className={`${
                     passwordChangeLoading || !passwordsMatch
                       ? "bg-zinc-400"
-                      : "bg-blue-400 dark:bg-blue-600 hover:bg-blue-500 dark:hover:bg-blue-700 active:scale-90"
+                      : "bg-blue-400 hover:bg-blue-500 active:scale-90 dark:bg-blue-600 dark:hover:bg-blue-700"
                   } flex justify-center rounded transition-all duration-300 ease-out my-6 px-4 py-2 text-white`}
                 >
                   Set
                 </button>
                 <div
                   className={`${
-                    passwordError ? "" : "opacity-0 select-none"
+                    passwordError ? "" : "select-none opacity-0"
                   } transition-opacity text-center text-red-500 duration-200 ease-in-out`}
                 >
                   {user?.hasPassword
@@ -649,12 +650,12 @@ export default function ClientSideData(props: {
             </form>
             <hr className="mt-4" />
             <div className="py-14">
-              <div className="w-full md:w-3/4 overflow-auto rounded-md mt-4 pt-8 pb-4 md:py-8 px-6 shadow-md bg-red-300 dark:bg-red-950 mx-auto">
-                <div className="text-xl text-center pb-4">Delete Account</div>
-                <div className="w-full flex justify-center">
+              <div className="mx-auto mt-4 w-full overflow-auto rounded-md bg-red-300 px-6 pb-4 pt-8 shadow-md dark:bg-red-950 md:w-3/4 md:py-8">
+                <div className="pb-4 text-center text-xl">Delete Account</div>
+                <div className="flex w-full justify-center">
                   <div className="tooltip">
                     <InfoIcon height={36} width={36} strokeWidth={1} />
-                    <div className="tooltip-text w-40 -ml-20">
+                    <div className="tooltip-text -ml-20 w-40">
                       <div className="px-1">
                         Warning: This will delete all account information and is
                         irreversible
@@ -663,8 +664,8 @@ export default function ClientSideData(props: {
                   </div>
                 </div>
                 <form onSubmit={(e) => deleteAccountTrigger(e)}>
-                  <div className="w-full flex justify-center">
-                    <div className="input-group mx-4 delete">
+                  <div className="flex w-full justify-center">
+                    <div className="input-group delete mx-4">
                       <input
                         ref={deleteAccountPasswordRef}
                         type="password"
@@ -672,7 +673,7 @@ export default function ClientSideData(props: {
                         disabled={deleteAccountButtonLoading}
                         name="title"
                         placeholder=" "
-                        className="bg-transparent underlinedInput"
+                        className="underlinedInput bg-transparent"
                       />
                       <span className="bar"></span>
                       <label className="underlinedInputLabel">
@@ -686,14 +687,14 @@ export default function ClientSideData(props: {
                     className={`${
                       deleteAccountButtonLoading
                         ? "bg-zinc-400"
-                        : "bg-red-500 dark:bg-red-600 hover:bg-red-600 dark:hover:bg-red-700 active:scale-90"
+                        : "bg-red-500 hover:bg-red-600 active:scale-90 dark:bg-red-600 dark:hover:bg-red-700"
                     } flex justify-center mx-auto rounded transition-all duration-300 ease-out mt-2 px-4 py-2 text-white`}
                   >
                     Delete
                   </button>
                   <div
                     className={`${
-                      passwordDeletionError ? "" : "opacity-0 select-none"
+                      passwordDeletionError ? "" : "select-none opacity-0"
                     } transition-opacity text-center text-red-500 duration-200 ease-in-out`}
                   >
                     Password did not match record

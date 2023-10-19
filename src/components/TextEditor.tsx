@@ -87,14 +87,14 @@ export default function TextEditor({ updateContent, preSet }: any) {
   }, [editor]);
 
   return (
-    <div className="dark:text-white rounded-md border px-4 py-2 border-black dark:border-white w-full">
+    <div className="w-full rounded-md border border-black px-4 py-2 dark:border-white dark:text-white">
       {editor && (
         <BubbleMenu
-          className="bg-black rounded text-white p-2 mt-4 w-fit whitespace-nowrap text-sm"
+          className="mt-4 w-fit whitespace-nowrap rounded bg-black p-2 text-sm text-white"
           tippyOptions={{ duration: 100 }}
           editor={editor}
         >
-          <div className="overflow-x-scroll w-64 md:w-fit">
+          <div className="w-64 overflow-x-scroll md:w-fit">
             <button
               type="button"
               onClick={() =>
@@ -207,11 +207,11 @@ export default function TextEditor({ updateContent, preSet }: any) {
       )}
       {editor && (
         <FloatingMenu
-          className="bg-zinc-200 rounded text-black p-1 mt-4 w-fit whitespace-nowrap text-sm"
+          className="mt-4 w-fit whitespace-nowrap rounded bg-zinc-200 p-1 text-sm text-black"
           tippyOptions={{ duration: 100 }}
           editor={editor}
         >
-          <div className="overflow-x-scroll w-64 md:w-fit">
+          <div className="w-64 overflow-x-scroll md:w-fit">
             <button
               type="button"
               onClick={() =>
@@ -309,7 +309,7 @@ export default function TextEditor({ updateContent, preSet }: any) {
       )}
       <EditorContent
         editor={editor}
-        className="prose prose-sm min-w-full sm:prose-base md:prose-xl lg:prose-xl xl:prose-2xl dark:prose-invert dark:sm:prose-base dark:md:prose-xl dark:lg:prose-xl dark:xl:prose-2xl mx-auto"
+        className="prose prose-sm mx-auto min-w-full dark:prose-invert sm:prose-base dark:sm:prose-base md:prose-xl dark:md:prose-xl lg:prose-xl dark:lg:prose-xl xl:prose-2xl dark:xl:prose-2xl"
       />
     </div>
   );

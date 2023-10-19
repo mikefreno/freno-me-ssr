@@ -50,7 +50,7 @@ const Dropzone = ({ onDrop, accept, fileHolder, preSet }: any) => {
             ) : (
               <img
                 src={fileHolder == null ? preSet : fileHolder}
-                className="rounded-full w-36 h-36 object-cover object-center"
+                className="h-36 w-36 rounded-full object-cover object-center"
                 alt="upload"
               />
             )}

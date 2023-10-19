@@ -13,7 +13,6 @@ export default async function NonRootLayout({
 }) {
   return (
     <section>
-      <link rel="preload" href="/bitcoin.jpg" as="image" />
       <NextTopLoader showSpinner={false} color="#fb923c" />
       <Navbar />
       {children}

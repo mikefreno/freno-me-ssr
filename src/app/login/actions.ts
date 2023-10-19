@@ -160,7 +160,7 @@ export async function emailLinkLogin(email: string, rememberMe: boolean) {
 `,
         subject: `freno.me login link`,
       };
-      const res = await fetch(apiUrl, {
+      await fetch(apiUrl, {
         method: "POST",
         headers: {
           accept: "application/json",

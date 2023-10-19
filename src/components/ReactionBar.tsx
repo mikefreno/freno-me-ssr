@@ -22,7 +22,7 @@ export default function ReactionBar(props: {
     <div
       className={`${
         props.showingReactionOptions
-          ? "bg-zinc-50 shadow-inner dark:bg-zinc-700 py-4 px-2"
+          ? "bg-zinc-50 px-2 py-4 shadow-inner dark:bg-zinc-700"
           : ""
       } ml-2 py-1 min-h-[1.5rem] w-64 fade-in flex rounded-md flex-row max-w-[1/4] overflow-scroll scrollYDisabled md:overflow-hidden md:w-fit`}
     >
@@ -40,7 +40,7 @@ export default function ReactionBar(props: {
             props.reactions.some(
               (reaction) =>
                 reaction.type == "tears" &&
-                reaction.user_id == props.currentUserID
+                reaction.user_id == props.currentUserID,
             )
               ? "text-green-500"
               : null
@@ -73,7 +73,7 @@ export default function ReactionBar(props: {
             props.reactions.some(
               (reaction) =>
                 reaction.type == "blank" &&
-                reaction.user_id == props.currentUserID
+                reaction.user_id == props.currentUserID,
             )
               ? "text-green-500"
               : null
@@ -106,7 +106,7 @@ export default function ReactionBar(props: {
             props.reactions.some(
               (reaction) =>
                 reaction.type == "tongue" &&
-                reaction.user_id == props.currentUserID
+                reaction.user_id == props.currentUserID,
             )
               ? "text-green-500"
               : null
@@ -139,7 +139,7 @@ export default function ReactionBar(props: {
             props.reactions.some(
               (reaction) =>
                 reaction.type == "cry" &&
-                reaction.user_id == props.currentUserID
+                reaction.user_id == props.currentUserID,
             )
               ? "text-green-500"
               : null
@@ -172,7 +172,7 @@ export default function ReactionBar(props: {
             props.reactions.some(
               (reaction) =>
                 reaction.type == "heartEye" &&
-                reaction.user_id == props.currentUserID
+                reaction.user_id == props.currentUserID,
             )
               ? "text-green-500"
               : null
@@ -205,7 +205,7 @@ export default function ReactionBar(props: {
             props.reactions.some(
               (reaction) =>
                 reaction.type == "angry" &&
-                reaction.user_id == props.currentUserID
+                reaction.user_id == props.currentUserID,
             )
               ? "text-green-500"
               : null
@@ -238,7 +238,7 @@ export default function ReactionBar(props: {
             props.reactions.some(
               (reaction) =>
                 reaction.type == "moneyEye" &&
-                reaction.user_id == props.currentUserID
+                reaction.user_id == props.currentUserID,
             )
               ? "text-green-500"
               : null
@@ -271,7 +271,7 @@ export default function ReactionBar(props: {
             props.reactions.some(
               (reaction) =>
                 reaction.type == "sick" &&
-                reaction.user_id == props.currentUserID
+                reaction.user_id == props.currentUserID,
             )
               ? "text-green-500"
               : null
@@ -304,7 +304,7 @@ export default function ReactionBar(props: {
             props.reactions.some(
               (reaction) =>
                 reaction.type == "upsideDown" &&
-                reaction.user_id == props.currentUserID
+                reaction.user_id == props.currentUserID,
             )
               ? "text-green-500"
               : null
@@ -313,7 +313,7 @@ export default function ReactionBar(props: {
           {props.reactions.filter((reaction) => reaction.type == "upsideDown")
             .length > 0
             ? props.reactions.filter(
-                (reaction) => reaction.type == "upsideDown"
+                (reaction) => reaction.type == "upsideDown",
               ).length
             : null}
         </div>
@@ -338,7 +338,7 @@ export default function ReactionBar(props: {
             props.reactions.some(
               (reaction) =>
                 reaction.type == "worried" &&
-                reaction.user_id == props.currentUserID
+                reaction.user_id == props.currentUserID,
             )
               ? "text-green-500"
               : null
