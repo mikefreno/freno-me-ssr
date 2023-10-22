@@ -30,7 +30,6 @@ export async function getPrivilegeLevel(): Promise<
       }
     }
   } catch (e) {
-    console.log("An error occurred during JWT verification:", e);
     return "anonymous";
   }
   return "anonymous";
@@ -62,7 +61,6 @@ export async function getUserID(): Promise<string | null> {
       }
     }
   } catch (e) {
-    console.log("An error occurred during JWT verification:", e);
     return null;
   }
   return null;
