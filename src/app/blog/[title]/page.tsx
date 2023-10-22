@@ -11,6 +11,8 @@ import PostBodyClient from "@/components/PostBodyClient";
 import { incrementReads } from "@/app/globalActions";
 import { ConnectionFactory, getPrivilegeLevel, getUserID } from "@/app/utils";
 import CommentSectionWrapper from "@/components/CommentSectionWrapper";
+import { JSDOM } from "jsdom";
+import DOMPurify from "dompurify";
 
 function hasCodeBlock(str: string): boolean {
   return str.includes("<code") && str.includes("</code>");
@@ -33,6 +35,58 @@ export default async function DynamicBlogPost({
     .rows[0] as Blog;
   const containsCodeBlock = hasCodeBlock(blog.body);
 
+  let comments: Comment[] = [];
+  let likes: BlogLike[] = [];
+  let reactionMap: Map<number, CommentReaction[]> = new Map();
+  let commenterToCommentIDMap = new Map<string, number[]>();
+  let commentIDToCommenterMap = new Map<
+    { email?: string; display_name?: string; image?: string | undefined },
+    number[]
+  >();
+
+  let topLevelComments: Comment[] = [];
+
+  if (blog) {
+    const commentQuery = "SELECT * FROM Comment WHERE blog_id = ?";
+    comments = (await conn.execute(commentQuery, [blog.id])).rows as Comment[];
+
+    comments.forEach((comment) => {
+      const prev = commenterToCommentIDMap.get(comment.commenter_id) || [];
+      commenterToCommentIDMap.set(comment.commenter_id, [...prev, comment.id]);
+    });
+
+    const commenterQuery =
+      "SELECT email, display_name, image FROM User WHERE id = ?";
+
+    let promises = Array.from(commenterToCommentIDMap.keys()).map(
+      async (key) => {
+        const value = commenterToCommentIDMap.get(key) as number[];
+        const res = await conn.execute(commenterQuery, [key]);
+        const user = res.rows[0] as {
+          email?: string;
+          image?: string;
+          display_name?: string;
+        };
+        commentIDToCommenterMap.set(user, value);
+      },
+    );
+
+    await Promise.all(promises);
+
+    topLevelComments = comments.filter(
+      (comment) => comment.parent_comment_id == null,
+    );
+    const blogLikesQuery = "SELECT * FROM BlogLike WHERE blog_id = ?";
+    likes = (await conn.execute(blogLikesQuery, [blog.id])).rows as BlogLike[];
+    for (const comment of comments) {
+      const reactionQuery =
+        "SELECT * FROM CommentReaction WHERE comment_id = ?";
+      const reactionParam = [comment.id];
+      const res = await conn.execute(reactionQuery, reactionParam);
+      reactionMap.set(comment.id, res.rows as CommentReaction[]);
+    }
+  }
+
   if (!blog) {
     return (
       <>
@@ -50,51 +104,9 @@ export default async function DynamicBlogPost({
       </>
     );
   } else if (blog) {
-    let comments: Comment[];
-    let likes;
-    let reactionMap: Map<number, CommentReaction[]> = new Map();
-    const commentQuery = "SELECT * FROM Comment WHERE blog_id = ?";
-    comments = (await conn.execute(commentQuery, [blog.id])).rows as Comment[];
-
-    let commenterToCommentIDMap = new Map<string, number[]>();
-    comments.forEach((comment) => {
-      const prev = commenterToCommentIDMap.get(comment.commenter_id) || [];
-      commenterToCommentIDMap.set(comment.commenter_id, [...prev, comment.id]);
-    });
-    let commentIDToCommenterMap = new Map<
-      { email?: string; display_name?: string; image?: string | undefined },
-      number[]
-    >();
-    const commenterQuery =
-      "SELECT email, display_name, image FROM User WHERE id = ?";
-
-    let promises = Array.from(commenterToCommentIDMap.keys()).map(
-      async (key) => {
-        const value = commenterToCommentIDMap.get(key) as number[];
-        const res = await conn.execute(commenterQuery, [key]);
-        const user = res.rows[0] as {
-          email?: string;
-          display_name?: string;
-          image?: string;
-        };
-        commentIDToCommenterMap.set(user, value);
-      },
-    );
-
-    await Promise.all(promises);
-
-    const topLevelComments = comments.filter(
-      (comment) => comment.parent_comment_id == null,
-    );
-    const blogLikesQuery = "SELECT * FROM BlogLike WHERE blog_id = ?";
-    likes = (await conn.execute(blogLikesQuery, [blog.id])).rows as BlogLike[];
-    for (const comment of comments) {
-      const reactionQuery =
-        "SELECT * FROM CommentReaction WHERE comment_id = ?";
-      const reactionParam = [comment.id];
-      const res = await conn.execute(reactionQuery, reactionParam);
-      reactionMap.set(comment.id, res.rows as CommentReaction[]);
-    }
+    const window = new JSDOM("").window;
+    const purify = DOMPurify(window);
+    const sanitizedBody = purify.sanitize(blog.body);
     incrementReads({ postID: blog.id, postType: "Blog" });
     return (
       <div className="select-none overflow-x-hidden">
@@ -169,7 +181,7 @@ export default async function DynamicBlogPost({
             By Michael Freno
           </div>
           <PostBodyClient
-            body={blog.body}
+            body={sanitizedBody}
             hasCodeBlock={containsCodeBlock}
             banner_photo={blog.banner_photo}
           />

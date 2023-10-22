@@ -5,6 +5,7 @@ import hljs from "highlight.js";
 import Lightbox from "yet-another-react-lightbox";
 import "yet-another-react-lightbox/styles.css";
 import Zoom from "yet-another-react-lightbox/plugins/zoom";
+import * as DOMPurify from "dompurify";
 
 export default function PostBodyClient(props: {
   body: string;
