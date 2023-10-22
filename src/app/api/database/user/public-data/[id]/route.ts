@@ -14,7 +14,7 @@ export async function GET(_: Request, context: { params: { id: string } }) {
           {
             email: user.email,
             image: user.image,
-            displayName: user.display_name,
+            display_name: user.display_name,
           },
           { status: 202 },
         );
