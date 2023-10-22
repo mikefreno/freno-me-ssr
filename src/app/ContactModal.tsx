@@ -9,7 +9,6 @@ import LinkedIn from "@/icons/LinkedIn";
 import Cookies from "js-cookie";
 import { CountdownCircleTimer } from "react-countdown-circle-timer";
 import LoadingSpinner from "@/components/LoadingSpinner";
-import { API_RES_GetUserDataFromCookie } from "@/types/response-types";
 
 export default function ContactModal(props: ContactModalProps) {
   const [countDown, setCountDown] = useState<number>(0);
@@ -20,16 +19,8 @@ export default function ContactModal(props: ContactModalProps) {
   const nameRef = useRef<HTMLInputElement>(null);
   const messageRef = useRef<HTMLTextAreaElement>(null);
   const timerIdRef = useRef<number | NodeJS.Timeout | null>(null);
-  const [userData, setUserData] = useState<{
-    id: string;
-    email: string | undefined;
-    emailVerified: boolean;
-    image: string | null;
-    displayName: string | undefined;
-    provider: string | undefined;
-    hasPassword: boolean;
-  }>();
 
+  const { user } = props;
   const calcRemainder = (timer: string) => {
     const expires = new Date(timer);
     const remaining = expires.getTime() - Date.now();
@@ -43,19 +34,6 @@ export default function ContactModal(props: ContactModalProps) {
     } else {
       setCountDown(remainingInSeconds);
     }
-  };
-
-  useEffect(() => {
-    asyncGetUserData();
-  }, []);
-
-  const asyncGetUserData = async () => {
-    const res = await fetch(
-      `/api/user-data/cookie/${Cookies.get("userIDToken")}`,
-      { method: "GET" }
-    );
-    const resData = (await res.json()) as API_RES_GetUserDataFromCookie;
-    setUserData(resData);
   };
 
   useEffect(() => {
@@ -109,7 +87,7 @@ export default function ContactModal(props: ContactModalProps) {
         className={`${
           props.showing
             ? "fade-in flex"
-            : "backdrop-brightness-100 backdrop-blur-0 -translate-x-full absolute"
+            : "absolute -translate-x-full backdrop-blur-0 backdrop-brightness-100"
         } w-full h-screen justify-center overflow-scroll pb-36 pt-24 md:pb-[20vh] md:pt-[15vh] opacity-0 backdrop-blur-sm backdrop-brightness-75`}
       >
         <div
@@ -128,18 +106,16 @@ export default function ContactModal(props: ContactModalProps) {
           </h2>
           <form onSubmit={sendEmailTrigger}>
             <div className="mt-24">
-              <div className="flex flex-col md:flex-row justify-evenly">
+              <div className="flex flex-col justify-evenly md:flex-row">
                 <div className="input-group home mx-auto">
                   <input
                     type="text"
                     required
                     ref={nameRef}
-                    defaultValue={
-                      userData?.displayName ? userData.displayName : ""
-                    }
+                    defaultValue={user?.display_name ? user.display_name : ""}
                     name="name"
                     placeholder=" "
-                    className="bg-transparent underlinedInput w-full"
+                    className="underlinedInput w-full bg-transparent"
                   />
                   <span className="bar"></span>
                   <label className="underlinedInputLabel">Name</label>
@@ -149,10 +125,10 @@ export default function ContactModal(props: ContactModalProps) {
                     type="email"
                     required
                     ref={emailRef}
-                    defaultValue={userData?.email ? userData.email : ""}
+                    defaultValue={user?.email ? user.email : ""}
                     name="email"
                     placeholder=" "
-                    className="bg-transparent underlinedInput w-full"
+                    className="underlinedInput w-full bg-transparent"
                   />
                   <span className="bar"></span>
                   <label className="underlinedInputLabel">Email</label>
@@ -165,7 +141,7 @@ export default function ContactModal(props: ContactModalProps) {
                     name="message"
                     ref={messageRef}
                     placeholder=" "
-                    className="bg-transparent underlinedInput w-full"
+                    className="underlinedInput w-full bg-transparent"
                     rows={4}
                   />
                   <span className="bar" />
@@ -194,7 +170,7 @@ export default function ContactModal(props: ContactModalProps) {
                     className={`${
                       loading
                         ? "bg-zinc-400"
-                        : "hover:border-blue-400 hover:bg-blue-400 bg-transparent"
+                        : "bg-transparent hover:border-blue-400 hover:bg-blue-400"
                     } rounded border w-40 text-white shadow-md border-white active:scale-90 transition-all duration-300 ease-in-out py-2`}
                   >
                     {loading ? (
@@ -236,7 +212,7 @@ export default function ContactModal(props: ContactModalProps) {
                 href="https://www.linkedin.com/in/michael-freno-176001256/"
                 target="_blank"
                 rel="noreferrer"
-                className="hvr-grow-rotate rounded-full shaker border-zinc-800 dark:border-zinc-300"
+                className="hvr-grow-rotate shaker rounded-full border-zinc-800 dark:border-zinc-300"
               >
                 <span className="m-auto">
                   <LinkedIn height={20} width={20} fill={"white"} />
@@ -254,4 +230,11 @@ interface ContactModalProps {
   showing: boolean;
   contactRef: RefObject<HTMLDivElement>;
   contactToggle: () => void;
+  user:
+    | {
+        email?: string | undefined;
+        display_name?: string | undefined;
+        image?: string | undefined;
+      }
+    | undefined;
 }
