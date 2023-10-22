@@ -1,18 +1,23 @@
-import { FormEvent, MutableRefObject, useRef } from "react";
+import { FormEvent, MutableRefObject, useEffect, useRef } from "react";
 
 export default function CommentInputBlock(props: {
   isReply: boolean;
   parent_id?: number;
   privilegeLevel: "admin" | "user" | "anonymous";
-  commentRefreshTrigger: () => Promise<void>;
   type: "project" | "blog";
   post_id: number;
-  socket: MutableRefObject<WebSocket | null>;
+  socket: MutableRefObject<WebSocket | undefined>;
   currentUserID: string;
   newComment: (commentBody: string, parentCommentID?: number) => Promise<void>;
   commentSubmitLoading: boolean;
 }) {
   const bodyRef = useRef<HTMLTextAreaElement>(null);
+
+  useEffect(() => {
+    if (bodyRef.current) {
+      bodyRef.current.value = "";
+    }
+  }, [props.commentSubmitLoading]);
 
   function newCommentWrapper(e: FormEvent) {
     e.preventDefault();

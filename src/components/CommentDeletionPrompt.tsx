@@ -1,11 +1,6 @@
 import { RefObject, useState } from "react";
 import Image from "next/image";
 import UserDefaultImage from "@/icons/UserDefaultImage";
-import {
-  deleteCommentByAdmin,
-  deleteCommentByUser,
-  trueDeleteComment,
-} from "@/app/globalActions";
 
 export default function CommentDeletionPrompt(props: {
   commentID: number;
@@ -17,8 +12,11 @@ export default function CommentDeletionPrompt(props: {
   commentBody: string;
   privilegeLevel: "admin" | "user" | "anonymous";
   deletePromptRef: RefObject<HTMLDivElement>;
+  postType: "project" | "blog";
+  postID: number;
+  commentDeletionLoading: boolean;
+  deleteComment: (checkedChoice: string) => void;
 }) {
-  const [deletionLoading, setDeletionLoading] = useState<boolean>(false);
   const [normalDeleteChecked, setNormalDeleteChecked] = useState(false);
   const [adminDeleteChecked, setAdminDeleteChecked] = useState(false);
   const [fullDeleteChecked, setFullDeleteChecked] = useState(false);
@@ -41,17 +39,17 @@ export default function CommentDeletionPrompt(props: {
     setAdminDeleteChecked(false);
   };
 
-  async function deleteComment() {
-    setDeletionLoading(true);
+  const deletionWrapper = () => {
+    let deleteType = "";
     if (normalDeleteChecked) {
-      await deleteCommentByUser(props.commentID);
+      deleteType = "user";
     } else if (adminDeleteChecked) {
-      await deleteCommentByAdmin(props.commentID);
+      deleteType = "admin";
     } else if (fullDeleteChecked) {
-      await trueDeleteComment(props.commentID);
+      deleteType = "full";
     }
-    setDeletionLoading(true);
-  }
+    props.deleteComment(deleteType);
+  };
 
   if (
     props.currentUserID == props.commenterID ||
@@ -143,12 +141,17 @@ export default function CommentDeletionPrompt(props: {
             <div className="flex w-full justify-center pt-2">
               <button
                 type="button"
-                onClick={deleteComment}
+                onClick={deletionWrapper}
                 disabled={
-                  deletionLoading || !(normalDeleteChecked || fullDeleteChecked)
+                  props.commentDeletionLoading ||
+                  !(
+                    normalDeleteChecked ||
+                    adminDeleteChecked ||
+                    fullDeleteChecked
+                  )
                 }
                 className={`${
-                  deletionLoading ||
+                  props.commentDeletionLoading ||
                   !(
                     normalDeleteChecked ||
                     adminDeleteChecked ||

@@ -20,26 +20,27 @@ import TrashIcon from "@/icons/TrashIcon";
 import LoadingSpinner from "./LoadingSpinner";
 
 export default function CommentBlock(props: {
-  commentRefreshTrigger: () => Promise<void>;
   comment: Comment;
   category: "project" | "blog";
   projectID: number;
   recursionCount: number;
-  allComments: Comment[];
-  child_comments: Comment[];
+  allComments: Comment[] | undefined;
+  child_comments: Comment[] | undefined;
   privilegeLevel: "admin" | "user" | "anonymous";
   currentUserID: string;
   reactionMap: Map<number, CommentReaction[]>;
   level: number;
-  socket: MutableRefObject<WebSocket | null>;
-  userCommentMap: Map<
-    {
-      email?: string | undefined;
-      display_name?: string | undefined;
-      image?: string | undefined;
-    },
-    number[]
-  >;
+  socket: MutableRefObject<WebSocket | undefined>;
+  userCommentMap:
+    | Map<
+        {
+          email?: string | undefined;
+          display_name?: string | undefined;
+          image?: string | undefined;
+        },
+        number[]
+      >
+    | undefined;
   newComment: (commentBody: string, parentCommentID?: number) => Promise<void>;
   commentSubmitLoading: boolean;
   toggleDeletePrompt: (
@@ -90,11 +91,13 @@ export default function CommentBlock(props: {
   }, []);
 
   useEffect(() => {
-    props.userCommentMap.forEach((v, k) => {
-      if (v.includes(props.comment.id)) {
-        setUserData(k);
-      }
-    });
+    if (props.userCommentMap) {
+      props.userCommentMap.forEach((v, k) => {
+        if (v.includes(props.comment.id)) {
+          setUserData(k);
+        }
+      });
+    }
   }, [props.comment.id, props.userCommentMap]);
 
   useEffect(() => {
@@ -168,7 +171,7 @@ export default function CommentBlock(props: {
         setPointFeedbackOffset(2);
         setImmediateLike(true);
         setImmediateDislike(false);
-        const removeRes = await fetch(
+        await fetch(
           `${env.NEXT_PUBLIC_DOMAIN}/api/database/comment-reactions/remove/downVote`,
           { method: "POST", body: JSON.stringify(data) },
         );
@@ -400,7 +403,11 @@ export default function CommentBlock(props: {
               style={{ height: toggleHeight }}
             />
           </button>
-          <div className="w-3/4" onClick={showingReactionOptionsToggle}>
+          <div
+            className="w-3/4"
+            onClick={showingReactionOptionsToggle}
+            id={props.comment.id.toString()}
+          >
             <div
               ref={containerRef}
               className="flex select-text overflow-x-auto overflow-y-hidden"
@@ -485,7 +492,6 @@ export default function CommentBlock(props: {
           <CommentInputBlock
             isReply={true}
             privilegeLevel={props.privilegeLevel}
-            commentRefreshTrigger={props.commentRefreshTrigger}
             parent_id={props.comment.id}
             type={props.category}
             post_id={props.projectID}
@@ -496,7 +502,7 @@ export default function CommentBlock(props: {
           />
         </div>
         <div className="pl-2 sm:pl-4 md:pl-8 lg:pl-12">
-          {props.child_comments.map((this_comment) => (
+          {props.child_comments?.map((this_comment) => (
             <CommentBlock
               key={this_comment.id}
               comment={this_comment}
@@ -504,12 +510,11 @@ export default function CommentBlock(props: {
               projectID={props.projectID}
               recursionCount={1}
               allComments={props.allComments}
-              child_comments={props.allComments.filter(
+              child_comments={props.allComments?.filter(
                 (comment) => comment.parent_comment_id == this_comment.id,
               )}
               privilegeLevel={props.privilegeLevel}
               currentUserID={props.currentUserID}
-              commentRefreshTrigger={props.commentRefreshTrigger}
               reactionMap={props.reactionMap}
               level={props.level + 1}
               socket={props.socket}
