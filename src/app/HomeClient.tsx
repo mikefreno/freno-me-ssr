@@ -11,7 +11,7 @@ export default function HomeClient(props: {
     email?: string | undefined;
     display_name?: string | undefined;
     image?: string | undefined;
-  };
+  } | null;
 }) {
   //refs
   const centerDiv = useRef<HTMLDivElement>(null);

@@ -230,11 +230,9 @@ interface ContactModalProps {
   showing: boolean;
   contactRef: RefObject<HTMLDivElement>;
   contactToggle: () => void;
-  user:
-    | {
-        email?: string | undefined;
-        display_name?: string | undefined;
-        image?: string | undefined;
-      }
-    | undefined;
+  user: {
+    email?: string | undefined;
+    display_name?: string | undefined;
+    image?: string | undefined;
+  } | null;
 }
