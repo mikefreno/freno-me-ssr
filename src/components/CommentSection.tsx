@@ -32,11 +32,12 @@ export default function CommentSection(props: {
       >
     | undefined;
   newComment: (commentBody: string, parentCommentID?: number) => Promise<void>;
-  updateComment: (body: string, comment_id: number) => Promise<void>;
-  toggleDeletePrompt: (
+  editComment: (body: string, comment_id: number) => Promise<void>;
+  toggleModification: (
     commentID: number,
     commenterID: string,
     commentBody: string,
+    modificationType: "delete" | "edit",
     commenterImage?: string,
     commenterEmail?: string,
     commenterDisplayName?: string,
@@ -124,7 +125,7 @@ export default function CommentSection(props: {
                   level={0}
                   socket={socket}
                   userCommentMap={userCommentMap}
-                  toggleDeletePrompt={props.toggleDeletePrompt}
+                  toggleModification={props.toggleModification}
                   newComment={props.newComment}
                   commentSubmitLoading={props.commentSubmitLoading}
                 />

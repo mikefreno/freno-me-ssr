@@ -1,6 +1,7 @@
 import { RefObject, useState } from "react";
 import Image from "next/image";
 import UserDefaultImage from "@/icons/UserDefaultImage";
+import Xmark from "@/icons/Xmark";
 
 export default function CommentDeletionPrompt(props: {
   commentID: number;
@@ -16,6 +17,7 @@ export default function CommentDeletionPrompt(props: {
   postID: number;
   commentDeletionLoading: boolean;
   deleteComment: (checkedChoice: string) => void;
+  toggle: () => void;
 }) {
   const [normalDeleteChecked, setNormalDeleteChecked] = useState(false);
   const [adminDeleteChecked, setAdminDeleteChecked] = useState(false);
@@ -65,7 +67,10 @@ export default function CommentDeletionPrompt(props: {
             id="delete_prompt"
             className="fade-in rounded-md bg-red-400 px-8 py-4 shadow-lg dark:bg-red-900"
           >
-            <div className="tracking py-4 text-center text-3xl">
+            <button className="absolute right-4 " onClick={props.toggle}>
+              <Xmark strokeWidth={0.5} color={"white"} height={50} width={50} />
+            </button>
+            <div className="py-4 text-center text-3xl tracking-wide">
               Comment Deletion
             </div>
             <div className="mx-auto w-3/4 rounded  bg-zinc-50 px-6 py-4 dark:bg-zinc-800">

@@ -18,6 +18,7 @@ import Cookies from "js-cookie";
 import debounce from "./Debounce";
 import TrashIcon from "@/icons/TrashIcon";
 import LoadingSpinner from "./LoadingSpinner";
+import EditIcon from "@/icons/EditIcon";
 
 export default function CommentBlock(props: {
   comment: Comment;
@@ -43,10 +44,11 @@ export default function CommentBlock(props: {
     | undefined;
   newComment: (commentBody: string, parentCommentID?: number) => Promise<void>;
   commentSubmitLoading: boolean;
-  toggleDeletePrompt: (
+  toggleModification: (
     commentID: number,
     commenterID: string,
     commentBody: string,
+    modificationType: "delete" | "edit",
     commenterImage?: string,
     commenterEmail?: string,
     commenterDisplayName?: string,
@@ -306,15 +308,29 @@ export default function CommentBlock(props: {
   const deleteCommentTrigger = async (e: FormEvent) => {
     e.stopPropagation();
     setDeletionLoading(true);
-    props.toggleDeletePrompt(
+    props.toggleModification(
       props.comment.id,
       props.comment.commenter_id,
       props.comment.body,
+      "delete",
       userData?.image,
       userData?.email,
       userData?.display_name,
     );
     setDeletionLoading(false);
+  };
+
+  const editCommentTrigger = (e: FormEvent) => {
+    e.stopPropagation();
+    props.toggleModification(
+      props.comment.id,
+      props.comment.commenter_id,
+      props.comment.body,
+      "edit",
+      userData?.image,
+      userData?.email,
+      userData?.display_name,
+    );
   };
 
   return (
@@ -451,25 +467,31 @@ export default function CommentBlock(props: {
                 ) : null}
               </div>
             </div>
-            {props.currentUserID == props.comment.commenter_id ? (
-              <div></div>
-            ) : null}
-            <button
-              onClick={(event) => toggleCommentReplyBox(event)}
-              className="absolute z-30"
-            >
-              <ReplyIcon
-                color={pathname.split("/")[1] == "blog" ? "#fb923c" : "#60a5fa"}
-                height={24}
-                width={24}
-              />
-            </button>
+            <div className="absolute flex">
+              {props.currentUserID == props.comment.commenter_id ? (
+                <button onClick={editCommentTrigger} className="px-2">
+                  <EditIcon strokeWidth={1} height={24} width={24} />
+                </button>
+              ) : null}
+              <button
+                onClick={(event) => toggleCommentReplyBox(event)}
+                className="z-30"
+              >
+                <ReplyIcon
+                  color={
+                    pathname.split("/")[1] == "blog" ? "#fb923c" : "#60a5fa"
+                  }
+                  height={24}
+                  width={24}
+                />
+              </button>
+            </div>
             <div
               className={`${
                 showingReactionOptions || reactions.length > 0
                   ? ""
                   : "opacity-0"
-              } ml-6`}
+              } ml-16`}
             >
               <ReactionBar
                 commentID={props.comment.id}
@@ -487,7 +509,7 @@ export default function CommentBlock(props: {
             replyBoxShowing ? "fade-in" : "hidden"
           } opacity-0 lg:w-2/3`}
           ref={commentInputRef}
-          style={{ marginLeft: `${-96 * props.recursionCount}px` }}
+          style={{ marginLeft: `${-24 * props.recursionCount}px` }}
         >
           <CommentInputBlock
             isReply={true}
@@ -519,7 +541,7 @@ export default function CommentBlock(props: {
               level={props.level + 1}
               socket={props.socket}
               userCommentMap={props.userCommentMap}
-              toggleDeletePrompt={props.toggleDeletePrompt}
+              toggleModification={props.toggleModification}
               newComment={props.newComment}
               commentSubmitLoading={props.commentSubmitLoading}
             />

@@ -7,6 +7,7 @@ import CommentSection from "./CommentSection";
 import { backup_res, websocket_broadcast } from "@/types/utility-types";
 import CommentDeletionPrompt from "./CommentDeletionPrompt";
 import useOnClickOutside from "@/hooks/ClickOutsideHook";
+import EditCommentModal from "./EditCommentModal";
 
 const MAX_RETRIES = 12;
 const RETRY_INTERVAL = 5000;
@@ -46,23 +47,27 @@ export default function CommentSectionWrapper(props: {
     useState<boolean>(false);
   const [commentDeletionLoading, setCommentDeletionLoading] =
     useState<boolean>(false);
+  const [editCommentLoading, setCommentEditLoading] = useState<boolean>(false);
+  const [showingCommentEdit, setShowingCommentEdit] = useState<boolean>(false);
   const [showingDeletionPrompt, setShowingDeletionPrompt] =
     useState<boolean>(false);
-  const [commentIDForDeletePrompt, setCommentIDForDeletePrompt] =
+  const [commentIDForModification, setCommentIDForModification] =
     useState<number>(-1);
-  const [commenterForDeletePrompt, setCommenterForDeletePrompt] =
+  const [commenterForModification, setCommenterForModification] =
     useState<string>("");
-  const [commenterImageForDeletePrompt, setCommenterImageForDeletePrompt] =
+  const [commenterImageForModification, setCommenterImageForModification] =
     useState<string>();
-  const [commenterEmailForDeletePrompt, setCommenterEmailForDeletePrompt] =
+  const [commenterEmailForModification, setCommenterEmailForModification] =
     useState<string>();
   const [
-    commenterDisplaNameForDeletePrompt,
-    setCommenterDisplayNameForDeletePrompt,
+    commenterDisplaNameForModification,
+    setCommenterDisplayNameForModification,
   ] = useState<string>();
-  const [commentBodyForDeletePrompt, setCommentBodyForDeletePrompt] =
+  const [commentBodyForModification, setCommentBodyForModification] =
     useState<string>("");
+
   //refs
+  const modificationPromptRef = useRef<HTMLDivElement>(null);
   const deletePromptRef = useRef<HTMLDivElement>(null);
   let retryCount = useRef<number>(0);
   let socket = useRef<WebSocket>();
@@ -70,6 +75,15 @@ export default function CommentSectionWrapper(props: {
   //hooks
   useOnClickOutside([deletePromptRef], () => {
     setShowingDeletionPrompt(false);
+    //setTimeout(() => {
+    //clearModificationPrompt();
+    //}, 500);
+  });
+  useOnClickOutside([modificationPromptRef], () => {
+    setShowingCommentEdit(false);
+    //setTimeout(() => {
+    //clearModificationPrompt();
+    //}, 500);
   });
 
   // websocket handling
@@ -102,7 +116,7 @@ export default function CommentSectionWrapper(props: {
               createCommentHandler(parsed);
               break;
             case "commentUpdateBroadcast":
-              updateCommentHandler(parsed);
+              editCommentHandler(parsed);
               break;
             case "commentDeletionBroadcast":
               deleteCommentHandler(parsed);
@@ -224,7 +238,7 @@ export default function CommentSectionWrapper(props: {
   };
 
   //comment updating
-  const updateComment = async (body: string, comment_id: number) => {
+  const editComment = async (body: string, comment_id: number) => {
     if (socket.current) {
       socket.current.send(
         JSON.stringify({
@@ -245,7 +259,7 @@ export default function CommentSectionWrapper(props: {
     }
   };
 
-  const updateCommentHandler = (data: websocket_broadcast) => {};
+  const editCommentHandler = (data: websocket_broadcast) => {};
 
   //comment deletion
   const deleteComment = (checkedChoice: string) => {
@@ -255,7 +269,7 @@ export default function CommentSectionWrapper(props: {
         JSON.stringify({
           action: "commentDeletion",
           deleteType: checkedChoice,
-          commentID: commentIDForDeletePrompt,
+          commentID: commentIDForModification,
           invokerID: props.currentUserID,
           postType: props.type,
           postID: props.id,
@@ -301,41 +315,50 @@ export default function CommentSectionWrapper(props: {
     }
     setCommentDeletionLoading(false);
     setTimeout(() => {
-      clearDeletionPompt();
+      clearModificationPrompt();
       setShowingDeletionPrompt(false);
     }, 500);
   };
 
   //deletion prompt
-  const toggleDeletePrompt = (
+  const toggleModification = (
     commentID: number,
     commenterID: string,
     commentBody: string,
+    modificationType: "delete" | "edit",
     commenterImage?: string,
     commenterEmail?: string,
     commenterDisplayName?: string,
   ) => {
-    if (commentID == commentIDForDeletePrompt) {
-      setShowingDeletionPrompt(false);
-      clearDeletionPompt();
+    if (commentID == commentIDForModification) {
+      if (modificationType == "delete") {
+        setShowingDeletionPrompt(false);
+      } else {
+        setShowingCommentEdit(false);
+      }
+      clearModificationPrompt();
     } else {
-      setShowingDeletionPrompt(true);
-      setCommentIDForDeletePrompt(commentID);
-      setCommenterForDeletePrompt(commenterID);
-      setCommenterImageForDeletePrompt(commenterImage);
-      setCommenterEmailForDeletePrompt(commenterEmail);
-      setCommenterDisplayNameForDeletePrompt(commenterDisplayName);
-      setCommentBodyForDeletePrompt(commentBody);
+      if (modificationType == "delete") {
+        setShowingDeletionPrompt(true);
+      } else {
+        setShowingCommentEdit(true);
+      }
+      setCommentIDForModification(commentID);
+      setCommenterForModification(commenterID);
+      setCommenterImageForModification(commenterImage);
+      setCommenterEmailForModification(commenterEmail);
+      setCommenterDisplayNameForModification(commenterDisplayName);
+      setCommentBodyForModification(commentBody);
     }
   };
 
-  const clearDeletionPompt = () => {
-    setCommentIDForDeletePrompt(-1);
-    setCommenterForDeletePrompt("");
-    setCommenterImageForDeletePrompt(undefined);
-    setCommenterEmailForDeletePrompt("");
-    setCommenterDisplayNameForDeletePrompt(undefined);
-    setCommentBodyForDeletePrompt("");
+  const clearModificationPrompt = () => {
+    setCommentIDForModification(-1);
+    setCommenterForModification("");
+    setCommenterImageForModification(undefined);
+    setCommenterEmailForModification("");
+    setCommenterDisplayNameForModification(undefined);
+    setCommentBodyForModification("");
   };
 
   //reaction handling
@@ -354,25 +377,48 @@ export default function CommentSectionWrapper(props: {
         socket={socket}
         userCommentMap={userCommentMap.current}
         newComment={newComment}
-        updateComment={updateComment}
-        toggleDeletePrompt={toggleDeletePrompt}
+        editComment={editComment}
+        toggleModification={toggleModification}
         commentSubmitLoading={commentSubmitLoading}
       />
       {showingDeletionPrompt ? (
         <CommentDeletionPrompt
-          commentID={commentIDForDeletePrompt}
-          commenterID={commenterForDeletePrompt}
+          commentID={commentIDForModification}
+          commenterID={commenterForModification}
           currentUserID={props.currentUserID}
-          commenterImage={commenterImageForDeletePrompt}
-          commenterEmail={commenterEmailForDeletePrompt}
-          commenterDisplayName={commenterDisplaNameForDeletePrompt}
-          commentBody={commentBodyForDeletePrompt}
+          commenterImage={commenterImageForModification}
+          commenterEmail={commenterEmailForModification}
+          commenterDisplayName={commenterDisplaNameForModification}
+          commentBody={commentBodyForModification}
           privilegeLevel={props.privilegeLevel}
           deletePromptRef={deletePromptRef}
           postType={props.type}
           postID={props.id}
           commentDeletionLoading={commentDeletionLoading}
           deleteComment={deleteComment}
+          toggle={() => {
+            clearModificationPrompt();
+            setShowingDeletionPrompt(false);
+          }}
+        />
+      ) : null}
+      {showingCommentEdit ? (
+        <EditCommentModal
+          commentID={commentIDForModification}
+          commenterID={commenterForModification}
+          currentUserID={props.currentUserID}
+          commenterImage={commenterImageForModification}
+          commenterEmail={commenterEmailForModification}
+          commenterDisplayName={commenterDisplaNameForModification}
+          commentBody={commentBodyForModification}
+          postID={props.id}
+          editCommentLoading={editCommentLoading}
+          modificationPromptRef={modificationPromptRef}
+          editComment={editComment}
+          toggle={() => {
+            clearModificationPrompt();
+            setShowingCommentEdit(false);
+          }}
         />
       ) : null}
     </>
