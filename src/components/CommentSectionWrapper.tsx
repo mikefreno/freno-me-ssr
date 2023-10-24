@@ -239,6 +239,7 @@ export default function CommentSectionWrapper(props: {
 
   //comment updating
   const editComment = async (body: string, comment_id: number) => {
+    setCommentEditLoading(true);
     if (socket.current) {
       socket.current.send(
         JSON.stringify({
@@ -276,8 +277,11 @@ export default function CommentSectionWrapper(props: {
         return comment;
       }),
     );
-    setShowingCommentEdit(false);
-    clearModificationPrompt();
+    setCommentEditLoading(true);
+    setTimeout(() => {
+      setShowingCommentEdit(false);
+      clearModificationPrompt();
+    }, 500);
   };
 
   //comment deletion
