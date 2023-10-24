@@ -242,7 +242,7 @@ export default function CommentSectionWrapper(props: {
     if (socket.current) {
       socket.current.send(
         JSON.stringify({
-          action: "updateComment",
+          action: "commentUpdate",
           commentBody: body,
           postType: props.type,
           postID: props.id,
@@ -250,16 +250,35 @@ export default function CommentSectionWrapper(props: {
           invokerID: props.currentUserID,
         }),
       );
-    } else {
-      //fallback
-      await fetch(`${env.NEXT_PUBLIC_DOMAIN}/api/database/comments/update`, {
-        method: "POST",
-        body: JSON.stringify({ body: body, commentID: comment_id }),
-      });
     }
   };
 
-  const editCommentHandler = (data: websocket_broadcast) => {};
+  const editCommentHandler = (data: websocket_broadcast) => {
+    setAllComments((prev) =>
+      prev.map((comment) => {
+        if (comment.id === data.commentID) {
+          return {
+            ...comment,
+            body: data.commentBody,
+          };
+        }
+        return comment;
+      }),
+    );
+    setTopLevelComments((prev) =>
+      prev.map((comment) => {
+        if (comment.id === data.commentID) {
+          return {
+            ...comment,
+            body: data.commentBody,
+          };
+        }
+        return comment;
+      }),
+    );
+    setShowingCommentEdit(false);
+    clearModificationPrompt();
+  };
 
   //comment deletion
   const deleteComment = (checkedChoice: string) => {

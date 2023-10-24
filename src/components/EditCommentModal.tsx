@@ -1,5 +1,5 @@
 import Xmark from "@/icons/Xmark";
-import { RefObject } from "react";
+import { FormEvent, RefObject, useRef, useState } from "react";
 
 export default function EditCommentModal(props: {
   commentID: number;
@@ -15,6 +15,23 @@ export default function EditCommentModal(props: {
   modificationPromptRef: RefObject<HTMLDivElement>;
   toggle: () => void;
 }) {
+  let bodyRef = useRef<HTMLTextAreaElement>(null);
+  const [showNoChange, setShowNoChange] = useState<boolean>(false);
+
+  const editCommentWrapper = (e: FormEvent) => {
+    e.preventDefault();
+    if (
+      bodyRef.current &&
+      bodyRef.current.value.length > 0 &&
+      bodyRef.current.value != props.commentBody
+    ) {
+      setShowNoChange(false);
+      props.editComment(bodyRef.current.value, props.commentID);
+    } else {
+      setShowNoChange(true);
+    }
+  };
+
   if (props.commenterID == props.currentUserID) {
     return (
       <div className="flex justify-center">
@@ -32,6 +49,36 @@ export default function EditCommentModal(props: {
             <div className="py-4 text-center text-3xl tracking-wide text-zinc-50">
               Edit Comment
             </div>
+            <form onSubmit={(e) => editCommentWrapper(e)}>
+              <div className="textarea-group home">
+                <textarea
+                  required
+                  ref={bodyRef}
+                  placeholder=" "
+                  defaultValue={props.commentBody}
+                  className="underlinedInput w-full bg-transparent text-blue-300"
+                  rows={4}
+                />
+                <span className="bar" />
+                <label className="underlinedInputLabel">Edit Comment</label>
+              </div>
+              <div className="flex justify-end pt-2">
+                <button
+                  type="submit"
+                  disabled={props.editCommentLoading}
+                  className={`${
+                    props.editCommentLoading ? "bg-zinc-400" : null
+                  } rounded border text-white shadow-md hover:bg-blue-400 hover:border-blue-500 active:scale-90 transition-all duration-300 ease-in-out px-4 py-2`}
+                >
+                  Submit
+                </button>
+              </div>
+            </form>
+            {showNoChange ? (
+              <div className="text-center italic text-red-500">
+                No change detected
+              </div>
+            ) : null}
           </div>
         </div>
       </div>

@@ -52,6 +52,7 @@ export default function CommentInputBlock(props: {
             <div className="flex justify-end pt-2">
               <button
                 type="submit"
+                disabled={props.commentSubmitLoading}
                 className={`${
                   props.commentSubmitLoading
                     ? "bg-zinc-400"
