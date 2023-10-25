@@ -79,6 +79,8 @@ export const model: { [key: string]: string } = {
       blog_id INT,
       project_id INT,
       parent_comment_id INT,
+      date datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+      edited BOOLEAN NOT NULL DEFAULT FALSE,
       commenter_id varchar(255) NOT NULL,
       PRIMARY KEY (id),
       INDEX (commenter_id),

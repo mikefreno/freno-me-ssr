@@ -2,10 +2,10 @@ export interface User {
   id: string;
   email?: string;
   email_verified: boolean;
+  password_hash?: string;
   display_name?: string;
   provider?: string;
   image?: string;
-  password_hash?: string;
   registered_at: string;
 }
 
@@ -53,6 +53,8 @@ export interface Comment {
   blog_id?: number;
   project_id?: number;
   parent_comment_id?: number;
+  date: string;
+  edited: boolean;
   commenter_id: string;
 }
 
@@ -62,6 +64,15 @@ export interface CommentReaction {
   comment_id: number;
   user_id: string;
 }
+
+export interface Connection {
+  id: number;
+  user_id: string;
+  connection_id: string;
+  post_type?: string;
+  post_id?: number;
+}
+
 export interface PostWithCommentsAndLikes {
   id: number;
   title: string;
@@ -75,11 +86,4 @@ export interface PostWithCommentsAndLikes {
   attachments: string;
   total_likes: number;
   total_comments: number;
-}
-export interface Connection {
-  id: number;
-  connection_id: string;
-  blog_id: number;
-  project_id: number;
-  user_id: string;
 }
