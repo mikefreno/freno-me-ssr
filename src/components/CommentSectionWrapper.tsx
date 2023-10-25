@@ -212,6 +212,7 @@ export default function CommentSectionWrapper(props: {
       display_name?: string;
       image?: string;
     };
+    const comment_date = getSQLMatchingFormattedDate();
     const newComment = {
       id: id,
       body: body,
@@ -219,6 +220,8 @@ export default function CommentSectionWrapper(props: {
       project_id: props.type == "project" ? props.id : undefined,
       parent_comment_id: parentCommentID,
       commenter_id: commenterID,
+      edited: false,
+      date: comment_date,
     };
     if (parentCommentID == -1) {
       setTopLevelComments((prevComments) => [
@@ -236,6 +239,18 @@ export default function CommentSectionWrapper(props: {
     }
     setCommentSubmitLoading(false);
   };
+
+  function getSQLMatchingFormattedDate() {
+    const date = new Date();
+    date.setHours(date.getHours() + 4);
+    const year = date.getFullYear();
+    const month = `${date.getMonth() + 1}`.padStart(2, "0");
+    const day = `${date.getDate()}`.padStart(2, "0");
+    const hours = `${date.getHours()}`.padStart(2, "0");
+    const minutes = `${date.getMinutes()}`.padStart(2, "0");
+    const seconds = `${date.getSeconds()}`.padStart(2, "0");
+    return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+  }
 
   //comment updating
   const editComment = async (body: string, comment_id: number) => {
@@ -261,6 +276,7 @@ export default function CommentSectionWrapper(props: {
           return {
             ...comment,
             body: data.commentBody,
+            edited: true,
           };
         }
         return comment;
@@ -272,6 +288,7 @@ export default function CommentSectionWrapper(props: {
           return {
             ...comment,
             body: data.commentBody,
+            edited: true,
           };
         }
         return comment;
@@ -281,7 +298,7 @@ export default function CommentSectionWrapper(props: {
     setTimeout(() => {
       setShowingCommentEdit(false);
       clearModificationPrompt();
-    }, 500);
+    }, 300);
   };
 
   //comment deletion
@@ -310,6 +327,7 @@ export default function CommentSectionWrapper(props: {
               ...comment,
               body: data.commentBody,
               commenter_id: "",
+              edited: false,
             };
           }
           return comment;
@@ -323,6 +341,7 @@ export default function CommentSectionWrapper(props: {
               ...comment,
               body: data.commentBody,
               commenter_id: "",
+              edited: false,
             };
           }
           return comment;
@@ -340,7 +359,7 @@ export default function CommentSectionWrapper(props: {
     setTimeout(() => {
       clearModificationPrompt();
       setShowingDeletionPrompt(false);
-    }, 500);
+    }, 300);
   };
 
   //deletion prompt

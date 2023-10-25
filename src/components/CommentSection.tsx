@@ -2,6 +2,8 @@ import CommentInputBlock from "@/components/CommentInputBlock";
 import CommentBlock from "@/components/CommentBlock";
 import { Comment, CommentReaction } from "@/types/model-types";
 import { MutableRefObject, useEffect, useState } from "react";
+import CommentSortingSelect from "./CommentSortingSelect";
+import CommentSorting from "./CommentSorting";
 
 type UserCommentMapType = Map<
   {
@@ -11,6 +13,12 @@ type UserCommentMapType = Map<
   },
   number[]
 >;
+const commentSorting = [
+  { val: "Newest" },
+  { val: "Oldest" },
+  { val: "Highest Rated" },
+  { val: "Hot" },
+];
 
 export default function CommentSection(props: {
   privilegeLevel: "admin" | "user" | "anonymous";
@@ -49,35 +57,11 @@ export default function CommentSection(props: {
   const [userCommentMap, setUserCommentMap] = useState<
     UserCommentMapType | undefined
   >(props.userCommentMap);
-  const [clickedOnce, setClickedOnce] = useState<boolean>(false);
-  const [showingBlock, setShowingBlock] = useState<Map<number, boolean>>(
-    new Map(props.topLevelComments?.map((comment) => [comment.id, true])),
-  );
+  const [selectedSorting, setSelectedSorting] = useState(commentSorting[0]);
 
   useEffect(() => {
     setUserCommentMap(props.userCommentMap);
   }, [props.userCommentMap]);
-
-  useEffect(() => {
-    setShowingBlock(
-      new Map(props.topLevelComments?.map((comment) => [comment.id, true])),
-    );
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [props.topLevelComments]);
-
-  useEffect(() => {
-    if (clickedOnce) {
-      setTimeout(() => setClickedOnce(false), 300);
-    }
-  }, [clickedOnce]);
-
-  const checkForDoubleClick = (id: number) => {
-    if (clickedOnce) {
-      setShowingBlock((prev) => new Map(prev).set(id, !prev.get(id)));
-    } else {
-      setClickedOnce(true);
-    }
-  };
 
   return (
     <>
@@ -100,40 +84,31 @@ export default function CommentSection(props: {
             commentSubmitLoading={props.commentSubmitLoading}
           />
         </div>
-
+        <CommentSortingSelect
+          type={"blog"}
+          commentSorting={commentSorting}
+          selectedSorting={selectedSorting}
+          setSelectedSorting={setSelectedSorting}
+        />
         <div className="" id="comments">
-          {props.topLevelComments?.map((topLevelComment) => (
-            <div
-              onClick={() => checkForDoubleClick(topLevelComment.id)}
-              key={topLevelComment.id}
-              className="mt-4 max-w-full select-none rounded bg-white py-2 pl-2 shadow dark:bg-zinc-900 sm:pl-4 md:pl-8 lg:pl-12"
-            >
-              {showingBlock.get(topLevelComment.id) ? (
-                <CommentBlock
-                  comment={topLevelComment}
-                  category={"blog"}
-                  projectID={props.id}
-                  recursionCount={1}
-                  allComments={props.allComments}
-                  child_comments={props.allComments?.filter(
-                    (comment) =>
-                      comment.parent_comment_id == topLevelComment.id,
-                  )}
-                  privilegeLevel={props.privilegeLevel}
-                  currentUserID={props.currentUserID}
-                  reactionMap={props.reactionMap}
-                  level={0}
-                  socket={socket}
-                  userCommentMap={userCommentMap}
-                  toggleModification={props.toggleModification}
-                  newComment={props.newComment}
-                  commentSubmitLoading={props.commentSubmitLoading}
-                />
-              ) : (
-                <div className="h-4"></div>
-              )}
-            </div>
-          ))}
+          {props.allComments && props.topLevelComments ? (
+            <CommentSorting
+              topLevelComments={props.topLevelComments}
+              privilegeLevel={"admin"}
+              type={"blog"}
+              postID={props.id}
+              allComments={props.allComments}
+              reactionMap={props.reactionMap}
+              currentUserID={props.currentUserID}
+              socket={socket}
+              userCommentMap={userCommentMap}
+              newComment={props.newComment}
+              editComment={props.editComment}
+              toggleModification={props.toggleModification}
+              commentSubmitLoading={props.commentSubmitLoading}
+              selectedSorting={selectedSorting}
+            />
+          ) : null}
         </div>
       </div>
     </>

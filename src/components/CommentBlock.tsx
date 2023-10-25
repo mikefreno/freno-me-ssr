@@ -341,7 +341,11 @@ export default function CommentBlock(props: {
       >
         <div className="my-auto mr-2 mt-1 h-8 border-l-2 border-black dark:border-white" />
       </button>
-      <div className={commentCollapsed ? "hidden" : "z-[500]"}>
+      <div
+        className={`${
+          commentCollapsed ? "hidden" : "z-[500]"
+        } transition-all duration-300 ease-in-out`}
+      >
         <div className="my-4 flex w-full overflow-x-auto overflow-y-hidden lg:w-3/4">
           <div
             className="flex flex-col justify-between"
@@ -426,9 +430,12 @@ export default function CommentBlock(props: {
           >
             <div
               ref={containerRef}
-              className="flex select-text overflow-x-auto overflow-y-hidden"
+              className="select-text overflow-x-auto overflow-y-hidden"
             >
-              {props.comment.body}
+              <div>{props.comment.body}</div>
+              {props.comment.edited ? (
+                <div className="pb-0.5 text-xs italic">Edited</div>
+              ) : null}
             </div>
             <div className="flex pl-2">
               {userData?.image ? (
