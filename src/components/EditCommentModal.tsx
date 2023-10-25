@@ -37,11 +37,11 @@ export default function EditCommentModal(props: {
       <div className="flex justify-center">
         <div
           ref={props.modificationPromptRef}
-          className="fixed top-48 z-50 h-fit w-11/12 sm:w-4/5 md:w-2/3"
+          className="fixed top-48 h-fit w-11/12 sm:w-4/5 md:w-2/3"
         >
           <div
             id="edit_prompt"
-            className="fade-in rounded-md bg-zinc-600 px-8 py-4 shadow-lg dark:bg-zinc-800"
+            className="fade-in z-50 rounded-md bg-zinc-600 px-8 py-4 shadow-lg dark:bg-zinc-800"
           >
             <button className="absolute right-4 " onClick={props.toggle}>
               <Xmark strokeWidth={0.5} color={"white"} height={50} width={50} />
