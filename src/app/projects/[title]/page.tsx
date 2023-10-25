@@ -19,6 +19,7 @@ import { ConnectionFactory, getPrivilegeLevel, getUserID } from "@/app/utils";
 import CommentSectionWrapper from "@/components/CommentSectionWrapper";
 import { JSDOM } from "jsdom";
 import DOMPurify from "dompurify";
+import { notFound } from "next/navigation";
 
 function hasCodeBlock(str: string): boolean {
   return str.includes("<code") && str.includes("</code>");
@@ -40,7 +41,8 @@ export default async function DynamicProjectPost({
   const project = (
     await conn.execute(query, [decodeURIComponent(params.title)])
   ).rows[0] as Project;
-  const containsCodeBlock = hasCodeBlock(project.body);
+
+  let containsCodeBlock = false;
 
   let comments: Comment[] = [];
   let likes: ProjectLike[] = [];
@@ -51,9 +53,11 @@ export default async function DynamicProjectPost({
     number[]
   >();
 
+  let exists = false;
   let topLevelComments: Comment[] = [];
 
   if (project) {
+    containsCodeBlock = hasCodeBlock(project.body);
     const commentQuery = "SELECT * FROM Comment WHERE project_id = ?";
     comments = (await conn.execute(commentQuery, [project.id]))
       .rows as Comment[];
@@ -94,24 +98,36 @@ export default async function DynamicProjectPost({
       const res = await conn.execute(reactionQuery, reactionParam);
       reactionMap.set(comment.id, res.rows as CommentReaction[]);
     }
+  } else {
+    const query = "SELECT id FROM Project WHERE title = ?";
+    let exist_res = await conn.execute(query, [
+      decodeURIComponent(params.title),
+    ]);
+    if (exist_res.rows[0]) {
+      exists = true;
+    }
   }
 
   if (!project) {
-    return (
-      <>
-        <div className="flex w-full justify-center pt-[20vh] text-4xl">
-          No project found!
+    if (exists) {
+      return (
+        <div className="w-full pt-[30vh]">
+          <div className="text-center text-2xl">
+            That post is in the works! Come back soon!
+          </div>
+          <div className="flex justify-center">
+            <Link
+              href={`${env.NEXT_PUBLIC_DOMAIN}/project`}
+              className="mt-4 rounded border border-blue-500 bg-blue-400 px-4 py-2 text-white shadow-md transition-all duration-300 ease-in-out hover:bg-blue-500 active:scale-90 dark:border-blue-700 dark:bg-blue-700 dark:hover:bg-blue-800"
+            >
+              Project Main
+            </Link>
+          </div>
         </div>
-        <div className="flex justify-center pt-12">
-          <Link
-            href="/projects"
-            className="dark: rounded border border-blue-500 bg-blue-400 px-4 py-2 text-white shadow-md transition-all duration-300 ease-in-out hover:bg-blue-500 active:scale-90 dark:border-blue-700 dark:bg-blue-700 dark:hover:bg-blue-800"
-          >
-            Back to project main page
-          </Link>
-        </div>
-      </>
-    );
+      );
+    } else {
+      return notFound();
+    }
   } else if (project) {
     const window = new JSDOM("").window;
     const purify = DOMPurify(window);
