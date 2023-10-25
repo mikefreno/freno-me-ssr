@@ -23,7 +23,7 @@ export default function CardLinks(props: {
             : props.linkTarget == "projects"
             ? "bg-blue-400 hover:bg-blue-500 dark:bg-blue-600 dark:hover:bg-blue-700"
             : "bg-orange-400 hover:bg-orange-500"
-        } active:scale-90 flex transition-all duration-300 ease-out text-white rounded px-4 py-2 ml-2`}
+        } active:scale-90 flex transition-all duration-300 ease-out shadow text-white rounded px-4 py-2 ml-2`}
       >
         {readLoading ? <LoadingSpinner height={24} width={24} /> : "Read"}
       </Link>
@@ -33,7 +33,7 @@ export default function CardLinks(props: {
           href={`/${props.linkTarget}/edit/${props.postID}`}
           className={`${
             editLoading ? "bg-zinc-400" : "bg-green-400 hover:bg-green-500"
-          } active:scale-90 flex transition-all duration-300 ease-out text-white rounded px-4 py-2 ml-2`}
+          } active:scale-90 flex transition-all duration-300 ease-out text-white rounded shadow px-4 py-2 ml-2 mt-1`}
         >
           {editLoading ? <LoadingSpinner height={24} width={24} /> : "Edit"}
         </Link>
