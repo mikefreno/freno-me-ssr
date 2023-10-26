@@ -346,7 +346,7 @@ export default function CommentBlock(props: {
           commentCollapsed ? "hidden" : "z-[500]"
         } transition-all duration-300 ease-in-out`}
       >
-        <div className="my-4 flex w-full overflow-x-auto overflow-y-hidden lg:w-3/4">
+        <div className="my-4 flex w-full overflow-x-hidden overflow-y-hidden lg:w-3/4">
           <div
             className="flex flex-col justify-between"
             style={{ height: toggleHeight }}
