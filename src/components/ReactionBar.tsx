@@ -24,7 +24,7 @@ export default function ReactionBar(props: {
         props.showingReactionOptions
           ? "bg-zinc-50 px-2 py-4 shadow-inner dark:bg-zinc-700"
           : ""
-      } ml-2 py-1 min-h-[1.5rem] w-64 fade-in flex rounded-md flex-row max-w-[1/4] overflow-scroll scrollYDisabled md:overflow-hidden md:w-fit`}
+      } ml-2 py-1 min-h-[1.5rem] w-48 sm:w-56 fade-in flex rounded-md flex-row max-w-[1/4] overflow-scroll scrollYDisabled md:overflow-hidden md:w-fit`}
     >
       <div
         className={`${
