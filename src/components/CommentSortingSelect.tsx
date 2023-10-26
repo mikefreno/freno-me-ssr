@@ -19,7 +19,7 @@ export default function CommentSortingSelect(props: {
   >;
 }) {
   return (
-    <div className="mt-2 flex justify-center md:mt-0 md:justify-normal">
+    <div className="mt-2 flex justify-center">
       <div className="w-72">
         <Listbox
           value={props.selectedSorting}

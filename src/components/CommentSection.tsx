@@ -84,32 +84,41 @@ export default function CommentSection(props: {
             commentSubmitLoading={props.commentSubmitLoading}
           />
         </div>
-        <CommentSortingSelect
-          type={"blog"}
-          commentSorting={commentSorting}
-          selectedSorting={selectedSorting}
-          setSelectedSorting={setSelectedSorting}
-        />
-        <div className="" id="comments">
-          {props.allComments && props.topLevelComments ? (
-            <CommentSorting
-              topLevelComments={props.topLevelComments}
-              privilegeLevel={"admin"}
+        {props.allComments &&
+        props.allComments.length > 0 &&
+        props.topLevelComments &&
+        props.topLevelComments.length > 0 ? (
+          <>
+            <CommentSortingSelect
               type={"blog"}
-              postID={props.id}
-              allComments={props.allComments}
-              reactionMap={props.reactionMap}
-              currentUserID={props.currentUserID}
-              socket={socket}
-              userCommentMap={userCommentMap}
-              newComment={props.newComment}
-              editComment={props.editComment}
-              toggleModification={props.toggleModification}
-              commentSubmitLoading={props.commentSubmitLoading}
+              commentSorting={commentSorting}
               selectedSorting={selectedSorting}
+              setSelectedSorting={setSelectedSorting}
             />
-          ) : null}
-        </div>
+            <div className="" id="comments">
+              <CommentSorting
+                topLevelComments={props.topLevelComments}
+                privilegeLevel={"admin"}
+                type={"blog"}
+                postID={props.id}
+                allComments={props.allComments}
+                reactionMap={props.reactionMap}
+                currentUserID={props.currentUserID}
+                socket={socket}
+                userCommentMap={userCommentMap}
+                newComment={props.newComment}
+                editComment={props.editComment}
+                toggleModification={props.toggleModification}
+                commentSubmitLoading={props.commentSubmitLoading}
+                selectedSorting={selectedSorting}
+              />
+            </div>
+          </>
+        ) : (
+          <div className="pt-8 text-center text-xl font-thin italic tracking-wide">
+            No Comments Yet
+          </div>
+        )}
       </div>
     </>
   );
