@@ -430,9 +430,11 @@ export default function CommentBlock(props: {
           >
             <div
               ref={containerRef}
-              className="select-text overflow-x-auto overflow-y-hidden"
+              className="select-text overflow-x-hidden overflow-y-hidden"
             >
-              <div>{props.comment.body}</div>
+              <div className="max-w-[90%] md:max-w-[75%]">
+                {props.comment.body}
+              </div>
               {props.comment.edited ? (
                 <div className="pb-0.5 text-xs italic">Edited</div>
               ) : null}

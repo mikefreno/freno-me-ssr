@@ -63,7 +63,7 @@ export default async function Blog() {
             </div>
           </div>
         </div>
-        <div className="relative z-40 mx-auto -mt-16 min-h-screen w-11/12 rounded-t-lg bg-zinc-50 pb-24 pt-8 shadow-2xl dark:bg-zinc-800 sm:-mt-20 md:mt-0 md:w-3/4">
+        <div className="relative z-40 mx-auto -mt-16 min-h-screen w-11/12 rounded-t-lg bg-zinc-50 pb-24 pt-8 shadow-2xl dark:bg-zinc-800 sm:-mt-20 md:mt-0 md:w-5/6 lg:w-3/4">
           <div className="flex flex-col justify-center md:flex-row md:justify-around">
             <div className="flex justify-center md:justify-start">
               <PostSortingSelect type={"blog"} />

@@ -72,7 +72,7 @@ export default function CommentSection(props: {
         >
           Comments
         </div>
-        <div>
+        <div className="mb-1">
           <CommentInputBlock
             isReply={false}
             privilegeLevel={props.privilegeLevel}
