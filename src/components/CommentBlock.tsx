@@ -129,11 +129,11 @@ export default function CommentBlock(props: {
     event.stopPropagation();
     event.preventDefault();
     setReplyBoxShowing(!replyBoxShowing);
-    setTimeout(() => {
-      if (commentInputRef.current) {
-        commentInputRef.current.scrollIntoView({ behavior: "smooth" });
-      }
-    }, 50);
+    //setTimeout(() => {
+    //if (commentInputRef.current) {
+    //commentInputRef.current.scrollIntoView({ behavior: "smooth" });
+    //}
+    //}, 50);
   };
 
   const upVoteHandler = async (event: React.MouseEvent) => {
