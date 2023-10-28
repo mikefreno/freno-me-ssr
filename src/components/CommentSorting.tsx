@@ -1,6 +1,6 @@
 "use client";
 import { Comment, CommentReaction } from "@/types/model-types";
-import { MutableRefObject, useEffect, useState } from "react";
+import { FormEvent, MutableRefObject, useEffect, useState } from "react";
 import CommentBlock from "./CommentBlock";
 
 export default function CommentSorting(props: {
@@ -37,6 +37,11 @@ export default function CommentSorting(props: {
   selectedSorting: {
     val: string;
   };
+  commentReaction: (
+    event: FormEvent,
+    reactionType: string,
+    commentID: number,
+  ) => void;
 }) {
   const [clickedOnce, setClickedOnce] = useState<boolean>(false);
   const [showingBlock, setShowingBlock] = useState<Map<number, boolean>>(
@@ -96,6 +101,7 @@ export default function CommentSorting(props: {
                 toggleModification={props.toggleModification}
                 newComment={props.newComment}
                 commentSubmitLoading={props.commentSubmitLoading}
+                commentReaction={props.commentReaction}
               />
             ) : (
               <div className="h-4"></div>
@@ -135,6 +141,7 @@ export default function CommentSorting(props: {
                 toggleModification={props.toggleModification}
                 newComment={props.newComment}
                 commentSubmitLoading={props.commentSubmitLoading}
+                commentReaction={props.commentReaction}
               />
             ) : (
               <div className="h-4"></div>
@@ -145,9 +152,25 @@ export default function CommentSorting(props: {
     case "Highest Rated":
       return [...props.topLevelComments]
         .sort((a, b) => {
-          const aReactions = props.reactionMap.get(a.id) || [];
-          const bReactions = props.reactionMap.get(b.id) || [];
-          return bReactions.length - aReactions.length;
+          const upVotesA =
+            props.reactionMap
+              .get(a.id)
+              ?.filter((reaction) => reaction.type == "upVote") || [];
+          const downVotesA =
+            props.reactionMap
+              .get(a.id)
+              ?.filter((reaction) => reaction.type == "downVote") || [];
+          const aDiff = upVotesA.length - downVotesA.length;
+          const upVotesB =
+            props.reactionMap
+              .get(a.id)
+              ?.filter((reaction) => reaction.type == "upVote") || [];
+          const downVotesB =
+            props.reactionMap
+              .get(a.id)
+              ?.filter((reaction) => reaction.type == "downVote") || [];
+          const bDiff = upVotesB.length - downVotesB.length;
+          return bDiff - aDiff;
         })
         .map((topLevelComment) => (
           <div
@@ -174,6 +197,7 @@ export default function CommentSorting(props: {
                 toggleModification={props.toggleModification}
                 newComment={props.newComment}
                 commentSubmitLoading={props.commentSubmitLoading}
+                commentReaction={props.commentReaction}
               />
             ) : (
               <div className="h-4"></div>
@@ -213,6 +237,7 @@ export default function CommentSorting(props: {
                 toggleModification={props.toggleModification}
                 newComment={props.newComment}
                 commentSubmitLoading={props.commentSubmitLoading}
+                commentReaction={props.commentReaction}
               />
             ) : (
               <div className="h-4"></div>

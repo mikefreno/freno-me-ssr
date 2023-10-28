@@ -2,7 +2,7 @@
 
 import { env } from "@/env.mjs";
 import { CommentReaction, Comment } from "@/types/model-types";
-import { useEffect, useRef, useState } from "react";
+import { FormEvent, useEffect, useRef, useState } from "react";
 import CommentSection from "./CommentSection";
 import { backup_res, websocket_broadcast } from "@/types/utility-types";
 import CommentDeletionPrompt from "./CommentDeletionPrompt";
@@ -11,15 +11,6 @@ import EditCommentModal from "./EditCommentModal";
 
 const MAX_RETRIES = 12;
 const RETRY_INTERVAL = 5000;
-
-type UserCommentMapType = Map<
-  {
-    email?: string;
-    display_name?: string;
-    image?: string;
-  },
-  number[]
->;
 
 export default function CommentSectionWrapper(props: {
   privilegeLevel: "admin" | "user" | "anonymous";
@@ -42,7 +33,12 @@ export default function CommentSectionWrapper(props: {
   const [topLevelComments, setTopLevelComments] = useState<Comment[]>(
     props.topLevelComments,
   );
-  let userCommentMap = useRef<UserCommentMapType>(props.userCommentMap);
+  let userCommentMap = useRef<
+    Map<{ email?: string; display_name?: string; image?: string }, number[]>
+  >(props.userCommentMap);
+  const [currentReactionMap, setCurrentReactionMap] = useState<
+    Map<number, CommentReaction[]>
+  >(props.reactionMap);
   const [commentSubmitLoading, setCommentSubmitLoading] =
     useState<boolean>(false);
   const [commentDeletionLoading, setCommentDeletionLoading] =
@@ -65,6 +61,7 @@ export default function CommentSectionWrapper(props: {
   ] = useState<string>();
   const [commentBodyForModification, setCommentBodyForModification] =
     useState<string>("");
+  const [reactionLoading, setReactionLoading] = useState<boolean>(false);
 
   //refs
   const modificationPromptRef = useRef<HTMLDivElement>(null);
@@ -85,6 +82,10 @@ export default function CommentSectionWrapper(props: {
     //clearModificationPrompt();
     //}, 500);
   });
+
+  useEffect(() => {
+    console.log(currentReactionMap);
+  }, [currentReactionMap]);
 
   // websocket handling
   useEffect(() => {
@@ -120,6 +121,9 @@ export default function CommentSectionWrapper(props: {
               break;
             case "commentDeletionBroadcast":
               deleteCommentHandler(parsed);
+              break;
+            case "commentReactionBroadcast":
+              commentReactionHandler(parsed);
               break;
             default:
               //console.log(parsed.action);
@@ -204,38 +208,40 @@ export default function CommentSectionWrapper(props: {
     const commenterID = data.commenterID;
     const parentCommentID = data.commentParent;
     const id = data.commentID;
-    const res = await fetch(
-      `${env.NEXT_PUBLIC_DOMAIN}/api/database/user/public-data/${commenterID}`,
-    );
-    const userData = (await res.json()) as {
-      email?: string;
-      display_name?: string;
-      image?: string;
-    };
-    const comment_date = getSQLMatchingFormattedDate();
-    const newComment = {
-      id: id,
-      body: body,
-      blog_id: props.type == "blog" ? props.id : undefined,
-      project_id: props.type == "project" ? props.id : undefined,
-      parent_comment_id: parentCommentID,
-      commenter_id: commenterID,
-      edited: false,
-      date: comment_date,
-    };
-    if (parentCommentID == -1) {
-      setTopLevelComments((prevComments) => [
-        ...(prevComments || []),
-        newComment,
-      ]);
-    }
-    setAllComments((prevComments) => [...(prevComments || []), newComment]);
+    if (body && commenterID && parentCommentID && id) {
+      const res = await fetch(
+        `${env.NEXT_PUBLIC_DOMAIN}/api/database/user/public-data/${commenterID}`,
+      );
+      const userData = (await res.json()) as {
+        email?: string;
+        display_name?: string;
+        image?: string;
+      };
+      const comment_date = getSQLMatchingFormattedDate();
+      const newComment = {
+        id: id,
+        body: body,
+        blog_id: props.type == "blog" ? props.id : undefined,
+        project_id: props.type == "project" ? props.id : undefined,
+        parent_comment_id: parentCommentID,
+        commenter_id: commenterID,
+        edited: false,
+        date: comment_date,
+      };
+      if (parentCommentID == -1) {
+        setTopLevelComments((prevComments) => [
+          ...(prevComments || []),
+          newComment,
+        ]);
+      }
+      setAllComments((prevComments) => [...(prevComments || []), newComment]);
 
-    if (userCommentMap.current?.has(userData) && userCommentMap.current) {
-      const prevIDs = userCommentMap.current.get(userData);
-      userCommentMap.current.set(userData, [...(prevIDs || []), id]);
-    } else {
-      userCommentMap.current?.set(userData, [id]);
+      if (userCommentMap.current?.has(userData) && userCommentMap.current) {
+        const prevIDs = userCommentMap.current.get(userData);
+        userCommentMap.current.set(userData, [...(prevIDs || []), id]);
+      } else {
+        userCommentMap.current?.set(userData, [id]);
+      }
     }
     setCommentSubmitLoading(false);
   };
@@ -275,7 +281,7 @@ export default function CommentSectionWrapper(props: {
         if (comment.id === data.commentID) {
           return {
             ...comment,
-            body: data.commentBody,
+            body: data.commentBody!,
             edited: true,
           };
         }
@@ -287,7 +293,7 @@ export default function CommentSectionWrapper(props: {
         if (comment.id === data.commentID) {
           return {
             ...comment,
-            body: data.commentBody,
+            body: data.commentBody!,
             edited: true,
           };
         }
@@ -325,7 +331,7 @@ export default function CommentSectionWrapper(props: {
           if (comment.id === data.commentID) {
             return {
               ...comment,
-              body: data.commentBody,
+              body: data.commentBody!,
               commenter_id: "",
               edited: false,
             };
@@ -339,7 +345,7 @@ export default function CommentSectionWrapper(props: {
           if (comment.id === data.commentID) {
             return {
               ...comment,
-              body: data.commentBody,
+              body: data.commentBody!,
               commenter_id: "",
               edited: false,
             };
@@ -404,7 +410,94 @@ export default function CommentSectionWrapper(props: {
   };
 
   //reaction handling
-  const commentReaction = () => {};
+  const commentReaction = (
+    event: FormEvent,
+    reactionType: string,
+    commentID: number,
+  ) => {
+    event.preventDefault();
+    event.stopPropagation();
+    //console.log("sending ", reactionType);
+    setReactionLoading(true);
+    if (socket.current) {
+      socket.current.send(
+        JSON.stringify({
+          action: "commentReaction",
+          postType: props.type,
+          postID: props.id,
+          commentID: commentID,
+          invokerID: props.currentUserID,
+          reactionType: reactionType,
+        }),
+      );
+    }
+  };
+
+  const commentReactionHandler = (data: websocket_broadcast) => {
+    switch (data.endEffect) {
+      case "creation":
+        if (data.commentID && data.reactionType && data.reactingUserID) {
+          const newReaction = {
+            id: -1,
+            type: data.reactionType,
+            comment_id: data.commentID,
+            user_id: data.reactingUserID,
+          };
+          setCurrentReactionMap((prevMap) => {
+            const entries = [
+              ...(prevMap.get(data.commentID!) || []),
+              newReaction,
+            ];
+            return new Map([...prevMap, [data.commentID!, entries]]);
+          });
+        }
+        break;
+
+      case "deletion":
+        if (data.commentID) {
+          setCurrentReactionMap((prevMap) => {
+            const entries = (prevMap.get(data.commentID!) || []).filter(
+              (reaction) =>
+                reaction.user_id !== data.reactingUserID ||
+                reaction.type !== data.reactionType,
+            );
+            return new Map([...prevMap, [data.commentID!, entries]]);
+          });
+        }
+        break;
+
+      case "inversion":
+        //only applies to upvotes / downvotes
+        if (
+          data.commentID &&
+          data.reactingUserID &&
+          data.reactionType &&
+          (data.reactionType === "upVote" || data.reactionType === "downVote")
+        ) {
+          setCurrentReactionMap((prevMap) => {
+            let entries = (prevMap.get(data.commentID!) || []).filter(
+              (reaction) =>
+                reaction.user_id !== data.reactingUserID ||
+                reaction.type !==
+                  (data.reactionType === "upVote" ? "downVote" : "upVote"),
+            );
+            const newReaction = {
+              id: -1,
+              type: data.reactionType!,
+              comment_id: data.commentID!,
+              user_id: data.reactingUserID!,
+            };
+            entries = entries.concat(newReaction);
+            return new Map([...prevMap, [data.commentID!, entries]]);
+          });
+        }
+        break;
+
+      default:
+        console.log("endEffect value unknown");
+    }
+    setReactionLoading(false);
+  };
 
   return (
     <>
@@ -414,7 +507,7 @@ export default function CommentSectionWrapper(props: {
         topLevelComments={topLevelComments}
         id={props.id}
         type={props.type}
-        reactionMap={props.reactionMap}
+        reactionMap={currentReactionMap}
         currentUserID={props.currentUserID}
         socket={socket}
         userCommentMap={userCommentMap.current}
@@ -422,6 +515,7 @@ export default function CommentSectionWrapper(props: {
         editComment={editComment}
         toggleModification={toggleModification}
         commentSubmitLoading={commentSubmitLoading}
+        commentReaction={commentReaction}
       />
       {showingDeletionPrompt ? (
         <CommentDeletionPrompt

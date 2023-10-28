@@ -13,10 +13,13 @@
 
 export interface websocket_broadcast {
   action: "commentCreation" | "commentUpdate" | "commentDeletion";
-  commentBody: string;
-  commentID: number;
-  commenterID: string;
+  commentBody?: string;
+  commentID?: number;
+  commenterID?: string;
   commentParent?: number;
+  reactionType?: string;
+  endEffect?: string;
+  reactingUserID?: string;
 }
 export interface backup_res {
   commentBody: string;

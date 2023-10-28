@@ -9,14 +9,19 @@ import TongueEmoji from "@/icons/emojis/Tongue.svg";
 import UpsideDownEmoji from "@/icons/emojis/UpsideDown.svg";
 import WorriedEmoji from "@/icons/emojis/Worried.svg";
 import { CommentReaction } from "@/types/model-types";
+import { FormEvent } from "react";
 
 export default function ReactionBar(props: {
   currentUserID: string;
   commentID: number;
-  genericReactionHandler: (event: React.MouseEvent, type: string) => void;
   reactions: CommentReaction[];
   privilegeLevel: "admin" | "user" | "anonymous";
   showingReactionOptions: boolean;
+  commentReaction: (
+    event: FormEvent,
+    reactionType: string,
+    commentID: number,
+  ) => void;
 }) {
   return (
     <div
@@ -54,7 +59,9 @@ export default function ReactionBar(props: {
         </div>
         <button
           className={`pl-0.5 h-6 w-6`}
-          onClick={(event) => props.genericReactionHandler(event, "tears")}
+          onClick={(event) =>
+            props.commentReaction(event, "tears", props.commentID)
+          }
         >
           <TearsEmoji />
         </button>
@@ -87,7 +94,9 @@ export default function ReactionBar(props: {
         </div>
         <button
           className={`pl-0.5 h-6 w-6`}
-          onClick={(event) => props.genericReactionHandler(event, "blank")}
+          onClick={(event) =>
+            props.commentReaction(event, "blank", props.commentID)
+          }
         >
           <BlankEmoji />
         </button>
@@ -120,7 +129,9 @@ export default function ReactionBar(props: {
         </div>
         <button
           className={`pl-0.5 h-6 w-6`}
-          onClick={(event) => props.genericReactionHandler(event, "tongue")}
+          onClick={(event) =>
+            props.commentReaction(event, "tongue", props.commentID)
+          }
         >
           <TongueEmoji />
         </button>
@@ -153,7 +164,9 @@ export default function ReactionBar(props: {
         </div>
         <button
           className={`pl-0.5 h-6 w-6`}
-          onClick={(event) => props.genericReactionHandler(event, "cry")}
+          onClick={(event) =>
+            props.commentReaction(event, "cry", props.commentID)
+          }
         >
           <CryEmoji />
         </button>
@@ -186,7 +199,9 @@ export default function ReactionBar(props: {
         </div>
         <button
           className={`pl-0.5 h-6 w-6`}
-          onClick={(event) => props.genericReactionHandler(event, "heartEye")}
+          onClick={(event) =>
+            props.commentReaction(event, "heartEye", props.commentID)
+          }
         >
           <HeartEyeEmoji />
         </button>
@@ -219,7 +234,9 @@ export default function ReactionBar(props: {
         </div>
         <button
           className={`pl-0.5 h-6 w-6`}
-          onClick={(event) => props.genericReactionHandler(event, "angry")}
+          onClick={(event) =>
+            props.commentReaction(event, "angry", props.commentID)
+          }
         >
           <AngryEmoji />
         </button>
@@ -252,7 +269,9 @@ export default function ReactionBar(props: {
         </div>
         <button
           className={`pl-0.5 h-6 w-6`}
-          onClick={(event) => props.genericReactionHandler(event, "moneyEye")}
+          onClick={(event) =>
+            props.commentReaction(event, "moneyEye", props.commentID)
+          }
         >
           <MoneyEyeEmoji />
         </button>
@@ -285,7 +304,9 @@ export default function ReactionBar(props: {
         </div>
         <button
           className={`pl-0.5 h-6 w-6`}
-          onClick={(event) => props.genericReactionHandler(event, "sick")}
+          onClick={(event) =>
+            props.commentReaction(event, "sick", props.commentID)
+          }
         >
           <SickEmoji />
         </button>
@@ -319,7 +340,9 @@ export default function ReactionBar(props: {
         </div>
         <button
           className={`pl-0.5 h-6 w-6`}
-          onClick={(event) => props.genericReactionHandler(event, "upsideDown")}
+          onClick={(event) =>
+            props.commentReaction(event, "upsideDown", props.commentID)
+          }
         >
           <UpsideDownEmoji />
         </button>
@@ -352,7 +375,9 @@ export default function ReactionBar(props: {
         </div>
         <button
           className={`pl-0.5 h-6 w-6`}
-          onClick={(event) => props.genericReactionHandler(event, "worried")}
+          onClick={(event) =>
+            props.commentReaction(event, "worried", props.commentID)
+          }
         >
           <WorriedEmoji />
         </button>

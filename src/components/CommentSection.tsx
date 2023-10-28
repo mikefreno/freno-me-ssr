@@ -1,7 +1,7 @@
 import CommentInputBlock from "@/components/CommentInputBlock";
 import CommentBlock from "@/components/CommentBlock";
 import { Comment, CommentReaction } from "@/types/model-types";
-import { MutableRefObject, useEffect, useState } from "react";
+import { FormEvent, MutableRefObject, useEffect, useState } from "react";
 import CommentSortingSelect from "./CommentSortingSelect";
 import CommentSorting from "./CommentSorting";
 
@@ -51,6 +51,11 @@ export default function CommentSection(props: {
     commenterDisplayName?: string,
   ) => void;
   commentSubmitLoading: boolean;
+  commentReaction: (
+    event: FormEvent,
+    reactionType: string,
+    commentID: number,
+  ) => void;
 }) {
   const { socket } = props;
   //state
@@ -111,6 +116,7 @@ export default function CommentSection(props: {
                 toggleModification={props.toggleModification}
                 commentSubmitLoading={props.commentSubmitLoading}
                 selectedSorting={selectedSorting}
+                commentReaction={props.commentReaction}
               />
             </div>
           </>

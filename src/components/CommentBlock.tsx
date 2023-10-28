@@ -11,10 +11,8 @@ import CommentInputBlock from "./CommentInputBlock";
 import ReactionBar from "./ReactionBar";
 import ThumbsUpEmoji from "@/icons/emojis/ThumbsUp.svg";
 import { Comment, CommentReaction } from "@/types/model-types";
-import { env } from "@/env.mjs";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import Cookies from "js-cookie";
 import debounce from "./Debounce";
 import TrashIcon from "@/icons/TrashIcon";
 import LoadingSpinner from "./LoadingSpinner";
@@ -53,6 +51,11 @@ export default function CommentBlock(props: {
     commenterEmail?: string,
     commenterDisplayName?: string,
   ) => void;
+  commentReaction: (
+    event: FormEvent,
+    reactionType: string,
+    commentID: number,
+  ) => void;
 }) {
   const [commentCollapsed, setCommentCollapsed] = useState<boolean>(false);
   const [showingReactionOptions, setShowingReactionOptions] =
@@ -60,9 +63,6 @@ export default function CommentBlock(props: {
   const [replyBoxShowing, setReplyBoxShowing] = useState<boolean>(false);
   const [toggleHeight, setToggleHeight] = useState<number>(0);
   const [reactions, setReactions] = useState<CommentReaction[]>([]);
-  const [pointFeedbackOffset, setPointFeedbackOffset] = useState<number>(0);
-  const [immediateLike, setImmediateLike] = useState<boolean>(false);
-  const [immediateDislike, setImmediateDislike] = useState<boolean>(false);
   const [windowWidth, setWindowWidth] = useState<number>(0);
   const [deletionLoading, setDeletionLoading] = useState<boolean>(false);
   const [userData, setUserData] = useState<{
@@ -136,175 +136,6 @@ export default function CommentBlock(props: {
     //}, 50);
   };
 
-  const upVoteHandler = async (event: React.MouseEvent) => {
-    event.stopPropagation();
-    event.preventDefault();
-    if (props.privilegeLevel !== "anonymous") {
-      const data = {
-        comment_id: props.comment.id,
-        user_id: Cookies.get("userIDToken"),
-      };
-
-      if (
-        reactions
-          .filter((commentReaction) => commentReaction.type == "upVote")
-          .some(
-            (commentReaction) => commentReaction.user_id == props.currentUserID,
-          )
-      ) {
-        setPointFeedbackOffset(-1);
-        setImmediateLike(false);
-        const removeRes = await fetch(
-          `${env.NEXT_PUBLIC_DOMAIN}/api/database/comment-reactions/remove/upVote`,
-          { method: "POST", body: JSON.stringify(data) },
-        );
-        const resData = await removeRes.json();
-        setReactions(resData.commentReactions);
-        setPointFeedbackOffset(0);
-        setImmediateDislike(false);
-        setImmediateLike(false);
-      } else if (
-        reactions
-          .filter((commentReaction) => commentReaction.type == "downVote")
-          .some(
-            (commentReaction) => commentReaction.user_id == props.currentUserID,
-          )
-      ) {
-        setPointFeedbackOffset(2);
-        setImmediateLike(true);
-        setImmediateDislike(false);
-        await fetch(
-          `${env.NEXT_PUBLIC_DOMAIN}/api/database/comment-reactions/remove/downVote`,
-          { method: "POST", body: JSON.stringify(data) },
-        );
-        const addRes = await fetch(
-          `${env.NEXT_PUBLIC_DOMAIN}/api/database/comment-reactions/add/upVote`,
-          { method: "POST", body: JSON.stringify(data) },
-        );
-
-        const resData = await addRes.json();
-        setReactions(resData.commentReactions);
-        setPointFeedbackOffset(0);
-        setImmediateDislike(false);
-        setImmediateLike(false);
-      } else {
-        setPointFeedbackOffset(1);
-        setImmediateLike(true);
-        const addRes = await fetch(
-          `${env.NEXT_PUBLIC_DOMAIN}/api/database/comment-reactions/add/upVote`,
-          { method: "POST", body: JSON.stringify(data) },
-        );
-        const resData = await addRes.json();
-        setReactions(resData.commentReactions);
-        setPointFeedbackOffset(0);
-        setImmediateDislike(false);
-        setImmediateLike(false);
-      }
-    }
-  };
-
-  const downVoteHandler = async (event: React.MouseEvent) => {
-    event.stopPropagation();
-    event.preventDefault();
-    if (props.privilegeLevel !== "anonymous") {
-      const data = {
-        comment_id: props.comment.id,
-        user_id: Cookies.get("userIDToken"),
-      };
-
-      if (
-        reactions
-          .filter((commentReaction) => commentReaction.type == "downVote")
-          .some(
-            (commentReaction) => commentReaction.user_id == props.currentUserID,
-          )
-      ) {
-        setPointFeedbackOffset(1);
-        setImmediateDislike(false);
-        const removeRes = await fetch(
-          `${env.NEXT_PUBLIC_DOMAIN}/api/database/comment-reactions/remove/downVote`,
-          { method: "POST", body: JSON.stringify(data) },
-        );
-        const resData = await removeRes.json();
-        setReactions(resData.commentReactions);
-        setPointFeedbackOffset(0);
-        setImmediateDislike(false);
-        setImmediateLike(false);
-      } else if (
-        reactions
-          .filter((commentReaction) => commentReaction.type == "upVote")
-          .some(
-            (commentReaction) => commentReaction.user_id == props.currentUserID,
-          )
-      ) {
-        setPointFeedbackOffset(-2);
-        setImmediateDislike(false);
-        setImmediateLike(true);
-        await fetch(
-          `${env.NEXT_PUBLIC_DOMAIN}/api/database/comment-reactions/remove/upVote`,
-          { method: "POST", body: JSON.stringify(data) },
-        );
-        const addRes = await fetch(
-          `${env.NEXT_PUBLIC_DOMAIN}/api/database/comment-reactions/add/downVote`,
-          { method: "POST", body: JSON.stringify(data) },
-        );
-
-        const resData = await addRes.json();
-        setReactions(resData.commentReactions);
-        setPointFeedbackOffset(0);
-        setImmediateDislike(false);
-        setImmediateLike(false);
-      } else {
-        setPointFeedbackOffset(-1);
-        setImmediateDislike(true);
-        const addRes = await fetch(
-          `${env.NEXT_PUBLIC_DOMAIN}/api/database/comment-reactions/add/downVote`,
-          { method: "POST", body: JSON.stringify(data) },
-        );
-        const resData = await addRes.json();
-        setReactions(resData.commentReactions);
-        setPointFeedbackOffset(0);
-        setImmediateDislike(false);
-        setImmediateLike(false);
-      }
-    }
-  };
-
-  const genericReactionHandler = async (
-    event: React.MouseEvent,
-    type: string,
-  ) => {
-    event.stopPropagation();
-    if (props.privilegeLevel !== "anonymous") {
-      const data = {
-        comment_id: props.comment.id,
-        user_id: props.currentUserID,
-      };
-      if (
-        reactions.some(
-          (reaction) =>
-            reaction.type == type && reaction.user_id == props.currentUserID,
-        )
-      ) {
-        //user has given this reaction, need to remove
-        const res = await fetch(
-          `${env.NEXT_PUBLIC_DOMAIN}/api/database/comment-reactions/remove/${type}`,
-          { method: "POST", body: JSON.stringify(data) },
-        );
-        const resData = await res.json();
-        setReactions(resData.commentReactions);
-      } else {
-        //create new reaction
-        const res = await fetch(
-          `${env.NEXT_PUBLIC_DOMAIN}/api/database/comment-reactions/add/${type}`,
-          { method: "POST", body: JSON.stringify(data) },
-        );
-        const resData = await res.json();
-        setReactions(resData.commentReactions);
-      }
-    }
-  };
-
   const deleteCommentTrigger = async (e: FormEvent) => {
     e.stopPropagation();
     setDeletionLoading(true);
@@ -351,7 +182,11 @@ export default function CommentBlock(props: {
             className="flex flex-col justify-between"
             style={{ height: toggleHeight }}
           >
-            <button onClick={(e) => upVoteHandler(e)}>
+            <button
+              onClick={(e) =>
+                props.commentReaction(e, "upVote", props.comment.id)
+              }
+            >
               <div
                 className={`h-5 w-5 ${
                   reactions
@@ -361,7 +196,7 @@ export default function CommentBlock(props: {
                     .some(
                       (commentReaction) =>
                         commentReaction.user_id == props.currentUserID,
-                    ) || immediateLike
+                    )
                     ? "fill-emerald-500"
                     : `fill-black dark:fill-white hover:fill-emerald-500 ${
                         props.privilegeLevel == "anonymous"
@@ -384,10 +219,13 @@ export default function CommentBlock(props: {
               ).length -
                 reactions.filter(
                   (commentReaction) => commentReaction.type == "downVote",
-                ).length +
-                pointFeedbackOffset}
+                ).length}
             </div>
-            <button onClick={(e) => downVoteHandler(e)}>
+            <button
+              onClick={(e) =>
+                props.commentReaction(e, "downVote", props.comment.id)
+              }
+            >
               <div
                 className={`h-5 w-5 ${
                   reactions
@@ -397,7 +235,7 @@ export default function CommentBlock(props: {
                     .some(
                       (commentReaction) =>
                         commentReaction.user_id == props.currentUserID,
-                    ) || immediateDislike
+                    )
                     ? "fill-rose-500"
                     : `fill-black dark:fill-white hover:fill-rose-500 ${
                         props.privilegeLevel == "anonymous"
@@ -505,10 +343,10 @@ export default function CommentBlock(props: {
               <ReactionBar
                 commentID={props.comment.id}
                 currentUserID={props.currentUserID}
-                genericReactionHandler={genericReactionHandler}
                 reactions={reactions}
                 showingReactionOptions={showingReactionOptions}
                 privilegeLevel={props.privilegeLevel}
+                commentReaction={props.commentReaction}
               />
             </div>
           </div>
