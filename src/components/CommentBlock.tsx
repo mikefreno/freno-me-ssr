@@ -391,6 +391,7 @@ export default function CommentBlock(props: {
               toggleModification={props.toggleModification}
               newComment={props.newComment}
               commentSubmitLoading={props.commentSubmitLoading}
+              commentReaction={props.commentReaction}
             />
           ))}
         </div>
