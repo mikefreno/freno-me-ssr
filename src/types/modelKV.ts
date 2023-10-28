@@ -98,7 +98,7 @@ export const model: { [key: string]: string } = {
     user_id varchar(255) NOT NULL,
     PRIMARY KEY (id),
     INDEX (comment_id),
-    UNIQUE KEY user_type_unique (user_id, type)
+    UNIQUE KEY user_type_unique (user_id, type, comment_id)
   )`,
   Connection: `
   CREATE TABLE Connection 

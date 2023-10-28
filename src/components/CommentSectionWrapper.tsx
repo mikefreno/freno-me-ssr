@@ -83,10 +83,6 @@ export default function CommentSectionWrapper(props: {
     //}, 500);
   });
 
-  useEffect(() => {
-    console.log(currentReactionMap);
-  }, [currentReactionMap]);
-
   // websocket handling
   useEffect(() => {
     const connect = () => {
