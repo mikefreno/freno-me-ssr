@@ -9,6 +9,7 @@ interface POSTInputData {
   body: string | null;
   banner_photo: string | null;
   published: boolean;
+  tags: string | null;
 }
 
 interface PATCHInputData {
@@ -18,12 +19,13 @@ interface PATCHInputData {
   body: string | null;
   banner_photo: string | null;
   published: boolean | null;
+  tags: string | null;
 }
 
 export async function POST(input: NextRequest) {
   try {
     const inputData = (await input.json()) as POSTInputData;
-    const { title, subtitle, body, banner_photo, published } = inputData;
+    const { title, subtitle, body, banner_photo, published, tags } = inputData;
     const userIDCookie = cookies().get("userIDToken");
     let fullURL = "";
     if (banner_photo !== null) {
@@ -34,8 +36,8 @@ export async function POST(input: NextRequest) {
       const author_id = userIDCookie.value;
       const conn = ConnectionFactory();
       const query = `
-    INSERT INTO Project (title, subtitle, body, banner_photo, published, author_id)
-    VALUES (?, ?, ?, ?, ?, ?)
+    INSERT INTO Project (title, subtitle, body, banner_photo, published, author_id, tags)
+    VALUES (?, ?, ?, ?, ?, ?, ?)
     `;
       const params = [
         title,
@@ -44,6 +46,7 @@ export async function POST(input: NextRequest) {
         fullURL !== "" ? fullURL : null,
         published,
         author_id,
+        tags,
       ];
       try {
         const results = await conn.execute(query, params);
@@ -73,7 +76,7 @@ export async function PATCH(input: NextRequest) {
 }
 
 function createUpdateQuery(data: PATCHInputData) {
-  const { id, title, subtitle, body, banner_photo, published } = data;
+  const { id, title, subtitle, body, banner_photo, published, tags } = data;
 
   let query = "UPDATE Project SET ";
   let params = [];
@@ -111,6 +114,13 @@ function createUpdateQuery(data: PATCHInputData) {
     params.push(published);
     first = false;
   }
+
+  if (tags !== null) {
+    query += first ? "tags = ?" : ", tags = ?";
+    params.push(tags);
+    first = false;
+  }
+
   query += first ? "author_id = ?" : ", author_id = ?";
   params.push(cookies().get("userIDToken")?.value);
 

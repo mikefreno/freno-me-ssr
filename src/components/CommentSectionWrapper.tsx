@@ -61,7 +61,6 @@ export default function CommentSectionWrapper(props: {
   ] = useState<string>();
   const [commentBodyForModification, setCommentBodyForModification] =
     useState<string>("");
-  const [reactionLoading, setReactionLoading] = useState<boolean>(false);
 
   //refs
   const modificationPromptRef = useRef<HTMLDivElement>(null);
@@ -122,7 +121,6 @@ export default function CommentSectionWrapper(props: {
               commentReactionHandler(parsed);
               break;
             default:
-              //console.log(parsed.action);
               break;
           }
         } catch (e) {
@@ -414,7 +412,6 @@ export default function CommentSectionWrapper(props: {
     event.preventDefault();
     event.stopPropagation();
     //console.log("sending ", reactionType);
-    setReactionLoading(true);
     if (socket.current) {
       socket.current.send(
         JSON.stringify({
@@ -492,7 +489,6 @@ export default function CommentSectionWrapper(props: {
       default:
         console.log("endEffect value unknown");
     }
-    setReactionLoading(false);
   };
 
   return (

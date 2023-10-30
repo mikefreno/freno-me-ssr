@@ -102,7 +102,9 @@ export default function AddAttachmentSection(props: {
   if (!props.postTitle) {
     return (
       <>
-        <div className="text-center">Add title to add attachments</div>
+        <div className="pb-4 text-center italic">
+          Add title to add attachments
+        </div>
       </>
     );
   }

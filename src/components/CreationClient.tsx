@@ -8,6 +8,9 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import AddAttachmentSection from "./AddAttachmentSection";
 import { env } from "@/env.mjs";
 import Link from "next/link";
+import InfoIcon from "@/icons/InfoIcon";
+import Xmark from "@/icons/Xmark";
+import TagMaker from "./TagMaker";
 
 export default function CreationClient(props: { type: "projects" | "blog" }) {
   const [publish, setPublish] = useState<boolean>(false);
@@ -23,28 +26,31 @@ export default function CreationClient(props: { type: "projects" | "blog" }) {
     useState<boolean>(false);
   const [hasSaved, setHasSaved] = useState<boolean>(false);
   const [showSaveMessage, setShowSaveMessage] = useState<boolean>(false);
+  const [postTitle, setPostTitle] = useState<string>();
+  const [tags, setTags] = useState<string[]>([]);
+  const [tagInputValue, setTagInputValue] = useState<string>();
 
-  const titleRef = useRef<HTMLInputElement>(null);
   const subtitleRef = useRef<HTMLInputElement>(null);
   const autosaveRef = useRef<NodeJS.Timeout | null>(null);
 
   const autoSave = async () => {
-    if (titleRef.current && editorContent !== "") {
+    if (postTitle && editorContent !== "") {
       let bannerImageKey = "";
       if (bannerImage) {
         bannerImageKey = (await AddImageToS3(
           bannerImage,
-          titleRef.current!.value,
+          postTitle,
           props.type,
         )) as string;
       }
       const data = {
-        title: titleRef.current.value.replaceAll(" ", "_"),
+        title: postTitle.replaceAll(" ", "_"),
         subtitle: subtitleRef.current?.value,
         body: editorContent,
         embedded_link: null,
         banner_photo: bannerImageKey !== "" ? bannerImageKey : null,
         published: publish,
+        tags: tags.join("//,"),
       };
 
       const res = await fetch(
@@ -107,22 +113,23 @@ export default function CreationClient(props: { type: "projects" | "blog" }) {
   const createProject = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitButtonLoading(true);
-    if (titleRef.current) {
+    if (postTitle) {
       let bannerImageKey = "";
       if (bannerImage) {
         bannerImageKey = (await AddImageToS3(
           bannerImage,
-          titleRef.current.value,
+          postTitle,
           props.type,
         )) as string;
       }
       const data = {
-        title: titleRef.current.value.replaceAll(" ", "_"),
+        title: postTitle.replaceAll(" ", "_"),
         subtitle: subtitleRef.current?.value,
         body: editorContent,
         embedded_link: null,
         banner_photo: bannerImageKey !== "" ? bannerImageKey : null,
         published: publish,
+        tags: tags.join("//,"),
       };
 
       const res = await fetch(
@@ -142,6 +149,26 @@ export default function CreationClient(props: { type: "projects" | "blog" }) {
     setBannerImage(undefined);
     setBannerImageHolder(null);
   };
+
+  const tagHandler = (input: string) => {
+    const split = input.split(" ");
+    if (split.length > 1) {
+      let newSplit: string[] = [];
+      split.forEach((word) => {
+        if (word[0] == "#" && word.length > 1) {
+          setTags((prevTags) => [...prevTags, word]);
+        } else {
+          newSplit.push(word);
+        }
+      });
+      setTagInputValue(newSplit.join());
+    } else setTagInputValue(input);
+  };
+
+  const deleteTag = (idx: number) => {
+    setTags((tags) => tags.filter((_, index) => index !== idx));
+  };
+
   return (
     <div className="px-8 py-32 dark:text-white">
       <div className="text-center text-2xl tracking-wide">
@@ -154,8 +181,9 @@ export default function CreationClient(props: { type: "projects" | "blog" }) {
         >
           <div className="input-group mx-4">
             <input
-              ref={titleRef}
               type="text"
+              value={postTitle}
+              onChange={(e) => setPostTitle(e.target.value)}
               required
               name="title"
               placeholder=" "
@@ -200,11 +228,17 @@ export default function CreationClient(props: { type: "projects" | "blog" }) {
           <AddAttachmentSection
             type={"projects"}
             post={null}
-            postTitle={titleRef.current?.value}
+            postTitle={postTitle}
           />
           <div className="md:-mx-36">
             <TextEditor updateContent={setEditorContent} preSet={undefined} />
           </div>
+          <TagMaker
+            tagInputValue={tagInputValue}
+            tagHandler={tagHandler}
+            tags={tags}
+            deleteTag={deleteTag}
+          />
           <div
             className={`${
               showAutoSaveMessage || showSaveMessage
@@ -261,7 +295,7 @@ export default function CreationClient(props: { type: "projects" | "blog" }) {
           <Link
             href={`${env.NEXT_PUBLIC_DOMAIN}/${
               props.type
-            }/${titleRef.current?.value.replaceAll(" ", "_")}`}
+            }/${postTitle?.replaceAll(" ", "_")}`}
             className="rounded border border-blue-500 bg-blue-400 px-4 py-2 text-white shadow-md transition-all duration-300  ease-in-out hover:bg-blue-500 active:scale-90 dark:border-blue-700 dark:bg-blue-700 dark:hover:bg-blue-800"
           >
             Go to Post

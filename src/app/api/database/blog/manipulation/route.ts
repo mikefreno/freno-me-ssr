@@ -9,6 +9,7 @@ interface POSTInputData {
   body: string | null;
   banner_photo: string | null;
   published: boolean;
+  tags: string | null;
 }
 
 interface PATCHInputData {
@@ -18,12 +19,13 @@ interface PATCHInputData {
   body: string | null;
   banner_photo: string | null;
   published: boolean | null;
+  tags: string | null;
 }
 
 export async function POST(input: NextRequest) {
   try {
     const inputData = (await input.json()) as POSTInputData;
-    const { title, subtitle, body, banner_photo, published } = inputData;
+    const { title, subtitle, body, banner_photo, published, tags } = inputData;
     const userIDCookie = cookies().get("userIDToken");
     const fullURL = env.NEXT_PUBLIC_AWS_BUCKET_STRING + banner_photo;
 
@@ -31,8 +33,8 @@ export async function POST(input: NextRequest) {
       const author_id = userIDCookie.value;
       const conn = ConnectionFactory();
       const query = `
-    INSERT INTO Blog (title, subtitle, body, banner_photo, published, author_id)
-    VALUES (?, ?, ?, ?, ?, ?)
+    INSERT INTO Blog (title, subtitle, body, banner_photo, published, author_id, tags)
+    VALUES (?, ?, ?, ?, ?, ?, ?)
     `;
       const params = [
         title,
@@ -41,6 +43,7 @@ export async function POST(input: NextRequest) {
         banner_photo ? fullURL : null,
         published,
         author_id,
+        tags,
       ];
       const results = await conn.execute(query, params);
       console.log(results);
@@ -68,7 +71,7 @@ export async function PATCH(input: NextRequest) {
 }
 
 function createUpdateQuery(data: PATCHInputData) {
-  const { id, title, subtitle, body, banner_photo, published } = data;
+  const { id, title, subtitle, body, banner_photo, published, tags } = data;
 
   let query = "UPDATE Blog SET ";
   let params = [];
@@ -105,6 +108,12 @@ function createUpdateQuery(data: PATCHInputData) {
   if (published !== null) {
     query += first ? "published = ?" : ", published = ?";
     params.push(published);
+    first = false;
+  }
+
+  if (tags !== null) {
+    query += first ? "tags = ?" : ", tags = ?";
+    params.push(tags);
     first = false;
   }
 

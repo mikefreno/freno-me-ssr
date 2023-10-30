@@ -20,6 +20,7 @@ export interface Blog {
   author_id: string;
   reads: number;
   attachments?: string;
+  tags?: string;
 }
 
 export interface BlogLike {
@@ -39,6 +40,7 @@ export interface Project {
   author_id: string;
   reads: number;
   attachments?: string;
+  tags?: string;
 }
 
 export interface ProjectLike {
