@@ -17,7 +17,7 @@ export default async function AddImageToS3(
         }),
       },
     );
-    console.log(getPreSignedResponse);
+
     const { uploadURL, key } =
       (await getPreSignedResponse.json()) as getPreSignedResponseData;
 

@@ -4,7 +4,7 @@ import AddImageToS3 from "@/app/s3upload";
 import Dropzone from "@/components/Dropzone";
 import TextEditor from "@/components/TextEditor";
 import XCircle from "@/icons/XCircle";
-import { PostWithTags } from "@/types/model-types";
+import { Post, Tag } from "@/types/model-types";
 import { useCallback, useEffect, useRef, useState } from "react";
 import LoadingSpinner from "./LoadingSpinner";
 import AddAttachmentSection from "./AddAttachmentSection";
@@ -12,7 +12,7 @@ import { env } from "@/env.mjs";
 import Link from "next/link";
 import TagMaker from "./TagMaker";
 
-export default function EditingClient(props: { post: PostWithTags }) {
+export default function EditingClient(props: { post: Post; tags: Tag[] }) {
   const [publish, setPublish] = useState<boolean>(props.post.published);
   const [bannerImage, setBannerImage] = useState<File | Blob>();
   const [bannerImageHolder, setBannerImageHolder] = useState<
@@ -34,12 +34,12 @@ export default function EditingClient(props: { post: PostWithTags }) {
   const autosaveRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
-    if (props.post.tags) {
+    if (props.tags) {
       let initTags: string[] = [];
-      props.post.tags.forEach((tag) => initTags.push(tag.value));
+      props.tags.forEach((tag) => initTags.push(tag.value));
       setTags(initTags);
     }
-  }, [props.post]);
+  }, [props.tags]);
 
   const autoSave = async () => {
     if (postTitle) {
@@ -67,7 +67,7 @@ export default function EditingClient(props: { post: PostWithTags }) {
             ? "_DELETE_IMAGE_"
             : null,
         published: publish || props.post.published,
-        tags: tags.join("//,"),
+        tags: tags,
       };
 
       const res = await fetch(
@@ -137,6 +137,7 @@ export default function EditingClient(props: { post: PostWithTags }) {
           props.post.category,
         )) as string;
       }
+      console.log("banner key: ", bannerImageKey);
       const data = {
         id: props.post.id,
         title: postTitle.replaceAll(" ", "_"),
@@ -153,7 +154,7 @@ export default function EditingClient(props: { post: PostWithTags }) {
             ? "_DELETE_IMAGE_"
             : null,
         published: publish || props.post.published,
-        tags: tags.join("//,"),
+        tags: tags,
       };
 
       const res = await fetch(
@@ -210,7 +211,7 @@ export default function EditingClient(props: { post: PostWithTags }) {
         <form onSubmit={editPost} className="w-full md:w-3/4 lg:w-1/3 xl:w-1/2">
           <div className="input-group mx-4">
             <input
-              value={postTitle}
+              value={postTitle.replaceAll("_", " ")}
               onChange={(e) => setPostTitle(e.target.value)}
               type="text"
               required
@@ -228,7 +229,6 @@ export default function EditingClient(props: { post: PostWithTags }) {
             <input
               ref={subtitleRef}
               type="text"
-              required
               name="subtitle"
               placeholder=" "
               defaultValue={props.post.subtitle ? props.post.subtitle : ""}

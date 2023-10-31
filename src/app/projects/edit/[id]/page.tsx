@@ -2,7 +2,7 @@ import { getPrivilegeLevel } from "@/app/utils";
 import EditingClient from "@/components/EditingClient";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import { env } from "@/env.mjs";
-import { Post, PostWithTags } from "@/types/model-types";
+import { Post, Tag } from "@/types/model-types";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
 
@@ -17,7 +17,9 @@ export default async function ProjectEditing({
       `${env.NEXT_PUBLIC_DOMAIN}/api/database/post/project/by-id/${params.id}`,
       { method: "GET", cache: "no-store" },
     );
-    const post = (await res.json()).post as PostWithTags;
+    const parsed = await res.json();
+    const post = parsed.post as Post;
+    const tags = parsed.tags as Tag[];
     return (
       <>
         <Suspense
@@ -27,7 +29,7 @@ export default async function ProjectEditing({
             </div>
           }
         >
-          <EditingClient post={post} />
+          <EditingClient post={post} tags={tags} />
         </Suspense>
       </>
     );

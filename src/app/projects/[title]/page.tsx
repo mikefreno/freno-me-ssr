@@ -5,7 +5,13 @@ import { env } from "@/env.mjs";
 import Link from "next/link";
 import Image from "next/image";
 import SessionDependantLike from "@/components/SessionDependantLike";
-import { CommentReaction, Comment, PostLike, Post } from "@/types/model-types";
+import {
+  CommentReaction,
+  Comment,
+  PostLike,
+  Post,
+  Tag,
+} from "@/types/model-types";
 import { Suspense } from "react";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import PostBodyClient from "@/components/PostBodyClient";
@@ -50,6 +56,7 @@ export default async function DynamicProjectPost({
 
   let exists = false;
   let topLevelComments: Comment[] = [];
+  let tags: Tag[] = [];
 
   if (project) {
     containsCodeBlock = hasCodeBlock(project.body);
@@ -93,6 +100,9 @@ export default async function DynamicProjectPost({
       const res = await conn.execute(reactionQuery, reactionParam);
       reactionMap.set(comment.id, res.rows as CommentReaction[]);
     }
+    const tagQuery = "SELECT * FROM Tag WHERE post_id = ?";
+    const res = await conn.execute(tagQuery, [project.id]);
+    tags = res.rows as Tag[];
   } else {
     const query = "SELECT id FROM Project WHERE title = ?";
     let exist_res = await conn.execute(query, [
@@ -201,6 +211,20 @@ export default async function DynamicProjectPost({
             Written {`${new Date(project.date).toDateString()}`}
             <br />
             By Michael Freno
+          </div>
+          <div className="flex max-w-[420px] flex-wrap justify-center italic md:justify-start md:pl-24">
+            {tags &&
+              tags.length > 0 &&
+              tags.map((tag, idx) => (
+                <div
+                  key={idx}
+                  className="group relative mx-1 h-fit w-fit max-w-[120px] rounded-xl bg-purple-600 px-2 py-1 text-sm"
+                >
+                  <div className="overflow-hidden overflow-ellipsis whitespace-nowrap text-white">
+                    {tag.value}
+                  </div>
+                </div>
+              ))}
           </div>
           <PostBodyClient
             body={sanitizedBody}

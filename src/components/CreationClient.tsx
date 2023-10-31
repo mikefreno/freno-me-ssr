@@ -125,7 +125,7 @@ export default function CreationClient(props: { type: "project" | "blog" }) {
         embedded_link: null,
         banner_photo: bannerImageKey !== "" ? bannerImageKey : null,
         published: publish,
-        tags: tags.join("//,"),
+        tags: tags,
       };
 
       const res = await fetch(
@@ -190,7 +190,6 @@ export default function CreationClient(props: { type: "project" | "blog" }) {
             <input
               ref={subtitleRef}
               type="text"
-              required
               name="subtitle"
               placeholder=" "
               className="underlinedInput w-full bg-transparent"
