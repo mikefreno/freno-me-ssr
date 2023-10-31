@@ -4,7 +4,7 @@ import { env } from "@/env.mjs";
 import Link from "next/link";
 import Image from "next/image";
 import SessionDependantLike from "@/components/SessionDependantLike";
-import { Blog, CommentReaction, Comment, BlogLike } from "@/types/model-types";
+import { Post, CommentReaction, Comment, PostLike } from "@/types/model-types";
 import { Suspense } from "react";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import PostBodyClient from "@/components/PostBodyClient";
@@ -27,17 +27,17 @@ export default async function DynamicBlogPost({
   let userID: string | null = null;
   const privilegeLevel = await getPrivilegeLevel();
   userID = await getUserID();
-  let query = "SELECT * FROM Blog WHERE title = ?";
+  let query = "SELECT * FROM Post WHERE title = ? AND category = 'blog'";
   if (privilegeLevel !== "admin") {
     query += ` AND published = TRUE`;
   }
   const conn = ConnectionFactory();
   const blog = (await conn.execute(query, [decodeURIComponent(params.title)]))
-    .rows[0] as Blog;
+    .rows[0] as Post;
   let containsCodeBlock = false;
 
   let comments: Comment[] = [];
-  let likes: BlogLike[] = [];
+  let likes: PostLike[] = [];
   let reactionMap: Map<number, CommentReaction[]> = new Map();
   let commenterToCommentIDMap = new Map<string, number[]>();
   let commentIDToCommenterMap = new Map<
@@ -50,7 +50,7 @@ export default async function DynamicBlogPost({
 
   if (blog) {
     containsCodeBlock = hasCodeBlock(blog.body);
-    const commentQuery = "SELECT * FROM Comment WHERE blog_id = ?";
+    const commentQuery = "SELECT * FROM Comment WHERE post_id = ?";
     comments = (await conn.execute(commentQuery, [blog.id])).rows as Comment[];
 
     comments.forEach((comment) => {
@@ -79,8 +79,8 @@ export default async function DynamicBlogPost({
     topLevelComments = comments.filter(
       (comment) => comment.parent_comment_id == null,
     );
-    const blogLikesQuery = "SELECT * FROM BlogLike WHERE blog_id = ?";
-    likes = (await conn.execute(blogLikesQuery, [blog.id])).rows as BlogLike[];
+    const blogLikesQuery = "SELECT * FROM PostLike WHERE post_id = ?";
+    likes = (await conn.execute(blogLikesQuery, [blog.id])).rows as PostLike[];
     for (const comment of comments) {
       const reactionQuery =
         "SELECT * FROM CommentReaction WHERE comment_id = ?";
@@ -89,7 +89,7 @@ export default async function DynamicBlogPost({
       reactionMap.set(comment.id, res.rows as CommentReaction[]);
     }
   } else {
-    const query = "SELECT id FROM Blog WHERE title = ?";
+    const query = "SELECT id FROM Post WHERE title = ?";
     let exist_res = await conn.execute(query, [
       decodeURIComponent(params.title),
     ]);
@@ -122,7 +122,7 @@ export default async function DynamicBlogPost({
     const window = new JSDOM("").window;
     const purify = DOMPurify(window);
     const sanitizedBody = purify.sanitize(blog.body);
-    incrementReads({ postID: blog.id, postType: "Blog" });
+    incrementReads(blog.id);
     return (
       <div className="select-none overflow-x-hidden">
         <div className="z-30">

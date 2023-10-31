@@ -12,30 +12,31 @@ export default async function Projects() {
   privilegeLevel = await getPrivilegeLevel();
   let query = `
     SELECT
-        Project.id,
-        Project.title,
-        Project.subtitle,
-        Project.body,
-        Project.banner_photo,
-        Project.date,
-        Project.published,
-        Project.author_id,
-        Project.reads,
-        Project.attachments,
-    (SELECT COUNT(*) FROM ProjectLike WHERE Project.id = ProjectLike.project_id) AS total_likes,
-    (SELECT COUNT(*) FROM Comment WHERE Project.id = Comment.project_id) AS total_comments
+        Post.id,
+        Post.title,
+        Post.subtitle,
+        Post.body,
+        Post.banner_photo,
+        Post.date,
+        Post.published,
+        Post.author_id,
+        Post.reads,
+        Post.attachments,
+    (SELECT COUNT(*) FROM PostLike WHERE Post.id = PostLike.post_id) AS total_likes,
+    (SELECT COUNT(*) FROM Comment WHERE Post.id = Comment.post_id) AS total_comments
     FROM
-        Project
+        Post
     LEFT JOIN
-        ProjectLike ON Project.id = ProjectLike.project_id
+        PostLike ON Post.id = PostLike.post_id
     LEFT JOIN
-        Comment ON Project.id = Comment.project_id`;
+        Comment ON Post.id = Comment.post_id`;
+
   if (privilegeLevel != "admin") {
-    query += ` WHERE Project.published = TRUE`;
+    query += ` WHERE Post.published = TRUE AND Post.category = 'project'`;
   } else {
-    privilegeLevel = "admin";
+    query += ` WHERE Post.category = 'project'`;
   }
-  query += ` GROUP BY Project.id, Project.title, Project.subtitle, Project.body, Project.banner_photo, Project.date, Project.published, Project.author_id, Project.reads, Project.attachments;`;
+  query += ` GROUP BY Post.id, Post.title, Post.subtitle, Post.body, Post.banner_photo, Post.date, Post.published, Post.category, Post.author_id, Post.reads, Post.attachments;`;
   const conn = ConnectionFactory();
   const results = await conn.execute(query);
   let projects = results.rows as PostWithCommentsAndLikes[];

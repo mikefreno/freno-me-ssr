@@ -75,11 +75,7 @@ export async function sendContactRequest({
   return "countdown not expired";
 }
 
-interface deletePostInput {
-  type: string;
-  postId: number;
-}
-export async function deletePost({ type, postId }: deletePostInput) {
+export async function deletePost(postID: number) {
   const cookie = cookies().get("userIDToken");
 
   if (!cookie) {
@@ -110,12 +106,11 @@ export async function deletePost({ type, postId }: deletePostInput) {
   if (userID == env.ADMIN_ID) {
     try {
       const conn = ConnectionFactory();
-      const query = `DELETE FROM ${type} WHERE id = ?`;
-      const params = [postId];
-      const res = await conn.execute(query, params);
-      console.log(res.statement);
-      const commentDeleteQuery = `DELETE FROM Comment WHERE ${type}_id = ?`;
-      const commentDeleteParams = [postId];
+      const query = `DELETE FROM Post WHERE id = ?`;
+      const params = [postID];
+      await conn.execute(query, params);
+      const commentDeleteQuery = `DELETE FROM Comment WHERE post_id = ?`;
+      const commentDeleteParams = [postID];
       const commentDeleteConn = await conn.execute(
         commentDeleteQuery,
         commentDeleteParams,
@@ -132,16 +127,9 @@ export async function deletePost({ type, postId }: deletePostInput) {
   }
 }
 
-interface incrementReadsInput {
-  postID: number;
-  postType: "Blog" | "Project";
-}
-export async function incrementReads({
-  postID,
-  postType,
-}: incrementReadsInput) {
+export async function incrementReads(postID: number) {
   const conn = ConnectionFactory();
-  const query = `UPDATE ${postType} SET reads = reads + 1 WHERE id=?`;
+  const query = `UPDATE Post SET reads = reads + 1 WHERE id=?`;
   const params = [postID];
   await conn.execute(query, params);
 }

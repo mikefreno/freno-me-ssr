@@ -2,7 +2,7 @@ import { getPrivilegeLevel } from "@/app/utils";
 import EditingClient from "@/components/EditingClient";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import { env } from "@/env.mjs";
-import { Project } from "@/types/model-types";
+import { Post, PostWithTags } from "@/types/model-types";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
 
@@ -14,11 +14,10 @@ export default async function ProjectEditing({
   const privilegeLevel = await getPrivilegeLevel();
   if (privilegeLevel == "admin") {
     const res = await fetch(
-      `${env.NEXT_PUBLIC_DOMAIN}/api/database/project/by-id/${params.id}`,
+      `${env.NEXT_PUBLIC_DOMAIN}/api/database/post/project/by-id/${params.id}`,
       { method: "GET", cache: "no-store" },
     );
-    const post = (await res.json()).project as Project;
-
+    const post = (await res.json()).post as PostWithTags;
     return (
       <>
         <Suspense
@@ -28,7 +27,7 @@ export default async function ProjectEditing({
             </div>
           }
         >
-          <EditingClient post={post} type={"projects"} />
+          <EditingClient post={post} />
         </Suspense>
       </>
     );

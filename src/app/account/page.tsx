@@ -1,5 +1,4 @@
 import { env } from "@/env.mjs";
-import { API_RES_GetUserDataFromCookie } from "@/types/response-types";
 import ClientSideData from "./ClientSideData";
 import { getUserID } from "../utils";
 

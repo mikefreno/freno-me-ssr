@@ -1,8 +1,8 @@
-/** @type {import('next').NextConfig} */
-const nextConfig = {
-  experimental: {
-    logging: { level: "verbose", fullUrl: true },
-    serverActions: true,
+module.exports = {
+  logging: {
+    fetches: {
+      fullUrl: true,
+    },
   },
   images: {
     remotePatterns: [
@@ -32,5 +32,3 @@ const nextConfig = {
     return config;
   },
 };
-
-module.exports = nextConfig;

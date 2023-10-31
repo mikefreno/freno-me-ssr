@@ -2,7 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Suspense } from "react";
 import LoadingSpinner from "@/components/LoadingSpinner";
-import { Blog, PostWithCommentsAndLikes } from "@/types/model-types";
+import { PostWithCommentsAndLikes } from "@/types/model-types";
 import PostSortingSelect from "@/components/PostSortingSelect";
 import PostSorting from "@/components/PostSorting";
 import { ConnectionFactory, getPrivilegeLevel } from "../utils";
@@ -10,31 +10,36 @@ import { ConnectionFactory, getPrivilegeLevel } from "../utils";
 export default async function Blog() {
   let privilegeLevel: "anonymous" | "admin" | "user" = "anonymous";
   privilegeLevel = await getPrivilegeLevel();
+
   let query = `
     SELECT
-        Blog.id,
-        Blog.title,
-        Blog.subtitle,
-        Blog.body,
-        Blog.banner_photo,
-        Blog.date,
-        Blog.published,
-        Blog.author_id,
-        Blog.reads,
-        Blog.attachments,
-    (SELECT COUNT(*) FROM BlogLike WHERE Blog.id = BlogLike.blog_id) AS total_likes,
-    (SELECT COUNT(*) FROM Comment WHERE Blog.id = Comment.blog_id) AS total_comments
+        Post.id,
+        Post.title,
+        Post.subtitle,
+        Post.body,
+        Post.banner_photo,
+        Post.date,
+        Post.published,
+        Post.author_id,
+        Post.reads,
+        Post.attachments,
+    (SELECT COUNT(*) FROM PostLike WHERE Post.id = PostLike.post_id) AS total_likes,
+    (SELECT COUNT(*) FROM Comment WHERE Post.id = Comment.post_id) AS total_comments
     FROM
-        Blog
+        Post
     LEFT JOIN
-        BlogLike ON Blog.id = BlogLike.blog_id
+        PostLike ON Post.id = PostLike.post_id
     LEFT JOIN
-        Comment ON Blog.id = Comment.blog_id`;
+        Comment ON Post.id = Comment.post_id`;
+
   if (privilegeLevel != "admin") {
-    query += ` WHERE Blog.published = TRUE`;
+    query += ` WHERE Post.published = TRUE AND Post.category = 'blog'`;
+  } else {
+    query += ` WHERE Post.category = 'blog'`;
   }
-  query += ` GROUP BY Blog.id, Blog.title, Blog.subtitle, Blog.body, Blog.banner_photo, Blog.date, Blog.published, Blog.author_id, Blog.reads, Blog.attachments;`;
+  query += ` GROUP BY Post.id, Post.title, Post.subtitle, Post.body, Post.banner_photo, Post.date, Post.published, Post.category, Post.author_id, Post.reads, Post.attachments;`;
   const conn = ConnectionFactory();
+
   const results = await conn.execute(query);
   let blogs = results.rows as PostWithCommentsAndLikes[];
 

@@ -2,18 +2,18 @@
 
 import { useState } from "react";
 import LikeIcon from "@/icons/LikeIcon";
-import { BlogLike, ProjectLike } from "@/types/model-types";
+import { PostLike } from "@/types/model-types";
 import { env } from "@/env.mjs";
 
 export default function SessionDependantLike(props: {
   currentUserID: string | undefined | null;
   privilegeLevel: "admin" | "user" | "anonymous";
-  likes: ProjectLike[] | BlogLike[];
+  likes: PostLike[];
   type: "blog" | "project";
   projectID: number;
 }) {
   const [hovering, setHovering] = useState<boolean>(false);
-  const [likes, setLikes] = useState<ProjectLike[] | BlogLike[]>(props.likes);
+  const [likes, setLikes] = useState<PostLike[]>(props.likes);
   const [instantOffset, setInstantOffset] = useState<number>(0);
   const [hasLiked, setHasLiked] = useState<boolean>(
     props.likes.some((like) => like.user_id == props.currentUserID),
@@ -36,7 +36,7 @@ export default function SessionDependantLike(props: {
       let res;
       if (initialHasLiked) {
         res = await fetch(
-          `${env.NEXT_PUBLIC_DOMAIN}/api/database/generic/post-like/remove`,
+          `${env.NEXT_PUBLIC_DOMAIN}/api/database/post-like/remove`,
           {
             method: "POST",
             body: JSON.stringify(data),
@@ -44,7 +44,7 @@ export default function SessionDependantLike(props: {
         );
       } else {
         res = await fetch(
-          `${env.NEXT_PUBLIC_DOMAIN}/api/database/generic/post-like/add`,
+          `${env.NEXT_PUBLIC_DOMAIN}/api/database/post-like/add`,
           {
             method: "POST",
             body: JSON.stringify(data),

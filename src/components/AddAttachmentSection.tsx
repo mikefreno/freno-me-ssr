@@ -1,15 +1,15 @@
 "use client";
 
-import { Blog, Project } from "@/types/model-types";
 import { useCallback, useEffect, useState } from "react";
 import Dropzone from "./Dropzone";
 import XCircle from "@/icons/XCircle";
 import { env } from "@/env.mjs";
 import AddImageToS3 from "@/app/s3upload";
+import { Post } from "@/types/model-types";
 
 export default function AddAttachmentSection(props: {
-  type: "blog" | "projects";
-  post: Blog | Project | null;
+  type: "blog" | "project";
+  post: Post | null;
   postTitle: string | undefined;
 }) {
   const [images, setImages] = useState<(File | Blob)[]>([]);
@@ -56,7 +56,9 @@ export default function AddAttachmentSection(props: {
   const removeImage = async (index: number, key: string) => {
     if (props.post && props.post.attachments) {
       const imgStringArr = props.post.attachments.split(",");
-      const newString = imgStringArr.filter((str) => str !== key).join(",");
+      const newString = imgStringArr
+        .filter((str: string) => str !== key)
+        .join(",");
       const res = await fetch("/api/s3/deleteImage", {
         method: "POST",
         body: JSON.stringify({

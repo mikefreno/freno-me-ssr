@@ -4,7 +4,7 @@ import AddImageToS3 from "@/app/s3upload";
 import Dropzone from "@/components/Dropzone";
 import TextEditor from "@/components/TextEditor";
 import XCircle from "@/icons/XCircle";
-import { Blog, Project } from "@/types/model-types";
+import { PostWithTags } from "@/types/model-types";
 import { useCallback, useEffect, useRef, useState } from "react";
 import LoadingSpinner from "./LoadingSpinner";
 import AddAttachmentSection from "./AddAttachmentSection";
@@ -12,10 +12,7 @@ import { env } from "@/env.mjs";
 import Link from "next/link";
 import TagMaker from "./TagMaker";
 
-export default function EditingClient(props: {
-  post: Project | Blog;
-  type: "projects" | "blog";
-}) {
+export default function EditingClient(props: { post: PostWithTags }) {
   const [publish, setPublish] = useState<boolean>(props.post.published);
   const [bannerImage, setBannerImage] = useState<File | Blob>();
   const [bannerImageHolder, setBannerImageHolder] = useState<
@@ -29,12 +26,20 @@ export default function EditingClient(props: {
   const [showAutoSaveMessage, setShowAutoSaveMessage] =
     useState<boolean>(false);
   const [showSaveMessage, setShowSaveMessage] = useState<boolean>(false);
-  const [postTitle, setPostTitle] = useState<string>();
+  const [postTitle, setPostTitle] = useState<string>(props.post.title);
   const [tags, setTags] = useState<string[]>([]);
-  const [tagInputValue, setTagInputValue] = useState<string>();
+  const [tagInputValue, setTagInputValue] = useState<string>("");
 
   const subtitleRef = useRef<HTMLInputElement>(null);
   const autosaveRef = useRef<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
+    if (props.post.tags) {
+      let initTags: string[] = [];
+      props.post.tags.forEach((tag) => initTags.push(tag.value));
+      setTags(initTags);
+    }
+  }, [props.post]);
 
   const autoSave = async () => {
     if (postTitle) {
@@ -43,7 +48,7 @@ export default function EditingClient(props: {
         bannerImageKey = (await AddImageToS3(
           bannerImage,
           postTitle || props.post.title,
-          props.type,
+          props.post.category,
         )) as string;
       }
       const data = {
@@ -62,12 +67,11 @@ export default function EditingClient(props: {
             ? "_DELETE_IMAGE_"
             : null,
         published: publish || props.post.published,
+        tags: tags.join("//,"),
       };
 
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_DOMAIN}/api/database/${
-          props.type == "blog" ? "blog" : "project"
-        }/manipulation`,
+        `${process.env.NEXT_PUBLIC_DOMAIN}/api/database/post/${props.post.category}/manipulation`,
         { method: "PATCH", body: JSON.stringify(data) },
       );
       if (res.status == 201) {
@@ -130,7 +134,7 @@ export default function EditingClient(props: {
         bannerImageKey = (await AddImageToS3(
           bannerImage,
           postTitle || props.post.title,
-          props.type,
+          props.post.category,
         )) as string;
       }
       const data = {
@@ -149,14 +153,14 @@ export default function EditingClient(props: {
             ? "_DELETE_IMAGE_"
             : null,
         published: publish || props.post.published,
+        tags: tags.join("//,"),
       };
 
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_DOMAIN}/api/database/${
-          props.type == "blog" ? "blog" : "project"
-        }/manipulation`,
+        `${process.env.NEXT_PUBLIC_DOMAIN}/api/database/post/${props.post.category}/manipulation`,
         { method: "PATCH", body: JSON.stringify(data) },
       );
+      console.log(res);
       if (res.status == 201) {
         showSaveTrigger();
       }
@@ -200,7 +204,7 @@ export default function EditingClient(props: {
   return (
     <div className="px-8 py-32 dark:text-white">
       <div className="text-center text-2xl tracking-wide">
-        Edit a {props.type == "blog" ? "Blog" : "Project"}
+        Edit a {props.post.category == "blog" ? "Blog" : "Project"}
       </div>
       <div className="flex h-full w-full justify-center">
         <form onSubmit={editPost} className="w-full md:w-3/4 lg:w-1/3 xl:w-1/2">
@@ -261,7 +265,7 @@ export default function EditingClient(props: {
             </button>
           </div>
           <AddAttachmentSection
-            type={props.type}
+            type={props.post.category}
             post={props.post}
             postTitle={postTitle || props.post.title}
           />
@@ -310,13 +314,13 @@ export default function EditingClient(props: {
                   ? "bg-zinc-400"
                   : publish
                   ? `bg-${
-                      props.type == "blog" ? "orange" : "blue"
+                      props.post.category == "blog" ? "orange" : "blue"
                     }-400 dark:bg-${
-                      props.type == "blog" ? "orange" : "blue"
+                      props.post.category == "blog" ? "orange" : "blue"
                     }-600 hover:bg-${
-                      props.type == "blog" ? "orange" : "blue"
+                      props.post.category == "blog" ? "orange" : "blue"
                     }-500 dark:hover:bg-${
-                      props.type == "blog" ? "orange" : "blue"
+                      props.post.category == "blog" ? "orange" : "blue"
                     }-700`
                   : "bg-green-400 hover:bg-green-500 dark:bg-green-600 dark:hover:bg-green-700"
               } active:scale-90 text-white flex w-36 justify-center rounded transition-all duration-300 ease-out py-3 text-white"`}
@@ -332,9 +336,9 @@ export default function EditingClient(props: {
       </div>
       <div className="mt-2 flex justify-center">
         <Link
-          href={`${env.NEXT_PUBLIC_DOMAIN}/${props.type}/${
-            postTitle?.replaceAll(" ", "_") || props.post.title
-          }`}
+          href={`${env.NEXT_PUBLIC_DOMAIN}/${
+            props.post.category == "blog" ? "blog" : "projects"
+          }/${postTitle?.replaceAll(" ", "_") || props.post.title}`}
           className="rounded border border-blue-500 bg-blue-400 px-4 py-2 text-white shadow-md transition-all duration-300  ease-in-out hover:bg-blue-500 active:scale-90 dark:border-blue-700 dark:bg-blue-700 dark:hover:bg-blue-800"
         >
           Go to Post

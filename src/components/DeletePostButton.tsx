@@ -7,7 +7,7 @@ import LoadingSpinner from "./LoadingSpinner";
 
 export default function DeletePostButton(props: {
   type: string;
-  postId: number;
+  postID: number;
 }) {
   const [loading, setLoading] = useState<boolean>(false);
   const deletePostTrigger = async (e: React.FormEvent) => {
@@ -15,7 +15,7 @@ export default function DeletePostButton(props: {
     const affirm = window.confirm("Are you sure you want to delete?");
     if (affirm) {
       setLoading(true);
-      const res = await deletePost({ type: props.type, postId: props.postId });
+      const res = await deletePost(props.postID);
       if (res !== "good") {
         alert(res);
       }

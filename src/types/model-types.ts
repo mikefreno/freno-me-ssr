@@ -9,8 +9,9 @@ export interface User {
   registered_at: string;
 }
 
-export interface Blog {
+export interface Post {
   id: number;
+  category: "blog" | "project";
   title: string;
   subtitle?: string;
   body: string;
@@ -20,40 +21,18 @@ export interface Blog {
   author_id: string;
   reads: number;
   attachments?: string;
-  tags?: string;
 }
 
-export interface BlogLike {
+export interface PostLike {
   id: number;
   user_id: string;
-  blog_id: number;
-}
-
-export interface Project {
-  id: number;
-  title: string;
-  subtitle?: string;
-  body: string;
-  banner_photo?: string;
-  date: string;
-  published: boolean;
-  author_id: string;
-  reads: number;
-  attachments?: string;
-  tags?: string;
-}
-
-export interface ProjectLike {
-  id: number;
-  user_id: string;
-  project_id: number;
+  post_id: number;
 }
 
 export interface Comment {
   id: number;
   body: string;
-  blog_id?: number;
-  project_id?: number;
+  post_id: number;
   parent_comment_id?: number;
   date: string;
   edited: boolean;
@@ -71,21 +50,41 @@ export interface Connection {
   id: number;
   user_id: string;
   connection_id: string;
-  post_type?: string;
   post_id?: number;
+}
+
+export interface Tag {
+  id: number;
+  value: string;
+  post_id: number;
 }
 
 export interface PostWithCommentsAndLikes {
   id: number;
+  category: "blog" | "project";
   title: string;
   subtitle: string;
   body: string;
   banner_photo: string;
   date: string;
-  published: number;
+  published: boolean;
   author_id: string;
   reads: number;
   attachments: string;
   total_likes: number;
   total_comments: number;
+}
+export interface PostWithTags {
+  id: number;
+  category: "blog" | "project";
+  title: string;
+  subtitle: string;
+  body: string;
+  banner_photo: string;
+  date: string;
+  published: boolean;
+  author_id: string;
+  reads: number;
+  attachments: string;
+  tags: Tag[];
 }

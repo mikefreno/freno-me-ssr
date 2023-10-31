@@ -215,8 +215,7 @@ export default function CommentSectionWrapper(props: {
       const newComment = {
         id: id,
         body: body,
-        blog_id: props.type == "blog" ? props.id : undefined,
-        project_id: props.type == "project" ? props.id : undefined,
+        post_id: props.id,
         parent_comment_id: parentCommentID,
         commenter_id: commenterID,
         edited: false,

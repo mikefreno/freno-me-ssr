@@ -5,12 +5,7 @@ import { env } from "@/env.mjs";
 import Link from "next/link";
 import Image from "next/image";
 import SessionDependantLike from "@/components/SessionDependantLike";
-import {
-  CommentReaction,
-  Project,
-  Comment,
-  ProjectLike,
-} from "@/types/model-types";
+import { CommentReaction, Comment, PostLike, Post } from "@/types/model-types";
 import { Suspense } from "react";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import PostBodyClient from "@/components/PostBodyClient";
@@ -33,19 +28,19 @@ export default async function DynamicProjectPost({
   let userID: string | null = null;
   const privilegeLevel = await getPrivilegeLevel();
   userID = await getUserID();
-  let query = "SELECT * FROM Project WHERE title = ?";
+  let query = "SELECT * FROM Post WHERE title = ?";
   if (privilegeLevel !== "admin") {
     query += ` AND published = TRUE`;
   }
   const conn = ConnectionFactory();
   const project = (
     await conn.execute(query, [decodeURIComponent(params.title)])
-  ).rows[0] as Project;
+  ).rows[0] as Post;
 
   let containsCodeBlock = false;
 
   let comments: Comment[] = [];
-  let likes: ProjectLike[] = [];
+  let likes: PostLike[] = [];
   let reactionMap: Map<number, CommentReaction[]> = new Map();
   let commenterToCommentIDMap = new Map<string, number[]>();
   let commentIDToCommenterMap = new Map<
@@ -58,7 +53,7 @@ export default async function DynamicProjectPost({
 
   if (project) {
     containsCodeBlock = hasCodeBlock(project.body);
-    const commentQuery = "SELECT * FROM Comment WHERE project_id = ?";
+    const commentQuery = "SELECT * FROM Comment WHERE post_id = ?";
     comments = (await conn.execute(commentQuery, [project.id]))
       .rows as Comment[];
 
@@ -88,9 +83,9 @@ export default async function DynamicProjectPost({
     topLevelComments = comments.filter(
       (comment) => comment.parent_comment_id == null,
     );
-    const projectLikesQuery = "SELECT * FROM ProjectLike WHERE project_id = ?";
+    const projectLikesQuery = "SELECT * FROM PostLike WHERE post_id = ?";
     likes = (await conn.execute(projectLikesQuery, [project.id]))
-      .rows as ProjectLike[];
+      .rows as PostLike[];
     for (const comment of comments) {
       const reactionQuery =
         "SELECT * FROM CommentReaction WHERE comment_id = ?";
@@ -117,7 +112,7 @@ export default async function DynamicProjectPost({
           </div>
           <div className="flex justify-center">
             <Link
-              href={`${env.NEXT_PUBLIC_DOMAIN}/project`}
+              href={`${env.NEXT_PUBLIC_DOMAIN}/projects`}
               className="mt-4 rounded border border-blue-500 bg-blue-400 px-4 py-2 text-white shadow-md transition-all duration-300 ease-in-out hover:bg-blue-500 active:scale-90 dark:border-blue-700 dark:bg-blue-700 dark:hover:bg-blue-800"
             >
               Project Main
@@ -132,7 +127,7 @@ export default async function DynamicProjectPost({
     const window = new JSDOM("").window;
     const purify = DOMPurify(window);
     const sanitizedBody = purify.sanitize(project.body);
-    incrementReads({ postID: project.id, postType: "Project" });
+    incrementReads(project.id);
     return (
       <div className="select-none overflow-x-hidden">
         <div className="z-30">

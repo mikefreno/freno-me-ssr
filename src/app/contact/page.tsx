@@ -1,5 +1,4 @@
 import { env } from "@/env.mjs";
-import { API_RES_GetUserDataFromCookie } from "@/types/response-types";
 import ContactClient from "./ContactClient";
 import { getUserID } from "../utils";
 
@@ -13,7 +12,7 @@ export default async function ContactPage() {
         method: "GET",
       },
     );
-    const resData = (await res.json()) as API_RES_GetUserDataFromCookie;
+    const resData = await res.json();
     status = res.status;
     return <ContactClient user={resData} status={status} />;
   }

@@ -20,7 +20,7 @@ export default async function PostCard(props: {
             )}
             <DeletePostButton
               type={props.linkTarget == "blog" ? "Blog" : "Project"}
-              postId={props.post.id}
+              postID={props.post.id}
             />
           </div>
         </div>

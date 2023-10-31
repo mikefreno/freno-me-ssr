@@ -8,11 +8,9 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import AddAttachmentSection from "./AddAttachmentSection";
 import { env } from "@/env.mjs";
 import Link from "next/link";
-import InfoIcon from "@/icons/InfoIcon";
-import Xmark from "@/icons/Xmark";
 import TagMaker from "./TagMaker";
 
-export default function CreationClient(props: { type: "projects" | "blog" }) {
+export default function CreationClient(props: { type: "project" | "blog" }) {
   const [publish, setPublish] = useState<boolean>(false);
   const [bannerImage, setBannerImage] = useState<File | Blob>();
   const [bannerImageHolder, setBannerImageHolder] = useState<
@@ -50,15 +48,13 @@ export default function CreationClient(props: { type: "projects" | "blog" }) {
         embedded_link: null,
         banner_photo: bannerImageKey !== "" ? bannerImageKey : null,
         published: publish,
-        tags: tags.join("//,"),
+        tags: tags,
       };
 
-      const res = await fetch(
-        `/api/database/${
-          props.type == "blog" ? "blog" : "project"
-        }/manipulation`,
-        { method: hasSaved ? "PATCH" : "POST", body: JSON.stringify(data) },
-      );
+      const res = await fetch(`/api/database/post/${props.type}/manipulation`, {
+        method: hasSaved ? "PATCH" : "POST",
+        body: JSON.stringify(data),
+      });
       if (res.status == 201) {
         setHasSaved(true);
         showAutoSaveTrigger();
@@ -133,9 +129,7 @@ export default function CreationClient(props: { type: "projects" | "blog" }) {
       };
 
       const res = await fetch(
-        `${env.NEXT_PUBLIC_DOMAIN}/api/database/${
-          props.type == "blog" ? "blog" : "project"
-        }/manipulation`,
+        `${env.NEXT_PUBLIC_DOMAIN}/api/database/post/${props.type}/manipulation`,
         { method: "POST", body: JSON.stringify(data) },
       );
       if (res.status == 201) {
@@ -226,7 +220,7 @@ export default function CreationClient(props: { type: "projects" | "blog" }) {
             </button>
           </div>
           <AddAttachmentSection
-            type={"projects"}
+            type={props.type}
             post={null}
             postTitle={postTitle}
           />
@@ -294,7 +288,7 @@ export default function CreationClient(props: { type: "projects" | "blog" }) {
         <div className="mt-2 flex justify-center">
           <Link
             href={`${env.NEXT_PUBLIC_DOMAIN}/${
-              props.type
+              props.type == "blog" ? "blog" : "projects"
             }/${postTitle?.replaceAll(" ", "_")}`}
             className="rounded border border-blue-500 bg-blue-400 px-4 py-2 text-white shadow-md transition-all duration-300  ease-in-out hover:bg-blue-500 active:scale-90 dark:border-blue-700 dark:bg-blue-700 dark:hover:bg-blue-800"
           >

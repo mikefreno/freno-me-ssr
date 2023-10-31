@@ -17,7 +17,7 @@ export default async function BlogCreation() {
             </div>
           }
         >
-          <CreationClient type={"projects"} />
+          <CreationClient type={"project"} />
         </Suspense>
       </>
     );
