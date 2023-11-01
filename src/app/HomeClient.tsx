@@ -94,7 +94,7 @@ export default function HomeClient(props: {
       <>
         <link rel="preload" as="image" href="/blur_SH_water.jpg" />
         <link rel="preload" as="image" href="/me_in_flannel.jpg" />
-        <div className="page-fade-in max-h-[100dvh] bg-[url('/blur_SH_water.jpg')] bg-cover bg-center bg-no-repeat text-white">
+        <div className="page-fade-in max-h-[100vh] bg-[url('/blur_SH_water.jpg')] bg-cover bg-center bg-no-repeat text-white">
           <div className="flex min-h-[100dvh] w-screen justify-center backdrop-brightness-50">
             <div
               className={`${
