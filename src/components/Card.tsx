@@ -9,12 +9,12 @@ export default async function PostCard(props: {
   linkTarget: "blog" | "projects";
 }) {
   return (
-    <div className="relative z-0 mx-auto h-96 w-full overflow-hidden rounded-lg bg-white shadow-lg md:w-5/6 lg:w-3/4">
+    <div className="relative z-0 mx-auto h-96 w-full overflow-hidden rounded-lg bg-white shadow-lg dark:bg-zinc-900 md:w-5/6 lg:w-3/4">
       {props.privilegeLevel !== "admin" ? null : (
-        <div className="absolute top-0 w-full border-b border-white border-opacity-20 bg-white bg-opacity-40 px-2 py-4 backdrop-blur-md md:px-6">
+        <div className="absolute top-0 w-full border-b border-white border-opacity-20 bg-white bg-opacity-40 px-2 py-4 backdrop-blur-md dark:border-black dark:bg-zinc-800 dark:bg-opacity-60 md:px-6">
           <div className="flex justify-between">
             {props.post.published ? null : (
-              <div className="whitespace-nowrap text-center text-lg text-black">
+              <div className="whitespace-nowrap text-center text-lg text-black dark:text-white">
                 Not Published
               </div>
             )}
@@ -38,22 +38,22 @@ export default async function PostCard(props: {
         width={1000}
         className="h-full w-full object-cover"
       />
-      <div className="absolute bottom-0 w-full border-t border-white border-opacity-20 bg-white bg-opacity-40 px-2 py-4 backdrop-blur-md md:px-6">
+      <div className="absolute bottom-0 w-full border-t border-white border-opacity-20 bg-white bg-opacity-40 px-2 py-4 backdrop-blur-md dark:border-zinc-900 dark:bg-zinc-800 dark:bg-opacity-60 md:px-6">
         <div className="flex flex-col items-center justify-between md:flex-row">
           <div className="text-center md:text-left">
-            <div className="text-lg text-black md:text-xl">
+            <div className="text-lg text-black dark:text-white md:text-xl">
               {props.post.subtitle}
             </div>
-            <div className="text-2xl text-black md:text-3xl">
+            <div className="text-2xl text-black dark:text-white md:text-3xl">
               {props.post.title.replaceAll("_", " ")}
             </div>
           </div>
           <div className="flex w-full justify-around pt-2 md:w-1/3 md:justify-between md:pl-2 md:pt-0">
             <div className="my-auto md:h-full">
-              <p className="whitespace-nowrap text-sm text-black">
+              <p className="whitespace-nowrap text-sm text-black dark:text-white">
                 {props.post.total_comments || 0} Comments
               </p>
-              <p className="whitespace-nowrap text-sm text-black">
+              <p className="whitespace-nowrap text-sm text-black dark:text-white">
                 {props.post.total_likes || 0} Likes
               </p>
             </div>

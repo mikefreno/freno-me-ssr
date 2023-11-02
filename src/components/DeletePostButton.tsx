@@ -28,12 +28,7 @@ export default function DeletePostButton(props: {
         {loading ? (
           <LoadingSpinner height={24} width={24} />
         ) : (
-          <TrashIcon
-            height={24}
-            width={24}
-            stroke={"black"}
-            strokeWidth={1.5}
-          />
+          <TrashIcon height={24} width={24} strokeWidth={1.5} />
         )}
       </button>
     </form>

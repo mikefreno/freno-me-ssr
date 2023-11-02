@@ -1,7 +1,6 @@
 const TrashIcon = (props: {
   height: number;
   width: number;
-  stroke: string;
   strokeWidth: number;
   className?: string;
 }) => {
@@ -11,9 +10,9 @@ const TrashIcon = (props: {
       fill="none"
       viewBox="0 0 24 24"
       strokeWidth={props.strokeWidth}
-      stroke={props.stroke}
       height={props.height}
       width={props.width}
+      className="stroke-zinc-900 dark:stroke-white"
     >
       <path
         strokeLinecap="round"
