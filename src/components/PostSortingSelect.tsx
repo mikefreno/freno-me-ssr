@@ -3,7 +3,7 @@ import { Fragment, useEffect, useState } from "react";
 import { Listbox, Transition } from "@headlessui/react";
 import Check from "@/icons/Check";
 import UpDownArrows from "@/icons/UpDownArrows";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 const sorting = [
   { val: "Newest" },
   { val: "Oldest" },
@@ -17,9 +17,22 @@ export default function PostSortingSelect(props: {
 }) {
   const [selected, setSelected] = useState(sorting[0]);
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
+
+  const [currentFilters, setCurrentFilters] = useState<string | null>(null);
 
   useEffect(() => {
-    router.push(`${props.type}?sort=${selected.val.toLowerCase()}`);
+    setCurrentFilters(searchParams.get("filter"));
+  }, [searchParams, pathname]);
+
+  useEffect(() => {
+    let newRoute = pathname + "?sort=" + selected.val.toLowerCase();
+    if (currentFilters) {
+      newRoute += "&filter=" + currentFilters;
+    }
+    router.push(newRoute);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selected, props.type, router]);
 
   return (

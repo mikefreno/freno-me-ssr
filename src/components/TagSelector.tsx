@@ -1,6 +1,7 @@
 "use client";
 import useOnClickOutside from "@/hooks/ClickOutsideHook";
-import { useRef, useState } from "react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
 
 export default function TagSelector(props: {
   tagMap: Map<string, number>;
@@ -9,11 +10,45 @@ export default function TagSelector(props: {
   const [showingMenu, setShowingMenu] = useState<boolean>(false);
   const buttonRef = useRef<HTMLButtonElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
+  const pathname = usePathname();
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const [currentSort, setCurrentSort] = useState<string>("");
+  const [currentFilters, setCurrentFilters] = useState<string[]>();
 
   useOnClickOutside([buttonRef, menuRef], () => setShowingMenu(false));
 
+  useEffect(() => {
+    setCurrentSort(searchParams.get("sort") || "");
+    setCurrentFilters(searchParams.get("filter")?.split("|"));
+  }, [searchParams]);
+
   const toggleMenu = () => {
     setShowingMenu(!showingMenu);
+  };
+
+  const handleCheck = (filter: string, isChecked: boolean) => {
+    if (isChecked) {
+      const newFilters = searchParams.get("filter")?.replace(filter + "|", "");
+      if (newFilters && newFilters.length >= 1) {
+        router.push(`?sort=${currentSort}` + "&filter=" + newFilters);
+      } else {
+        router.push(`?sort=${currentSort}`);
+      }
+    } else {
+      const currentFilters = searchParams.get("filter");
+      if (currentFilters) {
+        const newFilters = currentFilters + filter + "|";
+        const newPathname =
+          pathname + "?sort=" + currentSort + "&filter=" + newFilters;
+        router.push(newPathname);
+      } else {
+        const newPathname =
+          pathname + "?sort=" + currentSort + "&filter=" + filter + "|";
+        router.push(newPathname);
+      }
+    }
   };
 
   return (
@@ -35,8 +70,13 @@ export default function TagSelector(props: {
           className="absolute z-50 mt-12 rounded-lg bg-zinc-100 p-2 shadow-lg dark:bg-zinc-900"
         >
           {Array.from(props.tagMap).map(([key, value]) => (
-            <div className="mx-auto my-1 flex" key={key}>
-              <input type="checkbox" className="" />
+            <div className="mx-auo my-1 flex" key={key}>
+              <input
+                type="checkbox"
+                className=""
+                defaultChecked={!currentFilters?.includes(key.slice(1))}
+                onChange={(e) => handleCheck(key.slice(1), e.target.checked)}
+              />
               <div className="-mt-0.5 pl-1 text-sm font-normal">
                 {`${key.slice(1)} (${value}) `}
               </div>

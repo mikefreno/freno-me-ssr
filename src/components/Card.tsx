@@ -9,7 +9,7 @@ export default async function PostCard(props: {
   linkTarget: "blog" | "projects";
 }) {
   return (
-    <div className="relative z-0 mx-auto h-96 w-full overflow-hidden rounded-lg bg-white shadow-lg md:w-5/6 lg:w-3/4 xl:w-3/5">
+    <div className="relative z-0 mx-auto h-96 w-full overflow-hidden rounded-lg bg-white shadow-lg md:w-5/6 lg:w-3/4">
       {props.privilegeLevel !== "admin" ? null : (
         <div className="absolute top-0 w-full border-b border-white border-opacity-20 bg-white bg-opacity-40 px-2 py-4 backdrop-blur-md md:px-6">
           <div className="flex justify-between">

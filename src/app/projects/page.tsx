@@ -107,6 +107,7 @@ export default async function Projects() {
               <div className="mx-auto flex w-11/12 flex-col">
                 <PostSorting
                   posts={projects}
+                  tags={tags}
                   privilegeLevel={privilegeLevel}
                   type={"projects"}
                 />
