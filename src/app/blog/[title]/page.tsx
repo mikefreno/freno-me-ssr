@@ -131,6 +131,10 @@ export default async function DynamicBlogPost({
   } else if (blog) {
     const window = new JSDOM("").window;
     const purify = DOMPurify(window);
+    purify.setConfig({
+      ADD_TAGS: ["iframe"],
+      ADD_ATTR: ["src", "frameborder", "allowfullscreen"],
+    });
     const sanitizedBody = purify.sanitize(blog.body);
     incrementReads(blog.id);
     return (

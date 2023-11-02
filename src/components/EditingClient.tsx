@@ -217,9 +217,6 @@ export default function EditingClient(props: { post: Post; tags: Tag[] }) {
               required
               name="title"
               placeholder=" "
-              defaultValue={
-                props.post.title ? props.post.title.replaceAll("_", " ") : ""
-              }
               className="underlinedInput w-full bg-transparent"
             />
             <span className="bar"></span>

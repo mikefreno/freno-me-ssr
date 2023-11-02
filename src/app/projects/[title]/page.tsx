@@ -136,6 +136,10 @@ export default async function DynamicProjectPost({
   } else if (project) {
     const window = new JSDOM("").window;
     const purify = DOMPurify(window);
+    purify.setConfig({
+      ADD_TAGS: ["iframe"],
+      ADD_ATTR: ["src", "frameborder", "allowfullscreen"],
+    });
     const sanitizedBody = purify.sanitize(project.body);
     incrementReads(project.id);
     return (

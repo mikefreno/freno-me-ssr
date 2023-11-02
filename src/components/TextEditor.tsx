@@ -27,6 +27,87 @@ lowlight.registerLanguage("rust", rust);
 
 import CodeBlockComponent from "./CodeBlockComponent";
 
+import { Node } from "@tiptap/core";
+
+interface IframeOptions {
+  allowFullscreen: boolean;
+  HTMLAttributes: {
+    [key: string]: any;
+  };
+}
+
+declare module "@tiptap/core" {
+  interface Commands<ReturnType> {
+    iframe: {
+      /**
+       * Add an iframe
+       */
+      setIframe: (options: { src: string }) => ReturnType;
+    };
+  }
+}
+
+const IframeEmbed = Node.create<IframeOptions>({
+  name: "iframe",
+
+  group: "block",
+
+  atom: true,
+
+  addOptions() {
+    return {
+      allowFullscreen: true,
+      HTMLAttributes: {
+        class: "iframe-wrapper",
+      },
+    };
+  },
+
+  addAttributes() {
+    return {
+      src: {
+        default: null,
+      },
+      frameborder: {
+        default: 0,
+      },
+      allowfullscreen: {
+        default: this.options.allowFullscreen,
+        parseHTML: () => this.options.allowFullscreen,
+      },
+    };
+  },
+
+  parseHTML() {
+    return [
+      {
+        tag: "iframe",
+      },
+    ];
+  },
+
+  renderHTML({ HTMLAttributes }) {
+    return ["div", this.options.HTMLAttributes, ["iframe", HTMLAttributes]];
+  },
+
+  addCommands() {
+    return {
+      setIframe:
+        (options: { src: string }) =>
+        ({ tr, dispatch }) => {
+          const { selection } = tr;
+          const node = this.type.create(options);
+
+          if (dispatch) {
+            tr.replaceRangeWith(selection.from, selection.to, node);
+          }
+
+          return true;
+        },
+    };
+  },
+});
+
 export default function TextEditor({ updateContent, preSet }: any) {
   const editor = useEditor({
     extensions: [
@@ -40,6 +121,7 @@ export default function TextEditor({ updateContent, preSet }: any) {
         openOnClick: true,
       }),
       Image,
+      IframeEmbed,
     ],
     content: preSet
       ? preSet
@@ -74,6 +156,16 @@ export default function TextEditor({ updateContent, preSet }: any) {
     // update link
     editor.chain().focus().extendMarkRange("link").setLink({ href: url }).run();
   }, [editor]);
+
+  const addIframe = () => {
+    if (!editor) {
+      return null;
+    }
+    const url = window.prompt("URL");
+    if (url) {
+      editor.commands.setIframe({ src: url });
+    }
+  };
 
   const addImage = useCallback(() => {
     if (!editor) {
@@ -303,7 +395,20 @@ export default function TextEditor({ updateContent, preSet }: any) {
             >
               Code Block
             </button>
-            <button onClick={addImage}>Add Image</button>
+            <button
+              onClick={addImage}
+              type="button"
+              className="mx-1 rounded bg-opacity-30 p-1 hover:bg-opacity-30"
+            >
+              Add Image
+            </button>
+            <button
+              onClick={addIframe}
+              type="button"
+              className="mx-1 rounded bg-opacity-30 p-1 hover:bg-opacity-30"
+            >
+              Add Iframe
+            </button>
           </div>
         </FloatingMenu>
       )}

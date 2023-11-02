@@ -2,10 +2,11 @@ import LoadingSpinner from "@/components/LoadingSpinner";
 import Link from "next/link";
 import { Suspense } from "react";
 import Image from "next/image";
-import { PostWithCommentsAndLikes } from "@/types/model-types";
+import { PostWithCommentsAndLikes, Tag } from "@/types/model-types";
 import PostSortingSelect from "@/components/PostSortingSelect";
 import PostSorting from "@/components/PostSorting";
 import { ConnectionFactory, getPrivilegeLevel } from "../utils";
+import TagSelector from "@/components/TagSelector";
 
 export default async function Projects() {
   let privilegeLevel: "anonymous" | "admin" | "user" = "anonymous";
@@ -41,6 +42,16 @@ export default async function Projects() {
   const results = await conn.execute(query);
   let projects = results.rows as PostWithCommentsAndLikes[];
 
+  const projectIDs = projects.map((project) => project.id);
+  const tagQuery = `SELECT * FROM Tag WHERE post_id IN (${projectIDs.join(
+    ", ",
+  )})`;
+  const tags = (await conn.execute(tagQuery)).rows as Tag[];
+  let tagMap: Map<string, number> = new Map();
+  tags.forEach((tag) => {
+    tagMap.set(tag.value, (tagMap.get(tag.value) || 0) + 1);
+  });
+
   return (
     <>
       <div className="min-h-screen overflow-x-hidden bg-white dark:bg-zinc-900">
@@ -70,6 +81,9 @@ export default async function Projects() {
           <div className="flex flex-col justify-center md:flex-row md:justify-around">
             <div className="flex justify-center md:justify-start">
               <PostSortingSelect type={"projects"} />
+            </div>
+            <div className="flex justify-center md:justify-end">
+              <TagSelector tagMap={tagMap} category={"project"} />
             </div>
             {privilegeLevel == "admin" ? (
               <div className="mt-2 flex justify-center md:mt-0 md:justify-end">
