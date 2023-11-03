@@ -1,6 +1,6 @@
 import GitHubIcon from "@/icons/GitHub";
 import LinkedInIcon from "@/icons/LinkedIn";
-import CloseIcon from "@/icons/Xmark";
+import Xmark from "@/icons/Xmark";
 import Link from "next/link";
 import { RefObject } from "react";
 
@@ -15,7 +15,7 @@ export default function AboutMeModal({
         className={`${
           showing
             ? "fade-in flex"
-            : "backdrop-brightness-100 backdrop-blur-0 -translate-x-full absolute"
+            : "absolute -translate-x-full backdrop-blur-0 backdrop-brightness-100"
         } w-full h-screen justify-center overflow-scroll pb-36 pt-24 md:pb-[20vh] md:pt-[10vh] opacity-0 backdrop-blur-sm backdrop-brightness-75`}
       >
         <div
@@ -24,21 +24,16 @@ export default function AboutMeModal({
             showing ? "" : "translate-y-full"
           } h-fit w-11/12 rounded border border-white bg-white bg-opacity-10 px-4 py-2 md:w-2/3 lg:w-1/2 md:px-10 md:py-6 xl:w-5/12 transition-all duration-700 ease-in-out`}
         >
-          <div className="-my-6 flex justify-end pt-4 md:pt-2">
+          <div className="-mb-11 flex justify-end">
             <button onClick={aboutToggle}>
-              <CloseIcon
-                strokeWidth={0.5}
-                color={"white"}
-                height={50}
-                width={50}
-              />
+              <Xmark strokeWidth={0.5} color={"white"} height={50} width={50} />
             </button>
           </div>
           <article>
             <h2 className="text-3xl font-light tracking-wide underline underline-offset-4">
               About Me
             </h2>
-            <div className="py-4 -mx-4 md:-mx-10">
+            <div className="-mx-4 py-4 md:-mx-10">
               <div className="h-[30vh] w-full  bg-[url('/me_in_flannel.jpg')] bg-cover bg-center bg-no-repeat" />
             </div>
             <p>
@@ -77,7 +72,7 @@ export default function AboutMeModal({
                   href="https://github.com/MikeFreno/"
                   target="_blank"
                   rel="noreferrer"
-                  className="rounded-full shaker border-zinc-800 dark:border-zinc-300"
+                  className="shaker rounded-full border-zinc-800 dark:border-zinc-300"
                 >
                   <span className="m-auto">
                     <GitHubIcon height={16} width={16} fill={"white"} />
@@ -89,7 +84,7 @@ export default function AboutMeModal({
                   href="https://www.linkedin.com/in/michael-freno-176001256/"
                   target="_blank"
                   rel="noreferrer"
-                  className="rounded-full shaker border-zinc-800 dark:border-zinc-300"
+                  className="shaker rounded-full border-zinc-800 dark:border-zinc-300"
                 >
                   <span className="m-auto">
                     <LinkedInIcon height={16} width={16} fill={"white"} />
