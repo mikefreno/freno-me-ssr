@@ -171,7 +171,7 @@ export default function ContactModal(props: ContactModalProps) {
                       loading
                         ? "bg-zinc-400"
                         : "bg-transparent hover:border-blue-400 hover:bg-blue-400"
-                    } rounded border w-40 text-white shadow-md border-white active:scale-90 transition-all duration-300 ease-in-out py-2`}
+                    } rounded border w-40 text-white shadow-md border-white font-light active:scale-90 transition-all duration-300 ease-in-out py-2`}
                   >
                     {loading ? (
                       <LoadingSpinner height={24} width={24} />

@@ -44,7 +44,8 @@ export default function PostSorting(props: {
       return !postsToFilter.has(post.id);
     });
     setFilteredPosts(newFilteredPosts);
-  }, [postFilters, props.posts, props.tags]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [postFilters]);
 
   if (props.posts.length > 0 && filteredPosts.length == 0) {
     return (

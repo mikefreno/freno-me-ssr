@@ -156,7 +156,7 @@ export default function HomeClient(props: {
                     <button
                       ref={aboutButtonRef}
                       onClick={aboutToggle}
-                      className="w-20 rounded border border-white py-2 text-center hover:bg-white hover:bg-opacity-20 active:bg-opacity-60 sm:w-24 md:w-28"
+                      className="w-20 rounded border border-white py-2 text-center font-light hover:bg-white hover:bg-opacity-20 active:bg-opacity-60 sm:w-24 md:w-28"
                     >
                       About
                     </button>
@@ -164,7 +164,7 @@ export default function HomeClient(props: {
 
                     <Link
                       href="/projects"
-                      className="w-20 rounded border border-white py-2 text-center text-white hover:bg-white hover:bg-opacity-20 active:bg-opacity-60 sm:w-24 md:w-28"
+                      className="w-20 rounded border border-white py-2 text-center font-light text-white hover:bg-white hover:bg-opacity-20 active:bg-opacity-60 sm:w-24 md:w-28"
                     >
                       Projects
                     </Link>
@@ -173,7 +173,7 @@ export default function HomeClient(props: {
 
                     <Link
                       href="/blog"
-                      className="w-20 rounded border border-white py-2 text-center text-white hover:bg-white hover:bg-opacity-20 active:bg-opacity-60 sm:w-24 md:w-28"
+                      className="w-20 rounded border border-white py-2 text-center font-light text-white hover:bg-white hover:bg-opacity-20 active:bg-opacity-60 sm:w-24 md:w-28"
                     >
                       Blog
                     </Link>
@@ -183,7 +183,7 @@ export default function HomeClient(props: {
                     <button
                       ref={contactButtonRef}
                       onClick={contactToggle}
-                      className="w-20 rounded border border-white py-2 text-center hover:bg-white hover:bg-opacity-20 active:bg-opacity-60 sm:w-24 md:w-28"
+                      className="w-20 rounded border border-white py-2 text-center font-light hover:bg-white hover:bg-opacity-20 active:bg-opacity-60 sm:w-24 md:w-28"
                     >
                       Contact
                     </button>
@@ -193,7 +193,7 @@ export default function HomeClient(props: {
                     <button
                       ref={aboutButtonRef}
                       onClick={aboutToggle}
-                      className="w-36 rounded border border-white py-4 text-center hover:bg-white hover:bg-opacity-20 active:bg-opacity-60"
+                      className="w-36 rounded border border-white py-4 text-center font-light hover:bg-white hover:bg-opacity-20 active:bg-opacity-60"
                     >
                       About
                     </button>
@@ -206,7 +206,7 @@ export default function HomeClient(props: {
                     </div>
                     <Link
                       href="/projects"
-                      className="w-36 rounded border border-white py-4 text-center text-white hover:bg-white hover:bg-opacity-20 active:bg-opacity-60"
+                      className="w-36 rounded border border-white py-4 text-center font-light text-white hover:bg-white hover:bg-opacity-20 active:bg-opacity-60"
                     >
                       Projects
                     </Link>
@@ -219,7 +219,7 @@ export default function HomeClient(props: {
                     </div>
                     <Link
                       href="/blog"
-                      className="w-36 rounded border border-white py-4 text-center text-white hover:bg-white hover:bg-opacity-20 active:bg-opacity-60"
+                      className="w-36 rounded border border-white py-4 text-center font-light text-white hover:bg-white hover:bg-opacity-20 active:bg-opacity-60"
                     >
                       Blog
                     </Link>
@@ -233,7 +233,7 @@ export default function HomeClient(props: {
                     <button
                       ref={contactButtonRef}
                       onClick={contactToggle}
-                      className="w-36 rounded border border-white py-4 text-center hover:bg-white hover:bg-opacity-20 active:bg-opacity-60"
+                      className="w-36 rounded border border-white py-4 text-center font-light hover:bg-white hover:bg-opacity-20 active:bg-opacity-60"
                     >
                       Contact
                     </button>

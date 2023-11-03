@@ -91,14 +91,14 @@ export default function ContactClient(props: {
   };
   return (
     <>
-      <div className="flex min-h-screen justify-center w-full">
+      <div className="flex min-h-screen w-full justify-center">
         <div className="pt-[20vh]">
           <div className="text-center text-3xl tracking-widest dark:text-white">
             Contact
           </div>
           <form onSubmit={sendEmailTrigger} className="min-w-[85vw]">
-            <div className="pt-6 md:mt-24 flex flex-col justify-evenly w-full">
-              <div className="md:flex md:flex-row justify-evenly mx-auto w-full md:w-3/4 lg:w-1/2">
+            <div className="flex w-full flex-col justify-evenly pt-6 md:mt-24">
+              <div className="mx-auto w-full justify-evenly md:flex md:w-3/4 md:flex-row lg:w-1/2">
                 <div className="input-group md:mx-4">
                   <input
                     type="text"
@@ -108,7 +108,7 @@ export default function ContactClient(props: {
                       props.user?.displayName ? props.user.displayName : ""
                     }
                     placeholder=" "
-                    className="bg-transparent underlinedInput w-full"
+                    className="underlinedInput w-full bg-transparent"
                   />
                   <span className="bar"></span>
                   <label className="underlinedInputLabel">Name</label>
@@ -120,26 +120,26 @@ export default function ContactClient(props: {
                     name="email"
                     defaultValue={props.user?.email ? props.user.email : ""}
                     placeholder=" "
-                    className="bg-transparent underlinedInput w-full"
+                    className="underlinedInput w-full bg-transparent"
                   />
                   <span className="bar"></span>
                   <label className="underlinedInputLabel">Email</label>
                 </div>
               </div>
-              <div className="pt-6 md:pt-12 mx-auto w-full md:w-3/4 lg:w-1/2">
+              <div className="mx-auto w-full pt-6 md:w-3/4 md:pt-12 lg:w-1/2">
                 <div className="textarea-group">
                   <textarea
                     required
                     name="message"
                     placeholder=" "
-                    className="bg-transparent underlinedInput w-full"
+                    className="underlinedInput w-full bg-transparent"
                     rows={4}
                   />
                   <span className="bar" />
                   <label className="underlinedInputLabel">Message</label>
                 </div>
               </div>
-              <div className="flex justify-end pt-4 w-full md:w-3/4 mx-auto lg:w-1/2">
+              <div className="mx-auto flex w-full justify-end pt-4 md:w-3/4 lg:w-1/2">
                 {countDown > 0 ? (
                   <CountdownCircleTimer
                     isPlaying
@@ -160,8 +160,8 @@ export default function ContactClient(props: {
                     className={`${
                       loading
                         ? "bg-zinc-400"
-                        : "bg-blue-400 dark:bg-blue-600 hover:bg-blue-500 dark:hover:bg-blue-700 active:scale-90"
-                    } flex w-36 justify-center rounded transition-all duration-300 ease-out py-3 text-white shadow-lg shadow-blue-300 dark:shadow-blue-700`}
+                        : "bg-blue-400 hover:bg-blue-500 active:scale-90 dark:bg-blue-600 dark:hover:bg-blue-700"
+                    } flex w-36 justify-center rounded transition-all duration-300 font-light ease-out py-3 text-white shadow-lg shadow-blue-300 dark:shadow-blue-700`}
                   >
                     {loading ? (
                       <LoadingSpinner height={24} width={24} />
@@ -184,13 +184,13 @@ export default function ContactClient(props: {
           >
             {emailSent ? "Email Sent!" : error}
           </div>
-          <ul className="icons flex justify-center pt-24 pb-6">
+          <ul className="icons flex justify-center pb-6 pt-24">
             <li>
               <Link
                 href="https://github.com/MikeFreno/"
                 target="_blank"
                 rel="noreferrer"
-                className="rounded-full shaker border-zinc-800 dark:border-zinc-300"
+                className="shaker rounded-full border-zinc-800 dark:border-zinc-300"
               >
                 <span className="m-auto p-2">
                   <GitHub height={24} width={24} fill={undefined} />
@@ -202,9 +202,9 @@ export default function ContactClient(props: {
                 href="https://www.linkedin.com/in/michael-freno-176001256/"
                 target="_blank"
                 rel="noreferrer"
-                className="rounded-full shaker border-zinc-800 dark:border-zinc-300"
+                className="shaker rounded-full border-zinc-800 dark:border-zinc-300"
               >
-                <span className="m-auto p-2 rounded-md">
+                <span className="m-auto rounded-md p-2">
                   <LinkedIn height={24} width={24} fill={undefined} />
                 </span>
               </Link>

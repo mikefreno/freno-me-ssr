@@ -198,11 +198,9 @@ export default async function DynamicProjectPost({
                   tags.map((tag, idx) => (
                     <div
                       key={idx}
-                      className="group relative m-1 h-fit w-fit max-w-[120px] rounded-xl bg-purple-600 px-2 py-1 text-sm"
+                      className="group relative m-1 h-fit w-fit rounded-xl bg-purple-600 px-2 py-1 text-sm"
                     >
-                      <div className="overflow-hidden overflow-ellipsis whitespace-nowrap text-white">
-                        {tag.value}
-                      </div>
+                      <div className="text-white">{tag.value}</div>
                     </div>
                   ))}
               </div>

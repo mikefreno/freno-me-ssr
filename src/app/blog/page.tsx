@@ -98,8 +98,8 @@ export default async function Blog() {
           </div>
           <Suspense
             fallback={
-              <div className="mx-auto pt-24">
-                <LoadingSpinner height={48} width={48} />
+              <div className="mx-auto pt-48">
+                <LoadingSpinner height={64} width={64} />
               </div>
             }
           >
