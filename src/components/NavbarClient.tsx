@@ -69,7 +69,7 @@ export default function NavbarClient(props: {
   };
 
   return (
-    <nav className="fixed z-50 flex w-screen bg-white bg-opacity-50 p-2 backdrop-blur dark:bg-opacity-5">
+    <nav className="fixed z-50 flex w-screen bg-white bg-opacity-50 p-2 backdrop-blur dark:bg-zinc-900 dark:bg-opacity-25">
       <div className={`mx-4 my-2 flex flex-1`}>
         <Link href={"/"} className="z-50 flex">
           <picture className="logoSpinner">
@@ -188,8 +188,8 @@ export default function NavbarClient(props: {
         </ul>
         <div
           className={`${
-            menuOpen ? "-mr-2 -mt-4" : ""
-          } my-auto transition-all duration-300 ease-in md:hidden`}
+            menuOpen ? "mr-32" : ""
+          } my-auto transition-all duration-500 ease-in-out md:hidden`}
         >
           <button
             onClick={menuToggle}
@@ -199,18 +199,15 @@ export default function NavbarClient(props: {
             <MenuBars />
           </button>
         </div>
-        <div className="">
-          {menuOpen ? (
-            <Menu
-              menuRef={menuRef}
-              setMenuOpen={setMenuOpen}
-              user={props.user}
-              status={props.status}
-              signOutTrigger={signOutTrigger}
-              signOutLoading={signOutLoading}
-            />
-          ) : null}
-        </div>
+        <Menu
+          menuRef={menuRef}
+          menuShowing={menuOpen}
+          setMenuOpen={setMenuOpen}
+          user={props.user}
+          status={props.status}
+          signOutTrigger={signOutTrigger}
+          signOutLoading={signOutLoading}
+        />
       </div>
     </nav>
   );

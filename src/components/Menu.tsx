@@ -1,4 +1,4 @@
-import React, { useState, type RefObject } from "react";
+import React, { type RefObject } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
@@ -8,6 +8,7 @@ import LoadingSpinner from "./LoadingSpinner";
 export default function Menu(props: {
   menuRef: RefObject<HTMLDivElement>;
   setMenuOpen: (open: boolean) => void;
+  menuShowing: boolean;
   user: {
     email?: string;
     image?: string;
@@ -23,7 +24,9 @@ export default function Menu(props: {
     <div
       id="menu"
       ref={props.menuRef}
-      className={`fade-in absolute right-0 top-0 z-[100] overflow-scroll ${
+      className={`${
+        props.menuShowing ? "right-0" : "translate-x-[125%]"
+      } fixed top-0 z-[100] shadow-left overflow-scroll ${
         pathname === "/app" ? "" : "md:hidden"
       }`}
     >
@@ -32,9 +35,9 @@ export default function Menu(props: {
           pathname.split("/")[1] == "blog"
             ? "border-yellow-400 dark:border-yellow-700"
             : "border-blue-400 dark:border-blue-700"
-        } rounded-b-3xl rounded-tl-3xl rounded-tr-sm border bg-zinc-50 shadow-inner dark:bg-zinc-900`}
+        } border-l bg-zinc-50 min-w-[12rem] dark:bg-zinc-800 h-[100dvh]`}
       >
-        <ul className="px-6 pb-4 pt-8">
+        <ul className="px-6 pb-4 pt-10">
           <li className="pt-2 text-lg">
             <Link href="/projects">
               <div
