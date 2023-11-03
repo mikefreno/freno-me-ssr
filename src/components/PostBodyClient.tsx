@@ -66,15 +66,11 @@ export default function PostBodyClient(props: {
     <>
       <div className="flex justify-center">
         <div
-          className={`ProseMirror py-8 md:py-12 ${
-            props.hasCodeBlock ? "mx-14" : "mx-4"
-          } select-text prose sm:prose md:prose-base lg:prose-xl xl:prose-2xl dark:prose-invert dark:sm:prose-invert dark:md:prose-invert dark:lg:prose-invert dark:xl:prose-invert`}
+          className={`ProseMirror py-8 md:py-12 select-text max-w-full prose sm:prose md:prose-base lg:prose-xl xl:prose-2xl dark:prose-invert dark:sm:prose-invert dark:md:prose-invert dark:lg:prose-invert dark:xl:prose-invert`}
         >
           <div
             ref={contentRef}
-            className={`${
-              props.hasCodeBlock ? "mx-32 sm:mx-24 md:mx-0" : "mx-4 md:mx-0"
-            }`}
+            className={`max-w-full`}
             dangerouslySetInnerHTML={{
               __html: props.body,
             }}
