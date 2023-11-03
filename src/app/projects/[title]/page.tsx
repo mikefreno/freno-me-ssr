@@ -183,52 +183,58 @@ export default async function DynamicProjectPost({
               </Link>
             </div>
           ) : null}
-          <div className="my-auto flex justify-center py-4 md:justify-end md:pr-12">
-            <a href="#comments" className="mx-2">
-              <div className="tooltip flex flex-col">
-                <div className="mx-auto">
-                  <CommentIcon strokeWidth={1} height={32} width={32} />
-                </div>
-                <div
-                  className="my-auto pl-2 pt-0.5
-              text-sm text-black dark:text-white"
-                >
-                  {comments.length}{" "}
-                  {comments.length == 1 ? "Comment" : "Comments"}
-                </div>
-                <div className="tooltip-text -ml-[4.5rem]">
-                  <div className="w-fit px-2">Go to Comments</div>
+          <div className="top-4 flex w-full flex-col justify-center md:absolute md:flex-row md:justify-between">
+            <div className="">
+              <div className="flex justify-center italic md:justify-start md:pl-24">
+                <div>
+                  Written {`${new Date(project.date).toDateString()}`}
+                  <br />
+                  By Michael Freno
                 </div>
               </div>
-            </a>
-            <div className="mx-2">
-              <SessionDependantLike
-                currentUserID={userID}
-                privilegeLevel={privilegeLevel}
-                likes={likes}
-                type={"project"}
-                projectID={project.id}
-              />
+              <div className="flex max-w-[420px] flex-wrap justify-center italic md:justify-start md:pl-24">
+                {tags &&
+                  tags.length > 0 &&
+                  tags.map((tag, idx) => (
+                    <div
+                      key={idx}
+                      className="group relative m-1 h-fit w-fit max-w-[120px] rounded-xl bg-purple-600 px-2 py-1 text-sm"
+                    >
+                      <div className="overflow-hidden overflow-ellipsis whitespace-nowrap text-white">
+                        {tag.value}
+                      </div>
+                    </div>
+                  ))}
+              </div>
             </div>
-          </div>
-          <div className="absolute flex justify-center italic md:justify-start md:pl-24">
-            Written {`${new Date(project.date).toDateString()}`}
-            <br />
-            By Michael Freno
-          </div>
-          <div className="absolute flex max-w-[420px] flex-wrap justify-center italic md:justify-start md:pl-24">
-            {tags &&
-              tags.length > 0 &&
-              tags.map((tag, idx) => (
-                <div
-                  key={idx}
-                  className="group relative m-1 h-fit w-fit max-w-[120px] rounded-xl bg-purple-600 px-2 py-1 text-sm"
-                >
-                  <div className="overflow-hidden overflow-ellipsis whitespace-nowrap text-white">
-                    {tag.value}
+            <div className="flex flex-row justify-center pt-4 md:pr-8 md:pt-0">
+              <a href="#comments" className="mx-2">
+                <div className="tooltip flex flex-col">
+                  <div className="mx-auto">
+                    <CommentIcon strokeWidth={1} height={32} width={32} />
+                  </div>
+                  <div
+                    className="my-auto pl-2 pt-0.5
+              text-sm text-black dark:text-white"
+                  >
+                    {comments.length}{" "}
+                    {comments.length == 1 ? "Comment" : "Comments"}
+                  </div>
+                  <div className="tooltip-text -ml-[4.5rem]">
+                    <div className="w-fit px-2">Go to Comments</div>
                   </div>
                 </div>
-              ))}
+              </a>
+              <div className="mx-2">
+                <SessionDependantLike
+                  currentUserID={userID}
+                  privilegeLevel={privilegeLevel}
+                  likes={likes}
+                  type={"project"}
+                  projectID={project.id}
+                />
+              </div>
+            </div>
           </div>
           <PostBodyClient
             body={sanitizedBody}
