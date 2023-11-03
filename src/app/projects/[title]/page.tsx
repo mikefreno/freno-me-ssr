@@ -192,7 +192,7 @@ export default async function DynamicProjectPost({
                   By Michael Freno
                 </div>
               </div>
-              <div className="flex max-w-[420px] flex-wrap justify-center italic md:justify-start md:pl-24">
+              <div className="flex max-w-[420px] flex-wrap justify-center italic md:justify-start md:pl-20">
                 {tags &&
                   tags.length > 0 &&
                   tags.map((tag, idx) => (

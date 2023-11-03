@@ -534,8 +534,10 @@ input[type="checkbox"]:checked::before {
 }
 .iframe-wrapper {
   position: relative;
-  height: 500px;
+  min-height: 300px;
   width: 100%;
+  min-width: 350px;
+  max-width: 100% !important;
   background-color: black;
 }
 
