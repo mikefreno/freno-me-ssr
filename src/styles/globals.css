@@ -393,7 +393,7 @@ input[type="checkbox"]::before {
   content: "";
   width: 0.65em;
   height: 0.65em;
-  clip-path: circle(30%);
+  clip-path: circle(25%);
   transform: scale(0);
   color: #3b82f6;
   transform-origin: center;
