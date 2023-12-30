@@ -2,6 +2,7 @@ import "@/styles/globals.css";
 import "@/styles/content.scss";
 import { Source_Code_Pro } from "next/font/google";
 import NextTopLoader from "nextjs-toploader";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 const SCP = Source_Code_Pro({ subsets: ["latin"] });
 
@@ -24,6 +25,7 @@ export default function RootLayout({
       >
         <NextTopLoader showSpinner={false} color="#3b82f6" />
         {children}
+        <SpeedInsights />
       </body>
     </html>
   );
