@@ -9,11 +9,8 @@ export default function DownloadPage() {
     fetch(`/api/downloads/public/${assetName}`)
       .then((response) => response.json())
       .then((data) => {
-        console.log(data.dowloadURL);
-        const url = data.dowloadURL;
-
-        // Open download URL in a new tab
-        window.open(url);
+        const url = data.downloadURL;
+        window.location.href = url;
       })
       .catch((error) => console.error(error));
   };
@@ -41,7 +38,7 @@ export default function DownloadPage() {
             <div className="rule-around">Or</div>
             <button
               onClick={() => download("shapes-with-abigail")}
-              className="mt-2 rounded-md bg-blue-400 px-4 py-2 text-white transition-all duration-200 ease-out active:scale-95"
+              className="mt-2 rounded-md bg-blue-500 px-4 py-2 text-white shadow-lg shadow-blue-800 transition-all duration-200 ease-out hover:opacity-90 active:scale-95 active:opacity-90"
             >
               Download APK
             </button>
@@ -75,19 +72,19 @@ export default function DownloadPage() {
             <div className="rule-around">Or</div>
             <button
               onClick={() => download("magic-delve")}
-              className="mt-2 rounded-md bg-blue-400 px-4 py-2 text-white transition-all duration-200 ease-out active:scale-95"
+              className="mt-2 rounded-md bg-blue-500 px-4 py-2 text-white shadow-lg shadow-blue-800 transition-all duration-200 ease-out hover:opacity-90 active:scale-95 active:opacity-90"
             >
               Download APK
             </button>
           </div>
           <div className="flex flex-col">
             <div className="text-center text-lg">iOS</div>
-            <Link
+            <button
               className="my-auto transition-all duration-200 ease-out active:scale-95"
-              href="https://apps.apple.com/us/app/shapes-with-abigail/id6474561117"
+              //href="https://apps.apple.com/us/app/shapes-with-abigail/id6474561117"
             >
               <DownloadOnAppStore size={50} />
-            </Link>
+            </button>
           </div>
         </div>
       </div>

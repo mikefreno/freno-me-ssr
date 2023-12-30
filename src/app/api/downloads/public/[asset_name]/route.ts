@@ -5,6 +5,7 @@ import { env } from "@/env.mjs";
 
 const assets: Record<string, string> = {
   "shapes-with-abigail": "shapes-with-abigail.apk",
+  "magic-delve": "magic-delve.apk",
 };
 
 const bucket = "frenomedownloads";
@@ -32,7 +33,7 @@ export async function GET(
 
     const command = new GetObjectCommand(params);
     const signedUrl = await getSignedUrl(client, command, { expiresIn: 120 });
-    return NextResponse.redirect(signedUrl);
+    return NextResponse.json({ downloadURL: signedUrl });
   } catch (e) {
     console.log(e);
     return NextResponse.json({ error: e }, { status: 400 });
