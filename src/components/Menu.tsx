@@ -89,7 +89,23 @@ export default function Menu(props: {
               </div>
             </Link>
           </li>
-
+          <li className="pt-2 text-lg">
+            <Link href="/downloads">
+              <div
+                className={`${
+                  pathname == "/downloads"
+                    ? pathname.split("/")[1] == "blog"
+                      ? "bg-yellow-400 dark:bg-yellow-700"
+                      : "bg-blue-400 dark:bg-blue-700"
+                    : pathname.split("/")[1] == "blog"
+                    ? "hover:bg-yellow-400 hover:dark:bg-yellow-700"
+                    : "hover:bg-blue-400 hover:dark:bg-blue-700"
+                } rounded-lg p-2 px-4 text-center text-lg text-zinc-800  dark:text-zinc-100 `}
+              >
+                Downloads
+              </div>
+            </Link>
+          </li>
           {props.status == 202 ? (
             <>
               <li className="pt-2 text-lg">

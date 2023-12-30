@@ -110,7 +110,6 @@ export default function NavbarClient(props: {
               Blog
             </Link>
           </li>
-
           <li className="my-auto pl-4">
             <Link
               href="/contact"
@@ -121,6 +120,18 @@ export default function NavbarClient(props: {
               } border-zinc-900 text-zinc-900 underline-offset-4 dark:border-zinc-200 dark:text-zinc-200`}
             >
               Contact
+            </Link>
+          </li>
+          <li className="my-auto pl-4">
+            <Link
+              href="/downloads"
+              className={`${
+                pathname.match("/downloads")
+                  ? "under underline"
+                  : "hover-underline-animation"
+              } border-zinc-900 text-zinc-900 underline-offset-4 dark:border-zinc-200 dark:text-zinc-200`}
+            >
+              Downloads
             </Link>
           </li>
           {props.status == 202 ? (

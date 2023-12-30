@@ -15,6 +15,12 @@ export default function DownloadPage() {
       .catch((error) => console.error(error));
   };
 
+  const joinBetaPrompt = () => {
+    window.alert(
+      "This isn't released yet, if you would like to help test, please go the contact page and include the game and platform you would like to help test in the message. Thanks!",
+    );
+  };
+
   return (
     <div className="pt-[15vh]">
       <div className="text-center text-3xl tracking-widest dark:text-white">
@@ -23,11 +29,16 @@ export default function DownloadPage() {
       <div className="pt-12">
         <div className="tracking wide text-center text-xl dark:text-white">
           Shapes with Abigail!
+          <br />
+          (apk and iOS)
         </div>
-        <div className="mx-[25vw] flex justify-evenly">
+        <div className="flex justify-evenly md:mx-[25vw]">
           <div className="flex flex-col">
             <div className="text-center text-lg">Android</div>
-            <button className="transition-all duration-200 ease-out active:scale-95">
+            <button
+              onClick={joinBetaPrompt}
+              className="transition-all duration-200 ease-out active:scale-95"
+            >
               <Image
                 src={"/google-play-badge.png"}
                 alt={"google-play"}
@@ -57,11 +68,16 @@ export default function DownloadPage() {
       <div className="pt-12">
         <div className="tracking wide text-center text-xl dark:text-white">
           Magic Delve (alpha)
+          <br />
+          (apk only)
         </div>
-        <div className="mx-[25vw] flex justify-evenly">
+        <div className="flex justify-evenly md:mx-[25vw]">
           <div className="flex flex-col">
             <div className="text-center text-lg">Android</div>
-            <button className="transition-all duration-200 ease-out active:scale-95">
+            <button
+              onClick={joinBetaPrompt}
+              className="transition-all duration-200 ease-out active:scale-95"
+            >
               <Image
                 src={"/google-play-badge.png"}
                 alt={"google-play"}
@@ -80,6 +96,7 @@ export default function DownloadPage() {
           <div className="flex flex-col">
             <div className="text-center text-lg">iOS</div>
             <button
+              onClick={joinBetaPrompt}
               className="my-auto transition-all duration-200 ease-out active:scale-95"
               //href="https://apps.apple.com/us/app/shapes-with-abigail/id6474561117"
             >
