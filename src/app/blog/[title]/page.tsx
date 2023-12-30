@@ -166,16 +166,6 @@ export default async function DynamicBlogPost({
           </div>
         </div>
         <div className="relative z-40 bg-zinc-100 pb-24 dark:bg-zinc-800">
-          {privilegeLevel == "admin" ? (
-            <div className="flex justify-center pt-4 md:-mb-8">
-              <Link
-                className="rounded border border-blue-500 bg-blue-400 px-4 py-2 text-white shadow-md transition-all duration-300  ease-in-out hover:bg-blue-500 active:scale-90 dark:border-blue-700 dark:bg-blue-700 dark:hover:bg-blue-800"
-                href={`${env.NEXT_PUBLIC_DOMAIN}/blog/edit/${blog.id}`}
-              >
-                Edit
-              </Link>
-            </div>
-          ) : null}
           <div className="top-4 flex w-full flex-col justify-center md:absolute md:flex-row md:justify-between">
             <div className="">
               <div className="flex justify-center italic md:justify-start md:pl-24">
@@ -232,6 +222,16 @@ export default async function DynamicBlogPost({
             hasCodeBlock={containsCodeBlock}
             banner_photo={blog.banner_photo}
           />
+          {privilegeLevel == "admin" ? (
+            <div className="flex justify-center">
+              <Link
+                className="z-100 h-fit rounded border border-blue-500 bg-blue-400 px-4 py-2 text-white shadow-md transition-all  duration-300 ease-in-out hover:bg-blue-500 active:scale-90 dark:border-blue-700 dark:bg-blue-700 dark:hover:bg-blue-800"
+                href={`${env.NEXT_PUBLIC_DOMAIN}/blog/edit/${blog.id}`}
+              >
+                Edit
+              </Link>
+            </div>
+          ) : null}
           <div className="mx-4 pb-12 md:mx-8 lg:mx-12">
             <Suspense
               fallback={
