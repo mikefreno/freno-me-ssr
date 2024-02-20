@@ -6,6 +6,7 @@ import { env } from "@/env.mjs";
 const assets: Record<string, string> = {
   "shapes-with-abigail": "shapes-with-abigail.apk",
   "magic-delve": "magic-delve.apk",
+  cork: "Cork.zip",
 };
 
 const bucket = "frenomedownloads";

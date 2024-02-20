@@ -27,8 +27,9 @@ export async function GET(
         }
       }
       const conn = ConnectionFactory();
+
       const projectQuery =
-        "SELECT * FROM Post WHERE title = ? AND category = ? AND published = ?";
+        "SELECT p.*, c.*, l.*,t.* FROM Post p JOIN Comment c ON p.id = c.post_id JOIN PostLike l ON p.id = l.post_idJOIN Tag t ON p.id = t.post_id WHERE p.title = ? AND p.category = ? AND p.published = ?;";
       const projectParams = [
         context.params.title,
         context.params.category,

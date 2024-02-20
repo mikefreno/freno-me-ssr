@@ -1,9 +1,4 @@
 module.exports = {
-  logging: {
-    fetches: {
-      fullUrl: true,
-    },
-  },
   images: {
     remotePatterns: [
       {

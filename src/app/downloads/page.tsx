@@ -27,7 +27,25 @@ export default function DownloadPage() {
         Downloads
       </div>
       <div className="pt-12">
-        <div className="tracking wide text-center text-xl dark:text-white">
+        <div className="text-center text-xl tracking-wide dark:text-white">
+          Cork
+          <br />
+          (macOS only)
+        </div>
+        <div className="flex justify-center">
+          <button
+            onClick={() => download("cork")}
+            className="my-2 rounded-md bg-blue-500 px-4 py-2 text-white shadow-lg shadow-blue-800 transition-all duration-200 ease-out hover:opacity-90 active:scale-95 active:opacity-90"
+          >
+            Download app
+          </button>
+        </div>
+        <div className="text-center text-sm">
+          Just unzip and drag into &apos;Applications&apos; folder
+        </div>
+      </div>
+      <div className="pt-12">
+        <div className="text-center text-xl tracking-wide dark:text-white">
           Shapes with Abigail!
           <br />
           (apk and iOS)
@@ -66,7 +84,7 @@ export default function DownloadPage() {
         </div>
       </div>
       <div className="pt-12">
-        <div className="tracking wide text-center text-xl dark:text-white">
+        <div className="text-center text-xl tracking-wide dark:text-white">
           Magic Delve (alpha)
           <br />
           (apk only)
