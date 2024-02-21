@@ -30,7 +30,7 @@ export default function DownloadPage() {
         <div className="text-center text-xl tracking-wide dark:text-white">
           Cork
           <br />
-          (macOS only)
+          (macOS 13 Ventura or later)
         </div>
         <div className="flex justify-center">
           <button
