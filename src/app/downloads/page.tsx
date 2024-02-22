@@ -22,7 +22,7 @@ export default function DownloadPage() {
   };
 
   return (
-    <div className="pt-[15vh]">
+    <div className="pb-12 pt-[15vh]">
       <div className="text-center text-3xl tracking-widest dark:text-white">
         Downloads
       </div>
