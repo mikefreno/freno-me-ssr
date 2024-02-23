@@ -1,6 +1,8 @@
 "use client";
 
 import DownloadOnAppStore from "@/icons/DownloadOnAppStore";
+import GitHub from "@/icons/GitHub";
+import LinkedIn from "@/icons/LinkedIn";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -122,6 +124,32 @@ export default function DownloadPage() {
             </button>
           </div>
         </div>
+        <ul className="icons flex justify-center pb-6 pt-24">
+          <li>
+            <Link
+              href="https://github.com/MikeFreno/"
+              target="_blank"
+              rel="noreferrer"
+              className="shaker rounded-full border-zinc-800 dark:border-zinc-300"
+            >
+              <span className="m-auto p-2">
+                <GitHub height={24} width={24} fill={undefined} />
+              </span>
+            </Link>
+          </li>
+          <li>
+            <Link
+              href="https://www.linkedin.com/in/michael-freno-176001256/"
+              target="_blank"
+              rel="noreferrer"
+              className="shaker rounded-full border-zinc-800 dark:border-zinc-300"
+            >
+              <span className="m-auto rounded-md p-2">
+                <LinkedIn height={24} width={24} fill={undefined} />
+              </span>
+            </Link>
+          </li>
+        </ul>
       </div>
     </div>
   );
