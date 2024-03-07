@@ -18,7 +18,10 @@ export async function passwordReset(
         const passwordHash = await hashPassword(newPassword);
         const updateQuery = `UPDATE User SET password_hash = ? WHERE id = ?`;
         const updateParams = [passwordHash, decoded.id];
-        const res = await conn.execute(updateQuery, updateParams);
+        const res = await conn.execute({
+          sql: updateQuery,
+          args: updateParams,
+        });
         console.log(res);
         cookies().set({
           name: "emailToken",

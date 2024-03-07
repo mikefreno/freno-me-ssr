@@ -17,7 +17,7 @@ export async function requestPasswordReset(email: string) {
     const conn = ConnectionFactory();
     const query = `SELECT * FROM User WHERE email = ?`;
     const params = [email];
-    const lookupRes = await conn.execute(query, params);
+    const lookupRes = await conn.execute({ sql: query, args: params });
     if (lookupRes.rows[0]) {
       const apiKey = env.SENDINBLUE_KEY as string;
       const apiUrl = "https://api.sendinblue.com/v3/smtp/email";
