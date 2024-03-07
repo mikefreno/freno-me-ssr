@@ -58,7 +58,7 @@ export async function POST(
           published,
           author_id,
         ];
-        const results = await conn.execute(query, params);
+        const results = await conn.execute({ sql: query, args: params });
         if (tags) {
           let query = "INSERT INTO Tag (value, post_id) VALUES ";
           let values = tags.map((tag) => `("${tag}", ${results.insertId})`);
@@ -80,10 +80,10 @@ export async function PATCH(input: NextRequest) {
 
     const conn = ConnectionFactory();
     const { query, params } = createUpdateQuery(inputData);
-    const results = await conn.execute(query, params);
+    const results = await conn.execute({ sql: query, args: params });
     const { tags, id } = inputData;
     const deleteTagsQuery = `DELETE FROM Tag WHERE post_id = ?`;
-    await conn.execute(deleteTagsQuery, [id]);
+    await conn.execute({ args: deleteTagsQuery, args: [id] });
     if (tags) {
       let query = "INSERT INTO Tag (value, post_id) VALUES ";
       let values = tags.map((tag) => `("${tag}", ${id})`);

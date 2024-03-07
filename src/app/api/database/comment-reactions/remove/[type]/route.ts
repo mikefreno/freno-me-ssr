@@ -15,11 +15,11 @@ export async function POST(
     WHERE type = ? AND comment_id = ? AND user_id = ?
     `;
   const params = [context.params.type, comment_id, user_id];
-  await conn.execute(query, params);
+  await conn.execute({ sql: query, args: params });
 
   const followUpQuery = `SELECT * FROM CommentReaction WHERE comment_id = ?`;
   const followUpParams = [comment_id];
-  const res = await conn.execute(followUpQuery, followUpParams);
+  const res = await conn.execute({ sql: followUpQuery, args: followUpParams });
   const data = (res.rows as CommentReaction[]).filter(
     (commentReaction) => commentReaction.comment_id == comment_id,
   );

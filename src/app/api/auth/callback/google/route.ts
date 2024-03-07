@@ -46,7 +46,7 @@ export async function GET(request: NextRequest) {
 
     const query = `SELECT * FROM User WHERE provider = ? AND email = ?`;
     const params = ["google", email];
-    const res = await conn.execute(query, params);
+    const res = await conn.execute({ sql: query, args: params });
     if (res.rows[0]) {
       const token = jwt.sign(
         { id: (res.rows[0] as User).id },
@@ -72,7 +72,10 @@ export async function GET(request: NextRequest) {
         "google",
         image,
       ];
-      const insertRes = await conn.execute(insertQuery, insertParams);
+      await conn.execute({
+        sql: insertQuery,
+        args: insertParams,
+      });
       const token = jwt.sign({ id: userId }, env.JWT_SECRET_KEY, {
         expiresIn: 60 * 60 * 24 * 14, // expires in 14 days
       });

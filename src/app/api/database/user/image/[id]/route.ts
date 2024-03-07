@@ -10,7 +10,7 @@ export async function GET(
   const conn = ConnectionFactory();
   const query = "SELECT * FROM User WHERE id = ?";
   const params = [context.params.id];
-  const results = await conn.execute(query, params);
+  const results = await conn.execute({ sql: query, args: params });
   return NextResponse.json({ user: results.rows[0] }, { status: 200 });
 }
 export async function POST(
@@ -24,7 +24,7 @@ export async function POST(
     const query = `UPDATE User SET image = ? WHERE id = ?`;
     const fullURL = env.NEXT_PUBLIC_AWS_BUCKET_STRING + imageURL;
     const params = [imageURL ? fullURL : null, context.params.id];
-    await conn.execute(query, params);
+    await conn.execute({ sql: query, args: params });
     return NextResponse.json({ res: "success" }, { status: 200 });
   } catch (err) {
     return NextResponse.json({ res: err }, { status: 500 });

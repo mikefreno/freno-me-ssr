@@ -40,7 +40,7 @@ export default async function DynamicProjectPost({
   }
   const conn = ConnectionFactory();
   const project = (
-    await conn.execute(query, [decodeURIComponent(params.title)])
+    await conn.execute({ sql: query, args: [decodeURIComponent(params.title)] })
   ).rows[0] as Post;
 
   let containsCodeBlock = false;
@@ -61,7 +61,7 @@ export default async function DynamicProjectPost({
   if (project) {
     containsCodeBlock = hasCodeBlock(project.body);
     const commentQuery = "SELECT * FROM Comment WHERE post_id = ?";
-    comments = (await conn.execute(commentQuery, [project.id]))
+    comments = (await conn.execute({ sql: commentQuery, args: [project.id] }))
       .rows as Comment[];
 
     comments.forEach((comment) => {
@@ -75,7 +75,7 @@ export default async function DynamicProjectPost({
     let promises = Array.from(commenterToCommentIDMap.keys()).map(
       async (key) => {
         const value = commenterToCommentIDMap.get(key) as number[];
-        const res = await conn.execute(commenterQuery, [key]);
+        const res = await conn.execute({ sql: commenterQuery, args: [key] });
         const user = res.rows[0] as {
           email?: string;
           image?: string;
@@ -91,23 +91,27 @@ export default async function DynamicProjectPost({
       (comment) => comment.parent_comment_id == null,
     );
     const projectLikesQuery = "SELECT * FROM PostLike WHERE post_id = ?";
-    likes = (await conn.execute(projectLikesQuery, [project.id]))
+    likes = (await conn.execute({ sql: projectLikesQuery, args: [project.id] }))
       .rows as PostLike[];
     for (const comment of comments) {
       const reactionQuery =
         "SELECT * FROM CommentReaction WHERE comment_id = ?";
       const reactionParam = [comment.id];
-      const res = await conn.execute(reactionQuery, reactionParam);
+      const res = await conn.execute({
+        sql: reactionQuery,
+        args: reactionParam,
+      });
       reactionMap.set(comment.id, res.rows as CommentReaction[]);
     }
     const tagQuery = "SELECT * FROM Tag WHERE post_id = ?";
-    const res = await conn.execute(tagQuery, [project.id]);
+    const res = await conn.execute({ sql: tagQuery, args: [project.id] });
     tags = res.rows as Tag[];
   } else {
     const query = "SELECT id FROM Project WHERE title = ?";
-    let exist_res = await conn.execute(query, [
-      decodeURIComponent(params.title),
-    ]);
+    let exist_res = await conn.execute({
+      sql: query,
+      args: [decodeURIComponent(params.title)],
+    });
     if (exist_res.rows[0]) {
       exists = true;
     }
@@ -160,7 +164,7 @@ export default async function DynamicProjectPost({
               />
             </div>
             <div
-              className={`text-shadow fixed top-36 sm:top-44 md:top-[20vh] w-full brightness-150 z-10 select-text text-center tracking-widest text-white`}
+              className={`text-shadow fixed top-36 z-10 w-full select-text text-center tracking-widest text-white brightness-150 sm:top-44 md:top-[20vh]`}
               style={{ pointerEvents: "none" }}
             >
               <div className="z-10 text-3xl font-light tracking-widest">

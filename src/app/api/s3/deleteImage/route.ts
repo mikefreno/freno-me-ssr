@@ -30,6 +30,6 @@ export async function POST(input: NextRequest) {
   const conn = ConnectionFactory();
   const query = `UPDATE ${type} SET attachments = ? WHERE id = ?`;
   const dbparams = [newAttachmentString, id];
-  await conn.execute(query, dbparams);
+  await conn.execute({ sql: query, args: dbparams });
   return NextResponse.json(res);
 }

@@ -67,14 +67,28 @@ export async function getUserID(): Promise<string | null> {
 }
 
 import { connect } from "@planetscale/database";
+import { createClient } from "@libsql/client/web";
 import { env } from "@/env.mjs";
 
+// planetscale - migrated away
+//export function ConnectionFactory() {
+//const config = {
+//host: env.DATABASE_HOST,
+//username: env.DATABASE_USERNAME,
+//password: env.DATABASE_PASSWORD,
+//};
+
+//const conn = connect(config);
+//return conn;
+//}
+
+// Turso
 export function ConnectionFactory() {
   const config = {
-    host: env.DATABASE_HOST,
-    username: env.DATABASE_USERNAME,
-    password: env.DATABASE_PASSWORD,
+    url: env.TURSO_DB_URL,
+    authToken: env.TURSO_DB_TOKEN,
   };
-  const conn = connect(config);
+
+  const conn = createClient(config);
   return conn;
 }

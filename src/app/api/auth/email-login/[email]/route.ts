@@ -21,7 +21,7 @@ export async function GET(
         const conn = ConnectionFactory();
         const query = `SELECT * FROM User WHERE email = ?`;
         const params = [decoded.email];
-        const res = await conn.execute(query, params);
+        const res = await conn.execute({ sql: query, args: params });
         const token = jwt.sign(
           { id: (res.rows[0] as User).id },
           env.JWT_SECRET_KEY,

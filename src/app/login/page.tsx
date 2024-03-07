@@ -287,7 +287,7 @@ export default function LoginPage() {
                 <div
                   className={`${
                     showPasswordLengthWarning ? "" : "select-none opacity-0"
-                  } transition-opacity text-center text-red-500 duration-200 ease-in-out`}
+                  } text-center text-red-500 transition-opacity duration-200 ease-in-out`}
                 >
                   Password too short! Min Length: 8
                 </div>
@@ -343,7 +343,7 @@ export default function LoginPage() {
                     passwordConfRef.current!.value.length >= 6
                       ? ""
                       : "select-none opacity-0"
-                  } transition-opacity text-center text-red-500 duration-200 ease-in-out`}
+                  } text-center text-red-500 transition-opacity duration-200 ease-in-out`}
                 >
                   Passwords do not match!
                 </div>
@@ -362,7 +362,7 @@ export default function LoginPage() {
                   : showPasswordSuccess
                   ? "text-green-500"
                   : "select-none opacity-0"
-              }  italic transition-opacity flex justify-center duration-300 ease-in-out min-h-[16px]`}
+              }  flex min-h-[16px] justify-center italic transition-opacity duration-300 ease-in-out`}
             >
               {showPasswordError
                 ? "Credentials did not match any record"
@@ -392,7 +392,7 @@ export default function LoginPage() {
                     loading
                       ? "bg-zinc-400"
                       : "bg-blue-400 hover:bg-blue-500 active:scale-90 dark:bg-blue-600 dark:hover:bg-blue-700"
-                  } flex w-36 justify-center rounded transition-all duration-300 ease-out py-3 text-white shadow-lg shadow-blue-300 dark:shadow-blue-700`}
+                  } flex w-36 justify-center rounded py-3 text-white shadow-lg shadow-blue-300 transition-all duration-300 ease-out dark:shadow-blue-700`}
                 >
                   {register ? "Sign Up" : usePassword ? "Sign In" : "Get Link"}
                 </button>
@@ -430,7 +430,7 @@ export default function LoginPage() {
           <div
             className={`${
               emailSent ? "" : "user-select opacity-0"
-            } text-green-400 text-center italic transition-opacity flex justify-center duration-300 ease-in-out min-h-[16px]`}
+            } flex min-h-[16px] justify-center text-center italic text-green-400 transition-opacity duration-300 ease-in-out`}
           >
             {emailSent ? "Email Sent!" : ""}
           </div>

@@ -18,9 +18,9 @@ export async function GET(
       const conn = ConnectionFactory();
       const query = `SELECT * FROM Post WHERE id = ?`;
       const params = [parseInt(context.params.id)];
-      const results = await conn.execute(query, params);
+      const results = await conn.execute({ sql: query, args: params });
       const tagQuery = `SELECT * FROM Tag WHERE post_id = ?`;
-      const tagRes = await conn.execute(tagQuery, params);
+      const tagRes = await conn.execute({ sql: tagQuery, args: params });
       if (results.rows[0]) {
         return NextResponse.json(
           {

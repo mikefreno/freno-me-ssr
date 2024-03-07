@@ -9,7 +9,10 @@ export async function GET(
   const conn = ConnectionFactory();
   const commentQuery = "SELECT * FROM CommentReaction WHERE comment_id = ?";
   const commentParams = [commentID];
-  const commentResults = await conn.execute(commentQuery, commentParams);
+  const commentResults = await conn.execute({
+    sql: commentQuery,
+    args: commentParams,
+  });
   return NextResponse.json(
     { commentReactions: commentResults.rows },
     { status: 202 },

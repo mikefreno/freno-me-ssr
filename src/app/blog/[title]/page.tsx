@@ -38,8 +38,9 @@ export default async function DynamicBlogPost({
     query += ` AND published = TRUE`;
   }
   const conn = ConnectionFactory();
-  const blog = (await conn.execute(query, [decodeURIComponent(params.title)]))
-    .rows[0] as Post;
+  const blog = (
+    await conn.execute({ sql: query, args: [decodeURIComponent(params.title)] })
+  ).rows[0] as Post;
   let containsCodeBlock = false;
 
   let comments: Comment[] = [];
@@ -58,7 +59,8 @@ export default async function DynamicBlogPost({
   if (blog) {
     containsCodeBlock = hasCodeBlock(blog.body);
     const commentQuery = "SELECT * FROM Comment WHERE post_id = ?";
-    comments = (await conn.execute(commentQuery, [blog.id])).rows as Comment[];
+    comments = (await conn.execute({ sql: commentQuery, args: [blog.id] }))
+      .rows as Comment[];
 
     comments.forEach((comment) => {
       const prev = commenterToCommentIDMap.get(comment.commenter_id) || [];
@@ -71,7 +73,7 @@ export default async function DynamicBlogPost({
     let promises = Array.from(commenterToCommentIDMap.keys()).map(
       async (key) => {
         const value = commenterToCommentIDMap.get(key) as number[];
-        const res = await conn.execute(commenterQuery, [key]);
+        const res = await conn.execute({ sql: commenterQuery, args: [key] });
         const user = res.rows[0] as {
           email?: string;
           image?: string;
@@ -87,22 +89,27 @@ export default async function DynamicBlogPost({
       (comment) => comment.parent_comment_id == null,
     );
     const blogLikesQuery = "SELECT * FROM PostLike WHERE post_id = ?";
-    likes = (await conn.execute(blogLikesQuery, [blog.id])).rows as PostLike[];
+    likes = (await conn.execute({ sql: blogLikesQuery, args: [blog.id] }))
+      .rows as PostLike[];
     for (const comment of comments) {
       const reactionQuery =
         "SELECT * FROM CommentReaction WHERE comment_id = ?";
       const reactionParam = [comment.id];
-      const res = await conn.execute(reactionQuery, reactionParam);
+      const res = await conn.execute({
+        sql: reactionQuery,
+        args: reactionParam,
+      });
       reactionMap.set(comment.id, res.rows as CommentReaction[]);
     }
     const tagQuery = "SELECT * FROM Tag WHERE post_id = ?";
-    const res = await conn.execute(tagQuery, [blog.id]);
+    const res = await conn.execute({ sql: tagQuery, args: [blog.id] });
     tags = res.rows as Tag[];
   } else {
     const query = "SELECT id FROM Post WHERE title = ?";
-    let exist_res = await conn.execute(query, [
-      decodeURIComponent(params.title),
-    ]);
+    let exist_res = await conn.execute({
+      sql: query,
+      args: [decodeURIComponent(params.title)],
+    });
     if (exist_res.rows[0]) {
       exists = true;
     }
@@ -153,7 +160,7 @@ export default async function DynamicBlogPost({
               />
             </div>
             <div
-              className={`text-shadow fixed top-36 sm:top-44 md:top-[20vh] w-full brightness-150 z-10 select-text text-center tracking-widest text-white`}
+              className={`text-shadow fixed top-36 z-10 w-full select-text text-center tracking-widest text-white brightness-150 sm:top-44 md:top-[20vh]`}
               style={{ pointerEvents: "none" }}
             >
               <div className="z-10 text-3xl font-light tracking-widest">

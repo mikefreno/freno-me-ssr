@@ -11,7 +11,7 @@ export async function POST(input: NextRequest) {
   const query = `UPDATE User SET email = ? WHERE id = ? AND email = ?`;
   const params = [newEmail, id, oldEmail];
   try {
-    const res = await conn.execute(query, params);
+    const res = await conn.execute({ sql: query, args: params });
     return NextResponse.json({ res: res }, { status: 202 });
   } catch (e) {
     console.log(e);

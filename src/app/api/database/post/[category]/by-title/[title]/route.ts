@@ -35,18 +35,30 @@ export async function GET(
         context.params.category,
         true,
       ];
-      const projectResults = await conn.execute(projectQuery, projectParams);
+      const projectResults = await conn.execute({
+        sql: projectQuery,
+        args: projectParams,
+      });
       if (projectResults.rows[0]) {
         const post_id = (projectResults.rows[0] as Post).id;
 
         const commentQuery = "SELECT * FROM Comment WHERE post_id = ?";
-        const commentResults = await conn.execute(commentQuery, [post_id]);
+        const commentResults = await conn.execute({
+          sql: commentQuery,
+          args: [post_id],
+        });
 
         const likeQuery = "SELECT * FROM PostLike WHERE post_id = ?";
-        const likeQueryResults = await conn.execute(likeQuery, [post_id]);
+        const likeQueryResults = await conn.execute({
+          sql: likeQuery,
+          args: [post_id],
+        });
 
         const tagsQuery = "SELECT * FROM Tag WHERE post_id = ?";
-        const tagResults = await conn.execute(tagsQuery, [post_id]);
+        const tagResults = await conn.execute({
+          sql: tagsQuery,
+          args: [post_id],
+        });
 
         return NextResponse.json(
           {

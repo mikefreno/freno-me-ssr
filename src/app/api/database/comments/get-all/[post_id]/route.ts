@@ -10,6 +10,6 @@ export async function GET(
   const conn = ConnectionFactory();
   const query = `SELECT * FROM Comment WHERE post_id = ?`;
   const params = [context.params.post_id];
-  const res = await conn.execute(query, params);
+  const res = await conn.execute({ sql: query, args: params });
   return NextResponse.json({ comments: res.rows }, { status: 302 });
 }

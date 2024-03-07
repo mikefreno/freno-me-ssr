@@ -24,10 +24,13 @@ export async function emailRegistration(
   `;
       const params = [userId, email, passwordHash];
       try {
-        await conn.execute(userCreationQuery, params);
+        await conn.execute({ sql: userCreationQuery, args: params });
         const followUpQuery = `SELECT * FROM User WHERE email=?`;
         const followUpParams = [email];
-        const followUpRes = await conn.execute(followUpQuery, followUpParams);
+        const followUpRes = await conn.execute({
+          sql: followUpQuery,
+          args: followUpParams,
+        });
         const userID = (followUpRes.rows[0] as User).id;
         cookies().set("userIDToken", userID);
         return "success";
@@ -50,7 +53,7 @@ export async function emailPasswordLogin(
     const userQuery = "SELECT * FROM User WHERE email = ?";
     const params = [email];
     try {
-      const userResults = await conn.execute(userQuery, params);
+      const userResults = await conn.execute({ sql: userQuery, args: params });
       const user = userResults.rows[0] as User;
       if (user) {
         const passwordHash = user.password_hash;
@@ -101,7 +104,7 @@ export async function emailLinkLogin(email: string, rememberMe: boolean) {
     const conn = ConnectionFactory();
     const query = `SELECT * FROM User WHERE email = ?`;
     const params = [email];
-    const lookupRes = await conn.execute(query, params);
+    const lookupRes = await conn.execute({ sql: query, args: params });
     if (lookupRes.rows[0]) {
       const apiKey = env.SENDINBLUE_KEY as string;
       const apiUrl = "https://api.sendinblue.com/v3/smtp/email";

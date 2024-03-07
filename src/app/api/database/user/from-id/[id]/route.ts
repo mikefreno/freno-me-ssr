@@ -9,7 +9,7 @@ export async function GET(
     const conn = ConnectionFactory();
     const userQuery = "SELECT * FROM User WHERE id =?";
     const userParams = [context.params.id];
-    const res = await conn.execute(userQuery, userParams);
+    const res = await conn.execute({ sql: userQuery, args: userParams });
     if (res.rows[0]) {
       const user = res.rows[0] as User;
       if (user && user.display_name !== "user deleted")

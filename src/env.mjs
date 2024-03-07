@@ -25,6 +25,8 @@ export const env = createEnv({
     DATABASE_HOST: z.string().min(1),
     DATABASE_USERNAME: z.string().min(1),
     DATABASE_PASSWORD: z.string().min(1),
+    TURSO_DB_URL: z.string().min(1),
+    TURSO_DB_TOKEN: z.string().min(1)
   },
 
   /**
@@ -67,6 +69,8 @@ export const env = createEnv({
     AWS_ACCESS_KEY: process.env.MY_AWS_ACCESS_KEY,
     AWS_SECRET_KEY: process.env.MY_AWS_SECRET_KEY,
     NEXT_PUBLIC_WEBSOCKET: process.env.NEXT_PUBLIC_WEBSOCKET,
+    TURSO_DB_URL: process.env.TURSO_DB_URL,
+    TURSO_DB_TOKEN: process.env.TURSO_DB_TOKEN
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation.

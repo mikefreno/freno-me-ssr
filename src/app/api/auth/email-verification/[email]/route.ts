@@ -19,7 +19,7 @@ export async function GET(
         const conn = ConnectionFactory();
         const query = `UPDATE User SET email_verified = ? WHERE email = ?`;
         const params = [true, userEmail];
-        const res = await conn.execute(query, params);
+        const res = await conn.execute({ sql: query, args: params });
         console.log(res);
         return new NextResponse(
           JSON.stringify({
