@@ -57,14 +57,20 @@ export default function ContactClient(props: {
     }
   }, []);
 
-  const sendEmailTrigger = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (nameRef.current && messageRef.current && emailRef.current) {
+  const sendEmailTrigger = async (formData: FormData) => {
+    //e.preventDefault();
+    //const formData = new FormData(e.target);
+
+    const name = formData.get("name") as string;
+    const email = formData.get("email") as string;
+    const message = formData.get("message") as string;
+
+    if (name && email && message) {
       setLoading(true);
       const res = await sendContactRequest({
-        name: nameRef.current.value,
-        email: emailRef.current.value,
-        message: messageRef.current.value,
+        name: name,
+        email: email,
+        message: message,
       });
       if (res == "email sent") {
         setEmailSent(true);
@@ -96,7 +102,7 @@ export default function ContactClient(props: {
           <div className="text-center text-3xl tracking-widest dark:text-white">
             Contact
           </div>
-          <form onSubmit={sendEmailTrigger} className="min-w-[85vw]">
+          <form action={sendEmailTrigger} className="min-w-[85vw]">
             <div className="flex w-full flex-col justify-evenly pt-6 md:mt-24">
               <div className="mx-auto w-full justify-evenly md:flex md:w-3/4 md:flex-row lg:w-1/2">
                 <div className="input-group md:mx-4">
@@ -161,7 +167,7 @@ export default function ContactClient(props: {
                       loading
                         ? "bg-zinc-400"
                         : "bg-blue-400 hover:bg-blue-500 active:scale-90 dark:bg-blue-600 dark:hover:bg-blue-700"
-                    } flex w-36 justify-center rounded transition-all duration-300 font-light ease-out py-3 text-white shadow-lg shadow-blue-300 dark:shadow-blue-700`}
+                    } flex w-36 justify-center rounded py-3 font-light text-white shadow-lg shadow-blue-300 transition-all duration-300 ease-out dark:shadow-blue-700`}
                   >
                     {loading ? (
                       <LoadingSpinner height={24} width={24} />
@@ -180,7 +186,7 @@ export default function ContactClient(props: {
                 : error !== ""
                 ? "text-red-400"
                 : "user-select opacity-0"
-            } text-center italic transition-opacity flex justify-center duration-300 ease-in-out`}
+            } flex justify-center text-center italic transition-opacity duration-300 ease-in-out`}
           >
             {emailSent ? "Email Sent!" : error}
           </div>
