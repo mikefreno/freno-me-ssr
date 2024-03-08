@@ -309,7 +309,7 @@ export default function ClientSideData(props: {
                       profileImageSetLoading || !profileImageStateChange
                         ? "bg-zinc-400"
                         : "bg-blue-400 hover:bg-blue-500 active:scale-90 dark:bg-blue-600 dark:hover:bg-blue-700"
-                    } flex justify-center w-full rounded transition-all duration-300 -ml-[6px] ease-out mt-2 px-4 py-2 text-white`}
+                    } -ml-[6px] mt-2 flex w-full justify-center rounded px-4 py-2 text-white transition-all duration-300 ease-out`}
                   >
                     Set
                   </button>
@@ -317,7 +317,7 @@ export default function ClientSideData(props: {
                 <div
                   className={`${
                     showImageSuccess ? "" : "select-none opacity-0"
-                  } transition-opacity text-center text-green-500 duration-200 ease-in-out`}
+                  } text-center text-green-500 transition-opacity duration-200 ease-in-out`}
                 >
                   Image Set Success!
                 </div>
@@ -402,7 +402,7 @@ export default function ClientSideData(props: {
                       )
                         ? "bg-zinc-400"
                         : "bg-blue-400 hover:bg-blue-500 active:scale-90 dark:bg-blue-600 dark:hover:bg-blue-700"
-                    } flex justify-center rounded transition-all duration-300 ease-out mt-2 px-4 py-2 text-white`}
+                    } mt-2 flex justify-center rounded px-4 py-2 text-white transition-all duration-300 ease-out`}
                   >
                     Submit
                   </button>
@@ -460,7 +460,7 @@ export default function ClientSideData(props: {
                       displayNameButtonLoading
                         ? "bg-zinc-400"
                         : "bg-blue-400 hover:bg-blue-500 active:scale-90 dark:bg-blue-600 dark:hover:bg-blue-700"
-                    } flex justify-center rounded transition-all duration-300 ease-out mt-2 px-4 py-2 text-white`}
+                    } mt-2 flex justify-center rounded px-4 py-2 text-white transition-all duration-300 ease-out`}
                   >
                     Submit
                   </button>
@@ -568,7 +568,7 @@ export default function ClientSideData(props: {
                 <div
                   className={`${
                     showPasswordLengthWarning ? "" : "select-none opacity-0"
-                  } transition-opacity text-center text-red-500 duration-200 ease-in-out`}
+                  } text-center text-red-500 transition-opacity duration-200 ease-in-out`}
                 >
                   Password too short! Min Length: 8
                 </div>
@@ -621,7 +621,7 @@ export default function ClientSideData(props: {
                     newPasswordConfRef.current!.value.length >= 6
                       ? ""
                       : "select-none opacity-0"
-                  } transition-opacity text-center text-red-500 duration-200 ease-in-out`}
+                  } text-center text-red-500 transition-opacity duration-200 ease-in-out`}
                 >
                   Passwords do not match!
                 </div>
@@ -633,14 +633,14 @@ export default function ClientSideData(props: {
                     passwordChangeLoading || !passwordsMatch
                       ? "bg-zinc-400"
                       : "bg-blue-400 hover:bg-blue-500 active:scale-90 dark:bg-blue-600 dark:hover:bg-blue-700"
-                  } flex justify-center rounded transition-all duration-300 ease-out my-6 px-4 py-2 text-white`}
+                  } my-6 flex justify-center rounded px-4 py-2 text-white transition-all duration-300 ease-out`}
                 >
                   Set
                 </button>
                 <div
                   className={`${
                     passwordError ? "" : "select-none opacity-0"
-                  } transition-opacity text-center text-red-500 duration-200 ease-in-out`}
+                  } text-center text-red-500 transition-opacity duration-200 ease-in-out`}
                 >
                   {user?.hasPassword
                     ? "Password did not match record"
@@ -688,14 +688,14 @@ export default function ClientSideData(props: {
                       deleteAccountButtonLoading
                         ? "bg-zinc-400"
                         : "bg-red-500 hover:bg-red-600 active:scale-90 dark:bg-red-600 dark:hover:bg-red-700"
-                    } flex justify-center mx-auto rounded transition-all duration-300 ease-out mt-2 px-4 py-2 text-white`}
+                    } mx-auto mt-2 flex justify-center rounded px-4 py-2 text-white transition-all duration-300 ease-out`}
                   >
                     Delete
                   </button>
                   <div
                     className={`${
                       passwordDeletionError ? "" : "select-none opacity-0"
-                    } transition-opacity text-center text-red-500 duration-200 ease-in-out`}
+                    } text-center text-red-500 transition-opacity duration-200 ease-in-out`}
                   >
                     Password did not match record
                   </div>

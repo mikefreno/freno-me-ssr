@@ -40,13 +40,13 @@ export default async function Projects() {
   query += ` GROUP BY Post.id, Post.title, Post.subtitle, Post.body, Post.banner_photo, Post.date, Post.published, Post.category, Post.author_id, Post.reads, Post.attachments;`;
   const conn = ConnectionFactory();
   const results = await conn.execute(query);
-  let projects = results.rows as PostWithCommentsAndLikes[];
+  let projects = results.rows as unknown as PostWithCommentsAndLikes[];
 
   const projectIDs = projects.map((project) => project.id);
   const tagQuery = `SELECT * FROM Tag WHERE post_id IN (${projectIDs.join(
     ", ",
   )})`;
-  const tags = (await conn.execute(tagQuery)).rows as Tag[];
+  const tags = (await conn.execute(tagQuery)).rows as unknown as Tag[];
   let tagMap: Map<string, number> = new Map();
   tags.forEach((tag) => {
     tagMap.set(tag.value, (tagMap.get(tag.value) || 0) + 1);
@@ -68,7 +68,7 @@ export default async function Projects() {
               />
             </div>
             <div
-              className={`text-shadow fixed top-36 sm:top-48 md:top-[15vh] w-full brightness-150 z-10 select-text text-center tracking-widest text-white`}
+              className={`text-shadow fixed top-36 z-10 w-full select-text text-center tracking-widest text-white brightness-150 sm:top-48 md:top-[15vh]`}
               style={{ pointerEvents: "none" }}
             >
               <div className="z-10 text-5xl font-light tracking-widest">

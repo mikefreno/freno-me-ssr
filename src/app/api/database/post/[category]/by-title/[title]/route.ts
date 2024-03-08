@@ -40,7 +40,7 @@ export async function GET(
         args: projectParams,
       });
       if (projectResults.rows[0]) {
-        const post_id = (projectResults.rows[0] as Post).id;
+        const post_id = (projectResults.rows[0] as unknown as Post).id;
 
         const commentQuery = "SELECT * FROM Comment WHERE post_id = ?";
         const commentResults = await conn.execute({

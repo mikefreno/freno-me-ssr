@@ -20,7 +20,7 @@ export async function POST(
   const followUpQuery = `SELECT * FROM CommentReaction WHERE comment_id = ?`;
   const followUpParams = [comment_id];
   const res = await conn.execute({ sql: followUpQuery, args: followUpParams });
-  const data = (res.rows as CommentReaction[]).filter(
+  const data = (res.rows as unknown as CommentReaction[]).filter(
     (commentReaction) => commentReaction.comment_id == comment_id,
   );
   return NextResponse.json({ commentReactions: data || [] });

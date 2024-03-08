@@ -61,11 +61,16 @@ export async function POST(
         const results = await conn.execute({ sql: query, args: params });
         if (tags) {
           let query = "INSERT INTO Tag (value, post_id) VALUES ";
-          let values = tags.map((tag) => `("${tag}", ${results.insertId})`);
+          let values = tags.map(
+            (tag) => `("${tag}", ${results.lastInsertRowid})`,
+          );
           query += values.join(", ");
           await conn.execute(query);
         }
-        return NextResponse.json({ data: results.insertId }, { status: 201 });
+        return NextResponse.json(
+          { data: results.lastInsertRowid },
+          { status: 201 },
+        );
       }
       return NextResponse.json({ error: "no cookie" }, { status: 401 });
     } catch (e) {
@@ -80,17 +85,23 @@ export async function PATCH(input: NextRequest) {
 
     const conn = ConnectionFactory();
     const { query, params } = createUpdateQuery(inputData);
-    const results = await conn.execute({ sql: query, args: params });
+    const results = await conn.execute({
+      sql: query,
+      args: params as string[],
+    });
     const { tags, id } = inputData;
     const deleteTagsQuery = `DELETE FROM Tag WHERE post_id = ?`;
-    await conn.execute({ args: deleteTagsQuery, args: [id] });
+    await conn.execute({ sql: deleteTagsQuery, args: [id.toString()] });
     if (tags) {
       let query = "INSERT INTO Tag (value, post_id) VALUES ";
       let values = tags.map((tag) => `("${tag}", ${id})`);
       query += values.join(", ");
       await conn.execute(query);
     }
-    return NextResponse.json({ data: results.insertId }, { status: 201 });
+    return NextResponse.json(
+      { data: results.lastInsertRowid },
+      { status: 201 },
+    );
   } catch (e) {
     console.error(e);
     return NextResponse.json({ error: e }, { status: 400 });

@@ -95,16 +95,16 @@ export async function setEmail(newEmail: string) {
   const conn = ConnectionFactory();
   const query = `UPDATE User SET email = ?, email_verified = ? WHERE id = ?`;
   const params = [newEmail, false, userID];
-  const res = await conn.execute({ sql: query, args: params });
+  const res = await conn.execute({ sql: query, args: params as string[] });
   console.log(res);
   const followUpQuery = `SELECT * FROM User WHERE id=?`;
   const followUpParams = [userID];
   const followUpRes = await conn.execute({
     sql: followUpQuery,
-    args: followUpParams,
+    args: followUpParams as string[],
   });
 
-  const user = followUpRes.rows[0] as User;
+  const user = followUpRes.rows[0] as unknown as User;
   const data = {
     id: user.id,
     email: user.email,
@@ -126,15 +126,15 @@ export async function setDisplayName(displayName: string) {
   const conn = ConnectionFactory();
   const query = `UPDATE User SET display_name = ? WHERE id = ?`;
   const params = [displayName, userID];
-  const res = await conn.execute({ sql: query, args: params });
+  const res = await conn.execute({ sql: query, args: params as string[] });
   console.log(res);
   const followUpQuery = `SELECT * FROM User WHERE id=?`;
   const followUpParams = [userID];
   const followUpRes = await conn.execute({
     sql: followUpQuery,
-    args: followUpParams,
+    args: followUpParams as string[],
   });
-  const user = followUpRes.rows[0] as User;
+  const user = followUpRes.rows[0] as unknown as User;
   const data = {
     id: user.id,
     email: user.email,
@@ -152,8 +152,8 @@ export async function deleteAccount(password: string) {
   const conn = ConnectionFactory();
   const query = `SELECT * FROM User WHERE id = ?`;
   const params = [userID];
-  const res = await conn.execute({ sql: query, args: params });
-  const user = res.rows[0] as User;
+  const res = await conn.execute({ sql: query, args: params as string[] });
+  const user = res.rows[0] as unknown as User;
   if (user) {
     const passwordHash = user.password_hash;
     const passwordMatch = await checkPassword(password, passwordHash!);
@@ -168,7 +168,10 @@ export async function deleteAccount(password: string) {
         null,
         userID,
       ];
-      const res = await conn.execute({ sql: bleachQuery, args: bleachParams });
+      const res = await conn.execute({
+        sql: bleachQuery,
+        args: bleachParams as string[],
+      });
       console.log(res);
       await signOut();
       return "deleted";
@@ -187,8 +190,8 @@ export async function changePassword(
     const conn = ConnectionFactory();
     const query = `SELECT * FROM User WHERE id = ?`;
     const params = [userID];
-    const res = await conn.execute({ sql: query, args: params });
-    const user = res.rows[0] as User;
+    const res = await conn.execute({ sql: query, args: params as string[] });
+    const user = res.rows[0] as unknown as User;
     if (user) {
       const passwordHash = user.password_hash;
       const passwordMatch = await checkPassword(oldPassword, passwordHash!);
@@ -196,7 +199,10 @@ export async function changePassword(
         const passwordHash = await hashPassword(newPassword);
         const updateQuery = `UPDATE User SET password_hash = ? WHERE id = ?`;
         const updateParams = [passwordHash, userID];
-        await conn.execute({ sql: updateQuery, args: updateParams });
+        await conn.execute({
+          sql: updateQuery,
+          args: updateParams as string[],
+        });
         cookies().set({
           name: "emailToken",
           value: "",
@@ -225,13 +231,13 @@ export async function setPassword(
     const conn = ConnectionFactory();
     const query = `SELECT * FROM User WHERE id = ?`;
     const params = [userID];
-    const res = await conn.execute({ sql: query, args: params });
-    const user = res.rows[0] as User;
+    const res = await conn.execute({ sql: query, args: params as string[] });
+    const user = res.rows[0] as unknown as User;
     if (user && !user.password_hash) {
       const passwordHash = await hashPassword(newPassword);
       const updateQuery = `UPDATE User SET password_hash = ? WHERE id = ?`;
       const updateParams = [passwordHash, userID];
-      await conn.execute({ sql: updateQuery, args: updateParams });
+      await conn.execute({ sql: updateQuery, args: updateParams as string[] });
       cookies().set({
         name: "emailToken",
         value: "",

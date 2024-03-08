@@ -42,11 +42,11 @@ export default async function Blog() {
   const conn = ConnectionFactory();
 
   const results = await conn.execute(query);
-  let blogs = results.rows as PostWithCommentsAndLikes[];
+  let blogs = results.rows as unknown as PostWithCommentsAndLikes[];
 
   const blogIds = blogs.map((blog) => blog.id);
   const tagQuery = `SELECT * FROM Tag WHERE post_id IN (${blogIds.join(", ")})`;
-  const tags = (await conn.execute(tagQuery)).rows as Tag[];
+  const tags = (await conn.execute(tagQuery)).rows as unknown as Tag[];
   let tagMap: Map<string, number> = new Map();
   tags.forEach((tag) => {
     tagMap.set(tag.value, (tagMap.get(tag.value) || 0) + 1);
@@ -68,7 +68,7 @@ export default async function Blog() {
               />
             </div>
             <div
-              className={`text-shadow fixed top-36 sm:top-44 md:top-[20vh] w-full brightness-150 z-10 select-text text-center tracking-widest text-white`}
+              className={`text-shadow fixed top-36 z-10 w-full select-text text-center tracking-widest text-white brightness-150 sm:top-44 md:top-[20vh]`}
               style={{ pointerEvents: "none" }}
             >
               <div className="z-10 text-5xl font-light tracking-widest">

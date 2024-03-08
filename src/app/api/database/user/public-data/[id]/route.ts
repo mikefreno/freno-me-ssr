@@ -8,7 +8,7 @@ export async function GET(_: Request, context: { params: { id: string } }) {
     const userParams = [context.params.id];
     const res = await conn.execute({ sql: userQuery, args: userParams });
     if (res.rows[0]) {
-      const user = res.rows[0] as User;
+      const user = res.rows[0] as unknown as User;
       if (user && user.display_name !== "user deleted")
         return NextResponse.json(
           {

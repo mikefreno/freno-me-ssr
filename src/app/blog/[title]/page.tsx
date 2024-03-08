@@ -40,7 +40,7 @@ export default async function DynamicBlogPost({
   const conn = ConnectionFactory();
   const blog = (
     await conn.execute({ sql: query, args: [decodeURIComponent(params.title)] })
-  ).rows[0] as Post;
+  ).rows[0] as unknown as Post;
   let containsCodeBlock = false;
 
   let comments: Comment[] = [];
@@ -60,7 +60,7 @@ export default async function DynamicBlogPost({
     containsCodeBlock = hasCodeBlock(blog.body);
     const commentQuery = "SELECT * FROM Comment WHERE post_id = ?";
     comments = (await conn.execute({ sql: commentQuery, args: [blog.id] }))
-      .rows as Comment[];
+      .rows as unknown as Comment[];
 
     comments.forEach((comment) => {
       const prev = commenterToCommentIDMap.get(comment.commenter_id) || [];
@@ -90,7 +90,7 @@ export default async function DynamicBlogPost({
     );
     const blogLikesQuery = "SELECT * FROM PostLike WHERE post_id = ?";
     likes = (await conn.execute({ sql: blogLikesQuery, args: [blog.id] }))
-      .rows as PostLike[];
+      .rows as unknown as PostLike[];
     for (const comment of comments) {
       const reactionQuery =
         "SELECT * FROM CommentReaction WHERE comment_id = ?";
@@ -99,11 +99,11 @@ export default async function DynamicBlogPost({
         sql: reactionQuery,
         args: reactionParam,
       });
-      reactionMap.set(comment.id, res.rows as CommentReaction[]);
+      reactionMap.set(comment.id, res.rows as unknown as CommentReaction[]);
     }
     const tagQuery = "SELECT * FROM Tag WHERE post_id = ?";
     const res = await conn.execute({ sql: tagQuery, args: [blog.id] });
-    tags = res.rows as Tag[];
+    tags = res.rows as unknown as Tag[];
   } else {
     const query = "SELECT id FROM Post WHERE title = ?";
     let exist_res = await conn.execute({

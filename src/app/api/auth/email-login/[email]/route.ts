@@ -23,7 +23,7 @@ export async function GET(
         const params = [decoded.email];
         const res = await conn.execute({ sql: query, args: params });
         const token = jwt.sign(
-          { id: (res.rows[0] as User).id },
+          { id: (res.rows[0] as unknown as User).id },
           env.JWT_SECRET_KEY,
           {
             expiresIn: 60 * 60 * 24 * 14, // expires in 14 days

@@ -111,11 +111,10 @@ export async function deletePost(postID: number) {
       await conn.execute({ sql: query, args: params });
       const commentDeleteQuery = `DELETE FROM Comment WHERE post_id = ?`;
       const commentDeleteParams = [postID];
-      const commentDeleteConn = await conn.execute({
+      await conn.execute({
         sql: commentDeleteQuery,
         args: commentDeleteParams,
       });
-      console.log(commentDeleteConn.statement);
       return "good";
     } catch (e) {
       console.log(e);

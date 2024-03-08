@@ -23,7 +23,7 @@ export async function requestPasswordReset(email: string) {
       const apiUrl = "https://api.sendinblue.com/v3/smtp/email";
 
       const secretKey = env.JWT_SECRET_KEY;
-      const payload = { id: (lookupRes.rows[0] as User).id };
+      const payload = { id: (lookupRes.rows[0] as unknown as User).id };
       const token = jwt.sign(payload, secretKey, { expiresIn: "15m" });
 
       const sendinblueData = {
@@ -33,7 +33,7 @@ export async function requestPasswordReset(email: string) {
         },
         to: [
           {
-            email: (lookupRes.rows[0] as User).email,
+            email: (lookupRes.rows[0] as unknown as User).email,
           },
         ],
         htmlContent: `<html>

@@ -31,7 +31,7 @@ export async function emailRegistration(
           sql: followUpQuery,
           args: followUpParams,
         });
-        const userID = (followUpRes.rows[0] as User).id;
+        const userID = (followUpRes.rows[0] as unknown as User).id;
         cookies().set("userIDToken", userID);
         return "success";
       } catch (e) {
@@ -54,7 +54,7 @@ export async function emailPasswordLogin(
     const params = [email];
     try {
       const userResults = await conn.execute({ sql: userQuery, args: params });
-      const user = userResults.rows[0] as User;
+      const user = userResults.rows[0] as unknown as User;
       if (user) {
         const passwordHash = user.password_hash;
         const passwordMatch = await checkPassword(password, passwordHash!);
@@ -120,7 +120,7 @@ export async function emailLinkLogin(email: string, rememberMe: boolean) {
         },
         to: [
           {
-            email: (lookupRes.rows[0] as User).email,
+            email: (lookupRes.rows[0] as unknown as User).email,
           },
         ],
         htmlContent: `<html>
