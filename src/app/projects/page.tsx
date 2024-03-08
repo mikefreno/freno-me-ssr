@@ -78,24 +78,32 @@ export default async function Projects() {
           </div>
         </div>
         <div className="relative z-40 mx-auto -mt-16 min-h-screen w-11/12 rounded-t-lg bg-zinc-50 pb-24 pt-8 shadow-2xl dark:bg-zinc-800 sm:-mt-20 md:mt-0 md:w-5/6 lg:w-3/4">
-          <div className="flex flex-col justify-center md:flex-row md:justify-around">
-            <div className="flex justify-center md:justify-start">
-              <PostSortingSelect type={"projects"} />
-            </div>
-            <div className="flex justify-center md:justify-end">
-              <TagSelector tagMap={tagMap} category={"project"} />
-            </div>
-            {privilegeLevel == "admin" ? (
-              <div className="mt-2 flex justify-center md:mt-0 md:justify-end">
-                <Link
-                  href="/projects/create"
-                  className="rounded border border-zinc-800 px-4 py-2 transition-all duration-300 ease-out hover:bg-zinc-200 active:scale-90 dark:border-white dark:hover:bg-zinc-700 md:mr-4"
-                >
-                  Create Post
-                </Link>
+          <Suspense
+            fallback={
+              <div className="mx-auto pt-48">
+                <LoadingSpinner height={64} width={64} />
               </div>
-            ) : null}
-          </div>
+            }
+          >
+            <div className="flex flex-col justify-center md:flex-row md:justify-around">
+              <div className="flex justify-center md:justify-start">
+                <PostSortingSelect type={"projects"} />
+              </div>
+              <div className="flex justify-center md:justify-end">
+                <TagSelector tagMap={tagMap} category={"project"} />
+              </div>
+              {privilegeLevel == "admin" ? (
+                <div className="mt-2 flex justify-center md:mt-0 md:justify-end">
+                  <Link
+                    href="/projects/create"
+                    className="rounded border border-zinc-800 px-4 py-2 transition-all duration-300 ease-out hover:bg-zinc-200 active:scale-90 dark:border-white dark:hover:bg-zinc-700 md:mr-4"
+                  >
+                    Create Post
+                  </Link>
+                </div>
+              ) : null}
+            </div>
+          </Suspense>
           <Suspense
             fallback={
               <div className="mx-auto pt-24">
