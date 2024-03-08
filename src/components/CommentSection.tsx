@@ -95,7 +95,7 @@ export default function CommentSection(props: {
         props.topLevelComments.length > 0 ? (
           <>
             <CommentSortingSelect
-              type={"blog"}
+              type={props.type}
               commentSorting={commentSorting}
               selectedSorting={selectedSorting}
               setSelectedSorting={setSelectedSorting}
@@ -104,7 +104,7 @@ export default function CommentSection(props: {
               <CommentSorting
                 topLevelComments={props.topLevelComments}
                 privilegeLevel={"admin"}
-                type={"blog"}
+                type={props.type}
                 postID={props.id}
                 allComments={props.allComments}
                 reactionMap={props.reactionMap}

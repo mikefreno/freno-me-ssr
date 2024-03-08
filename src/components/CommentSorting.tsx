@@ -6,7 +6,7 @@ import CommentBlock from "./CommentBlock";
 export default function CommentSorting(props: {
   topLevelComments: Comment[];
   privilegeLevel: "anonymous" | "admin" | "user";
-  type: "blog" | "projects";
+  type: "blog" | "project";
   postID: number;
   allComments: Comment[];
   reactionMap: Map<number, CommentReaction[]>;
@@ -85,7 +85,7 @@ export default function CommentSorting(props: {
             {showingBlock.get(topLevelComment.id) ? (
               <CommentBlock
                 comment={topLevelComment}
-                category={"blog"}
+                category={props.type}
                 projectID={props.postID}
                 recursionCount={1}
                 allComments={props.allComments}
@@ -125,7 +125,7 @@ export default function CommentSorting(props: {
             {showingBlock.get(topLevelComment.id) ? (
               <CommentBlock
                 comment={topLevelComment}
-                category={"blog"}
+                category={props.type}
                 projectID={props.postID}
                 recursionCount={1}
                 allComments={props.allComments}
@@ -181,7 +181,7 @@ export default function CommentSorting(props: {
             {showingBlock.get(topLevelComment.id) ? (
               <CommentBlock
                 comment={topLevelComment}
-                category={"blog"}
+                category={props.type}
                 projectID={props.postID}
                 recursionCount={1}
                 allComments={props.allComments}
@@ -221,7 +221,7 @@ export default function CommentSorting(props: {
             {showingBlock.get(topLevelComment.id) ? (
               <CommentBlock
                 comment={topLevelComment}
-                category={"blog"}
+                category={props.type}
                 projectID={props.postID}
                 recursionCount={1}
                 allComments={props.allComments}
