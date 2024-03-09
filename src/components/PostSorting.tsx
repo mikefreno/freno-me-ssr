@@ -1,51 +1,24 @@
-"use client";
 import { PostWithCommentsAndLikes, Tag } from "@/types/model-types";
 import Card from "./Card";
-import { useEffect, useState } from "react";
-import { usePathname, useSearchParams } from "next/navigation";
 
 export default function PostSorting(props: {
   posts: PostWithCommentsAndLikes[];
   tags: Tag[];
   privilegeLevel: "anonymous" | "admin" | "user";
   type: "blog" | "projects";
+  filters?: string;
+  sort?: string;
 }) {
-  const [sort, setSort] = useState<string>("newest");
-  const searchParams = useSearchParams();
-  const pathname = usePathname();
-  const [postFilters, setPostFilters] = useState<string[] | undefined>([]);
-  const [filteredPosts, setFilteredPosts] = useState<
-    PostWithCommentsAndLikes[]
-  >(props.posts);
+  let postsToFilter = new Set<number>();
 
-  useEffect(() => {
-    const sortParam = searchParams.get("sort");
-    const filterParam = searchParams.get("filter");
-    if (
-      sortParam &&
-      ["newest", "oldest", "most liked", "most read", "most comments"].includes(
-        sortParam,
-      )
-    ) {
-      setSort(sortParam);
+  props.tags.forEach((tag) => {
+    if (props.filters?.split("|").includes(tag.value.slice(1))) {
+      postsToFilter.add(tag.post_id);
     }
-    const filters = filterParam?.split("|");
-    setPostFilters(filters);
-  }, [searchParams, pathname]);
-
-  useEffect(() => {
-    let postsToFilter = new Set<number>();
-    props.tags.forEach((tag) => {
-      if (postFilters?.includes(tag.value.slice(1))) {
-        postsToFilter.add(tag.post_id);
-      }
-    });
-    const newFilteredPosts = props.posts.filter((post) => {
-      return !postsToFilter.has(post.id);
-    });
-    setFilteredPosts(newFilteredPosts);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [postFilters]);
+  });
+  const filteredPosts = props.posts.filter((post) => {
+    return !postsToFilter.has(post.id);
+  });
 
   if (props.posts.length > 0 && filteredPosts.length == 0) {
     return (
@@ -54,7 +27,8 @@ export default function PostSorting(props: {
       </div>
     );
   }
-  switch (sort) {
+
+  switch (props.sort) {
     case "newest":
       return [...filteredPosts].reverse().map((post) => (
         <div key={post.id} className="my-4">

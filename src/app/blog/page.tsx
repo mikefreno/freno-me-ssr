@@ -8,7 +8,13 @@ import PostSorting from "@/components/PostSorting";
 import { ConnectionFactory, getPrivilegeLevel } from "../utils";
 import TagSelector from "@/components/TagSelector";
 
-export default async function Blog() {
+export default async function Blog({
+  params,
+  searchParams,
+}: {
+  params: { slug: string };
+  searchParams: { [key: string]: string | undefined };
+}) {
   let privilegeLevel: "anonymous" | "admin" | "user" = "anonymous";
   privilegeLevel = await getPrivilegeLevel();
 
@@ -118,6 +124,12 @@ export default async function Blog() {
                   tags={tags}
                   privilegeLevel={privilegeLevel}
                   type={"blog"}
+                  filters={searchParams.filter}
+                  sort={
+                    Array.isArray(searchParams.sort)
+                      ? searchParams.sort[0]
+                      : searchParams.sort
+                  }
                 />
               </div>
             ) : (

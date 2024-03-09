@@ -68,9 +68,9 @@ export default function ContactClient(props: {
     if (name && email && message) {
       setLoading(true);
       const res = await sendContactRequest({
-        name: name,
-        email: email,
-        message: message,
+        name,
+        email,
+        message,
       });
       if (res == "email sent") {
         setEmailSent(true);
