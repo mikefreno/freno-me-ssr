@@ -1,7 +1,28 @@
 {
   "$schema": "https://turbo.build/schema.json",
+  "envMode": "loose",
   "tasks": {
     "build": {
+      "env": [
+  "ADMIN_EMAIL",
+  "ADMIN_ID",
+  "JWT_SECRET_KEY",
+  "DANGEROUS_DBCOMMAND_PASSWORD",
+  "AWS_REGION",
+  "AWS_S3_BUCKET_NAME",
+  "_AWS_ACCESS_KEY",
+  "_AWS_SECRET_KEY",
+  "GOOGLE_CLIENT_SECRET",
+  "GITHUB_CLIENT_SECRET",
+  "EMAIL_SERVER",
+  "EMAIL_FROM",
+  "SENDINBLUE_KEY",
+  "TURSO_DB_URL",
+  "TURSO_DB_TOKEN",
+  "TURSO_MAGIC_DELVE_URL",
+  "TURSO_MAGIC_DELVE_TOKEN",
+  "TURSO_DB_API_TOKEN"
+],
       "dependsOn": ["^build"],
       "outputs": [".next/**", "!.next/cache/**"]
     },
@@ -11,6 +32,6 @@
     "dev": {
       "persistent": true,
       "cache": false
-    }
+    },
   }
 }
