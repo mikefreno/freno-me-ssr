@@ -14,14 +14,14 @@ export const env = createEnv({
     JWT_SECRET_KEY: z.string().min(1),
     DANGEROUS_DBCOMMAND_PASSWORD: z.string().min(1),
     AWS_REGION: z.string().min(1),
+    AWS_S3_BUCKET_NAME: z.string().min(1),
+    AWS_ACCESS_KEY: z.string().min(1),
+    AWS_SECRET_KEY: z.string().min(1),
     GOOGLE_CLIENT_SECRET: z.string().min(1),
     GITHUB_CLIENT_SECRET: z.string().min(1),
     EMAIL_SERVER: z.string().min(1),
     EMAIL_FROM: z.string().min(1),
     SENDINBLUE_KEY: z.string().min(1),
-    AWS_S3_BUCKET_NAME: z.string().min(1),
-    AWS_ACCESS_KEY: z.string().min(1),
-    AWS_SECRET_KEY: z.string().min(1),
     TURSO_DB_URL: z.string().min(1),
     TURSO_DB_TOKEN: z.string().min(1),
     TURSO_MAGIC_DELVE_URL: z.string().min(1),
@@ -63,8 +63,8 @@ export const env = createEnv({
     EMAIL_FROM: process.env.EMAIL_FROM,
     SENDINBLUE_KEY: process.env.SENDINBLUE_KEY,
     AWS_S3_BUCKET_NAME: process.env.AWS_S3_BUCKET_NAME,
-    AWS_ACCESS_KEY: process.env.MY_AWS_ACCESS_KEY,
-    AWS_SECRET_KEY: process.env.MY_AWS_SECRET_KEY,
+    AWS_ACCESS_KEY: process.env._AWS_ACCESS_KEY,
+    AWS_SECRET_KEY: process.env._AWS_SECRET_KEY,
     NEXT_PUBLIC_WEBSOCKET: process.env.NEXT_PUBLIC_WEBSOCKET,
     TURSO_DB_URL: process.env.TURSO_DB_URL,
     TURSO_DB_TOKEN: process.env.TURSO_DB_TOKEN,
@@ -72,9 +72,6 @@ export const env = createEnv({
     TURSO_MAGIC_DELVE_TOKEN: process.env.TURSO_MAGIC_DELVE_TOKEN,
     TURSO_DB_API_TOKEN: process.env.TURSO_DB_API_TOKEN
   },
-  /**
-   * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation.
-   * This is especially useful for Docker builds.
-   */
-  skipValidation: !!process.env.SKIP_ENV_VALIDATION,
+
+  skipValidation: false,
 });
