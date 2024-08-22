@@ -13,8 +13,8 @@ export async function POST(input: NextRequest) {
   const inputData = (await input.json()) as InputData;
   const { type, title, filename } = inputData;
   const credentials = {
-    accessKeyId: env.AWS_ACCESS_KEY,
-    secretAccessKey: env.AWS_SECRET_KEY,
+    accessKeyId: env._AWS_ACCESS_KEY,
+    secretAccessKey: env._AWS_SECRET_KEY,
   };
   try {
     const client = new S3Client({

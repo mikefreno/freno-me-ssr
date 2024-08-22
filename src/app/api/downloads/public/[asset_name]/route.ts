@@ -23,8 +23,8 @@ export async function GET(
     Expires: 60 * 60,
   };
   const credentials = {
-    accessKeyId: env.AWS_ACCESS_KEY,
-    secretAccessKey: env.AWS_SECRET_KEY,
+    accessKeyId: env._AWS_ACCESS_KEY,
+    secretAccessKey: env._AWS_SECRET_KEY,
   };
   try {
     const client = new S3Client({
