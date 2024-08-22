@@ -23,7 +23,10 @@ export const env = createEnv({
     AWS_ACCESS_KEY: z.string().min(1),
     AWS_SECRET_KEY: z.string().min(1),
     TURSO_DB_URL: z.string().min(1),
-    TURSO_DB_TOKEN: z.string().min(1)
+    TURSO_DB_TOKEN: z.string().min(1),
+    TURSO_MAGIC_DELVE_URL: z.string().min(1),
+    TURSO_MAGIC_DELVE_TOKEN: z.string().min(1),
+    TURSO_DB_API_TOKEN: z.string().min(1)
   },
 
   /**
@@ -64,7 +67,10 @@ export const env = createEnv({
     AWS_SECRET_KEY: process.env.MY_AWS_SECRET_KEY,
     NEXT_PUBLIC_WEBSOCKET: process.env.NEXT_PUBLIC_WEBSOCKET,
     TURSO_DB_URL: process.env.TURSO_DB_URL,
-    TURSO_DB_TOKEN: process.env.TURSO_DB_TOKEN
+    TURSO_DB_TOKEN: process.env.TURSO_DB_TOKEN,
+    TURSO_MAGIC_DELVE_URL: process.env.TURSO_MAGIC_DELVE_URL,
+    TURSO_MAGIC_DELVE_TOKEN: process.env.TURSO_MAGIC_DELVE_TOKEN,
+    TURSO_DB_API_TOKEN: process.env.TURSO_DB_API_TOKEN
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation.

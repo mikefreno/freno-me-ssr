@@ -66,21 +66,8 @@ export async function getUserID(): Promise<string | null> {
   return null;
 }
 
-import { connect } from "@planetscale/database";
 import { createClient } from "@libsql/client/web";
 import { env } from "@/env.mjs";
-
-// planetscale - migrated away
-//export function ConnectionFactory() {
-//const config = {
-//host: env.DATABASE_HOST,
-//username: env.DATABASE_USERNAME,
-//password: env.DATABASE_PASSWORD,
-//};
-
-//const conn = connect(config);
-//return conn;
-//}
 
 // Turso
 export function ConnectionFactory() {
@@ -91,4 +78,33 @@ export function ConnectionFactory() {
 
   const conn = createClient(config);
   return conn;
+}
+
+export function MagicDelveConnectionFactory() {
+  const config = {
+    url: env.TURSO_MAGIC_DELVE_URL,
+    authToken: env.TURSO_MAGIC_DELVE_TOKEN,
+  };
+
+  const conn = createClient(config);
+  return conn;
+}
+
+import { v4 as uuid } from "uuid";
+import { createClient as createAPIClient } from "@tursodatabase/api";
+
+export async function MagicDelveDBInit() {
+  const turso = createAPIClient({
+    org: "mikefreno",
+    token: env.TURSO_DB_API_TOKEN,
+  });
+
+  const db_name = uuid();
+  const db = await turso.databases.create(db_name, { group: "default" });
+
+  const token = await turso.databases.createToken(db_name, {
+    authorization: "full-access",
+  });
+
+  return { token: token.jwt, hostname: db.hostname };
 }
