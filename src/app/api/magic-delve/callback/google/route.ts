@@ -54,14 +54,15 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
           VALUES (?, ?, ?, ?, ?, ?)
         `;
 
-        const result = await conn.execute({
+        await conn.execute({
           sql: insertQuery,
           args: [email, true, "google", picture ?? null, dbName, dbToken],
         });
-        console.log(result);
 
-        const recieved = result.lastInsertRowid?.toString();
-        if (!recieved) {
+        const followup_query = `SELECT * FROM User WHERE provider = ? AND email = ?`;
+        const params = ["google", email];
+        const res = await conn.execute({ sql: followup_query, args: params });
+        if (res.rows.length == 0) {
           return NextResponse.json(
             {
               success: false,
@@ -70,10 +71,11 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
             { status: 500 },
           );
         }
-        userId = recieved;
-        {
+        const id = res.rows[0].id?.toString();
+        if (!id) {
           throw new Error("Failed to insert new user");
         }
+        userId = id;
       } catch (insertError) {
         const turso = createAPIClient({
           org: "mikefreno",
