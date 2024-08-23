@@ -58,6 +58,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
           sql: insertQuery,
           args: [email, true, "google", picture ?? null, dbName, dbToken],
         });
+        console.log(result);
 
         const recieved = result.lastInsertRowid?.toString();
         if (!recieved) {
@@ -74,13 +75,12 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
           throw new Error("Failed to insert new user");
         }
       } catch (insertError) {
-        // Clean up the created database on insert failure
         const turso = createAPIClient({
           org: "mikefreno",
           token: env.TURSO_DB_API_TOKEN,
         });
         await turso.databases.delete(dbName);
-        throw insertError; // Re-throw the error to be caught by the outer catch block
+        throw insertError;
       }
     } else {
       // Update existing user
