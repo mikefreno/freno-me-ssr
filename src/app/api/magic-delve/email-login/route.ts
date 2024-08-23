@@ -36,6 +36,15 @@ export async function POST(input: NextRequest) {
       );
     }
     const user = res.rows[0];
+    if (user.email_verified === 0) {
+      return new NextResponse(
+        JSON.stringify({
+          success: false,
+          message: "Email not yet verified!",
+        }),
+        { status: 401, headers: { "content-type": "application/json" } },
+      );
+    }
     const valid = await checkPassword(password, user.password_hash as string);
     if (!valid) {
       return new NextResponse(
@@ -53,10 +62,12 @@ export async function POST(input: NextRequest) {
       env.JWT_SECRET_KEY,
       { expiresIn: "7d" },
     );
+
     return NextResponse.json({
       success: true,
       message: "Login successful",
       token: token,
+      email: email,
     });
   } else {
     return new NextResponse(
