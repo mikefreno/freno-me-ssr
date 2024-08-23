@@ -27,7 +27,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       throw new Error("Invalid token payload or missing email");
     }
 
-    const { email, name, picture } = payload;
+    const { email, picture } = payload;
 
     const conn = MagicDelveConnectionFactory();
 
@@ -92,12 +92,12 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
       const updateQuery = `
         UPDATE User 
-        SET name = ?, image = ?, email_verified = TRUE
+        SET  image = ?, email_verified = TRUE
         WHERE email = ?
       `;
       await conn.execute({
         sql: updateQuery,
-        args: [name ?? null, picture ?? null, email],
+        args: [picture ?? null, email],
       });
     }
 
@@ -110,7 +110,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         success: true,
         message: "Google authentication successful",
         token: customToken,
-        user: { id: userId, email, name, picture },
+        user: { id: userId, email, picture },
       },
       { status: 200 },
     );
