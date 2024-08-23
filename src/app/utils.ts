@@ -106,5 +106,5 @@ export async function MagicDelveDBInit() {
     authorization: "full-access",
   });
 
-  return { token: token.jwt, hostname: db.hostname };
+  return { token: token.jwt, dbName: db.name };
 }

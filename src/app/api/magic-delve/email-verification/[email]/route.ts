@@ -16,9 +16,9 @@ export async function GET(
       const decoded = jwt.verify(token, secretKey) as JwtPayload;
       if (decoded.email == userEmail) {
         const conn = MagicDelveConnectionFactory();
-        const { token, hostname } = await MagicDelveDBInit();
+        const { token, dbName } = await MagicDelveDBInit();
         const query = `UPDATE User SET email_verified = ?, database_url = ?, database_token = ? WHERE email = ?`;
-        const params = [true, hostname, token, userEmail];
+        const params = [true, dbName, token, userEmail];
         const res = await conn.execute({ sql: query, args: params });
         console.log(res);
         return new NextResponse(
