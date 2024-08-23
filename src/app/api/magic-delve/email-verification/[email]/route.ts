@@ -24,7 +24,8 @@ export async function GET(
         return new NextResponse(
           JSON.stringify({
             success: true,
-            message: "email verification success, you may close this window",
+            message:
+              "email verification success, you may close this window and sign-in within the app.",
           }),
           { status: 202, headers: { "content-type": "application/json" } },
         );
