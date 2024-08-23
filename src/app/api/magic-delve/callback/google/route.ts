@@ -9,6 +9,12 @@ const client = new OAuth2Client(env.NEXT_PUBLIC_GOOGLE_CLIENT_ID_MAGIC_DELVE);
 export async function POST(request: NextRequest) {
   try {
     const { idToken } = await request.json();
+    if (!idToken) {
+      return NextResponse.json(
+        { success: false, message: "Missing required fields" },
+        { status: 400 },
+      );
+    }
 
     const ticket = await client.verifyIdToken({
       idToken,
@@ -16,12 +22,11 @@ export async function POST(request: NextRequest) {
     });
 
     const payload = ticket.getPayload();
-    if (!payload) {
-      throw new Error("Invalid token payload");
+    if (!payload || !payload.email) {
+      throw new Error("Invalid token payload or missing email");
     }
 
     const { email, name, picture } = payload;
-    if (!email) return NextRequest;
 
     const conn = MagicDelveConnectionFactory();
 
@@ -32,9 +37,9 @@ export async function POST(request: NextRequest) {
     });
     const existingUser = res.rows.length > 0 ? res.rows[0] : null;
 
-    let userId: string | undefined;
-    let dbName: string | undefined;
-    let dbToken: string | undefined;
+    let userId: string;
+    let dbName: string;
+    let dbToken: string;
 
     if (!existingUser) {
       // Create new user
@@ -43,8 +48,8 @@ export async function POST(request: NextRequest) {
       dbToken = token;
 
       const insertQuery = `
-        INSERT INTO User (email, email_verified, provider, image, database_url, database_token)
-        VALUES (?, ?, ?, ?, ?, ?)
+        INSERT INTO User (email, email_verified, provider, name, image, database_url, database_token)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
       `;
       const result = await conn.execute({
         sql: insertQuery,
@@ -58,16 +63,26 @@ export async function POST(request: NextRequest) {
           dbToken,
         ],
       });
-      userId = result.rows[0].id?.toString();
+      const recieved = result.lastInsertRowid?.toString();
+      if (!recieved) {
+        return NextResponse.json(
+          {
+            success: false,
+            message: "server failure in database response",
+          },
+          { status: 500 },
+        );
+      }
+      userId = recieved;
     } else {
       // Update existing user
-      userId = existingUser.id?.toString();
-      dbName = existingUser.database_url?.toString();
-      dbToken = existingUser.database_token?.toString();
+      userId = existingUser.id?.toString() ?? "";
+      dbName = existingUser.database_url?.toString() ?? "";
+      dbToken = existingUser.database_token?.toString() ?? "";
 
       const updateQuery = `
         UPDATE User 
-        SET name = ?, profile_picture = ?, email_verified = TRUE
+        SET name = ?, image = ?, email_verified = TRUE
         WHERE email = ?
       `;
       await conn.execute({
@@ -80,23 +95,23 @@ export async function POST(request: NextRequest) {
       expiresIn: "7d",
     });
 
-    return new NextResponse(
-      JSON.stringify({
+    return NextResponse.json(
+      {
         success: true,
         message: "Google authentication successful",
         token: customToken,
         user: { id: userId, email, name, picture },
-      }),
-      { status: 200, headers: { "content-type": "application/json" } },
+      },
+      { status: 200 },
     );
   } catch (error) {
     console.error("Google authentication error:", error);
-    return new NextResponse(
-      JSON.stringify({
+    return NextResponse.json(
+      {
         success: false,
         message: "Authentication failed",
-      }),
-      { status: 401, headers: { "content-type": "application/json" } },
+      },
+      { status: 401 },
     );
   }
 }
