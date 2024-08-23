@@ -43,7 +43,8 @@ export async function GET(
     return new NextResponse(
       JSON.stringify({
         success: false,
-        message: "authentication failed: Invalid token",
+        message:
+          "authentication failed: Invalid token, request a new one by attempting a login in the app",
       }),
       { status: 401, headers: { "content-type": "application/json" } },
     );
