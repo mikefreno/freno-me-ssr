@@ -43,25 +43,16 @@ export async function POST(request: NextRequest) {
 
     if (!existingUser) {
       // Create new user
-      const { token, dbName: newDbName } = await MagicDelveDBInit();
-      dbName = newDbName;
+      const { token, dbName } = await MagicDelveDBInit();
       dbToken = token;
 
       const insertQuery = `
-        INSERT INTO User (email, email_verified, provider, name, image, database_url, database_token)
+        INSERT INTO User (email, email_verified, provider, image, database_url, database_token)
         VALUES (?, ?, ?, ?, ?, ?, ?)
       `;
       const result = await conn.execute({
         sql: insertQuery,
-        args: [
-          email,
-          true,
-          "google",
-          name ?? null,
-          picture ?? null,
-          dbName,
-          dbToken,
-        ],
+        args: [email, true, "google", picture ?? null, dbName, dbToken],
       });
       const recieved = result.lastInsertRowid?.toString();
       if (!recieved) {
