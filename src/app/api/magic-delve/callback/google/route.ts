@@ -3,10 +3,11 @@ import { env } from "@/env.mjs";
 import jwt from "jsonwebtoken";
 import { OAuth2Client } from "google-auth-library";
 import { MagicDelveConnectionFactory, MagicDelveDBInit } from "@/app/utils";
+import { createClient as createAPIClient } from "@tursodatabase/api";
 
 const client = new OAuth2Client(env.NEXT_PUBLIC_GOOGLE_CLIENT_ID_MAGIC_DELVE);
 
-export async function POST(request: NextRequest) {
+export async function POST(request: NextRequest): Promise<NextResponse> {
   try {
     const { idToken } = await request.json();
     if (!idToken) {
@@ -43,28 +44,52 @@ export async function POST(request: NextRequest) {
 
     if (!existingUser) {
       // Create new user
-      const { token, dbName } = await MagicDelveDBInit();
+      const { token, dbName: newDbName } = await MagicDelveDBInit();
+      dbName = newDbName;
       dbToken = token;
 
-      const insertQuery = `
-        INSERT INTO User (email, email_verified, provider, image, database_url, database_token)
-        VALUES (?, ?, ?, ?, ?, ?, ?)
-      `;
-      const result = await conn.execute({
-        sql: insertQuery,
-        args: [email, true, "google", picture ?? null, dbName, dbToken],
-      });
-      const recieved = result.lastInsertRowid?.toString();
-      if (!recieved) {
-        return NextResponse.json(
-          {
-            success: false,
-            message: "server failure in database response",
-          },
-          { status: 500 },
-        );
+      try {
+        const insertQuery = `
+          INSERT INTO User (email, email_verified, provider, name, image, database_url, database_token)
+          VALUES (?, ?, ?, ?, ?, ?, ?)
+        `;
+
+        const result = await conn.execute({
+          sql: insertQuery,
+          args: [
+            email,
+            true,
+            "google",
+            name ?? null,
+            picture ?? null,
+            dbName,
+            dbToken,
+          ],
+        });
+
+        const recieved = result.lastInsertRowid?.toString();
+        if (!recieved) {
+          return NextResponse.json(
+            {
+              success: false,
+              message: "server failure in database response",
+            },
+            { status: 500 },
+          );
+        }
+        userId = recieved;
+        {
+          throw new Error("Failed to insert new user");
+        }
+      } catch (insertError) {
+        // Clean up the created database on insert failure
+        const turso = createAPIClient({
+          org: "mikefreno",
+          token: env.TURSO_DB_API_TOKEN,
+        });
+        await turso.databases.delete(dbName);
+        throw insertError; // Re-throw the error to be caught by the outer catch block
       }
-      userId = recieved;
     } else {
       // Update existing user
       userId = existingUser.id?.toString() ?? "";
