@@ -76,12 +76,9 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    // Create a custom JWT
-    const customToken = jwt.sign(
-      { userId, email, dbName, dbToken },
-      env.JWT_SECRET_KEY,
-      { expiresIn: "7d" },
-    );
+    const customToken = jwt.sign({ userId, email }, env.JWT_SECRET_KEY, {
+      expiresIn: "7d",
+    });
 
     return new NextResponse(
       JSON.stringify({
