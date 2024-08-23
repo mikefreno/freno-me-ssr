@@ -25,7 +25,19 @@ export async function POST(input: NextRequest) {
     );
   }
 
-  sendEmailVerification(email);
+  const email_res = await sendEmailVerification(email);
+  const json = await email_res.json();
+  if (json.messageId) {
+    return new NextResponse(
+      JSON.stringify({
+        success: true,
+        message: "Email verification sent!",
+      }),
+      { status: 201, headers: { "content-type": "application/json" } },
+    );
+  } else {
+    return NextResponse.json(json);
+  }
 }
 
 async function sendEmailVerification(userEmail: string) {
