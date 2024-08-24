@@ -50,7 +50,7 @@ export async function POST(request: NextRequest) {
       try {
         const insertQuery = `
         INSERT INTO User (email, email_verified, given_name, family_name, provider, database_name, database_token)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
       `;
         await conn.execute({
           sql: insertQuery,
