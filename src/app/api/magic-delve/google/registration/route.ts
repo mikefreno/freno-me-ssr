@@ -49,7 +49,7 @@ export async function POST(request: NextRequest) {
       const { token, dbName } = await MagicDelveDBInit();
       try {
         const insertQuery = `
-        INSERT INTO User (email, email_verified, givenName, familyName, provider, database_name, database_token)
+        INSERT INTO User (email, email_verified, given_name, family_name, provider, database_name, database_token)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?)
       `;
         await conn.execute({
