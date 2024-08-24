@@ -13,7 +13,7 @@ export async function POST(req: NextRequest) {
     );
   }
   const conn = MagicDelveConnectionFactory();
-  const query = "SELECT * FROM Users WHERE apple_user_string = ?";
+  const query = "SELECT * FROM User WHERE apple_user_string = ?";
   const res = await conn.execute({ sql: query, args: [userString] });
   if (res.rows.length > 0) {
     return NextResponse.json(
