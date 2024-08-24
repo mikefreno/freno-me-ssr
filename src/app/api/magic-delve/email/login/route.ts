@@ -1,6 +1,9 @@
-import { MagicDelveConnectionFactory } from "@/app/utils";
+import {
+  MAGIC_DELVE_JWT_EXPIRY,
+  MagicDelveConnectionFactory,
+} from "@/app/utils";
 import { NextRequest, NextResponse } from "next/server";
-import { checkPassword } from "../../passwordHashing";
+import { checkPassword } from "../../../passwordHashing";
 import jwt from "jsonwebtoken";
 import { env } from "@/env.mjs";
 
@@ -60,7 +63,7 @@ export async function POST(input: NextRequest) {
     const token = jwt.sign(
       { userId: user.id, email: user.email },
       env.JWT_SECRET_KEY,
-      { expiresIn: "7d" },
+      { expiresIn: MAGIC_DELVE_JWT_EXPIRY },
     );
 
     return NextResponse.json({

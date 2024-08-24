@@ -1,6 +1,8 @@
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { cookies } from "next/headers";
 
+export const MAGIC_DELVE_JWT_EXPIRY = "14d";
+
 export async function getPrivilegeLevel(): Promise<
   "anonymous" | "admin" | "user"
 > {

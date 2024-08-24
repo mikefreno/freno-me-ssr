@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { hashPassword } from "../../passwordHashing";
+import { hashPassword } from "../../../passwordHashing";
 import { MagicDelveConnectionFactory } from "@/app/utils";
 import { env } from "@/env.mjs";
 import jwt from "jsonwebtoken";
