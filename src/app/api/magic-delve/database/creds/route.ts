@@ -57,8 +57,8 @@ export async function POST(req: NextRequest) {
         const user = res.rows[0];
         return new NextResponse(
           JSON.stringify({
-            success: false,
-            db_url: user.database_url,
+            success: true,
+            db_name: user.database_name,
             db_token: user.database_token,
           }),
           { status: 200 },
