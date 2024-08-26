@@ -108,5 +108,25 @@ export async function MagicDelveDBInit() {
     authorization: "full-access",
   });
 
+  const conn = PerUserDBConnectionFactory(db.hostname, token.jwt);
+  conn.execute(`
+  CREATE TABLE Save
+  (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT UNIQUE,
+    player_state TEXT,
+    game_state TEXT
+  );
+`); // no need to await this
+
   return { token: token.jwt, dbName: db.name };
+}
+
+export function PerUserDBConnectionFactory(dbName: string, token: string) {
+  const config = {
+    url: `libsql://${dbName}-mikefreno.turso.io`,
+    authToken: token,
+  };
+  const conn = createClient(config);
+  return conn;
 }
