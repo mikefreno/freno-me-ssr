@@ -108,7 +108,7 @@ export async function MagicDelveDBInit() {
     authorization: "full-access",
   });
 
-  const conn = PerUserDBConnectionFactory(db.hostname, token.jwt);
+  const conn = PerUserDBConnectionFactory(db.name, token.jwt);
   await conn.execute(`
   CREATE TABLE Save
   (

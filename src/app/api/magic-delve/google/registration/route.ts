@@ -46,9 +46,11 @@ export async function POST(request: NextRequest) {
       );
     } else {
       // User doesn't exist, insert new user and init database
-      const { token, dbName } = await MagicDelveDBInit();
-      console.log("init success");
+      let db_name;
       try {
+        const { token, dbName } = await MagicDelveDBInit();
+        db_name = dbName;
+        console.log("init success");
         const insertQuery = `
         INSERT INTO User (email, email_verified, given_name, family_name, provider, database_name, database_token)
         VALUES (?, ?, ?, ?, ?, ?, ?)
@@ -72,7 +74,7 @@ export async function POST(request: NextRequest) {
           org: "mikefreno",
           token: env.TURSO_DB_API_TOKEN,
         });
-        await turso.databases.delete(dbName);
+        await turso.databases.delete(db_name!);
         console.error(error);
       }
     }
