@@ -109,7 +109,7 @@ export async function MagicDelveDBInit() {
   });
 
   const conn = PerUserDBConnectionFactory(db.hostname, token.jwt);
-  conn.execute(`
+  await conn.execute(`
   CREATE TABLE Save
   (
     id INTEGER PRIMARY KEY AUTOINCREMENT,

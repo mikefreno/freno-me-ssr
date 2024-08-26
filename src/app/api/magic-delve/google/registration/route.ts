@@ -47,6 +47,7 @@ export async function POST(request: NextRequest) {
     } else {
       // User doesn't exist, insert new user and init database
       const { token, dbName } = await MagicDelveDBInit();
+      console.log("init success");
       try {
         const insertQuery = `
         INSERT INTO User (email, email_verified, given_name, family_name, provider, database_name, database_token)
@@ -56,6 +57,8 @@ export async function POST(request: NextRequest) {
           sql: insertQuery,
           args: [email, true, givenName, familyName, "google", dbName, token],
         });
+
+        console.log("insert success");
 
         return new NextResponse(
           JSON.stringify({

@@ -43,7 +43,7 @@ export async function POST(req: NextRequest) {
       const conn = MagicDelveConnectionFactory();
       const query = "SELECT * FROM User WHERE apple_user_string = ?";
       const res = await conn.execute({ sql: query, args: [token] });
-      if (res.rows.length > 0 && res.rows[0] && res.rows[0].email == email) {
+      if (res.rows.length > 0 && res.rows[0].email == email) {
         valid_request = true;
       }
     }
@@ -64,9 +64,12 @@ export async function POST(req: NextRequest) {
           { status: 200 },
         );
       }
-      return new NextResponse(JSON.stringify({ success: false }), {
-        status: 401,
-      });
+      return new NextResponse(
+        JSON.stringify({ success: false, message: "no user found" }),
+        {
+          status: 404,
+        },
+      );
     } else {
       return new NextResponse(
         JSON.stringify({ success: false, message: "destroy token" }),
@@ -76,8 +79,11 @@ export async function POST(req: NextRequest) {
       );
     }
   } catch (error) {
-    return new NextResponse(JSON.stringify({ success: false }), {
-      status: 401,
-    });
+    return new NextResponse(
+      JSON.stringify({ success: false, message: error }),
+      {
+        status: 401,
+      },
+    );
   }
 }
