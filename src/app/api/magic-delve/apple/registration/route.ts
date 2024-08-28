@@ -66,7 +66,7 @@ export async function POST(request: NextRequest) {
           JSON.stringify({
             success: true,
             message: "User information updated",
-            email: up,
+            email: checkUserResult.rows[0].email,
           }),
           { status: 200, headers: { "content-type": "application/json" } },
         );
