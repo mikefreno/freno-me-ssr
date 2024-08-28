@@ -46,8 +46,13 @@ export async function POST(request: NextRequest) {
       }
       setClauses.push("provider = ?", "apple_user_string = ?");
       values.push("apple", userString);
-      const whereClause = "WHERE apple_user_string = ? OR email = ?";
-      values.push(userString, email || null);
+      const whereClause = `WHERE apple_user_string = ?${
+        email && "OR email = ?"
+      }`;
+      values.push(userString);
+      if (email) {
+        values.push(email);
+      }
 
       const updateQuery = `UPDATE User SET ${setClauses.join(
         ", ",
@@ -61,6 +66,7 @@ export async function POST(request: NextRequest) {
           JSON.stringify({
             success: true,
             message: "User information updated",
+            email: up,
           }),
           { status: 200, headers: { "content-type": "application/json" } },
         );

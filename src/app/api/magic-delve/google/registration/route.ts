@@ -29,21 +29,31 @@ export async function POST(request: NextRequest) {
     if (checkUserResult.rows.length > 0) {
       const updateQuery = `
         UPDATE User 
-        SET email = ?, givenName = ?, familyName = ?, provider = ?
-        WHERE apple_user_string = ?
+        SET givenName = ?, familyName = ?, provider = ?
+        WHERE email = ?
       `;
-      await conn.execute({
+      const updateRes = await conn.execute({
         sql: updateQuery,
-        args: [email, givenName, "google", familyName],
+        args: [givenName, familyName, "google", email],
       });
 
-      return new NextResponse(
-        JSON.stringify({
-          success: true,
-          message: "User information updated",
-        }),
-        { status: 200, headers: { "content-type": "application/json" } },
-      );
+      if (updateRes.rowsAffected != 0) {
+        return new NextResponse(
+          JSON.stringify({
+            success: true,
+            message: "User information updated",
+          }),
+          { status: 200, headers: { "content-type": "application/json" } },
+        );
+      } else {
+        return new NextResponse(
+          JSON.stringify({
+            success: false,
+            message: "User update failed!",
+          }),
+          { status: 418, headers: { "content-type": "application/json" } },
+        );
+      }
     } else {
       // User doesn't exist, insert new user and init database
       let db_name;
