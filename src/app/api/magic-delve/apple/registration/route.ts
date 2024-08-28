@@ -21,7 +21,7 @@ export async function POST(request: NextRequest) {
   try {
     // Check if the user exists
     const checkUserQuery = `SELECT * FROM User WHERE apple_user_string = ?${
-      email && "OR email = ?"
+      email && " OR email = ?"
     }`;
     const checkUserResult = await conn.execute({
       sql: checkUserQuery,
@@ -47,7 +47,7 @@ export async function POST(request: NextRequest) {
       setClauses.push("provider = ?", "apple_user_string = ?");
       values.push("apple", userString);
       const whereClause = `WHERE apple_user_string = ?${
-        email && "OR email = ?"
+        email && " OR email = ?"
       }`;
       values.push(userString);
       if (email) {
