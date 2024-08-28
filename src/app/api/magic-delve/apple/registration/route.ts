@@ -30,21 +30,38 @@ export async function POST(request: NextRequest) {
     if (checkUserResult.rows.length > 0) {
       const updateQuery = `
         UPDATE User 
-        SET email = ?, given_name = ?, family_name = ?, provider = ?
-        WHERE apple_user_string = ?
+        SET email = ?, given_name = ?, family_name = ?, provider = ?, apple_user_string = ?
+        WHERE apple_user_string = ? OR email = ?
       `;
-      await conn.execute({
+      const updateRes = await conn.execute({
         sql: updateQuery,
-        args: [email, givenName, lastName, "apple", userString],
+        args: [
+          email,
+          givenName,
+          lastName,
+          "apple",
+          userString,
+          userString,
+          email,
+        ],
       });
-
-      return new NextResponse(
-        JSON.stringify({
-          success: true,
-          message: "User information updated",
-        }),
-        { status: 200, headers: { "content-type": "application/json" } },
-      );
+      if (updateRes.rowsAffected != 0) {
+        return new NextResponse(
+          JSON.stringify({
+            success: true,
+            message: "User information updated",
+          }),
+          { status: 200, headers: { "content-type": "application/json" } },
+        );
+      } else {
+        return new NextResponse(
+          JSON.stringify({
+            success: false,
+            message: "User update failed!",
+          }),
+          { status: 418, headers: { "content-type": "application/json" } },
+        );
+      }
     } else {
       // User doesn't exist, insert new user and init database
       const { token, dbName } = await MagicDelveDBInit();
