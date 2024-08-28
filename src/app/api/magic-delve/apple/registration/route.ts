@@ -20,30 +20,41 @@ export async function POST(request: NextRequest) {
 
   try {
     // Check if the user exists
-    const checkUserQuery =
-      "SELECT * FROM User WHERE apple_user_string = ? OR email = ?";
+    const checkUserQuery = `SELECT * FROM User WHERE apple_user_string = ?${
+      email && "OR email = ?"
+    }`;
     const checkUserResult = await conn.execute({
       sql: checkUserQuery,
       args: [userString, email],
     });
 
     if (checkUserResult.rows.length > 0) {
-      const updateQuery = `
-        UPDATE User 
-        SET email = ?, given_name = ?, family_name = ?, provider = ?, apple_user_string = ?
-        WHERE apple_user_string = ? OR email = ?
-      `;
+      const setClauses = [];
+      const values = [];
+
+      if (email) {
+        setClauses.push("email = ?");
+        values.push(email);
+      }
+      if (givenName) {
+        setClauses.push("given_name = ?");
+        values.push(givenName);
+      }
+      if (lastName) {
+        setClauses.push("family_name = ?");
+        values.push(lastName);
+      }
+      setClauses.push("provider = ?", "apple_user_string = ?");
+      values.push("apple", userString);
+      const whereClause = "WHERE apple_user_string = ? OR email = ?";
+      values.push(userString, email || null);
+
+      const updateQuery = `UPDATE User SET ${setClauses.join(
+        ", ",
+      )} ${whereClause}`;
       const updateRes = await conn.execute({
         sql: updateQuery,
-        args: [
-          email,
-          givenName,
-          lastName,
-          "apple",
-          userString,
-          userString,
-          email,
-        ],
+        args: values,
       });
       if (updateRes.rowsAffected != 0) {
         return new NextResponse(
