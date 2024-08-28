@@ -29,12 +29,12 @@ export async function POST(request: NextRequest) {
     if (checkUserResult.rows.length > 0) {
       const updateQuery = `
         UPDATE User 
-        SET email = ?, givenName = ?, familyName = ?
+        SET email = ?, givenName = ?, familyName = ?, provider = ?
         WHERE apple_user_string = ?
       `;
       await conn.execute({
         sql: updateQuery,
-        args: [email, givenName, familyName],
+        args: [email, givenName, "google", familyName],
       });
 
       return new NextResponse(
