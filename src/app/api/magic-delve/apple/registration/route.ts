@@ -20,13 +20,20 @@ export async function POST(request: NextRequest) {
 
   try {
     // Check if the user exists
-    const checkUserQuery = `SELECT * FROM User WHERE apple_user_string = ?${
-      email && " OR email = ?"
-    }`;
+    let checkUserQuery = `SELECT * FROM User WHERE apple_user_string = ?`;
+    console.log(checkUserQuery);
+    let args = [userString];
+    if (email) {
+      args.push(email);
+      checkUserQuery += " OR email = ?";
+    }
+    console.log(args);
     const checkUserResult = await conn.execute({
       sql: checkUserQuery,
-      args: [userString, email],
+      args: args,
     });
+
+    console.log(checkUserResult.rows[0]);
 
     if (checkUserResult.rows.length > 0) {
       const setClauses = [];
@@ -53,6 +60,8 @@ export async function POST(request: NextRequest) {
       if (email) {
         values.push(email);
       }
+      console.log(setClauses);
+      console.log(values);
 
       const updateQuery = `UPDATE User SET ${setClauses.join(
         ", ",
