@@ -114,7 +114,6 @@ export async function MagicDelveDBInit() {
   (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT UNIQUE,
-    player_state TEXT NOT NULL,
     game_state TEXT NOT NULL,
     created_at TEXT NOT NULL DEFAULT (datetime('now')),
     last_updated_at TEXT NOT NULL DEFAULT (datetime('now'))
