@@ -5,13 +5,14 @@ export default function PrivacyPolicy() {
     <>
       <div className="bg-zinc-100 dark:bg-zinc-900">
         <div className="min-h-screen px-[8vw] py-[8vh]">
-          <div className="py-4 text-xl">Magic Delve's Privacy Policy</div>
+          <div className="py-4 text-xl">Magic Delve&apos;s Privacy Policy</div>
           <div className="py-2">Last Updated: October 22, 2024</div>
           <div className="py-2">
-            Welcome to Magic Delve ('We', 'Us', 'Our'). Your privacy is
-            important to us. This privacy policy will help you understand our
-            policies and procedures related to the collection, use, and storage
-            of personal information from our users.
+            Welcome to Magic Delve (&apos;We&apos;, &apos;Us&apos;,
+            &apos;Our&apos;). Your privacy is important to us. This privacy
+            policy will help you understand our policies and procedures related
+            to the collection, use, and storage of personal information from our
+            users.
           </div>
           <ol>
             <div className="py-2">
