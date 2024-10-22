@@ -1,19 +1,9 @@
-import Head from "next/head";
-import Navbar from "@/components/Navbar";
 import Link from "next/link";
 
 export default function PrivacyPolicy() {
   return (
     <>
       <div className="bg-zinc-100 dark:bg-zinc-900">
-        <Head>
-          <title>Privacy Policy | Shapes with Abigail!</title>
-          <meta
-            name="description"
-            content="Shapes with Abigail!'s Privacy Policy"
-          />
-        </Head>
-        <Navbar />
         <div className="min-h-screen px-[8vw] py-[8vh]">
           <div className="py-4 text-xl">
             Shapes with Abigail!&apos;s Privacy Policy
