@@ -11,7 +11,8 @@ export default async function MaicDelveAccountDeletion() {
         a 24hr grace period is started where you can request a cancellation of
         the account deletion. Once the grace period ends, the account's entry in
         our central database will be completely removed, and your individual
-        database storing your remote saves will also be deleted.
+        database storing your remote saves will also be deleted. No data related
+        to the account is retained in any way.
       </div>
 
       <DeletionForm />
