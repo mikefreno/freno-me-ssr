@@ -1,4 +1,4 @@
-import { MagicDelveConnectionFactory } from "@/app/utils";
+import { LineageConnectionFactory } from "@/app/utils";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
@@ -12,7 +12,7 @@ export async function POST(req: NextRequest) {
       { status: 400, headers: { "content-type": "application/json" } },
     );
   }
-  const conn = MagicDelveConnectionFactory();
+  const conn = LineageConnectionFactory();
   const query = "SELECT * FROM User WHERE apple_user_string = ?";
   const res = await conn.execute({ sql: query, args: [userString] });
   if (res.rows.length > 0) {

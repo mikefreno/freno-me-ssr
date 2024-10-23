@@ -24,8 +24,8 @@ export async function SendDeletionRequestEmail(email: string) {
           email: "michael@freno.me",
         },
       ],
-      htmlContent: `<html><head></head><body><div>Request Name: Magic Delve Account Deletion</div><div>Request Email: ${email}</div></body></html>`,
-      subject: `Magic Delve Acct Deletion`,
+      htmlContent: `<html><head></head><body><div>Request Name: Life and Lineage Account Deletion</div><div>Request Email: ${email}</div></body></html>`,
+      subject: `Life and Lineage Acct Deletion`,
     };
     const sendinblueUserData = {
       sender: {
@@ -37,8 +37,8 @@ export async function SendDeletionRequestEmail(email: string) {
           email: email,
         },
       ],
-      htmlContent: `<html><head></head><body><div>Request Name: Magic Delve Account Deletion</div><div>Account to delete: ${email}</div><div>You can email michael@freno.me in the next 24hrs to cancel the deletion, email with subject line "Account Deletion Cancellation"</div></body></html>`,
-      subject: `Magic Delve Acct Deletion`,
+      htmlContent: `<html><head></head><body><div>Request Name: Life and Lineage Account Deletion</div><div>Account to delete: ${email}</div><div>You can email michael@freno.me in the next 24hrs to cancel the deletion, email with subject line "Account Deletion Cancellation"</div></body></html>`,
+      subject: `Life and Lineage Acct Deletion`,
     };
     try {
       await fetch(apiUrl, {
