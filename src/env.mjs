@@ -70,8 +70,8 @@ export const env = createEnv({
     NEXT_PUBLIC_WEBSOCKET: process.env.NEXT_PUBLIC_WEBSOCKET,
     TURSO_DB_URL: process.env.TURSO_DB_URL,
     TURSO_DB_TOKEN: process.env.TURSO_DB_TOKEN,
-    TURSO_LINEAGE_URL: process.env.TURSO_MAGIC_DELVE_URL,
-    TURSO_LINEAGE_TOKEN: process.env.TURSO_MAGIC_DELVE_TOKEN,
+    TURSO_LINEAGE_URL: process.env.TURSO_LINEAGE_URL,
+    TURSO_LINEAGE_TOKEN: process.env.TURSO_LINEAGE_TOKEN,
     TURSO_DB_API_TOKEN: process.env.TURSO_DB_API_TOKEN
   },
 
