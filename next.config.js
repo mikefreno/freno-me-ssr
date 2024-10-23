@@ -29,7 +29,7 @@ module.exports = {
   async headers() {
     return [
       {
-        // matching all magic delve API routes
+        // matching all life and lineage API routes
         source: "/api/life-and-lineage:path*",
         headers: [
           { key: "Access-Control-Allow-Credentials", value: "true" },

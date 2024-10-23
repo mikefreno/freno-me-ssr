@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { hashPassword } from "../../../passwordHashing";
-import { MagicDelveConnectionFactory } from "@/app/utils";
+import { LineageConnectionFactory } from "@/app/utils";
 import { env } from "@/env.mjs";
 import jwt from "jsonwebtoken";
 import { LibsqlError } from "@libsql/client/web";
@@ -18,7 +18,7 @@ export async function POST(input: NextRequest) {
   if (email && password && password_conf) {
     if (password == password_conf) {
       const passwordHash = await hashPassword(password);
-      const conn = MagicDelveConnectionFactory();
+      const conn = LineageConnectionFactory();
       const userCreationQuery = `
     INSERT INTO User (email, provider, password_hash)
     VALUES (?, ?, ?)

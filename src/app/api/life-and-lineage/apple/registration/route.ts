@@ -1,11 +1,11 @@
-import { MagicDelveConnectionFactory, MagicDelveDBInit } from "@/app/utils";
+import { LineageConnectionFactory, LineageDBInit } from "@/app/utils";
 import { NextRequest, NextResponse } from "next/server";
 
 import { createClient as createAPIClient } from "@tursodatabase/api";
 import { env } from "@/env.mjs";
 
 export async function POST(request: NextRequest) {
-  const { email, givenName, lastName, userString } = await request.json();
+  const { email, userString } = await request.json();
   if (!userString) {
     return new NextResponse(
       JSON.stringify({
@@ -16,7 +16,7 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const conn = MagicDelveConnectionFactory();
+  const conn = LineageConnectionFactory();
 
   try {
     // Check if the user exists
@@ -43,14 +43,6 @@ export async function POST(request: NextRequest) {
         setClauses.push("email = ?");
         values.push(email);
       }
-      if (givenName) {
-        setClauses.push("given_name = ?");
-        values.push(givenName);
-      }
-      if (lastName) {
-        setClauses.push("family_name = ?");
-        values.push(lastName);
-      }
       setClauses.push("provider = ?", "apple_user_string = ?");
       values.push("apple", userString);
       const whereClause = `WHERE apple_user_string = ?${
@@ -60,8 +52,6 @@ export async function POST(request: NextRequest) {
       if (email) {
         values.push(email);
       }
-      console.log(setClauses);
-      console.log(values);
 
       const updateQuery = `UPDATE User SET ${setClauses.join(
         ", ",
@@ -90,24 +80,15 @@ export async function POST(request: NextRequest) {
       }
     } else {
       // User doesn't exist, insert new user and init database
-      const { token, dbName } = await MagicDelveDBInit();
+      const { token, dbName } = await LineageDBInit();
       try {
         const insertQuery = `
-        INSERT INTO User (email, email_verified, given_name, family_name, apple_user_string, provider, database_name, database_token)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        INSERT INTO User (email, email_verified, apple_user_string, provider, database_name, database_token)
+        VALUES (?, ?, ?, ?, ?, ?)
       `;
         await conn.execute({
           sql: insertQuery,
-          args: [
-            email,
-            true,
-            givenName,
-            lastName,
-            userString,
-            "apple",
-            dbName,
-            token,
-          ],
+          args: [email, true, userString, "apple", dbName, token],
         });
 
         return new NextResponse(

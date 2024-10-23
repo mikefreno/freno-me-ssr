@@ -24,8 +24,8 @@ export const env = createEnv({
     SENDINBLUE_KEY: z.string().min(1),
     TURSO_DB_URL: z.string().min(1),
     TURSO_DB_TOKEN: z.string().min(1),
-    TURSO_MAGIC_DELVE_URL: z.string().min(1),
-    TURSO_MAGIC_DELVE_TOKEN: z.string().min(1),
+    TURSO_LINEAGE_URL: z.string().min(1),
+    TURSO_LINEAGE_TOKEN: z.string().min(1),
     TURSO_DB_API_TOKEN: z.string().min(1)
   },
 
@@ -70,8 +70,8 @@ export const env = createEnv({
     NEXT_PUBLIC_WEBSOCKET: process.env.NEXT_PUBLIC_WEBSOCKET,
     TURSO_DB_URL: process.env.TURSO_DB_URL,
     TURSO_DB_TOKEN: process.env.TURSO_DB_TOKEN,
-    TURSO_MAGIC_DELVE_URL: process.env.TURSO_MAGIC_DELVE_URL,
-    TURSO_MAGIC_DELVE_TOKEN: process.env.TURSO_MAGIC_DELVE_TOKEN,
+    TURSO_LINEAGE_URL: process.env.TURSO_MAGIC_DELVE_URL,
+    TURSO_LINEAGE_TOKEN: process.env.TURSO_MAGIC_DELVE_TOKEN,
     TURSO_DB_API_TOKEN: process.env.TURSO_DB_API_TOKEN
   },
 

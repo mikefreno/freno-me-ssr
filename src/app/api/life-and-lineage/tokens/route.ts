@@ -1,4 +1,4 @@
-import { MagicDelveConnectionFactory } from "@/app/utils";
+import { LineageConnectionFactory } from "@/app/utils";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
@@ -11,7 +11,7 @@ export async function POST(req: NextRequest) {
       },
     );
   }
-  const conn = MagicDelveConnectionFactory();
+  const conn = LineageConnectionFactory();
   const query = "SELECT * FROM Token WHERE token = ?";
   const res = await conn.execute({ sql: query, args: [token] });
   if (res.rows.length > 0) {

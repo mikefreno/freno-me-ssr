@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import jwt from "jsonwebtoken";
 import { env } from "@/env.mjs";
-import { MAGIC_DELVE_JWT_EXPIRY } from "@/app/utils";
+import { LINEAGE_JWT_EXPIRY } from "@/app/utils";
 
 export async function POST(req: NextRequest) {
   const authHeader = req.headers.get("authorization");
@@ -18,7 +18,7 @@ export async function POST(req: NextRequest) {
     const newToken = jwt.sign(
       { userId: decoded.userId, email: decoded.email },
       env.JWT_SECRET_KEY,
-      { expiresIn: MAGIC_DELVE_JWT_EXPIRY },
+      { expiresIn: LINEAGE_JWT_EXPIRY },
     );
 
     return new NextResponse(

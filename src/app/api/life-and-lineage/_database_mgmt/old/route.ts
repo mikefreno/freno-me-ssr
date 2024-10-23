@@ -1,11 +1,11 @@
-import { MagicDelveConnectionFactory } from "@/app/utils";
+import { LineageConnectionFactory } from "@/app/utils";
 import { env } from "@/env.mjs";
 
 import { createClient as createAPIClient } from "@tursodatabase/api";
 import { NextResponse } from "next/server";
 
 export async function GET() {
-  const conn = MagicDelveConnectionFactory();
+  const conn = LineageConnectionFactory();
   const query =
     "SELECT * FROM User WHERE datetime(db_destroy_date) < datetime('now');";
   try {

@@ -1,11 +1,11 @@
-import { MagicDelveConnectionFactory, MagicDelveDBInit } from "@/app/utils";
+import { LineageConnectionFactory, LineageDBInit } from "@/app/utils";
 import { NextRequest, NextResponse } from "next/server";
 
 import { createClient as createAPIClient } from "@tursodatabase/api";
 import { env } from "@/env.mjs";
 
 export async function POST(request: NextRequest) {
-  const { email, givenName, familyName } = await request.json();
+  const { email } = await request.json();
   if (!email) {
     return new NextResponse(
       JSON.stringify({
@@ -16,7 +16,7 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const conn = MagicDelveConnectionFactory();
+  const conn = LineageConnectionFactory();
 
   try {
     // Check if the user exists
@@ -29,12 +29,12 @@ export async function POST(request: NextRequest) {
     if (checkUserResult.rows.length > 0) {
       const updateQuery = `
         UPDATE User 
-        SET givenName = ?, familyName = ?, provider = ?
+        SET provider = ?
         WHERE email = ?
       `;
       const updateRes = await conn.execute({
         sql: updateQuery,
-        args: [givenName, familyName, "google", email],
+        args: ["google", email],
       });
 
       if (updateRes.rowsAffected != 0) {
@@ -58,16 +58,16 @@ export async function POST(request: NextRequest) {
       // User doesn't exist, insert new user and init database
       let db_name;
       try {
-        const { token, dbName } = await MagicDelveDBInit();
+        const { token, dbName } = await LineageDBInit();
         db_name = dbName;
         console.log("init success");
         const insertQuery = `
-        INSERT INTO User (email, email_verified, given_name, family_name, provider, database_name, database_token)
-        VALUES (?, ?, ?, ?, ?, ?, ?)
+        INSERT INTO User (email, email_verified, provider, database_name, database_token)
+        VALUES (?, ?, ?, ?, ?)
       `;
         await conn.execute({
           sql: insertQuery,
-          args: [email, true, givenName, familyName, "google", dbName, token],
+          args: [email, true, "google", dbName, token],
         });
 
         console.log("insert success");

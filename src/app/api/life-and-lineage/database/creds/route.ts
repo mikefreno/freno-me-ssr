@@ -1,7 +1,7 @@
 import { env } from "@/env.mjs";
 import { NextRequest, NextResponse } from "next/server";
 import jwt from "jsonwebtoken";
-import { MagicDelveConnectionFactory } from "@/app/utils";
+import { LineageConnectionFactory } from "@/app/utils";
 import { OAuth2Client } from "google-auth-library";
 const CLIENT_ID = env.NEXT_PUBLIC_GOOGLE_CLIENT_ID_MAGIC_DELVE;
 
@@ -40,7 +40,7 @@ export async function POST(req: NextRequest) {
         valid_request = true;
       }
     } else {
-      const conn = MagicDelveConnectionFactory();
+      const conn = LineageConnectionFactory();
       const query = "SELECT * FROM User WHERE apple_user_string = ?";
       const res = await conn.execute({ sql: query, args: [token] });
       if (res.rows.length > 0 && res.rows[0].email == email) {
@@ -49,7 +49,7 @@ export async function POST(req: NextRequest) {
     }
 
     if (valid_request) {
-      const conn = MagicDelveConnectionFactory();
+      const conn = LineageConnectionFactory();
       const query = "SELECT * FROM User WHERE email = ? LIMIT 1";
       const params = [email];
       const res = await conn.execute({ sql: query, args: params });

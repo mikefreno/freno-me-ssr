@@ -1,7 +1,4 @@
-import {
-  MAGIC_DELVE_JWT_EXPIRY,
-  MagicDelveConnectionFactory,
-} from "@/app/utils";
+import { LINEAGE_JWT_EXPIRY, LineageConnectionFactory } from "@/app/utils";
 import { NextRequest, NextResponse } from "next/server";
 import { checkPassword } from "../../../passwordHashing";
 import jwt from "jsonwebtoken";
@@ -25,7 +22,7 @@ export async function POST(input: NextRequest) {
         { status: 401, headers: { "content-type": "application/json" } },
       );
     }
-    const conn = MagicDelveConnectionFactory();
+    const conn = LineageConnectionFactory();
     const query = `SELECT * FROM User WHERE email = ? AND provider = ? LIMIT 1`;
     const params = [email, "email"];
     const res = await conn.execute({ sql: query, args: params });
@@ -63,7 +60,7 @@ export async function POST(input: NextRequest) {
     const token = jwt.sign(
       { userId: user.id, email: user.email },
       env.JWT_SECRET_KEY,
-      { expiresIn: MAGIC_DELVE_JWT_EXPIRY },
+      { expiresIn: LINEAGE_JWT_EXPIRY },
     );
 
     return NextResponse.json({

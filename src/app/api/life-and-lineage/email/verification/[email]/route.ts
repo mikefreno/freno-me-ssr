@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { env } from "@/env.mjs";
 import jwt, { JwtPayload } from "jsonwebtoken";
-import { MagicDelveConnectionFactory, MagicDelveDBInit } from "@/app/utils";
+import { LineageConnectionFactory, LineageDBInit } from "@/app/utils";
 import { createClient as createAPIClient } from "@tursodatabase/api";
 
 export async function GET(
@@ -33,8 +33,8 @@ export async function GET(
       );
     }
 
-    conn = MagicDelveConnectionFactory();
-    const dbInit = await MagicDelveDBInit();
+    conn = LineageConnectionFactory();
+    const dbInit = await LineageDBInit();
     dbName = dbInit.dbName;
     dbToken = dbInit.token;
 

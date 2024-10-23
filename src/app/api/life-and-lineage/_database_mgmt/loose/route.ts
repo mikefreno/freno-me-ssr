@@ -1,4 +1,4 @@
-import { MagicDelveConnectionFactory } from "@/app/utils";
+import { LineageConnectionFactory } from "@/app/utils";
 import { env } from "@/env.mjs";
 import { createClient as createAPIClient } from "@tursodatabase/api";
 import { NextResponse } from "next/server";
@@ -6,7 +6,7 @@ import { NextResponse } from "next/server";
 const IGNORE = ["frenome", "magic-delve-conductor"];
 
 export async function GET() {
-  const conn = MagicDelveConnectionFactory();
+  const conn = LineageConnectionFactory();
   const query = "SELECT database_url FROM User WHERE database_url IS NOT NULL";
   try {
     const res = await conn.execute(query);
