@@ -87,7 +87,7 @@ export default function DownloadPage() {
       </div>
       <div className="pt-12">
         <div className="text-center text-xl tracking-wide dark:text-white">
-          Magic Delve (alpha)
+          Life and Lineage (alpha)
           <br />
           (apk only)
         </div>

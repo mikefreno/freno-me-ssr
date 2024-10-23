@@ -5,10 +5,12 @@ export default function PrivacyPolicy() {
     <>
       <div className="bg-zinc-100 dark:bg-zinc-900">
         <div className="min-h-screen px-[8vw] py-[8vh]">
-          <div className="py-4 text-xl">Magic Delve&apos;s Privacy Policy</div>
+          <div className="py-4 text-xl">
+            Life and Lineage&apos;s Privacy Policy
+          </div>
           <div className="py-2">Last Updated: October 22, 2024</div>
           <div className="py-2">
-            Welcome to Magic Delve (&apos;We&apos;, &apos;Us&apos;,
+            Welcome to Life and Lineage (&apos;We&apos;, &apos;Us&apos;,
             &apos;Our&apos;). Your privacy is important to us. This privacy
             policy will help you understand our policies and procedures related
             to the collection, use, and storage of personal information from our
@@ -22,8 +24,8 @@ export default function PrivacyPolicy() {
               <div className="pl-4">
                 <div className="pb-2">
                   <div className="-ml-6">(a) Collection of Personal Data:</div>{" "}
-                  Magic Delve collects and stores personal data only if users
-                  opt to use the remote saving feature. The information
+                  Life and Lineage collects and stores personal data only if
+                  users opt to use the remote saving feature. The information
                   collected includes email address, and if using an OAuth
                   provider - first name, and last name. This information is used
                   solely for the purpose of providing and managing the remote
@@ -35,7 +37,7 @@ export default function PrivacyPolicy() {
                   request the removal of all information related to them by
                   visiting{" "}
                   <Link
-                    href="/deletion/magic-delve"
+                    href="/deletion/life-and-lineage"
                     className="text-blue-400 underline-offset-4 hover:underline"
                   >
                     this page
@@ -64,11 +66,12 @@ export default function PrivacyPolicy() {
                 <span className="-ml-4 pr-2">3.</span> Security
               </div>
               <div className="pb-2 pl-4">
-                <div className="-ml-6">(a) Data Protection:</div>Magic Delve
-                takes appropriate measures to protect the personal information
-                of users who opt for the remote saving feature. We implement
-                industry-standard security protocols to prevent unauthorized
-                access, disclosure, alteration, or destruction of user data.
+                <div className="-ml-6">(a) Data Protection:</div>Life and
+                Lineage takes appropriate measures to protect the personal
+                information of users who opt for the remote saving feature. We
+                implement industry-standard security protocols to prevent
+                unauthorized access, disclosure, alteration, or destruction of
+                user data.
               </div>
             </div>
 

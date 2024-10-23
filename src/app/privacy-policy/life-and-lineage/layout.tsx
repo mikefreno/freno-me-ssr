@@ -2,8 +2,8 @@ import Navbar from "@/components/Navbar";
 import NextTopLoader from "nextjs-toploader";
 
 export const metadata = {
-  title: "Privacy Policy | Magic Delve",
-  description: "Magic Delve Privacy Policy",
+  title: "Privacy Policy | Life and Lineage",
+  description: "Life and Lineage Privacy Policy",
 };
 
 export default async function NonRootLayout({
