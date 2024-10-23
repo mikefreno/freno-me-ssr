@@ -30,7 +30,7 @@ module.exports = {
     return [
       {
         // matching all magic delve API routes
-        source: "/api/magic-delve:path*",
+        source: "/api/life-and-lineage:path*",
         headers: [
           { key: "Access-Control-Allow-Credentials", value: "true" },
           { key: "Access-Control-Allow-Origin", value: "*" },

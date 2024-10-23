@@ -2,8 +2,8 @@ import Navbar from "@/components/Navbar";
 import NextTopLoader from "nextjs-toploader";
 
 export const metadata = {
-  title: "Deletion | Magic Delve",
-  description: "Magic Delve Acct Deletion",
+  title: "Deletion | Life and Lineage",
+  description: "Life and Lineage Acct Deletion",
 };
 
 export default async function NonRootLayout({

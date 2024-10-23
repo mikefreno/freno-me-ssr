@@ -88,7 +88,7 @@ async function sendEmailVerification(userEmail: string) {
   const sendinblueData = {
     sender: {
       name: "MikeFreno",
-      email: "magicdelve_no_reply@freno.me",
+      email: "lifeandlineage_no_reply@freno.me",
     },
     to: [
       {
@@ -125,12 +125,12 @@ async function sendEmailVerification(userEmail: string) {
     </div>
     <br/>
     <div class="center">
-        <a href=${env.NEXT_PUBLIC_DOMAIN}/api/magic-delve/email/verification/${userEmail}/?token=${token} class="button">Verify Email</a>
+        <a href=${env.NEXT_PUBLIC_DOMAIN}/api/life-and-lineage/email/verification/${userEmail}/?token=${token} class="button">Verify Email</a>
     </div>
 </body>
 </html>
 `,
-    subject: `Magic Delve email verification`,
+    subject: `Life and Lineage email verification`,
   };
   return await fetch(apiUrl, {
     method: "POST",
