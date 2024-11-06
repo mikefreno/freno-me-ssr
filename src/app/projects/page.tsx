@@ -47,6 +47,9 @@ export default async function Projects({
   const conn = ConnectionFactory();
   const results = await conn.execute(query);
   let projects = results.rows as unknown as PostWithCommentsAndLikes[];
+  if (!projects) {
+    return null;
+  }
 
   const projectIDs = projects.map((project) => project.id);
   const tagQuery = `SELECT * FROM Tag WHERE post_id IN (${projectIDs.join(
