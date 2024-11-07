@@ -102,6 +102,37 @@ export default function HomeClient(props: {
               } flex min-h-[100dvh] w-full flex-col justify-center opacity-0`}
             >
               <div className="text-center">
+                {windowWidth == 0 ||
+                  (windowWidth > 768 && (
+                    <>
+                      <nav className="mx-auto flex flex-row">
+                        <div className="duration-400 flex w-fit flex-row transition-all ease-in-out mx-auto -mb-[21px]">
+                          <Link
+                            href="/projects"
+                            className="w-20 rounded border border-white py-2 text-center font-light text-white hover:bg-white hover:bg-opacity-20 active:bg-opacity-60 sm:w-24 md:w-28"
+                          >
+                            Projects
+                          </Link>
+
+                          <div className="mx-auto my-auto h-0 w-4 border-[0.5px] border-white md:w-8" />
+
+                          <Link
+                            href="/blog"
+                            className="w-20 rounded border border-white py-2 text-center font-light text-white hover:bg-white hover:bg-opacity-20 active:bg-opacity-60 sm:w-24 md:w-28"
+                          >
+                            Blog
+                          </Link>
+                        </div>
+                      </nav>
+                      <div className="flex justify-center">
+                        <div
+                          className={`${
+                            onLoad ? "h-16" : "h-0"
+                          } w-0 transform border-[0.5px] border-white transition-all duration-[1500ms]`}
+                        />
+                      </div>
+                    </>
+                  ))}
                 <div
                   ref={topHR}
                   style={{
@@ -163,19 +194,19 @@ export default function HomeClient(props: {
                     <div className="mx-auto my-auto h-0 w-4 border-[0.5px] border-white md:w-8" />
 
                     <Link
-                      href="/projects"
+                      href="/login"
                       className="w-20 rounded border border-white py-2 text-center font-light text-white hover:bg-white hover:bg-opacity-20 active:bg-opacity-60 sm:w-24 md:w-28"
                     >
-                      Projects
+                      Login
                     </Link>
 
                     <div className="mx-auto my-auto h-0 w-4 border-[0.5px] border-white md:w-8" />
 
                     <Link
-                      href="/blog"
+                      href="/downloads"
                       className="w-20 rounded border border-white py-2 text-center font-light text-white hover:bg-white hover:bg-opacity-20 active:bg-opacity-60 sm:w-24 md:w-28"
                     >
-                      Blog
+                      Downloads
                     </Link>
 
                     <div className="mx-auto my-auto h-0 w-4 border-[0.5px] border-white md:w-8" />

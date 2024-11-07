@@ -209,7 +209,7 @@ export default function LoginPage() {
                   setRegister(true);
                   setUsePassword(false);
                 }}
-                className="pl-1 text-blue-400 underline dark:text-blue-600"
+                className="pl-1 text-blue-400 underline dark:text-blue-600 hover:text-blue-300 dark:hover:text-blue-500"
               >
                 Click here to Register
               </button>
@@ -222,7 +222,7 @@ export default function LoginPage() {
                   setRegister(false);
                   setUsePassword(false);
                 }}
-                className="pl-1 text-blue-400 underline dark:text-blue-600"
+                className="pl-1 text-blue-400 underline dark:text-blue-600 hover:text-blue-300 dark:hover:text-blue-500"
               >
                 Click here to Login
               </button>
