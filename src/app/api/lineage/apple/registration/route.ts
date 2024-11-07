@@ -16,11 +16,13 @@ export async function POST(request: NextRequest) {
     );
   }
 
+  let dbName;
+  let dbToken;
   const conn = LineageConnectionFactory();
 
   try {
     // Check if the user exists
-    let checkUserQuery = `SELECT * FROM User WHERE apple_user_string = ?`;
+    let checkUserQuery = "SELECT * FROM User WHERE apple_user_string = ?";
     console.log(checkUserQuery);
     let args = [userString];
     if (email) {
@@ -33,9 +35,15 @@ export async function POST(request: NextRequest) {
       args: args,
     });
 
-    console.log(checkUserResult.rows[0]);
+    console.log(
+      "rows: ",
+      checkUserResult.rows[0],
+      "length: ",
+      checkUserResult.rows.length,
+    );
 
     if (checkUserResult.rows.length > 0) {
+      console.log("enter update");
       const setClauses = [];
       const values = [];
 
@@ -80,7 +88,11 @@ export async function POST(request: NextRequest) {
       }
     } else {
       // User doesn't exist, insert new user and init database
-      const { token, dbName } = await LineageDBInit();
+      const dbInit = await LineageDBInit();
+      dbToken = dbInit.token;
+      dbName = dbInit.dbName;
+
+      console.log("enter insert");
       try {
         const insertQuery = `
         INSERT INTO User (email, email_verified, apple_user_string, provider, database_name, database_token)
@@ -88,7 +100,7 @@ export async function POST(request: NextRequest) {
       `;
         await conn.execute({
           sql: insertQuery,
-          args: [email, true, userString, "apple", dbName, token],
+          args: [email, true, userString, "apple", dbName, dbToken],
         });
 
         return new NextResponse(
@@ -96,7 +108,7 @@ export async function POST(request: NextRequest) {
             success: true,
             message: "New user created",
             dbName,
-            dbToken: token,
+            dbToken,
           }),
           { status: 201, headers: { "content-type": "application/json" } },
         );
@@ -110,6 +122,18 @@ export async function POST(request: NextRequest) {
       }
     }
   } catch (error) {
+    if (dbName) {
+      try {
+        const turso = createAPIClient({
+          org: "mikefreno",
+          token: env.TURSO_DB_API_TOKEN,
+        });
+        await turso.databases.delete(dbName);
+        console.log(`Database ${dbName} deleted due to error`);
+      } catch (deleteErr) {
+        console.error("Error deleting database:", deleteErr);
+      }
+    }
     console.error("Error in Apple Sign-Up handler:", error);
     return new NextResponse(
       JSON.stringify({
