@@ -110,16 +110,17 @@ export async function LineageDBInit() {
 
   const conn = PerUserDBConnectionFactory(db.name, token.jwt);
   await conn.execute(`
-  CREATE TABLE Save
-  (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT UNIQUE,
-    game_state TEXT NOT NULL,
-    player_state TEXT NOT NULL,
-    created_at TEXT NOT NULL DEFAULT (datetime('now')),
-    last_updated_at TEXT NOT NULL DEFAULT (datetime('now'))
-  );
-`); // no need to await this
+    CREATE TABLE checkpoints (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      timestamp INTEGER NOT NULL,
+      player_age INTEGER NOT NULL,
+      player_data TEXT,
+      time_data TEXT,
+      dungeon_data TEXT,
+      character_data TEXT,
+      shops_data TEXT
+    )
+  `);
 
   return { token: token.jwt, dbName: db.name };
 }
