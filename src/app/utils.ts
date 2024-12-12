@@ -113,7 +113,8 @@ export async function LineageDBInit() {
   CREATE TABLE checkpoints (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
-    timestamp INTEGER NOT NULL,
+    created_at INTEGER NOT NULL,
+    last_updated INTEGER NOT NULL,
     player_age INTEGER NOT NULL,
     player_data TEXT,
     time_data TEXT,
