@@ -7,7 +7,9 @@ import jwt from "jsonwebtoken";
 import { ConnectionFactory } from "@/app/utils";
 
 export async function requestPasswordReset(email: string) {
-  const requestedPasswordReset = cookies().get("passwordResetRequested");
+  const requestedPasswordReset = (await cookies()).get(
+    "passwordResetRequested",
+  );
   let remaining = 0;
   if (requestedPasswordReset) {
     const expires = new Date(requestedPasswordReset?.value);
@@ -86,7 +88,7 @@ export async function requestPasswordReset(email: string) {
         body: JSON.stringify(sendinblueData),
       });
       const exp = new Date(Date.now() + 5 * 60 * 1000);
-      cookies().set("passwordResetRequested", exp.toUTCString());
+      (await cookies()).set("passwordResetRequested", exp.toUTCString());
       return "email sent";
     }
   }

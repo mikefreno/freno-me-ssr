@@ -9,12 +9,13 @@ import { Suspense } from "react";
 export default async function ProjectEditing({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
   const privilegeLevel = await getPrivilegeLevel();
   if (privilegeLevel == "admin") {
+    const readyParams = await params;
     const res = await fetch(
-      `${env.NEXT_PUBLIC_DOMAIN}/api/database/post/blog/by-id/${params.id}`,
+      `${env.NEXT_PUBLIC_DOMAIN}/api/database/post/blog/by-id/${readyParams.id}`,
       { method: "GET", cache: "no-store" },
     );
     const parsed = await res.json();

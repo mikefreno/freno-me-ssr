@@ -6,7 +6,7 @@ import { ConnectionFactory } from "@/app/utils";
 export async function POST(input: NextRequest) {
   const inputData = (await input.json()) as newEmailInput;
   const { id, newEmail } = inputData;
-  const oldEmail = cookies().get("emailToken");
+  const oldEmail = (await cookies()).get("emailToken");
   const conn = ConnectionFactory();
   const query = `UPDATE User SET email = ? WHERE id = ? AND email = ?`;
   const params = [newEmail, id, oldEmail];

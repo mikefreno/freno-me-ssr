@@ -1,11 +1,12 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { ConnectionFactory } from "@/app/utils";
 
 export async function GET(
-  request: Request,
-  context: { params: { commentID: string } },
+  _: Request,
+  context: { params: Promise<{ commentID: string }> },
 ) {
-  const commentID = context.params.commentID;
+  const readyParams = await context.params;
+  const commentID = readyParams.commentID;
   const conn = ConnectionFactory();
   const commentQuery = "SELECT * FROM CommentReaction WHERE comment_id = ?";
   const commentParams = [commentID];

@@ -5,12 +5,10 @@ import { Post } from "@/types/model-types";
 
 export async function GET(
   request: NextRequest,
-  context: { params: { category: string; title: string } },
+  context: { params: Promise<{ category: string; title: string }> },
 ) {
-  if (
-    context.params.category !== "blog" &&
-    context.params.category !== "project"
-  ) {
+  const readyParams = await context.params;
+  if (readyParams.category !== "blog" && readyParams.category !== "project") {
     return NextResponse.json(
       { error: "invalid category value" },
       { status: 400 },
@@ -30,11 +28,7 @@ export async function GET(
 
       const projectQuery =
         "SELECT p.*, c.*, l.*,t.* FROM Post p JOIN Comment c ON p.id = c.post_id JOIN PostLike l ON p.id = l.post_idJOIN Tag t ON p.id = t.post_id WHERE p.title = ? AND p.category = ? AND p.published = ?;";
-      const projectParams = [
-        context.params.title,
-        context.params.category,
-        true,
-      ];
+      const projectParams = [readyParams.title, readyParams.category, true];
       const projectResults = await conn.execute({
         sql: projectQuery,
         args: projectParams,

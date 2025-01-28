@@ -1,11 +1,15 @@
 import { User } from "@/types/model-types";
 import { ConnectionFactory } from "@/app/utils";
 import { NextResponse } from "next/server";
-export async function GET(_: Request, context: { params: { id: string } }) {
+export async function GET(
+  _: Request,
+  context: { params: Promise<{ id: string }> },
+) {
   try {
     const conn = ConnectionFactory();
     const userQuery = "SELECT email, display_name, image FROM User WHERE id =?";
-    const userParams = [context.params.id];
+    const params = await context.params;
+    const userParams = [params.id];
     const res = await conn.execute({ sql: userQuery, args: userParams });
     if (res.rows[0]) {
       const user = res.rows[0] as unknown as User;

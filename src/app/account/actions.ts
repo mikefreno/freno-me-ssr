@@ -9,7 +9,8 @@ import { signOut } from "../globalActions";
 import { ConnectionFactory } from "../utils";
 
 export async function sendEmailVerification() {
-  const requestedEmail = cookies().get("emailVerificationRequested")?.value;
+  const requestedEmail = (await cookies()).get("emailVerificationRequested")
+    ?.value;
 
   let difference: number = 0;
   if (requestedEmail) {
@@ -21,7 +22,7 @@ export async function sendEmailVerification() {
   }
 
   if (!requestedEmail || difference >= 15) {
-    const userEmail = cookies().get("emailToken")?.value;
+    const userEmail = (await cookies()).get("emailToken")?.value;
 
     const apiKey = env.SENDINBLUE_KEY as string;
     const apiUrl = "https://api.sendinblue.com/v3/smtp/email";
@@ -86,12 +87,12 @@ export async function sendEmailVerification() {
       },
       body: JSON.stringify(sendinblueData),
     });
-    cookies().set("emailVerificationRequested", Date.now().toString());
+    (await cookies()).set("emailVerificationRequested", Date.now().toString());
   }
 }
 
 export async function setEmail(newEmail: string) {
-  const userID = cookies().get("userIDToken")?.value;
+  const userID = (await cookies()).get("userIDToken")?.value;
   const conn = ConnectionFactory();
   const query = `UPDATE User SET email = ?, email_verified = ? WHERE id = ?`;
   const params = [newEmail, false, userID];
@@ -114,7 +115,7 @@ export async function setEmail(newEmail: string) {
     provider: user.provider,
     hasPassword: user.password_hash ? true : false,
   };
-  cookies().set({
+  (await cookies()).set({
     name: "emailToken",
     value: newEmail,
   });
@@ -122,7 +123,7 @@ export async function setEmail(newEmail: string) {
 }
 
 export async function setDisplayName(displayName: string) {
-  const userID = cookies().get("userIDToken")?.value;
+  const userID = (await cookies()).get("userIDToken")?.value;
   const conn = ConnectionFactory();
   const query = `UPDATE User SET display_name = ? WHERE id = ?`;
   const params = [displayName, userID];
@@ -148,7 +149,7 @@ export async function setDisplayName(displayName: string) {
 }
 
 export async function deleteAccount(password: string) {
-  const userID = cookies().get("userIDToken")?.value;
+  const userID = (await cookies()).get("userIDToken")?.value;
   const conn = ConnectionFactory();
   const query = `SELECT * FROM User WHERE id = ?`;
   const params = [userID];
@@ -186,7 +187,7 @@ export async function changePassword(
   oldPassword: string,
 ) {
   if (newPassword == newPasswordConfirmation) {
-    const userID = cookies().get("userIDToken")?.value;
+    const userID = (await cookies()).get("userIDToken")?.value;
     const conn = ConnectionFactory();
     const query = `SELECT * FROM User WHERE id = ?`;
     const params = [userID];
@@ -203,12 +204,12 @@ export async function changePassword(
           sql: updateQuery,
           args: updateParams as string[],
         });
-        cookies().set({
+        (await cookies()).set({
           name: "emailToken",
           value: "",
           maxAge: 0,
         });
-        cookies().set({
+        (await cookies()).set({
           name: "userIDToken",
           value: "",
           maxAge: 0,
@@ -227,7 +228,7 @@ export async function setPassword(
   newPasswordConfirmation: string,
 ) {
   if (newPassword == newPasswordConfirmation) {
-    const userID = cookies().get("userIDToken")?.value;
+    const userID = (await cookies()).get("userIDToken")?.value;
     const conn = ConnectionFactory();
     const query = `SELECT * FROM User WHERE id = ?`;
     const params = [userID];
@@ -238,12 +239,12 @@ export async function setPassword(
       const updateQuery = `UPDATE User SET password_hash = ? WHERE id = ?`;
       const updateParams = [passwordHash, userID];
       await conn.execute({ sql: updateQuery, args: updateParams as string[] });
-      cookies().set({
+      (await cookies()).set({
         name: "emailToken",
         value: "",
         maxAge: 0,
       });
-      cookies().set({
+      (await cookies()).set({
         name: "userIDToken",
         value: "",
         maxAge: 0,

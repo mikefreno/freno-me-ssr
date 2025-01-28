@@ -18,6 +18,10 @@ module.exports = {
       },
     ],
   },
+  transpilePackages: ["three"],
+  experimental: {
+    reactCompiler: true,
+  },
   webpack: (config) => {
     config.module.rules.push({
       test: /\.svg$/,

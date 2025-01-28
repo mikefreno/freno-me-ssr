@@ -4,18 +4,19 @@ import { changeImageInput } from "@/types/input-types";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(
-  request: Request,
-  context: { params: { id: string } },
+  _: Request,
+  context: { params: Promise<{ id: string }> },
 ) {
   const conn = ConnectionFactory();
   const query = "SELECT * FROM User WHERE id = ?";
-  const params = [context.params.id];
-  const results = await conn.execute({ sql: query, args: params });
+  const params = await context.params;
+  const idArr = [params.id];
+  const results = await conn.execute({ sql: query, args: idArr });
   return NextResponse.json({ user: results.rows[0] }, { status: 200 });
 }
 export async function POST(
   request: NextRequest,
-  context: { params: { id: string } },
+  context: { params: Promise<{ id: string }> },
 ) {
   const inputData = (await request.json()) as changeImageInput;
   const { imageURL } = inputData;
@@ -23,7 +24,7 @@ export async function POST(
     const conn = ConnectionFactory();
     const query = `UPDATE User SET image = ? WHERE id = ?`;
     const fullURL = env.NEXT_PUBLIC_AWS_BUCKET_STRING + imageURL;
-    const params = [imageURL ? fullURL : null, context.params.id];
+    const params = [imageURL ? fullURL : null, (await context.params).id];
     await conn.execute({ sql: query, args: params });
     return NextResponse.json({ res: "success" }, { status: 200 });
   } catch (err) {

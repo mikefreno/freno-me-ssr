@@ -32,7 +32,7 @@ export async function emailRegistration(
           args: followUpParams,
         });
         const userID = (followUpRes.rows[0] as unknown as User).id;
-        cookies().set("userIDToken", userID);
+        (await cookies()).set("userIDToken", userID);
         return "success";
       } catch (e) {
         console.log(e);
@@ -64,7 +64,7 @@ export async function emailPasswordLogin(
             expiresIn: 60 * 60 * 24 * 14, // expires in 14 days
           });
           if (rememberMe) {
-            cookies().set({
+            (await cookies()).set({
               name: "userIDToken",
               value: token,
               maxAge: 60 * 60 * 24 * 14, // expires in 14 days
@@ -73,7 +73,7 @@ export async function emailPasswordLogin(
             const token = jwt.sign({ id: user.id }, env.JWT_SECRET_KEY, {
               expiresIn: 60 * 60 * 12, // expires in 12 hrs
             });
-            cookies().set({
+            (await cookies()).set({
               name: "userIDToken",
               value: token,
             });
@@ -94,7 +94,7 @@ export async function emailPasswordLogin(
   }
 }
 export async function emailLinkLogin(email: string, rememberMe: boolean) {
-  const requestedLoginExp = cookies().get("emailLoginLinkRequested");
+  const requestedLoginExp = (await cookies()).get("emailLoginLinkRequested");
   let remaining = 0;
   if (requestedLoginExp) {
     const expires = new Date(requestedLoginExp?.value);
@@ -173,7 +173,7 @@ export async function emailLinkLogin(email: string, rememberMe: boolean) {
         body: JSON.stringify(sendinblueData),
       });
       const exp = new Date(Date.now() + 2 * 60 * 1000);
-      cookies().set("emailLoginLinkRequested", exp.toUTCString());
+      (await cookies()).set("emailLoginLinkRequested", exp.toUTCString());
       return "email sent";
     }
   }

@@ -3,12 +3,10 @@ import { ConnectionFactory } from "@/app/utils";
 
 export async function GET(
   _: NextRequest,
-  context: { params: { category: string; id: string } },
+  context: { params: Promise<{ category: string; id: string }> },
 ) {
-  if (
-    context.params.category !== "blog" &&
-    context.params.category !== "project"
-  ) {
+  const readyParams = await context.params;
+  if (readyParams.category !== "blog" && readyParams.category !== "project") {
     return NextResponse.json(
       { error: "invalid category value" },
       { status: 400 },
@@ -17,7 +15,7 @@ export async function GET(
     try {
       const conn = ConnectionFactory();
       const query = `SELECT * FROM Post WHERE id = ?`;
-      const params = [parseInt(context.params.id)];
+      const params = [parseInt(readyParams.id)];
       const results = await conn.execute({ sql: query, args: params });
       const tagQuery = `SELECT * FROM Tag WHERE post_id = ?`;
       const tagRes = await conn.execute({ sql: tagQuery, args: params });

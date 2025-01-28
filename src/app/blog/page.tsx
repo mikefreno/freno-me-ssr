@@ -12,9 +12,10 @@ export default async function Blog({
   params,
   searchParams,
 }: {
-  params: { slug: string };
-  searchParams: { [key: string]: string | undefined };
+  params: Promise<{ slug: string }>;
+  searchParams: Promise<{ [key: string]: string | undefined }>;
 }) {
+  const readyParams = await searchParams;
   let privilegeLevel: "anonymous" | "admin" | "user" = "anonymous";
   privilegeLevel = await getPrivilegeLevel();
 
@@ -124,11 +125,11 @@ export default async function Blog({
                   tags={tags}
                   privilegeLevel={privilegeLevel}
                   type={"blog"}
-                  filters={searchParams.filter}
+                  filters={readyParams.filter}
                   sort={
-                    Array.isArray(searchParams.sort)
-                      ? searchParams.sort[0]
-                      : searchParams.sort
+                    Array.isArray(readyParams.sort)
+                      ? readyParams.sort[0]
+                      : readyParams.sort
                   }
                 />
               </div>

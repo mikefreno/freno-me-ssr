@@ -14,12 +14,13 @@ const bucket = "frenomedownloads";
 export async function GET(
   _: Request,
   context: {
-    params: { asset_name: string };
+    params: Promise<{ asset_name: string }>;
   },
 ) {
+  const readyParams = await context.params;
   const params = {
     Bucket: bucket,
-    Key: assets[context.params.asset_name],
+    Key: assets[readyParams.asset_name],
     Expires: 60 * 60,
   };
   const credentials = {

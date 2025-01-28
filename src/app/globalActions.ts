@@ -7,7 +7,7 @@ import { ConnectionFactory } from "./utils";
 
 export async function signOut() {
   try {
-    cookies().set({
+    (await cookies()).set({
       name: "userIDToken",
       value: "",
       maxAge: 0,
@@ -28,7 +28,7 @@ export async function sendContactRequest({
   email,
   message,
 }: ContactRequest) {
-  const contactExp = cookies().get("contactRequestSent");
+  const contactExp = (await cookies()).get("contactRequestSent");
   let remaining = 0;
   if (contactExp) {
     const expires = new Date(contactExp?.value);
@@ -63,7 +63,7 @@ export async function sendContactRequest({
           body: JSON.stringify(sendinblueData),
         });
         const exp = new Date(Date.now() + 1 * 60 * 1000);
-        cookies().set("contactRequestSent", exp.toUTCString());
+        (await cookies()).set("contactRequestSent", exp.toUTCString());
         return "email sent";
       } catch (e) {
         console.log(e);
@@ -76,7 +76,7 @@ export async function sendContactRequest({
 }
 
 export async function deletePost(postID: number) {
-  const cookie = cookies().get("userIDToken");
+  const cookie = (await cookies()).get("userIDToken");
 
   if (!cookie) {
     console.log("unauthorized");

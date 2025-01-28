@@ -8,12 +8,13 @@ import { ConnectionFactory } from "@/app/utils";
 
 export async function GET(
   request: NextRequest,
-  context: { params: { email: string } },
+  context: { params: Promise<{ email: string }> },
 ) {
+  const readyParams = await context.params;
   const secretKey = env.JWT_SECRET_KEY;
   const params = request.nextUrl.searchParams;
   const token = params.get("token");
-  const userEmail = context.params.email;
+  const userEmail = readyParams.email;
   try {
     if (token) {
       const decoded = jwt.verify(token, secretKey) as JwtPayload;
@@ -30,13 +31,13 @@ export async function GET(
           },
         );
         if (decoded.rememberMe) {
-          cookies().set({
+          (await cookies()).set({
             name: "userIDToken",
             value: token,
             maxAge: 60 * 60 * 24 * 14,
           });
         } else {
-          cookies().set({
+          (await cookies()).set({
             name: "userIDToken",
             value: token,
           });

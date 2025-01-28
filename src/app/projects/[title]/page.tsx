@@ -29,8 +29,9 @@ function hasCodeBlock(str: string): boolean {
 export default async function DynamicProjectPost({
   params,
 }: {
-  params: { title: string };
+  params: Promise<{ title: string }>;
 }) {
+  const readyParams = await params;
   let userID: string | null = null;
   const privilegeLevel = await getPrivilegeLevel();
   userID = await getUserID();
@@ -40,7 +41,10 @@ export default async function DynamicProjectPost({
   }
   const conn = ConnectionFactory();
   const project = (
-    await conn.execute({ sql: query, args: [decodeURIComponent(params.title)] })
+    await conn.execute({
+      sql: query,
+      args: [decodeURIComponent(readyParams.title)],
+    })
   ).rows[0] as unknown as Post;
 
   let containsCodeBlock = false;
@@ -110,7 +114,7 @@ export default async function DynamicProjectPost({
     const query = "SELECT id FROM Project WHERE title = ?";
     let exist_res = await conn.execute({
       sql: query,
-      args: [decodeURIComponent(params.title)],
+      args: [decodeURIComponent(readyParams.title)],
     });
     if (exist_res.rows[0]) {
       exists = true;

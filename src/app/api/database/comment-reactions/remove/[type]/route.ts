@@ -5,8 +5,9 @@ import { CommentReaction } from "@/types/model-types";
 
 export async function POST(
   input: NextRequest,
-  context: { params: { type: string } },
+  context: { params: Promise<{ type: string }> },
 ) {
+  const readyParams = await context.params;
   const inputData = (await input.json()) as CommentReactionInput;
   const { comment_id, user_id } = inputData;
   const conn = ConnectionFactory();
@@ -14,7 +15,7 @@ export async function POST(
     DELETE FROM CommentReaction
     WHERE type = ? AND comment_id = ? AND user_id = ?
     `;
-  const params = [context.params.type, comment_id, user_id];
+  const params = [readyParams.type, comment_id, user_id];
   await conn.execute({ sql: query, args: params });
 
   const followUpQuery = `SELECT * FROM CommentReaction WHERE comment_id = ?`;

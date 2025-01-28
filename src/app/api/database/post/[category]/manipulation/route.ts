@@ -24,12 +24,10 @@ interface PATCHInputData {
 
 export async function POST(
   input: NextRequest,
-  context: { params: { category: string } },
+  context: { params: Promise<{ category: string }> },
 ) {
-  if (
-    context.params.category !== "blog" &&
-    context.params.category !== "project"
-  ) {
+  const readyParams = await context.params;
+  if (readyParams.category !== "blog" && readyParams.category !== "project") {
     return NextResponse.json(
       { error: "invalid category value" },
       { status: 400 },
@@ -39,7 +37,7 @@ export async function POST(
       const inputData = (await input.json()) as POSTInputData;
       const { title, subtitle, body, banner_photo, published, tags } =
         inputData;
-      const userIDCookie = cookies().get("userIDToken");
+      const userIDCookie = (await cookies()).get("userIDToken");
       const fullURL = env.NEXT_PUBLIC_AWS_BUCKET_STRING + banner_photo;
 
       if (userIDCookie) {
@@ -51,7 +49,7 @@ export async function POST(
         `;
         const params = [
           title,
-          context.params.category,
+          readyParams.category,
           subtitle,
           body,
           banner_photo ? fullURL : null,
@@ -84,7 +82,7 @@ export async function PATCH(input: NextRequest) {
     const inputData = (await input.json()) as PATCHInputData;
 
     const conn = ConnectionFactory();
-    const { query, params } = createUpdateQuery(inputData);
+    const { query, params } = await createUpdateQuery(inputData);
     const results = await conn.execute({
       sql: query,
       args: params as string[],
@@ -108,7 +106,7 @@ export async function PATCH(input: NextRequest) {
   }
 }
 
-function createUpdateQuery(data: PATCHInputData) {
+async function createUpdateQuery(data: PATCHInputData) {
   const { id, title, subtitle, body, banner_photo, published } = data;
 
   let query = "UPDATE Post SET ";
@@ -150,7 +148,7 @@ function createUpdateQuery(data: PATCHInputData) {
   }
 
   query += first ? "author_id = ?" : ", author_id = ?";
-  params.push(cookies().get("userIDToken")?.value);
+  params.push((await cookies()).get("userIDToken")?.value);
 
   query += " WHERE id = ?";
   params.push(id);

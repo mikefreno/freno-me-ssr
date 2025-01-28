@@ -48,7 +48,7 @@ export async function GET(request: NextRequest) {
           expiresIn: 60 * 60 * 24 * 14, // expires in 14 days
         },
       );
-      cookies().set({
+      (await cookies()).set({
         name: "userIDToken",
         value: token,
         maxAge: 60 * 60 * 24 * 14,
@@ -64,7 +64,7 @@ export async function GET(request: NextRequest) {
       const token = jwt.sign({ id: userId }, env.JWT_SECRET_KEY, {
         expiresIn: 60 * 60 * 24 * 14, // expires in 14 days
       });
-      cookies().set({
+      (await cookies()).set({
         name: "userIDToken",
         value: token,
         maxAge: 60 * 60 * 24 * 14,

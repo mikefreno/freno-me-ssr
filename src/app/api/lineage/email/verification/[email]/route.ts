@@ -6,12 +6,12 @@ import { createClient as createAPIClient } from "@tursodatabase/api";
 
 export async function GET(
   request: NextRequest,
-  context: { params: { email: string } },
+  context: { params: Promise<{ email: string }> },
 ) {
   const secretKey = env.JWT_SECRET_KEY;
   const params = request.nextUrl.searchParams;
   const token = params.get("token");
-  const userEmail = context.params.email;
+  const userEmail = (await context.params).email;
 
   let conn;
   let dbName;

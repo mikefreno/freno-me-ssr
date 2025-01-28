@@ -4,7 +4,7 @@ import { env } from "@/env.mjs";
 import { cookies } from "next/headers";
 
 export async function SendDeletionRequestEmail(email: string) {
-  const contactExp = cookies().get("deletionRequestSent");
+  const contactExp = (await cookies()).get("deletionRequestSent");
   let remaining = 0;
   if (contactExp) {
     const expires = new Date(contactExp?.value);
@@ -60,7 +60,7 @@ export async function SendDeletionRequestEmail(email: string) {
         body: JSON.stringify(sendinblueUserData),
       });
       const exp = new Date(Date.now() + 1 * 60 * 1000);
-      cookies().set("contactRequestSent", exp.toUTCString());
+      (await cookies()).set("contactRequestSent", exp.toUTCString());
       return "request sent";
     } catch (e) {
       console.log(e);
