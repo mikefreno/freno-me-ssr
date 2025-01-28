@@ -2,4 +2,4 @@
 
 ## Portfolio / personal blog
 
-Using next13 app directory
+Using next15 app directory
