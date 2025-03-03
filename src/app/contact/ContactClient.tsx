@@ -217,7 +217,7 @@ export default function ContactClient(props: {
                       approach for its remote storage, this provides better
                       separation of users and therefore privacy, and it makes
                       requesting the removal of your data simpler, you can even
-                      request the database dump if you so choose. This isn't
+                      request the database dump if you so choose. This isn&apost
                       particularly expensive, but not free for n users, so use
                       of this feature requires a purchase of an IAP(in-app
                       purchase) - this can be the specific IAP for the remote
