@@ -1,27 +1,11 @@
-import { env } from "@/env.mjs";
-import HomeClient from "./HomeClient";
-import { getUserID } from "./utils";
+"use client";
 
-export default async function Home() {
-  const userID = await getUserID();
-  let user = null;
-  if (userID) {
-    const res = await fetch(
-      `${env.NEXT_PUBLIC_DOMAIN}/api/database/user/public-data/${userID}`,
-      {
-        method: "GET",
-      },
-    );
+import TestingWrapper from "@/components/3TestingWrapper";
+import Modal3d from "@/components/3dModal";
+import HomeParent from "@/components/HomeParent";
+import HomeRestart from "@/components/HomeRestart";
+import { Canvas } from "@react-three/fiber";
 
-    user = (await res.json()) as {
-      email?: string | undefined;
-      display_name?: string | undefined;
-      image?: string | undefined;
-    } | null;
-  }
-  return (
-    <>
-      <HomeClient user={user} />
-    </>
-  );
+export default function Home() {
+  return <HomeRestart />;
 }

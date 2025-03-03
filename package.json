@@ -17,6 +17,7 @@
     "@headlessui/react": "^1.7.19",
     "@libsql/client": "^0.14.0",
     "@react-spring/three": "^9.7.5",
+    "@react-spring/web": "^9.7.5",
     "@react-three/csg": "^3.3.0",
     "@react-three/drei": "10.0.0-rc.1",
     "@react-three/fiber": "9.0.0-rc.5",
