@@ -217,12 +217,47 @@ export default function ContactClient(props: {
                       approach for its remote storage, this provides better
                       separation of users and therefore privacy, and it makes
                       requesting the removal of your data simpler, you can even
-                      request the database dump if you so choose. This isn&apost
-                      particularly expensive, but not free for n users, so use
-                      of this feature requires a purchase of an IAP(in-app
-                      purchase) - this can be the specific IAP for the remote
-                      save feature, and any other IAP will also unlock this
-                      feature.
+                      request the database dump if you so choose. This
+                      isn&apos;t particularly expensive, but not free for n
+                      users, so use of this feature requires a purchase of an
+                      IAP(in-app purchase) - this can be the specific IAP for
+                      the remote save feature, and any other IAP will also
+                      unlock this feature.
+                    </div>
+                  </div>
+                  <div className="py-2">
+                    <div className="pb-2 text-lg">
+                      <span className="-ml-4 pr-2">3.</span> Cross Device Play
+                    </div>
+                    <div className="pl-4">
+                      You can use the above mentioned remote-backups to save
+                      progress between devices/platforms.
+                    </div>
+                  </div>
+                  <div className="py-2">
+                    <div className="pb-2 text-lg">
+                      <span className="-ml-4 pr-2">4.</span> Online Requirements
+                    </div>
+                    <div className="pl-4">
+                      Currently, the only time you need to be online is for
+                      remote save access. There are plans for pvp, which will
+                      require an internet connection, but this is not
+                      implemented at time of writing.
+                    </div>
+                  </div>
+                  <div className="py-2">
+                    <div className="pb-2 text-lg">
+                      <span className="-ml-4 pr-2">5.</span> Microtransactions
+                    </div>
+                    <div className="pl-4">
+                      Microtransactions are not required to play or complete the
+                      game, the game can be fully completed without spending any
+                      money, however 2 of the classes(necromancer and ranger)
+                      are pay-walled. Microtransactions are supported
+                      cross-platform, so no need to pay for each device, you
+                      simply need to login to your gmail/apple/email account.
+                      This would require first creating a character, signing in
+                      under options{">"}remote backups first.
                     </div>
                   </div>
                 </ol>

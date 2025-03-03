@@ -50,7 +50,7 @@ export default function RevealDropDown({
       {/* Reveal Content */}
       <div
         className={`transition-all duration-300 ease-in-out overflow-hidden ${
-          isRevealed ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
+          isRevealed ? "opacity-100" : "max-h-0 opacity-0"
         }`}
       >
         <div className="p-4 bg-white dark:bg-gray-900">{children}</div>
