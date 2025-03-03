@@ -16,7 +16,11 @@
     "@aws-sdk/signature-v4-multi-region": "^3.635.0",
     "@headlessui/react": "^1.7.19",
     "@libsql/client": "^0.14.0",
-    "@react-three/fiber": "^8.17.12",
+    "@react-spring/three": "^9.7.5",
+    "@react-three/csg": "^3.3.0",
+    "@react-three/drei": "10.0.0-rc.1",
+    "@react-three/fiber": "9.0.0-rc.5",
+    "@react-three/rapier": "^1.5.0",
     "@svgr/webpack": "^8.1.0",
     "@t3-oss/env-nextjs": "^0.6.1",
     "@tiptap/core": "^2.6.5",
@@ -47,9 +51,11 @@
     "jsdom": "^22.1.0",
     "jsonwebtoken": "^9.0.2",
     "jwks-rsa": "^3.1.0",
+    "leva": "^0.10.0",
     "lowlight": "^2.9.0",
     "next": "15.1.6",
     "nextjs-toploader": "^1.6.12",
+    "nipplejs": "^0.10.2",
     "postcss": "8.4.25",
     "react": "19.0.0",
     "react-countdown-circle-timer": "^3.2.1",
@@ -72,6 +78,7 @@
     "@types/js-cookie": "^3.0.6",
     "@types/jsdom": "^21.1.7",
     "@types/jsonwebtoken": "^9.0.6",
+    "@types/three": "^0.172.0",
     "@types/uuid": "^9.0.8"
   }
 }

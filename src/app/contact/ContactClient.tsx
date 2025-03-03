@@ -8,6 +8,7 @@ import LinkedIn from "@/icons/LinkedIn";
 import Cookies from "js-cookie";
 import { CountdownCircleTimer } from "react-countdown-circle-timer";
 import LoadingSpinner from "@/components/LoadingSpinner";
+import RevealControl from "@/components/RevealDropDown";
 
 export default function ContactClient(props: {
   user: {
@@ -102,6 +103,9 @@ export default function ContactClient(props: {
           <div className="text-center text-3xl tracking-widest dark:text-white">
             Contact
           </div>
+          <div className="text-center text-xl mt-4 -mb-4 tracking-widest dark:text-white">
+            (for this website or any of my apps...)
+          </div>
           <form action={sendEmailTrigger} className="min-w-[85vw]">
             <div className="flex w-full flex-col justify-evenly pt-6 md:mt-24">
               <div className="mx-auto w-full justify-evenly md:flex md:w-3/4 md:flex-row lg:w-1/2">
@@ -178,7 +182,54 @@ export default function ContactClient(props: {
                 )}
               </div>
             </div>
+            <div className="py-12 mx-auto px-4 sm:px-8 md:px-12 lg:px-16 xl:px-32">
+              <RevealControl title={"Questions about Life and Lineage?"}>
+                <div>
+                  Feel free to use the form above, I will respond as quickly as
+                  possible, however, you may find an answer to your question in
+                  the following.
+                </div>
+                <ol>
+                  <div className="py-2">
+                    <div className="pb-2 text-lg">
+                      <span className="-ml-4 pr-2">1.</span> Personal
+                      Information
+                    </div>
+                    <div className="pl-4">
+                      <div className="pb-2">
+                        You can find the entire privacy policy{" "}
+                        <Link
+                          href="/privacy-policy/life-and-lineage"
+                          className="text-blue-400 underline-offset-4 hover:underline"
+                        >
+                          here
+                        </Link>
+                        .
+                      </div>
+                    </div>
+                  </div>
+                  <div className="py-2">
+                    <div className="pb-2 text-lg">
+                      <span className="-ml-4 pr-2">2.</span> Remote Backups
+                    </div>
+                    <div className="pl-4">
+                      <em>Life and Lineage</em> uses a per-user database
+                      approach for its remote storage, this provides better
+                      separation of users and therefore privacy, and it makes
+                      requesting the removal of your data simpler, you can even
+                      request the database dump if you so choose. This isn't
+                      particularly expensive, but not free for n users, so use
+                      of this feature requires a purchase of an IAP(in-app
+                      purchase) - this can be the specific IAP for the remote
+                      save feature, and any other IAP will also unlock this
+                      feature.
+                    </div>
+                  </div>
+                </ol>
+              </RevealControl>
+            </div>
           </form>
+
           <div
             className={`${
               emailSent
