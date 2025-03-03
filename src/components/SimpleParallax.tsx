@@ -1,6 +1,7 @@
 "use client";
 import React, { useEffect, useState, useRef, type ReactNode } from "react";
 import Image from "next/image";
+import { useSpring, animated } from "@react-spring/web";
 
 type ParallaxBackground = {
   imageSet: { [key: number]: string };
@@ -8,9 +9,112 @@ type ParallaxBackground = {
   verticalOffset: number;
 };
 
+type ParallaxLayerProps = {
+  layer: number;
+  caveParallax: ParallaxBackground;
+  dimensions: { width: number; height: number };
+  scale: number;
+  scaledWidth: number;
+  scaledHeight: number;
+  verticalOffsetPixels: number;
+  imagesNeeded: number;
+  direction: number;
+};
+
+const ParallaxLayer = ({
+  layer,
+  caveParallax,
+  dimensions,
+  scale,
+  scaledWidth,
+  scaledHeight,
+  verticalOffsetPixels,
+  imagesNeeded,
+  direction,
+}: ParallaxLayerProps) => {
+  const layerDepthFactor =
+    layer / (Object.keys(caveParallax.imageSet).length - 1);
+  const layerVerticalOffset = verticalOffsetPixels * layerDepthFactor;
+
+  const speed = (120 - layer * 10) * 1000;
+
+  const [springProps, api] = useSpring(() => ({
+    from: { x: 0 },
+    to: { x: direction * -caveParallax.size.width * imagesNeeded },
+    config: { duration: speed },
+    loop: true,
+  }));
+
+  useEffect(() => {
+    api.start({
+      from: { x: springProps.x.get() },
+      to: { x: direction * -caveParallax.size.width * imagesNeeded },
+      config: { duration: speed },
+      loop: true,
+    });
+  }, [
+    direction,
+    api,
+    speed,
+    springProps.x,
+    imagesNeeded,
+    caveParallax.size.width,
+  ]);
+
+  return (
+    <animated.div
+      className="absolute"
+      style={{
+        width: caveParallax.size.width * imagesNeeded * 3,
+        height: caveParallax.size.height,
+        left: (dimensions.width - scaledWidth) / 2,
+        top: (dimensions.height - scaledHeight) / 2 + layerVerticalOffset,
+        transformOrigin: "center center",
+        transform: springProps.x.to(
+          (x) => `translateX(${x}px) scale(${scale})`,
+        ),
+      }}
+    >
+      {[-1, 0, 1].map((groupOffset) => (
+        <div
+          key={`group-${groupOffset}`}
+          className="absolute"
+          style={{
+            left: groupOffset * caveParallax.size.width * imagesNeeded,
+            width: caveParallax.size.width * imagesNeeded,
+            height: caveParallax.size.height,
+          }}
+        >
+          {Array.from({ length: imagesNeeded }).map((_, index) => (
+            <div
+              key={index}
+              className="absolute"
+              style={{
+                width: caveParallax.size.width,
+                height: caveParallax.size.height,
+                left: index * caveParallax.size.width,
+              }}
+            >
+              <Image
+                src={caveParallax.imageSet[layer]}
+                alt={`Parallax layer ${layer}`}
+                width={caveParallax.size.width}
+                height={caveParallax.size.height}
+                style={{ objectFit: "cover" }}
+                priority={layer > Object.keys(caveParallax.imageSet).length - 3}
+              />
+            </div>
+          ))}
+        </div>
+      ))}
+    </animated.div>
+  );
+};
+
 const SimpleParallax = ({ children }: { children: ReactNode }) => {
-  const containerRef = useRef(null);
+  const containerRef = useRef<HTMLDivElement>(null);
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
+  const [direction, setDirection] = useState(1); // 1 for right to left, -1 for left to right
 
   const caveParallax: ParallaxBackground = {
     imageSet: {
@@ -28,8 +132,7 @@ const SimpleParallax = ({ children }: { children: ReactNode }) => {
   };
 
   const layerCount = Object.keys(caveParallax.imageSet).length - 1;
-
-  const imagesNeeded = 5;
+  const imagesNeeded = 3;
 
   useEffect(() => {
     const updateDimensions = () => {
@@ -42,12 +145,20 @@ const SimpleParallax = ({ children }: { children: ReactNode }) => {
     };
 
     updateDimensions();
-
     window.addEventListener("resize", updateDimensions);
 
     return () => {
       window.removeEventListener("resize", updateDimensions);
     };
+  }, []);
+
+  // Toggle direction every 20 seconds
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      setDirection((prev) => prev * -1);
+    }, 30000);
+
+    return () => clearInterval(intervalId);
   }, []);
 
   // Calculate scale to fill screen completely
@@ -59,68 +170,6 @@ const SimpleParallax = ({ children }: { children: ReactNode }) => {
   const scaledHeight = caveParallax.size.height * scale;
 
   const verticalOffsetPixels = caveParallax.verticalOffset * dimensions.height;
-
-  const renderLayers = () => {
-    const layers = [];
-
-    for (let i = layerCount; i >= 1; i--) {
-      const animationDuration = 120 - i * 10;
-
-      const layerDepthFactor = i / layerCount;
-      const layerVerticalOffset = verticalOffsetPixels * layerDepthFactor;
-
-      layers.push(
-        <div
-          key={i}
-          className="absolute"
-          style={{
-            width: caveParallax.size.width * imagesNeeded * 3,
-            height: caveParallax.size.height,
-            left: (dimensions.width - scaledWidth) / 2,
-            top: (dimensions.height - scaledHeight) / 2 + layerVerticalOffset,
-            transformOrigin: "center center",
-            transform: `scale(${scale})`,
-            animation: `slide-${i} ${animationDuration}s linear infinite`,
-          }}
-        >
-          {[-1, 0, 1].map((groupOffset) => (
-            <div
-              key={`group-${groupOffset}`}
-              className="absolute"
-              style={{
-                left: groupOffset * caveParallax.size.width * imagesNeeded,
-                width: caveParallax.size.width * imagesNeeded,
-                height: caveParallax.size.height,
-              }}
-            >
-              {Array.from({ length: imagesNeeded }).map((_, index) => (
-                <div
-                  key={index}
-                  className="absolute"
-                  style={{
-                    width: caveParallax.size.width,
-                    height: caveParallax.size.height,
-                    left: index * caveParallax.size.width,
-                  }}
-                >
-                  <Image
-                    src={caveParallax.imageSet[i]}
-                    alt={`Parallax layer ${i}`}
-                    width={caveParallax.size.width}
-                    height={caveParallax.size.height}
-                    style={{ objectFit: "cover" }}
-                    priority={i > layerCount - 3}
-                  />
-                </div>
-              ))}
-            </div>
-          ))}
-        </div>,
-      );
-    }
-
-    return layers;
-  };
 
   return (
     <div
@@ -134,7 +183,24 @@ const SimpleParallax = ({ children }: { children: ReactNode }) => {
           marginTop: verticalOffsetPixels,
         }}
       >
-        {dimensions.width > 0 && renderLayers()}
+        {dimensions.width > 0 &&
+          Array.from({ length: layerCount }).map((_, i) => {
+            const layerIndex = layerCount - i;
+            return (
+              <ParallaxLayer
+                key={layerIndex}
+                layer={layerIndex}
+                caveParallax={caveParallax}
+                dimensions={dimensions}
+                scale={scale}
+                scaledWidth={scaledWidth}
+                scaledHeight={scaledHeight}
+                verticalOffsetPixels={verticalOffsetPixels}
+                imagesNeeded={imagesNeeded}
+                direction={direction}
+              />
+            );
+          })}
       </div>
       <div className="relative z-10 h-full w-full">{children}</div>
       <style jsx global>{`
@@ -145,70 +211,6 @@ const SimpleParallax = ({ children }: { children: ReactNode }) => {
           overflow: hidden;
           width: 100%;
           height: 100%;
-        }
-
-        @keyframes slide-1 {
-          0% {
-            transform: translateX(0) scale(${scale});
-          }
-          100% {
-            transform: translateX(-${caveParallax.size.width * imagesNeeded}px)
-              scale(${scale});
-          }
-        }
-        @keyframes slide-2 {
-          0% {
-            transform: translateX(0) scale(${scale});
-          }
-          100% {
-            transform: translateX(-${caveParallax.size.width * imagesNeeded}px)
-              scale(${scale});
-          }
-        }
-        @keyframes slide-3 {
-          0% {
-            transform: translateX(0) scale(${scale});
-          }
-          100% {
-            transform: translateX(-${caveParallax.size.width * imagesNeeded}px)
-              scale(${scale});
-          }
-        }
-        @keyframes slide-4 {
-          0% {
-            transform: translateX(0) scale(${scale});
-          }
-          100% {
-            transform: translateX(-${caveParallax.size.width * imagesNeeded}px)
-              scale(${scale});
-          }
-        }
-        @keyframes slide-5 {
-          0% {
-            transform: translateX(0) scale(${scale});
-          }
-          100% {
-            transform: translateX(-${caveParallax.size.width * imagesNeeded}px)
-              scale(${scale});
-          }
-        }
-        @keyframes slide-6 {
-          0% {
-            transform: translateX(0) scale(${scale});
-          }
-          100% {
-            transform: translateX(-${caveParallax.size.width * imagesNeeded}px)
-              scale(${scale});
-          }
-        }
-        @keyframes slide-7 {
-          0% {
-            transform: translateX(0) scale(${scale});
-          }
-          100% {
-            transform: translateX(-${caveParallax.size.width * imagesNeeded}px)
-              scale(${scale});
-          }
         }
       `}</style>
     </div>
