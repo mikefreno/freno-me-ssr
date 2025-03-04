@@ -88,7 +88,7 @@ const ParallaxLayer = React.memo(
         left: (dimensions.width - scaledWidth) / 2,
         top: (dimensions.height - scaledHeight) / 2 + layerVerticalOffset,
         transformOrigin: "center center",
-        willChange: "transform", // Add will-change for performance hint
+        willChange: "transform",
       }),
       [
         caveParallax.size.width,
@@ -220,7 +220,6 @@ const SimpleParallax = React.memo(({ children }: { children: ReactNode }) => {
     };
   }, [updateDimensions]);
 
-  // Direction change interval
   useEffect(() => {
     const intervalId = setInterval(() => {
       setDirection((prev) => prev * -1);
@@ -242,7 +241,7 @@ const SimpleParallax = React.memo(({ children }: { children: ReactNode }) => {
 
       const scaleHeight = dimensions.height / caveParallax.size.height;
       const scaleWidth = dimensions.width / caveParallax.size.width;
-      const scale = Math.max(scaleHeight, scaleWidth) * 1.1; // Add 10% extra to avoid any gaps
+      const scale = Math.max(scaleHeight, scaleWidth) * 1.1;
 
       return {
         scale,
