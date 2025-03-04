@@ -62,9 +62,9 @@ const ParallaxLayer = React.memo(
       () => ({
         from: { x: 0 },
         to: { x: targetX },
-        config: { duration: speed, easing: (t: number) => t }, // Linear easing for consistent speed
+        config: { duration: speed, easing: (t: number) => t },
         loop: true,
-        reset: true, // Ensure smooth looping
+        reset: true,
       }),
       [targetX, speed],
     );
@@ -75,11 +75,11 @@ const ParallaxLayer = React.memo(
       api.start({
         from: { x: springProps.x.get() },
         to: { x: targetX },
-        config: { duration: speed, easing: (t) => t }, // Ensure easing is consistent here as well
+        config: { duration: speed, easing: (t) => t },
         loop: true,
         reset: true,
       });
-    }, [api, speed, targetX]); // Removed springProps.x from dependencies
+    }, [api, speed, targetX]);
 
     const containerStyle = useMemo(
       () => ({
@@ -161,6 +161,7 @@ const ParallaxLayer = React.memo(
     );
   },
 );
+ParallaxLayer.displayName = "ParallaxLayer";
 
 const SimpleParallax = React.memo(({ children }: { children: ReactNode }) => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -311,5 +312,6 @@ const SimpleParallax = React.memo(({ children }: { children: ReactNode }) => {
     </div>
   );
 });
+SimpleParallax.displayName = "SimpleParallax";
 
 export default SimpleParallax;
