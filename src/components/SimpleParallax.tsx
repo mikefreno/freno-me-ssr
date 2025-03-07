@@ -149,6 +149,7 @@ const ParallaxLayer = React.memo(
     ]);
 
     return (
+      //@ts-ignore
       <animated.div
         className="absolute"
         style={{

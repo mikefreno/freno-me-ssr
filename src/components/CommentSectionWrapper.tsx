@@ -66,7 +66,7 @@ export default function CommentSectionWrapper(props: {
   const modificationPromptRef = useRef<HTMLDivElement>(null);
   const deletePromptRef = useRef<HTMLDivElement>(null);
   let retryCount = useRef<number>(0);
-  let socket = useRef<WebSocket>();
+  let socket = useRef<WebSocket>(undefined);
 
   //hooks
   useOnClickOutside([deletePromptRef], () => {

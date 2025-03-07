@@ -48,6 +48,7 @@ export default function Home() {
     return supportsPointerLock ? (
       <PointerLockControls
         makeDefault
+        //@ts-ignore
         args={[camera]}
         onLock={() => setLocked(true)}
         onUnlock={() => setLocked(false)}

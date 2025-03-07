@@ -21,14 +21,12 @@ export default function ContactClient(props: {
     hasPassword: boolean;
   } | null;
   status: number;
+  viewer: string;
 }) {
   const [countDown, setCountDown] = useState<number>(0);
   const [emailSent, setEmailSent] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
-  const emailRef = useRef<HTMLInputElement>(null);
-  const nameRef = useRef<HTMLInputElement>(null);
-  const messageRef = useRef<HTMLTextAreaElement>(null);
   const timerIdRef = useRef<number | NodeJS.Timeout | null>(null);
 
   const calcRemainder = (timer: string) => {
@@ -89,6 +87,89 @@ export default function ContactClient(props: {
     setLoading(false);
   };
 
+  const LineageQuestionsDropDown = () => {
+    return (
+      <div className="py-12 mx-auto px-4 md:w-3/4 md:flex-row lg:w-1/2">
+        <RevealControl title={"Questions about Life and Lineage?"}>
+          <div>
+            Feel free to use the form above, I will respond as quickly as
+            possible, however, you may find an answer to your question in the
+            following.
+          </div>
+          <ol>
+            <div className="py-2">
+              <div className="pb-2 text-lg">
+                <span className="-ml-4 pr-2">1.</span> Personal Information
+              </div>
+              <div className="pl-4">
+                <div className="pb-2">
+                  You can find the entire privacy policy{" "}
+                  <Link
+                    href="/privacy-policy/life-and-lineage"
+                    className="text-blue-400 underline-offset-4 hover:underline"
+                  >
+                    here
+                  </Link>
+                  .
+                </div>
+              </div>
+            </div>
+            <div className="py-2">
+              <div className="pb-2 text-lg">
+                <span className="-ml-4 pr-2">2.</span> Remote Backups
+              </div>
+              <div className="pl-4">
+                <em>Life and Lineage</em> uses a per-user database approach for
+                its remote storage, this provides better separation of users and
+                therefore privacy, and it makes requesting the removal of your
+                data simpler, you can even request the database dump if you so
+                choose. This isn&apos;t particularly expensive, but not free for
+                n users, so use of this feature requires a purchase of an
+                IAP(in-app purchase) - this can be the specific IAP for the
+                remote save feature, and any other IAP will also unlock this
+                feature.
+              </div>
+            </div>
+            <div className="py-2">
+              <div className="pb-2 text-lg">
+                <span className="-ml-4 pr-2">3.</span> Cross Device Play
+              </div>
+              <div className="pl-4">
+                You can use the above mentioned remote-backups to save progress
+                between devices/platforms.
+              </div>
+            </div>
+            <div className="py-2">
+              <div className="pb-2 text-lg">
+                <span className="-ml-4 pr-2">4.</span> Online Requirements
+              </div>
+              <div className="pl-4">
+                Currently, the only time you need to be online is for remote
+                save access. There are plans for pvp, which will require an
+                internet connection, but this is not implemented at time of
+                writing.
+              </div>
+            </div>
+            <div className="py-2">
+              <div className="pb-2 text-lg">
+                <span className="-ml-4 pr-2">5.</span> Microtransactions
+              </div>
+              <div className="pl-4">
+                Microtransactions are not required to play or complete the game,
+                the game can be fully completed without spending any money,
+                however 2 of the classes(necromancer and ranger) are pay-walled.
+                Microtransactions are supported cross-platform, so no need to
+                pay for each device, you simply need to login to your
+                gmail/apple/email account. This would require first creating a
+                character, signing in under options{">"}remote backups first.
+              </div>
+            </div>
+          </ol>
+        </RevealControl>
+      </div>
+    );
+  };
+
   const renderTime = () => {
     return (
       <div className="timer">
@@ -103,11 +184,18 @@ export default function ContactClient(props: {
           <div className="text-center text-3xl tracking-widest dark:text-white">
             Contact
           </div>
-          <div className="text-center text-xl mt-4 -mb-4 tracking-widest dark:text-white">
-            (for this website or any of my apps...)
-          </div>
+          {props.viewer !== "lineage" && (
+            <div className="text-center text-xl mt-4 -mb-4 tracking-widest dark:text-white">
+              (for this website or any of my apps...)
+            </div>
+          )}
+          {props.viewer === "lineage" && <LineageQuestionsDropDown />}
           <form action={sendEmailTrigger} className="min-w-[85vw] px-4">
-            <div className="flex w-full flex-col justify-evenly pt-6 md:mt-24">
+            <div
+              className={`flex w-full flex-col justify-evenly pt-6 ${
+                props.viewer !== "lineage" ? "md:mt-24" : ""
+              }`}
+            >
               <div className="mx-auto w-full justify-evenly md:flex md:w-3/4 md:flex-row lg:w-1/2">
                 <div className="input-group md:mx-4">
                   <input
@@ -183,86 +271,7 @@ export default function ContactClient(props: {
               </div>
             </div>
           </form>
-          <div className="py-12 mx-auto px-4 md:w-3/4 md:flex-row lg:w-1/2">
-            <RevealControl title={"Questions about Life and Lineage?"}>
-              <div>
-                Feel free to use the form above, I will respond as quickly as
-                possible, however, you may find an answer to your question in
-                the following.
-              </div>
-              <ol>
-                <div className="py-2">
-                  <div className="pb-2 text-lg">
-                    <span className="-ml-4 pr-2">1.</span> Personal Information
-                  </div>
-                  <div className="pl-4">
-                    <div className="pb-2">
-                      You can find the entire privacy policy{" "}
-                      <Link
-                        href="/privacy-policy/life-and-lineage"
-                        className="text-blue-400 underline-offset-4 hover:underline"
-                      >
-                        here
-                      </Link>
-                      .
-                    </div>
-                  </div>
-                </div>
-                <div className="py-2">
-                  <div className="pb-2 text-lg">
-                    <span className="-ml-4 pr-2">2.</span> Remote Backups
-                  </div>
-                  <div className="pl-4">
-                    <em>Life and Lineage</em> uses a per-user database approach
-                    for its remote storage, this provides better separation of
-                    users and therefore privacy, and it makes requesting the
-                    removal of your data simpler, you can even request the
-                    database dump if you so choose. This isn&apos;t particularly
-                    expensive, but not free for n users, so use of this feature
-                    requires a purchase of an IAP(in-app purchase) - this can be
-                    the specific IAP for the remote save feature, and any other
-                    IAP will also unlock this feature.
-                  </div>
-                </div>
-                <div className="py-2">
-                  <div className="pb-2 text-lg">
-                    <span className="-ml-4 pr-2">3.</span> Cross Device Play
-                  </div>
-                  <div className="pl-4">
-                    You can use the above mentioned remote-backups to save
-                    progress between devices/platforms.
-                  </div>
-                </div>
-                <div className="py-2">
-                  <div className="pb-2 text-lg">
-                    <span className="-ml-4 pr-2">4.</span> Online Requirements
-                  </div>
-                  <div className="pl-4">
-                    Currently, the only time you need to be online is for remote
-                    save access. There are plans for pvp, which will require an
-                    internet connection, but this is not implemented at time of
-                    writing.
-                  </div>
-                </div>
-                <div className="py-2">
-                  <div className="pb-2 text-lg">
-                    <span className="-ml-4 pr-2">5.</span> Microtransactions
-                  </div>
-                  <div className="pl-4">
-                    Microtransactions are not required to play or complete the
-                    game, the game can be fully completed without spending any
-                    money, however 2 of the classes(necromancer and ranger) are
-                    pay-walled. Microtransactions are supported cross-platform,
-                    so no need to pay for each device, you simply need to login
-                    to your gmail/apple/email account. This would require first
-                    creating a character, signing in under options{">"}remote
-                    backups first.
-                  </div>
-                </div>
-              </ol>
-            </RevealControl>
-          </div>
-
+          {props.viewer !== "lineage" && <LineageQuestionsDropDown />}
           <div
             className={`${
               emailSent

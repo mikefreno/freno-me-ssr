@@ -6,7 +6,7 @@ import UserDefaultImage from "@/icons/UserDefaultImage";
 import LoadingSpinner from "./LoadingSpinner";
 
 export default function Menu(props: {
-  menuRef: RefObject<HTMLDivElement>;
+  menuRef: RefObject<HTMLDivElement | null>;
   setMenuOpen: (open: boolean) => void;
   menuShowing: boolean;
   user: {

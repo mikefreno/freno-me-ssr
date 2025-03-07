@@ -114,6 +114,7 @@ export default function TextEditor({ updateContent, preSet }: any) {
       StarterKit,
       CodeBlockLowlight.extend({
         addNodeView() {
+          //@ts-ignore
           return ReactNodeViewRenderer(CodeBlockComponent);
         },
       }).configure({ lowlight }),

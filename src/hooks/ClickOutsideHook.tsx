@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, type RefObject } from "react";
 
-type Refs = RefObject<HTMLElement>[];
+type Refs = RefObject<HTMLElement | null>[];
 
 const useOnClickOutside = (
   refs: Refs,

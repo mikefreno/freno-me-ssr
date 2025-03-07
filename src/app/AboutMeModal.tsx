@@ -101,6 +101,6 @@ export default function AboutMeModal({
 
 interface AboutMeProps {
   showing: boolean;
-  aboutRef: RefObject<HTMLDivElement>;
+  aboutRef: RefObject<HTMLDivElement | null>;
   aboutToggle: () => void;
 }

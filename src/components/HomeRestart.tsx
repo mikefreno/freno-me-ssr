@@ -51,6 +51,7 @@ export default function HomeRestart() {
     return supportsPointerLock ? (
       <PointerLockControls
         makeDefault
+        //@ts-ignore
         args={[camera]}
         onLock={() => setLocked(true)}
         onUnlock={() => setLocked(false)}

@@ -12,7 +12,7 @@ export default function EditCommentModal(props: {
   postID: number;
   editComment: (body: string, comment_id: number) => Promise<void>;
   editCommentLoading: boolean;
-  modificationPromptRef: RefObject<HTMLDivElement>;
+  modificationPromptRef: RefObject<HTMLDivElement | null>;
   toggle: () => void;
 }) {
   let bodyRef = useRef<HTMLTextAreaElement>(null);

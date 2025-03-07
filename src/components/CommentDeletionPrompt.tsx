@@ -12,7 +12,7 @@ export default function CommentDeletionPrompt(props: {
   commenterDisplayName?: string;
   commentBody: string;
   privilegeLevel: "admin" | "user" | "anonymous";
-  deletePromptRef: RefObject<HTMLDivElement>;
+  deletePromptRef: RefObject<HTMLDivElement | null>;
   postType: "project" | "blog";
   postID: number;
   commentDeletionLoading: boolean;

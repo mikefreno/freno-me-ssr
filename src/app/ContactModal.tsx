@@ -228,7 +228,7 @@ export default function ContactModal(props: ContactModalProps) {
 
 interface ContactModalProps {
   showing: boolean;
-  contactRef: RefObject<HTMLDivElement>;
+  contactRef: RefObject<HTMLDivElement | null>;
   contactToggle: () => void;
   user: {
     email?: string | undefined;
