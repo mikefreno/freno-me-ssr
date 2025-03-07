@@ -4,7 +4,7 @@ export default function PrivacyPolicy() {
   return (
     <>
       <div className="bg-zinc-100 dark:bg-zinc-900">
-        <div className="min-h-screen px-[8vw] py-[8vh]">
+        <div className="min-h-screen px-[8vw] py-[10vh]">
           <div className="py-4 text-xl">
             Life and Lineage&apos;s Privacy Policy
           </div>
