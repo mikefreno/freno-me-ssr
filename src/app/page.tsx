@@ -19,9 +19,5 @@ export default async function Home() {
       image?: string | undefined;
     } | null;
   }
-  return (
-    <>
-      <HomeClient user={user} />
-    </>
-  );
+  return <HomeClient user={user} />;
 }
