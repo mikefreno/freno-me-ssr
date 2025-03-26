@@ -26,7 +26,8 @@ export const env = createEnv({
     TURSO_DB_TOKEN: z.string().min(1),
     TURSO_LINEAGE_URL: z.string().min(1),
     TURSO_LINEAGE_TOKEN: z.string().min(1),
-    TURSO_DB_API_TOKEN: z.string().min(1)
+    TURSO_DB_API_TOKEN: z.string().min(1),
+    LINEAGE_OFFLINE_SERIALIZATION_SECRET: z.string().min(1)
   },
 
   /**
@@ -72,7 +73,8 @@ export const env = createEnv({
     TURSO_DB_TOKEN: process.env.TURSO_DB_TOKEN,
     TURSO_LINEAGE_URL: process.env.TURSO_LINEAGE_URL,
     TURSO_LINEAGE_TOKEN: process.env.TURSO_LINEAGE_TOKEN,
-    TURSO_DB_API_TOKEN: process.env.TURSO_DB_API_TOKEN
+    TURSO_DB_API_TOKEN: process.env.TURSO_DB_API_TOKEN,
+    LINEAGE_OFFLINE_SERIALIZATION_SECRET: process.env.LINEAGE_OFFLINE_SERIALIZATION_SECRET
   },
 
   skipValidation: false,
