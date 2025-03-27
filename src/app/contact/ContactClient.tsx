@@ -92,9 +92,10 @@ export default function ContactClient(props: {
       <div className="py-12 mx-auto px-4 md:w-3/4 md:flex-row lg:w-1/2">
         <RevealControl title={"Questions about Life and Lineage?"}>
           <div>
-            Feel free to use the form above, I will respond as quickly as
-            possible, however, you may find an answer to your question in the
-            following.
+            Feel free to use the form{" "}
+            {props.viewer === "lineage" ? "below" : "above"}, I will respond as
+            quickly as possible, however, you may find an answer to your
+            question in the following.
           </div>
           <ol>
             <div className="py-2">
