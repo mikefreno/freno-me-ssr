@@ -10,7 +10,7 @@ export async function POST(req: NextRequest) {
   });
   const cronRow = res.rows[0];
   if (!cronRow) {
-    return NextResponse.json({ status: 404, ok: false });
+    return NextResponse.json({ status: 204, ok: true });
   }
   return NextResponse.json({
     ok: true,
