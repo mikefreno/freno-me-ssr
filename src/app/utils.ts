@@ -148,9 +148,11 @@ export function PerUserDBConnectionFactory(dbName: string, token: string) {
 
 export async function dumpAndSendDB({
   dbName,
+  dbToken,
   sendTarget,
 }: {
   dbName: string;
+  dbToken: string;
   sendTarget: string;
 }): Promise<{
   success: boolean;
@@ -159,7 +161,7 @@ export async function dumpAndSendDB({
   const res = await fetch(`https://${dbName}-mikefreno.turso.io/dump`, {
     method: "GET",
     headers: {
-      Authorization: `Bearer ${env.TURSO_DB_API_TOKEN}`,
+      Authorization: `Bearer ${dbToken}`,
     },
   });
   if (!res.ok) {

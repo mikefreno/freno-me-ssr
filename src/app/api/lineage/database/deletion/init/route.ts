@@ -60,6 +60,7 @@ export async function POST(req: NextRequest) {
     if (send_dump_target) {
       const res = await dumpAndSendDB({
         dbName: db_name,
+        dbToken: db_token,
         sendTarget: send_dump_target,
       });
       if (res.success) {

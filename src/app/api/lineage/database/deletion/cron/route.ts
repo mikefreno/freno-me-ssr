@@ -12,7 +12,7 @@ export async function GET() {
   if (res.rows.length > 0) {
     const executed_ids = [];
     for (const row of res.rows) {
-      const { id, db_name, send_dump_target, email } = row;
+      const { id, db_name, db_token, send_dump_target, email } = row;
       const turso = createAPIClient({
         org: "mikefreno",
         token: env.TURSO_DB_API_TOKEN,
@@ -20,6 +20,7 @@ export async function GET() {
       if (send_dump_target) {
         const res = await dumpAndSendDB({
           dbName: db_name as string,
+          dbToken: db_token as string,
           sendTarget: send_dump_target as string,
         });
         if (res.success) {
