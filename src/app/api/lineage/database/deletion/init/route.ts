@@ -65,10 +65,14 @@ export async function POST(req: NextRequest) {
       if (res.success) {
         const res = await turso.databases.delete(db_name);
         if (res.database) {
+          conn.execute({
+            sql: `DELETE FROM User WHERE email = ?`,
+            args: [email],
+          });
           return NextResponse.json({
             ok: true,
             status: 200,
-            message: `Database deleted and db dump sent to email: ${send_dump_target}`,
+            message: `Account and Database deleted, db dump sent to email: ${send_dump_target}`,
           });
         } else {
           // Shouldn't fail. No idea what the response from turso would be at this point - not documented
@@ -84,10 +88,14 @@ export async function POST(req: NextRequest) {
     } else {
       const res = await turso.databases.delete(db_name);
       if (res.database) {
+        conn.execute({
+          sql: `DELETE FROM User WHERE email = ?`,
+          args: [email],
+        });
         return NextResponse.json({
           ok: true,
           status: 200,
-          message: `Database deleted`,
+          message: `Account and Database deleted`,
         });
       } else {
         // Shouldn't fail. No idea what the response from turso would be at this point - not documented

@@ -12,7 +12,7 @@ export async function GET() {
   if (res.rows.length > 0) {
     const executed_ids = [];
     for (const row of res.rows) {
-      const { id, db_name, send_dump_target } = row;
+      const { id, db_name, send_dump_target, email } = row;
       const turso = createAPIClient({
         org: "mikefreno",
         token: env.TURSO_DB_API_TOKEN,
@@ -32,11 +32,11 @@ export async function GET() {
       } else {
         const res = await turso.databases.delete(db_name as string);
         if (res.database) {
-          executed_ids.push(id);
-          return NextResponse.json({
-            status: 200,
-            message: `Database deleted`,
+          conn.execute({
+            sql: `DELETE FROM User WHERE email = ?`,
+            args: [email],
           });
+          executed_ids.push(id);
           // Shouldn't fail. No idea what the response from turso would be at this point - not documented
         }
       }
