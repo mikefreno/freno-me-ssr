@@ -3,7 +3,7 @@ import jwt from "jsonwebtoken";
 import { env } from "@/env.mjs";
 import { LINEAGE_JWT_EXPIRY } from "@/app/utils";
 
-export async function POST(req: NextRequest) {
+export async function GET(req: NextRequest) {
   const authHeader = req.headers.get("authorization");
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
     return new NextResponse(JSON.stringify({ valid: false }), { status: 401 });
@@ -20,14 +20,14 @@ export async function POST(req: NextRequest) {
       { expiresIn: LINEAGE_JWT_EXPIRY },
     );
 
-    return new NextResponse(
-      JSON.stringify({
-        valid: true,
-        token: newToken,
-      }),
-      { status: 200 },
-    );
+    return NextResponse.json({
+      status: 200,
+      ok: true,
+      valid: true,
+      token: newToken,
+      email: decoded.email,
+    });
   } catch (error) {
-    return new NextResponse(JSON.stringify({ valid: false }), { status: 401 });
+    return NextResponse.json({ status: 401, ok: false });
   }
 }
