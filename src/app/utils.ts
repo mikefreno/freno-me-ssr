@@ -210,18 +210,18 @@ export async function dumpAndSendDB({
 
 export async function validateLineageRequest({
   auth_token,
-  email,
   userRow,
 }: {
   auth_token: string;
-  email: string;
   userRow: Row;
 }): Promise<boolean> {
-  const { provider } = userRow;
-  if (provider == "email") {
-    const { passwordHash } = userRow;
-    const valid = await checkPassword(auth_token, passwordHash as string);
-    if (!valid) {
+  const { provider, email } = userRow;
+  if (provider === "email") {
+    const decoded = jwt.verify(
+      auth_token,
+      env.JWT_SECRET_KEY,
+    ) as jwt.JwtPayload;
+    if (email !== decoded.email) {
       return false;
     }
   } else if (provider == "apple") {
