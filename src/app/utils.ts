@@ -163,6 +163,7 @@ export async function dumpAndSendDB({
     },
   });
   if (!res.ok) {
+    console.error(res);
     return { success: false, reason: "bad dump request response" };
   }
   const text = await res.text();
