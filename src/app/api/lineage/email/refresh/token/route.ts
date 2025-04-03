@@ -14,7 +14,6 @@ export async function POST(req: NextRequest) {
   try {
     const decoded = jwt.verify(token, env.JWT_SECRET_KEY) as jwt.JwtPayload;
 
-    // Generate a new token
     const newToken = jwt.sign(
       { userId: decoded.userId, email: decoded.email },
       env.JWT_SECRET_KEY,
