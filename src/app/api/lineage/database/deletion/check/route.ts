@@ -1,7 +1,7 @@
 import { LineageConnectionFactory } from "@/app/utils";
 import { NextRequest, NextResponse } from "next/server";
 
-export default async function POST(req: NextRequest) {
+export async function POST(req: NextRequest) {
   const { email } = await req.json();
   const conn = LineageConnectionFactory();
   const res = await conn.execute({
