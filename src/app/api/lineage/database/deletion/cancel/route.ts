@@ -39,7 +39,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ status: 404, ok: false });
   }
 
-  const valid = await validateLineageRequest({ auth_token, email, userRow });
+  const valid = await validateLineageRequest({ auth_token, userRow });
   if (!valid) {
     return NextResponse.json({
       status: 401,
