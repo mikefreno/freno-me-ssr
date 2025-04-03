@@ -108,7 +108,7 @@ export async function POST(req: NextRequest) {
     }
   } else {
     const insertRes = await conn.execute({
-      sql: `INSERT INTO cron`,
+      sql: `INSERT INTO cron (email, db_name, db_token, send_dump_target) VALUES (?, ?, ?, ?)`,
       args: [email, db_name, db_token, send_dump_target],
     });
     if (insertRes.rowsAffected > 0) {

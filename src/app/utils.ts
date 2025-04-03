@@ -159,7 +159,7 @@ export async function dumpAndSendDB({
   const res = await fetch(`https://${dbName}-mikefreno.turso.io/dump`, {
     method: "GET",
     headers: {
-      Authorization: `Bearer ${dbName}`,
+      Authorization: `Bearer ${env.TURSO_DB_API_TOKEN}`,
     },
   });
   if (!res.ok) {
