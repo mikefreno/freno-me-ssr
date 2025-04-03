@@ -21,29 +21,19 @@ export async function POST(request: NextRequest) {
   const conn = LineageConnectionFactory();
 
   try {
-    // Check if the user exists
     let checkUserQuery = "SELECT * FROM User WHERE apple_user_string = ?";
-    console.log(checkUserQuery);
+
     let args = [userString];
     if (email) {
       args.push(email);
       checkUserQuery += " OR email = ?";
     }
-    console.log(args);
     const checkUserResult = await conn.execute({
       sql: checkUserQuery,
       args: args,
     });
 
-    console.log(
-      "rows: ",
-      checkUserResult.rows[0],
-      "length: ",
-      checkUserResult.rows.length,
-    );
-
     if (checkUserResult.rows.length > 0) {
-      console.log("enter update");
       const setClauses = [];
       const values = [];
 
@@ -92,7 +82,6 @@ export async function POST(request: NextRequest) {
       dbToken = dbInit.token;
       dbName = dbInit.dbName;
 
-      console.log("enter insert");
       try {
         const insertQuery = `
         INSERT INTO User (email, email_verified, apple_user_string, provider, database_name, database_token)
@@ -129,7 +118,6 @@ export async function POST(request: NextRequest) {
           token: env.TURSO_DB_API_TOKEN,
         });
         await turso.databases.delete(dbName);
-        console.log(`Database ${dbName} deleted due to error`);
       } catch (deleteErr) {
         console.error("Error deleting database:", deleteErr);
       }

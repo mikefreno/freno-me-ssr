@@ -76,7 +76,7 @@ export async function getUserID(): Promise<string | null> {
   return null;
 }
 
-import { createClient } from "@libsql/client/web";
+import { createClient, Row } from "@libsql/client/web";
 import { env } from "@/env.mjs";
 
 // Turso
@@ -102,6 +102,8 @@ export function LineageConnectionFactory() {
 
 import { v4 as uuid } from "uuid";
 import { createClient as createAPIClient } from "@tursodatabase/api";
+import { checkPassword } from "./api/passwordHashing";
+import { OAuth2Client } from "google-auth-library";
 
 export async function LineageDBInit() {
   const turso = createAPIClient({
@@ -142,4 +144,103 @@ export function PerUserDBConnectionFactory(dbName: string, token: string) {
   };
   const conn = createClient(config);
   return conn;
+}
+
+export async function dumpAndSendDB({
+  dbName,
+  sendTarget,
+}: {
+  dbName: string;
+  sendTarget: string;
+}): Promise<{
+  success: boolean;
+  reason?: string;
+}> {
+  const res = await fetch(`https://${dbName}-mikefreno.turso.io/dump`, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${dbName}`,
+    },
+  });
+  if (!res.ok) {
+    return { success: false, reason: "bad dump request response" };
+  }
+  const text = await res.text();
+  const base64Content = Buffer.from(text, "utf-8").toString("base64");
+
+  const apiKey = env.SENDINBLUE_KEY as string;
+  const apiUrl = "https://api.brevo.com/v3/smtp/email";
+
+  const emailPayload = {
+    sender: {
+      name: "no_reply@freno.me",
+      email: "no_reply@freno.me",
+    },
+    to: [
+      {
+        email: sendTarget,
+      },
+    ],
+    subject: "Your Lineage Database Dump",
+    htmlContent:
+      "<html><body><p>Please find the attached database dump. This contains the state of your person remote Lineage remote saves. Should you ever return to Lineage, you can upload this file to reinstate the saves you had.</p></body></html>",
+    attachment: [
+      {
+        content: base64Content,
+        name: "database_dump.txt",
+      },
+    ],
+  };
+  const sendRes = await fetch(apiUrl, {
+    method: "POST",
+    headers: {
+      accept: "application/json",
+      "api-key": apiKey,
+      "content-type": "application/json",
+    },
+    body: JSON.stringify(emailPayload),
+  });
+
+  if (!sendRes.ok) {
+    return { success: false, reason: "email send failure" };
+  } else {
+    return { success: true };
+  }
+}
+
+export async function validateLineageRequest({
+  auth_token,
+  email,
+  userRow,
+}: {
+  auth_token: string;
+  email: string;
+  userRow: Row;
+}): Promise<boolean> {
+  const { provider } = userRow;
+  if (provider == "email") {
+    const { passwordHash } = userRow;
+    const valid = await checkPassword(auth_token, passwordHash as string);
+    if (!valid) {
+      return false;
+    }
+  } else if (provider == "apple") {
+    const { apple_user_string } = userRow;
+    if (apple_user_string !== auth_token) {
+      return false;
+    }
+  } else if (provider == "google") {
+    const CLIENT_ID = env.NEXT_PUBLIC_GOOGLE_CLIENT_ID_MAGIC_DELVE;
+    const client = new OAuth2Client(CLIENT_ID);
+    const ticket = await client.verifyIdToken({
+      idToken: auth_token,
+      audience: CLIENT_ID,
+    });
+    if (ticket.getPayload()?.email !== email) {
+      return false;
+    }
+  } else {
+    return false;
+  }
+  return true;
 }
