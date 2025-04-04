@@ -5,7 +5,6 @@ import {
 } from "@/app/utils";
 import { env } from "@/env.mjs";
 import { NextRequest, NextResponse } from "next/server";
-import { createClient as createAPIClient } from "@tursodatabase/api";
 
 export async function POST(req: NextRequest) {
   const authHeader = req.headers.get("authorization");
@@ -60,7 +59,6 @@ export async function POST(req: NextRequest) {
         sendTarget: send_dump_target,
       });
       if (res.success) {
-        console.log("deleting db");
         //const turso = createAPIClient({
         //org: "mikefreno",
         //token: env.TURSO_DB_API_TOKEN,
