@@ -204,6 +204,7 @@ export async function dumpAndSendDB({
     body: JSON.stringify(emailPayload),
   });
 
+  console.log(sendRes);
   if (!sendRes.ok) {
     return { success: false, reason: "email send failure" };
   } else {
