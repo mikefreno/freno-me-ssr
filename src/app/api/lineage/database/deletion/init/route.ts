@@ -53,10 +53,6 @@ export async function POST(req: NextRequest) {
   }
 
   if (skip_cron) {
-    const turso = createAPIClient({
-      org: "mikefreno",
-      token: env.TURSO_DB_API_TOKEN,
-    });
     if (send_dump_target) {
       const res = await dumpAndSendDB({
         dbName: db_name,
@@ -64,7 +60,13 @@ export async function POST(req: NextRequest) {
         sendTarget: send_dump_target,
       });
       if (res.success) {
+        console.log("delting db");
+        const turso = createAPIClient({
+          org: "mikefreno",
+          token: env.TURSO_DB_API_TOKEN,
+        });
         const res = await turso.databases.delete(db_name);
+        console.log(res);
         if (res.database) {
           conn.execute({
             sql: `DELETE FROM User WHERE email = ?`,
@@ -77,7 +79,11 @@ export async function POST(req: NextRequest) {
           });
         } else {
           // Shouldn't fail. No idea what the response from turso would be at this point - not documented
-          return NextResponse.json({ status: 500, message: "Unknown" });
+          return NextResponse.json({
+            status: 500,
+            message: "Unknown",
+            ok: false,
+          });
         }
       } else {
         return NextResponse.json({
@@ -87,6 +93,10 @@ export async function POST(req: NextRequest) {
         });
       }
     } else {
+      const turso = createAPIClient({
+        org: "mikefreno",
+        token: env.TURSO_DB_API_TOKEN,
+      });
       const res = await turso.databases.delete(db_name);
       if (res.database) {
         conn.execute({
