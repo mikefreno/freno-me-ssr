@@ -13,10 +13,7 @@ export async function GET() {
     const executed_ids = [];
     for (const row of res.rows) {
       const { id, db_name, db_token, send_dump_target, email } = row;
-      const turso = createAPIClient({
-        org: "mikefreno",
-        token: env.TURSO_DB_API_TOKEN,
-      });
+
       if (send_dump_target) {
         const res = await dumpAndSendDB({
           dbName: db_name as string,
@@ -24,15 +21,33 @@ export async function GET() {
           sendTarget: send_dump_target as string,
         });
         if (res.success) {
-          const res = await turso.databases.delete(db_name as string);
-          if (res.database) {
+          //const res = await turso.databases.delete(db_name as string);
+          //
+          const res = await fetch(
+            `https://api.turso.tech/v1/organizations/mikefreno/databases/${db_name}`,
+            {
+              method: "GET",
+              headers: {
+                Authorization: `Bearer ${env.TURSO_DB_API_TOKEN}`,
+              },
+            },
+          );
+          if (res.ok) {
             executed_ids.push(id);
             // Shouldn't fail. No idea what the response from turso would be at this point - not documented
           }
         }
       } else {
-        const res = await turso.databases.delete(db_name as string);
-        if (res.database) {
+        const res = await fetch(
+          `https://api.turso.tech/v1/organizations/mikefreno/databases/${db_name}`,
+          {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${env.TURSO_DB_API_TOKEN}`,
+            },
+          },
+        );
+        if (res.ok) {
           conn.execute({
             sql: `DELETE FROM User WHERE email = ?`,
             args: [email],
