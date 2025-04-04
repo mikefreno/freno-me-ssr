@@ -9,6 +9,7 @@ import sanityOptions from "@/lineage-json/misc-route/sanityOptions.json";
 
 export async function GET() {
   return NextResponse.json({
+    ok: true,
     activities,
     investments,
     jobs,

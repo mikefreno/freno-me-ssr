@@ -4,5 +4,5 @@ import enemies from "@/lineage-json/enemy-route/enemy.json";
 import enemyAttacks from "@/lineage-json/enemy-route/enemyAttacks.json";
 
 export async function GET() {
-  return NextResponse.json({ bosses, enemies, enemyAttacks });
+  return NextResponse.json({ ok: true, bosses, enemies, enemyAttacks });
 }

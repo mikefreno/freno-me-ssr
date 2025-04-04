@@ -21,6 +21,7 @@ import staves from "@/lineage-json/item-route/staves.json";
 
 export async function GET() {
   return NextResponse.json({
+    ok: true,
     arrows,
     bows,
     foci,

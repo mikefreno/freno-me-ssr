@@ -4,5 +4,10 @@ import sanityDebuffs from "@/lineage-json/conditions-route/sanityDebuffs.json";
 import { NextResponse } from "next/server";
 
 export async function GET() {
-  return NextResponse.json({ conditions, debilitations, sanityDebuffs });
+  return NextResponse.json({
+    ok: true,
+    conditions,
+    debilitations,
+    sanityDebuffs,
+  });
 }
