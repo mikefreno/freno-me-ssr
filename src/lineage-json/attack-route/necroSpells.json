@@ -269,7 +269,7 @@
     "proficiencyNeeded": "novice",
     "manaCost": 15,
     "damageTable": {
-      "physical": 10
+      "physical": 7
     },
     "animation": {
       "sprite": "teeth",
