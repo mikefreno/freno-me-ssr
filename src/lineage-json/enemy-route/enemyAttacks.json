@@ -544,6 +544,16 @@
     }
   },
   {
+    "name": "dark burst",
+    "manaCost": 20,
+    "target": "area",
+    "baseHitChance": 1.0,
+    "damageTable": {
+      "poison": 2,
+      "physical": 1
+    }
+  },
+  {
     "name": "dark bolt",
     "manaCost": 20,
     "target": "single",
