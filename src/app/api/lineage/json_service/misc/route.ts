@@ -6,6 +6,7 @@ import manaOptions from "@/lineage-json/misc-route/manaOptions.json";
 import otherOptions from "@/lineage-json/misc-route/otherOptions.json";
 import healthOptions from "@/lineage-json/misc-route/healthOptions.json";
 import sanityOptions from "@/lineage-json/misc-route/sanityOptions.json";
+import pvpRewards from "@/lineage-json/misc-route/pvpRewards.json";
 
 export async function GET() {
   return NextResponse.json({
@@ -17,5 +18,6 @@ export async function GET() {
     otherOptions,
     healthOptions,
     sanityOptions,
+    pvpRewards,
   });
 }
