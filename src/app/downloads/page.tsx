@@ -30,6 +30,70 @@ export default function DownloadPage() {
       </div>
       <div className="pt-12">
         <div className="text-center text-xl tracking-wide dark:text-white">
+          Life and Lineage
+          <br />
+        </div>
+        <div className="flex justify-evenly md:mx-[25vw]">
+          <div className="flex flex-col">
+            <div className="text-center text-lg">Android (apk only)</div>
+            <button
+              onClick={joinBetaPrompt}
+              className="transition-all duration-200 ease-out active:scale-95"
+            >
+              <Image
+                src={"/google-play-badge.png"}
+                alt={"google-play"}
+                width={180}
+                height={60}
+              />
+            </button>
+            <div className="rule-around">Or</div>
+            <button
+              onClick={() => download("magic-delve")}
+              className="mt-2 rounded-md bg-blue-500 px-4 py-2 text-white shadow-lg shadow-blue-800 transition-all duration-200 ease-out hover:opacity-90 active:scale-95 active:opacity-90"
+            >
+              Download APK
+            </button>
+          </div>
+          <div className="flex flex-col">
+            <div className="text-center text-lg">iOS</div>
+            <Link
+              className="my-auto transition-all duration-200 ease-out active:scale-95"
+              href="https://apps.apple.com/us/app/life-and-lineage/id6737252442"
+            >
+              <DownloadOnAppStore size={50} />
+            </Link>
+          </div>
+        </div>
+        <ul className="icons flex justify-center pb-6 pt-24">
+          <li>
+            <Link
+              href="https://github.com/MikeFreno/"
+              target="_blank"
+              rel="noreferrer"
+              className="shaker rounded-full border-zinc-800 dark:border-zinc-300"
+            >
+              <span className="m-auto p-2">
+                <GitHub height={24} width={24} fill={undefined} />
+              </span>
+            </Link>
+          </li>
+          <li>
+            <Link
+              href="https://www.linkedin.com/in/michael-freno-176001256/"
+              target="_blank"
+              rel="noreferrer"
+              className="shaker rounded-full border-zinc-800 dark:border-zinc-300"
+            >
+              <span className="m-auto rounded-md p-2">
+                <LinkedIn height={24} width={24} fill={undefined} />
+              </span>
+            </Link>
+          </li>
+        </ul>
+      </div>
+      <div className="pt-12">
+        <div className="text-center text-xl tracking-wide dark:text-white">
           Cork
           <br />
           (macOS 13 Ventura or later)
@@ -84,72 +148,6 @@ export default function DownloadPage() {
             </Link>
           </div>
         </div>
-      </div>
-      <div className="pt-12">
-        <div className="text-center text-xl tracking-wide dark:text-white">
-          Life and Lineage (alpha)
-          <br />
-          (apk only)
-        </div>
-        <div className="flex justify-evenly md:mx-[25vw]">
-          <div className="flex flex-col">
-            <div className="text-center text-lg">Android</div>
-            <button
-              onClick={joinBetaPrompt}
-              className="transition-all duration-200 ease-out active:scale-95"
-            >
-              <Image
-                src={"/google-play-badge.png"}
-                alt={"google-play"}
-                width={180}
-                height={60}
-              />
-            </button>
-            <div className="rule-around">Or</div>
-            <button
-              onClick={() => download("magic-delve")}
-              className="mt-2 rounded-md bg-blue-500 px-4 py-2 text-white shadow-lg shadow-blue-800 transition-all duration-200 ease-out hover:opacity-90 active:scale-95 active:opacity-90"
-            >
-              Download APK
-            </button>
-          </div>
-          <div className="flex flex-col">
-            <div className="text-center text-lg">iOS</div>
-            <button
-              onClick={joinBetaPrompt}
-              className="my-auto transition-all duration-200 ease-out active:scale-95"
-              //href="https://apps.apple.com/us/app/shapes-with-abigail/id6474561117"
-            >
-              <DownloadOnAppStore size={50} />
-            </button>
-          </div>
-        </div>
-        <ul className="icons flex justify-center pb-6 pt-24">
-          <li>
-            <Link
-              href="https://github.com/MikeFreno/"
-              target="_blank"
-              rel="noreferrer"
-              className="shaker rounded-full border-zinc-800 dark:border-zinc-300"
-            >
-              <span className="m-auto p-2">
-                <GitHub height={24} width={24} fill={undefined} />
-              </span>
-            </Link>
-          </li>
-          <li>
-            <Link
-              href="https://www.linkedin.com/in/michael-freno-176001256/"
-              target="_blank"
-              rel="noreferrer"
-              className="shaker rounded-full border-zinc-800 dark:border-zinc-300"
-            >
-              <span className="m-auto rounded-md p-2">
-                <LinkedIn height={24} width={24} fill={undefined} />
-              </span>
-            </Link>
-          </li>
-        </ul>
       </div>
     </div>
   );
