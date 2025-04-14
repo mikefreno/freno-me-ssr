@@ -65,50 +65,6 @@ export default function DownloadPage() {
             </Link>
           </div>
         </div>
-        <ul className="icons flex justify-center pb-6 pt-24">
-          <li>
-            <Link
-              href="https://github.com/MikeFreno/"
-              target="_blank"
-              rel="noreferrer"
-              className="shaker rounded-full border-zinc-800 dark:border-zinc-300"
-            >
-              <span className="m-auto p-2">
-                <GitHub height={24} width={24} fill={undefined} />
-              </span>
-            </Link>
-          </li>
-          <li>
-            <Link
-              href="https://www.linkedin.com/in/michael-freno-176001256/"
-              target="_blank"
-              rel="noreferrer"
-              className="shaker rounded-full border-zinc-800 dark:border-zinc-300"
-            >
-              <span className="m-auto rounded-md p-2">
-                <LinkedIn height={24} width={24} fill={undefined} />
-              </span>
-            </Link>
-          </li>
-        </ul>
-      </div>
-      <div className="pt-12">
-        <div className="text-center text-xl tracking-wide dark:text-white">
-          Cork
-          <br />
-          (macOS 13 Ventura or later)
-        </div>
-        <div className="flex justify-center">
-          <button
-            onClick={() => download("cork")}
-            className="my-2 rounded-md bg-blue-500 px-4 py-2 text-white shadow-lg shadow-blue-800 transition-all duration-200 ease-out hover:opacity-90 active:scale-95 active:opacity-90"
-          >
-            Download app
-          </button>
-        </div>
-        <div className="text-center text-sm">
-          Just unzip and drag into &apos;Applications&apos; folder
-        </div>
       </div>
       <div className="pt-12">
         <div className="text-center text-xl tracking-wide dark:text-white">
@@ -148,6 +104,50 @@ export default function DownloadPage() {
             </Link>
           </div>
         </div>
+        <div className="pt-12">
+          <div className="text-center text-xl tracking-wide dark:text-white">
+            Cork
+            <br />
+            (macOS 13 Ventura or later)
+          </div>
+          <div className="flex justify-center">
+            <button
+              onClick={() => download("cork")}
+              className="my-2 rounded-md bg-blue-500 px-4 py-2 text-white shadow-lg shadow-blue-800 transition-all duration-200 ease-out hover:opacity-90 active:scale-95 active:opacity-90"
+            >
+              Download app
+            </button>
+          </div>
+          <div className="text-center text-sm">
+            Just unzip and drag into &apos;Applications&apos; folder
+          </div>
+        </div>
+        <ul className="icons flex justify-center pb-6 pt-24">
+          <li>
+            <Link
+              href="https://github.com/MikeFreno/"
+              target="_blank"
+              rel="noreferrer"
+              className="shaker rounded-full border-zinc-800 dark:border-zinc-300"
+            >
+              <span className="m-auto p-2">
+                <GitHub height={24} width={24} fill={undefined} />
+              </span>
+            </Link>
+          </li>
+          <li>
+            <Link
+              href="https://www.linkedin.com/in/michael-freno-176001256/"
+              target="_blank"
+              rel="noreferrer"
+              className="shaker rounded-full border-zinc-800 dark:border-zinc-300"
+            >
+              <span className="m-auto rounded-md p-2">
+                <LinkedIn height={24} width={24} fill={undefined} />
+              </span>
+            </Link>
+          </li>
+        </ul>
       </div>
     </div>
   );
