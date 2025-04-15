@@ -19,7 +19,7 @@ export default function DownloadPage() {
 
   const joinBetaPrompt = () => {
     window.alert(
-      "This isn't released yet, if you would like to help test, please go the contact page and include the game and platform you would like to help test in the message. Thanks!",
+      "This isn't released yet, if you would like to help test, please go the contact page and include the game and platform you would like to help test in the message. Otherwise the apk is available for direct install. Thanks!",
     );
   };
 
@@ -37,8 +37,18 @@ export default function DownloadPage() {
           <div className="flex flex-col">
             <div className="text-center text-lg">Android (apk only)</div>
             <button
+              onClick={() => download("lineage")}
+              className="mt-2 rounded-md bg-blue-500 px-4 py-2 text-white shadow-lg transition-all duration-200 ease-out hover:opacity-90 active:scale-95 active:opacity-90"
+            >
+              Download APK
+            </button>
+
+            <div className="rule-around">Or</div>
+
+            <div className="italic mx-auto">(Coming soon)</div>
+            <button
               onClick={joinBetaPrompt}
-              className="transition-all duration-200 ease-out active:scale-95"
+              className="transition-all mx-auto duration-200 ease-out active:scale-95"
             >
               <Image
                 src={"/google-play-badge.png"}
@@ -46,13 +56,6 @@ export default function DownloadPage() {
                 width={180}
                 height={60}
               />
-            </button>
-            <div className="rule-around">Or</div>
-            <button
-              onClick={() => download("magic-delve")}
-              className="mt-2 rounded-md bg-blue-500 px-4 py-2 text-white shadow-lg shadow-blue-800 transition-all duration-200 ease-out hover:opacity-90 active:scale-95 active:opacity-90"
-            >
-              Download APK
             </button>
           </div>
           <div className="flex flex-col">
@@ -76,6 +79,14 @@ export default function DownloadPage() {
           <div className="flex flex-col">
             <div className="text-center text-lg">Android</div>
             <button
+              onClick={() => download("shapes-with-abigail")}
+              className="mt-2 rounded-md bg-blue-500 px-4 py-2 text-white shadow-lg  transition-all duration-200 ease-out hover:opacity-90 active:scale-95 active:opacity-90"
+            >
+              Download APK
+            </button>
+            <div className="rule-around">Or</div>
+            <div className="italic mx-auto">(Coming soon)</div>
+            <button
               onClick={joinBetaPrompt}
               className="transition-all duration-200 ease-out active:scale-95"
             >
@@ -85,13 +96,6 @@ export default function DownloadPage() {
                 width={180}
                 height={60}
               />
-            </button>
-            <div className="rule-around">Or</div>
-            <button
-              onClick={() => download("shapes-with-abigail")}
-              className="mt-2 rounded-md bg-blue-500 px-4 py-2 text-white shadow-lg shadow-blue-800 transition-all duration-200 ease-out hover:opacity-90 active:scale-95 active:opacity-90"
-            >
-              Download APK
             </button>
           </div>
           <div className="flex flex-col">
@@ -113,7 +117,7 @@ export default function DownloadPage() {
           <div className="flex justify-center">
             <button
               onClick={() => download("cork")}
-              className="my-2 rounded-md bg-blue-500 px-4 py-2 text-white shadow-lg shadow-blue-800 transition-all duration-200 ease-out hover:opacity-90 active:scale-95 active:opacity-90"
+              className="my-2 rounded-md bg-blue-500 px-4 py-2 text-white shadow-lg  transition-all duration-200 ease-out hover:opacity-90 active:scale-95 active:opacity-90"
             >
               Download app
             </button>

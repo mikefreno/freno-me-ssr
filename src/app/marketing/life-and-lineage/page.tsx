@@ -24,12 +24,12 @@ export default function LifeAndLineageMarketing() {
         <div className="flex space-x-4">
           <Link
             className="my-auto transition-all duration-200 ease-out active:scale-95"
-            href="#"
+            href="https://apps.apple.com/us/app/life-and-lineage/id6737252442"
           >
             <DownloadOnAppStoreDark size={50} />
           </Link>
           <Link
-            href="#"
+            href="/downloads"
             className="transition-all duration-200 ease-out active:scale-95"
           >
             <Image
