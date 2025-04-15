@@ -33,8 +33,9 @@ export default function DownloadPage() {
           Life and Lineage
           <br />
         </div>
+
         <div className="flex justify-evenly md:mx-[25vw]">
-          <div className="flex flex-col">
+          <div className="flex flex-col w-1/3">
             <div className="text-center text-lg">Android (apk only)</div>
             <button
               onClick={() => download("lineage")}
@@ -42,7 +43,10 @@ export default function DownloadPage() {
             >
               Download APK
             </button>
-
+            <div className="text-center italic">
+              Note the android version is not well tested, and has performance
+              issues.
+            </div>
             <div className="rule-around">Or</div>
 
             <div className="italic mx-auto">(Coming soon)</div>
