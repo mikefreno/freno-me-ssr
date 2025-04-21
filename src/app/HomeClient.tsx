@@ -5,6 +5,8 @@ import { useEffect, useRef, useState } from "react";
 import useOnClickOutside from "@/hooks/ClickOutsideHook";
 import AboutMeModal from "./AboutMeModal";
 import ContactModal from "./ContactModal";
+import GameReleaseToast from "@/components/GameReleaseToast";
+import Image from "next/image";
 
 export default function HomeClient(props: {
   user: {
@@ -95,6 +97,19 @@ export default function HomeClient(props: {
         <link rel="preload" as="image" href="/blur_SH_water.jpg" />
         <link rel="preload" as="image" href="/me_in_flannel.jpg" />
         <div className="page-fade-in max-h-[100dvh] bg-[url('/blur_SH_water.jpg')] bg-cover bg-center bg-no-repeat text-white">
+          <GameReleaseToast
+            message={"Life and Lineage v1.1 out now!"}
+            icon={
+              <Image
+                src={"/LineageIcon.png"}
+                alt={"Lineage App Icon"}
+                height={24}
+                width={24}
+                className="object-contain object-center"
+              />
+            }
+            link={"/marketing/life-and-lineage"}
+          />
           <div className="flex min-h-[100dvh] w-screen justify-center backdrop-brightness-50">
             <div
               className={`${

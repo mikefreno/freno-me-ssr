@@ -559,3 +559,21 @@ input[type="checkbox"]:checked::before {
 .shadow-left {
   box-shadow: -5px 0px 5px -1px rgba(0, 0, 0, 0.1);
 }
+
+@keyframes seesaw {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(1.5deg);
+  } /* Adjust rotation angle if needed */
+  75% {
+    transform: rotate(-1.5deg);
+  } /* Adjust rotation angle if needed */
+}
+
+/* Class to apply the animation */
+.apply-seesaw-animation {
+  animation: seesaw 3s linear infinite; /* Adjust duration/timing if needed */
+}
