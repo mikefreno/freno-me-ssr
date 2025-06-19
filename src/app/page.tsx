@@ -1,6 +1,7 @@
 import { env } from "@/env.mjs";
 import HomeClient from "./HomeClient";
 import { getUserID } from "./utils";
+import HomeRestart from "@/components/HomeRestart";
 
 export default async function Home() {
   const userID = await getUserID();
@@ -19,5 +20,5 @@ export default async function Home() {
       image?: string | undefined;
     } | null;
   }
-  return <HomeClient user={user} />;
+  return <HomeRestart user={user} />;
 }

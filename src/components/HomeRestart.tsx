@@ -1,3 +1,5 @@
+"use client";
+
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { Planet } from "./ThreeJSMeshes";
 import { Physics } from "@react-three/rapier";
@@ -11,6 +13,14 @@ import { cameraControls, globeControls, playerControls } from "./ThreeDebug";
 import { Player } from "./Player";
 import { useCallback, useEffect, useState } from "react";
 
+interface HomeRestartProps {
+  user: {
+    email?: string | undefined;
+    display_name?: string | undefined;
+    image?: string | undefined;
+  } | null;
+}
+
 function isPointerLockAvailable() {
   return (
     "pointerLockElement" in document ||
@@ -19,7 +29,7 @@ function isPointerLockAvailable() {
   );
 }
 
-export default function HomeRestart() {
+export default function HomeRestart({ user }: HomeRestartProps) {
   const { fov, positionZ } = useControls(cameraControls);
   const [locked, setLocked] = useState(false);
   const [usingOrbit, setUsingOrbit] = useState(true);
@@ -92,7 +102,7 @@ export default function HomeRestart() {
         >
           <ambientLight intensity={1.0} />
           <Controls />
-          <Physics gravity={[0, 0, 0]}>
+          <Physics gravity={[0, 0, 0]} debug>
             <Player
               locked={locked}
               controlType={supportsPointerLock ? "pointerlock" : "joystick"}

@@ -1,17 +1,12 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
+
+import { useRef, useState, useEffect } from "react";
 import { useFrame, useThree } from "@react-three/fiber";
 import { useKeyboardControls } from "@react-three/drei";
-import {
-  CapsuleCollider,
-  RapierRigidBody,
-  RigidBody,
-  useRapier,
-} from "@react-three/rapier";
-import { Quaternion, Vector3 } from "three";
+import { RapierRigidBody, RigidBody, BallCollider } from "@react-three/rapier";
+import { Vector3, Quaternion, Group, Matrix4, Mesh } from "three";
 import { useControls } from "leva";
-import { globeControls, playerControls } from "./ThreeDebug";
-import { Character } from "@/entities/character";
+import { playerControls, globeControls, cameraControls } from "./ThreeDebug";
 
 export function Player({
   locked,
@@ -23,110 +18,183 @@ export function Player({
   joystickInput?: { x: number; y: number };
 }) {
   const rigidBodyRef = useRef<RapierRigidBody>(null);
+  const meshRef = useRef<Mesh>(null);
+  const groupRef = useRef<Group>(null);
   const [, get] = useKeyboardControls();
-  const rapier = useRapier();
-  const { camera, scene } = useThree();
-  const planetQuaternion = useRef(new Quaternion());
   const [isInContact, setIsInContact] = useState(false);
 
-  const {
-    jumpForce,
-    rotationSpeed,
-    rotationSmoothing,
-    groundCheckDistance,
-    cameraHeight,
-    joystickSensitivity,
-  } = useControls(playerControls);
+  // Store player's facing angle
+  const playerFacingAngle = useRef(0);
 
-  const { planetRadius, gravityStrength } = useControls(globeControls);
+  // Get camera from three.js
+  const { camera } = useThree();
 
-  //useEffect(() => {
-  //console.log({
-  //"jump force: ": jumpForce,
-  //"rotation speed: ": rotationSpeed,
-  //"rotation smoothing: ": rotationSmoothing,
-  //"gravity: ": gravityStrength,
-  //"ground check distance: ": groundCheckDistance,
-  //"camera height: ": cameraHeight,
-  //"joystick sensitivity: ": joystickSensitivity,
-  //});
-  //}, [
-  //jumpForce,
-  //rotationSpeed,
-  //rotationSmoothing,
-  //gravityStrength,
-  //groundCheckDistance,
-  //joystickSensitivity,
-  //]);
+  // Add camera controls to your debug panel
+  const { cameraDistance, cameraHeight, cameraSmoothing } = useControls(
+    "Camera Controls",
+    {
+      cameraDistance: { value: 5, min: 1, max: 20 },
+      cameraHeight: { value: 2, min: 0, max: 10 },
+      cameraSmoothing: { value: 0.1, min: 0.01, max: 1 },
+    },
+  );
 
-  useFrame((state) => {
-    if (!rigidBodyRef.current) return;
+  const { jumpForce, joystickSensitivity } = useControls(playerControls);
+  const { gravityStrength, planetRadius } = useControls(globeControls);
+
+  useFrame((state, delta) => {
+    if (!rigidBodyRef.current || !groupRef.current) return;
+
     if (
       controlType === "pointerlock" &&
       !locked &&
-      process.env.NODE_ENV == "production"
+      process.env.NODE_ENV === "production"
     ) {
       return;
     }
 
-    // player controls logic
-    let moveX = 0;
-    let moveY = 0;
-    let moveZ = 0;
+    // 1. Get player position and calculate up vector
+    const playerPos = new Vector3().copy(
+      rigidBodyRef.current.translation() as any,
+    );
+    const planetCenter = new Vector3(0, 0, 0);
+    const upVector = new Vector3()
+      .subVectors(playerPos, planetCenter)
+      .normalize();
 
+    // 2. Apply gravity
+    const gravityForce = upVector
+      .clone()
+      .negate()
+      .multiplyScalar(gravityStrength * delta);
+    rigidBodyRef.current.applyImpulse(
+      { x: gravityForce.x, y: gravityForce.y, z: gravityForce.z },
+      true,
+    );
+
+    // 3. Handle inputs
     const { forward, backward, right, left, jump } = get();
 
-    //console.log(
-    //`forward: ${forward}, backward: ${backward}, right: ${right}, left: ${left}, jump: ${jump}`,
-    //);
+    let moveForward = 0;
+    let turnAmount = 0;
 
     if (controlType === "pointerlock") {
-      moveZ = -(Number(forward) - Number(backward));
-      moveX = -(Number(right) - Number(left));
+      moveForward = Number(forward) - Number(backward);
+      turnAmount = Number(right) - Number(left);
     } else if (controlType === "joystick" && joystickInput) {
-      moveX = -(joystickInput.x * joystickSensitivity);
-      moveZ = joystickInput.y * joystickSensitivity;
-    }
-    if (!isInContact && jump) {
-      moveY = jumpForce;
+      moveForward = -joystickInput.y * joystickSensitivity;
+      turnAmount = joystickInput.x * joystickSensitivity;
     }
 
-    rigidBodyRef.current.addForce({ x: moveX, y: moveY, z: moveZ }, true);
+    // 4. Update player rotation
+    const rotationSpeed = 2.0;
+    playerFacingAngle.current += turnAmount * delta * rotationSpeed;
 
-    // gravity calculation
-    const planetCenter = new Vector3(0, 0, 0);
-    const playerCenter = rigidBodyRef.current.translation();
-    const gravityDirection = new Vector3().subVectors(
-      planetCenter,
-      playerCenter,
-    );
-    const distance = gravityDirection.length();
-    const forceVector = gravityDirection
-      .normalize()
-      .multiplyScalar(gravityStrength / (distance * distance));
-    rigidBodyRef.current.addForce(forceVector, true);
+    // 5. Calculate player's local coordinate system using quaternions
+    // Create a quaternion that rotates from world up (0,1,0) to the player's up direction
+    const alignToSurfaceQuat = new Quaternion();
+    alignToSurfaceQuat.setFromUnitVectors(new Vector3(0, 1, 0), upVector);
 
-    state.camera.lookAt(
-      new Vector3(playerCenter.x, playerCenter.y, playerCenter.z),
+    // Create a quaternion for the player's rotation around their local up axis
+    const playerRotationQuat = new Quaternion();
+    playerRotationQuat.setFromAxisAngle(
+      new Vector3(0, 1, 0),
+      playerFacingAngle.current,
     );
+
+    // Combine the quaternions: first align to surface, then apply player rotation
+    const combinedQuat = new Quaternion();
+    combinedQuat.multiplyQuaternions(alignToSurfaceQuat, playerRotationQuat);
+
+    // Extract the local coordinate axes from the combined quaternion
+    const forwardVector = new Vector3(0, 0, 1).applyQuaternion(combinedQuat);
+
+    // 6. Apply movement
+    const moveSpeed = 5.0;
+    const moveVector = forwardVector
+      .clone()
+      .multiplyScalar(moveForward * moveSpeed * delta);
+
+    // Get current velocity
+    const velocity = rigidBodyRef.current.linvel();
+    const currentVel = new Vector3(velocity.x, velocity.y, velocity.z);
+
+    // Project current velocity onto the planet surface plane
+    const upComponent = upVector
+      .clone()
+      .multiplyScalar(currentVel.dot(upVector));
+    const tangentVelocity = new Vector3().subVectors(currentVel, upComponent);
+
+    // Calculate new velocity with damping
+    const dampingFactor = 0.95;
+    const newTangentVel = tangentVelocity
+      .multiplyScalar(dampingFactor)
+      .add(moveVector);
+
+    // Apply jump if grounded
+    if (isInContact && jump) {
+      upComponent.addScaledVector(upVector, jumpForce);
+    }
+
+    // Combine for final velocity
+    const newVelocity = new Vector3().add(newTangentVel).add(upComponent);
+
+    // Apply the velocity
+    rigidBodyRef.current.wakeUp();
+    rigidBodyRef.current.setLinvel(
+      { x: newVelocity.x, y: newVelocity.y, z: newVelocity.z },
+      true,
+    );
+
+    // 7. Update group orientation using the combined quaternion
+    groupRef.current.quaternion.copy(combinedQuat);
+
+    // 8. Position the group at the rigid body's position
+    groupRef.current.position.copy(playerPos);
+
+    // 9. Update camera position to follow player
+    // Calculate desired camera position
+    const cameraOffset = new Vector3();
+
+    // Position camera behind player and slightly above
+    cameraOffset.copy(forwardVector).negate().multiplyScalar(cameraDistance);
+    cameraOffset.addScaledVector(upVector, cameraHeight);
+
+    const targetCameraPos = new Vector3().copy(playerPos).add(cameraOffset);
+
+    // Smoothly interpolate camera position
+    camera.position.lerp(targetCameraPos, cameraSmoothing);
+
+    // Make camera look at player
+    camera.lookAt(playerPos);
+
+    // Ensure camera up vector aligns with player's up vector for proper orientation
+    camera.up.copy(upVector);
   });
 
   return (
-    <RigidBody
-      lockRotations
-      ref={rigidBodyRef}
-      colliders={false}
-      mass={50}
-      type="dynamic"
-      position={[0, planetRadius + cameraHeight + 0.5, 0]}
-      onCollisionEnter={() => setIsInContact(true)}
-      onCollisionExit={() => setIsInContact(false)}
-    >
-      <CapsuleCollider args={[0.75, 0.5]} />
-      <mesh>
-        <capsuleGeometry args={[0.5, cameraHeight, 1, 4]} />
-        <meshStandardMaterial color="red" />
-      </mesh>
-    </RigidBody>
+    <>
+      {/* Physics body - invisible */}
+      <RigidBody
+        lockRotations
+        ref={rigidBodyRef}
+        colliders={false}
+        mass={50}
+        type="dynamic"
+        position={[0, planetRadius + 2, 0]}
+        onCollisionEnter={() => setIsInContact(true)}
+        onCollisionExit={() => setIsInContact(false)}
+      >
+        <BallCollider args={[0.75]} />
+      </RigidBody>
+
+      {/* Visual representation - follows physics body */}
+      <group ref={groupRef}>
+        <mesh ref={meshRef} position={[0, 0, 0]}>
+          <capsuleGeometry args={[0.5, 2, 1, 4]} />
+          <meshStandardMaterial color="red" />
+        </mesh>
+      </group>
+    </>
   );
 }

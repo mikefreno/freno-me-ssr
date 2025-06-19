@@ -1,4 +1,4 @@
-import { RigidBody, CylinderCollider } from "@react-three/rapier";
+import { RigidBody, BallCollider } from "@react-three/rapier";
 import { useTexture } from "@react-three/drei";
 import { RepeatWrapping, SRGBColorSpace } from "three";
 import { useControls } from "leva";
@@ -19,10 +19,10 @@ export const Planet = () => {
   colorMap.colorSpace = SRGBColorSpace;
 
   return (
-    <RigidBody type="fixed">
+    <RigidBody type="fixed" colliders={false}>
       <mesh receiveShadow name="planet" rotation={[1, 1, 0]}>
         <sphereGeometry args={[planetRadius, segments, segments]} />
-        <meshStandardMaterial
+        {/*<meshStandardMaterial
           aoMap={aoMap}
           roughnessMap={armMap}
           metalnessMap={armMap}
@@ -33,9 +33,9 @@ export const Planet = () => {
           normalMap={normalMap}
           displacementScale={displacementScale}
           displacementBias={displacementBias}
-        />
+        />*/}
       </mesh>
-      <CylinderCollider args={[planetRadius, planetRadius]} />
+      <BallCollider args={[planetRadius]} />
       <ambientLight position={[0, 2, 4]} intensity={10} />
     </RigidBody>
   );
