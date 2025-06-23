@@ -1,17 +1,20 @@
 "use client";
 
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { Planet } from "./ThreeJSMeshes";
+import { PlanetRender } from "./ThreeJSMeshes";
 import { Physics } from "@react-three/rapier";
 import {
   KeyboardControls,
   OrbitControls,
+  Plane,
   PointerLockControls,
 } from "@react-three/drei";
 import { useControls } from "leva";
 import { cameraControls, globeControls, playerControls } from "./ThreeDebug";
 import { Player } from "./Player";
 import { useCallback, useEffect, useState } from "react";
+import { Planet } from "@/entities/planet";
+import { Vector3 } from "three";
 
 interface HomeRestartProps {
   user: {
@@ -35,6 +38,11 @@ export default function HomeRestart({ user }: HomeRestartProps) {
   const [usingOrbit, setUsingOrbit] = useState(true);
   const [supportsPointerLock, setSupportsPointerLock] = useState(true);
   const [joystickState, setJoystickState] = useState({ x: 0, y: 0 });
+  const [planets] = useState([
+    new Planet({ id: 0 }),
+    new Planet({ id: 1, scalar: 2, position: new Vector3(20, 20, 20) }),
+  ]);
+  const [currentPlanet, setCurrentPlanet] = useState(planets[0]);
 
   useEffect(() => {
     setSupportsPointerLock(isPointerLockAvailable());
@@ -107,8 +115,11 @@ export default function HomeRestart({ user }: HomeRestartProps) {
               locked={locked}
               controlType={supportsPointerLock ? "pointerlock" : "joystick"}
               joystickInput={joystickState}
+              currentPlanet={currentPlanet}
             />
-            <Planet />
+            {planets.map((planet) => (
+              <PlanetRender key={planet.id} planet={planet} />
+            ))}
           </Physics>
           <axesHelper scale={10} />
         </Canvas>

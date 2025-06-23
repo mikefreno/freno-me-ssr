@@ -3,16 +3,16 @@ import { folder } from "leva";
 export const playerControls = {
   "Player Controls": folder({
     jumpForce: {
-      value: 1.65,
+      value: 1,
       min: 0,
-      max: 3,
+      max: 2,
       step: 0.01,
     },
     rotationSpeed: {
-      value: 0.00025,
-      min: 0.0001,
-      max: 0.01,
-      step: 0.0001,
+      value: 2.0,
+      min: 0,
+      max: 4.0,
+      step: 0.1,
     },
     rotationSmoothing: {
       value: 0.15,
@@ -39,10 +39,10 @@ export const playerControls = {
       step: 0.1,
     },
     movementSpeed: {
-      value: 0.25,
+      value: 10,
       min: 0,
-      max: 5,
-      step: 0.001,
+      max: 20,
+      step: 0.1,
     },
     positionX: {
       value: 0,
@@ -68,15 +68,15 @@ export const playerControls = {
 export const globeControls = {
   "Globe Controls": folder({
     planetRadius: {
-      value: 5,
+      value: 7,
       min: 1,
-      max: 50,
+      max: 25,
       step: 1,
     },
     gravityStrength: {
-      value: 1,
+      value: 10,
       min: 1,
-      max: 10,
+      max: 20,
       step: 1,
     },
     segments: {

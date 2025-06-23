@@ -1,21 +1,22 @@
-"use client";
-
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState } from "react";
 import { useFrame, useThree } from "@react-three/fiber";
 import { useKeyboardControls } from "@react-three/drei";
 import { RapierRigidBody, RigidBody, BallCollider } from "@react-three/rapier";
-import { Vector3, Quaternion, Group, Matrix4, Mesh } from "three";
+import { Vector3, Quaternion, Group, Mesh } from "three";
 import { useControls } from "leva";
-import { playerControls, globeControls, cameraControls } from "./ThreeDebug";
+import { playerControls, globeControls } from "./ThreeDebug";
+import { Planet } from "@/entities/planet";
 
 export function Player({
   locked,
   controlType,
   joystickInput,
+  currentPlanet,
 }: {
   locked: boolean;
   controlType: "pointerlock" | "joystick";
   joystickInput?: { x: number; y: number };
+  currentPlanet: Planet;
 }) {
   const rigidBodyRef = useRef<RapierRigidBody>(null);
   const meshRef = useRef<Mesh>(null);
@@ -39,7 +40,8 @@ export function Player({
     },
   );
 
-  const { jumpForce, joystickSensitivity } = useControls(playerControls);
+  const { jumpForce, joystickSensitivity, rotationSpeed, movementSpeed } =
+    useControls(playerControls);
   const { gravityStrength, planetRadius } = useControls(globeControls);
 
   useFrame((state, delta) => {
@@ -57,9 +59,8 @@ export function Player({
     const playerPos = new Vector3().copy(
       rigidBodyRef.current.translation() as any,
     );
-    const planetCenter = new Vector3(0, 0, 0);
     const upVector = new Vector3()
-      .subVectors(playerPos, planetCenter)
+      .subVectors(playerPos, currentPlanet.position)
       .normalize();
 
     // 2. Apply gravity
@@ -67,10 +68,7 @@ export function Player({
       .clone()
       .negate()
       .multiplyScalar(gravityStrength * delta);
-    rigidBodyRef.current.applyImpulse(
-      { x: gravityForce.x, y: gravityForce.y, z: gravityForce.z },
-      true,
-    );
+    rigidBodyRef.current.applyImpulse(gravityForce, true);
 
     // 3. Handle inputs
     const { forward, backward, right, left, jump } = get();
@@ -86,9 +84,7 @@ export function Player({
       turnAmount = joystickInput.x * joystickSensitivity;
     }
 
-    // 4. Update player rotation
-    const rotationSpeed = 2.0;
-    playerFacingAngle.current += turnAmount * delta * rotationSpeed;
+    playerFacingAngle.current -= turnAmount * delta * rotationSpeed;
 
     // 5. Calculate player's local coordinate system using quaternions
     // Create a quaternion that rotates from world up (0,1,0) to the player's up direction
@@ -109,11 +105,9 @@ export function Player({
     // Extract the local coordinate axes from the combined quaternion
     const forwardVector = new Vector3(0, 0, 1).applyQuaternion(combinedQuat);
 
-    // 6. Apply movement
-    const moveSpeed = 5.0;
     const moveVector = forwardVector
       .clone()
-      .multiplyScalar(moveForward * moveSpeed * delta);
+      .multiplyScalar(moveForward * movementSpeed * delta);
 
     // Get current velocity
     const velocity = rigidBodyRef.current.linvel();
@@ -141,10 +135,7 @@ export function Player({
 
     // Apply the velocity
     rigidBodyRef.current.wakeUp();
-    rigidBodyRef.current.setLinvel(
-      { x: newVelocity.x, y: newVelocity.y, z: newVelocity.z },
-      true,
-    );
+    rigidBodyRef.current.setLinvel(newVelocity, true);
 
     // 7. Update group orientation using the combined quaternion
     groupRef.current.quaternion.copy(combinedQuat);
@@ -190,7 +181,7 @@ export function Player({
 
       {/* Visual representation - follows physics body */}
       <group ref={groupRef}>
-        <mesh ref={meshRef} position={[0, 0, 0]}>
+        <mesh ref={meshRef} position={[0, 1.0, 0]}>
           <capsuleGeometry args={[0.5, 2, 1, 4]} />
           <meshStandardMaterial color="red" />
         </mesh>
