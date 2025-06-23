@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { RefObject, useRef, useState } from "react";
 import { useFrame, useThree } from "@react-three/fiber";
 import { useKeyboardControls } from "@react-three/drei";
 import { RapierRigidBody, RigidBody, BallCollider } from "@react-three/rapier";
@@ -12,13 +12,14 @@ export function Player({
   controlType,
   joystickInput,
   currentPlanet,
+  rigidBodyRef
 }: {
   locked: boolean;
   controlType: "pointerlock" | "joystick";
   joystickInput?: { x: number; y: number };
   currentPlanet: Planet;
+  rigidBodyRef: RefObject<RapierRigidBody | null>
 }) {
-  const rigidBodyRef = useRef<RapierRigidBody>(null);
   const meshRef = useRef<Mesh>(null);
   const groupRef = useRef<Group>(null);
   const [, get] = useKeyboardControls();
@@ -105,9 +106,9 @@ export function Player({
     // Extract the local coordinate axes from the combined quaternion
     const forwardVector = new Vector3(0, 0, 1).applyQuaternion(combinedQuat);
 
-    const moveVector = forwardVector
-      .clone()
-      .multiplyScalar(moveForward * movementSpeed * delta);
+    // Project forward vector onto tangent plane (orthogonal to upVector)
+    const moveVector = forwardVector.clone().projectOnPlane(upVector);
+    moveVector.normalize().multiplyScalar(moveForward * movementSpeed * delta);
 
     // Get current velocity
     const velocity = rigidBodyRef.current.linvel();
@@ -181,7 +182,7 @@ export function Player({
 
       {/* Visual representation - follows physics body */}
       <group ref={groupRef}>
-        <mesh ref={meshRef} position={[0, 1.0, 0]}>
+        <mesh ref={meshRef} position={[0, 0.75, 0]}>
           <capsuleGeometry args={[0.5, 2, 1, 4]} />
           <meshStandardMaterial color="red" />
         </mesh>

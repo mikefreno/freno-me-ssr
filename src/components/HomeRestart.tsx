@@ -1,8 +1,8 @@
 "use client";
 
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { PlanetRender } from "./ThreeJSMeshes";
-import { Physics } from "@react-three/rapier";
+import { PlanetRender, TeleporterRender } from "./ThreeJSMeshes";
+import { Physics, RapierRigidBody } from "@react-three/rapier";
 import {
   KeyboardControls,
   OrbitControls,
@@ -12,9 +12,10 @@ import {
 import { useControls } from "leva";
 import { cameraControls, globeControls, playerControls } from "./ThreeDebug";
 import { Player } from "./Player";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Planet } from "@/entities/planet";
 import { Vector3 } from "three";
+import { Teleporter } from "@/entities/teleporter";
 
 interface HomeRestartProps {
   user: {
@@ -33,6 +34,10 @@ function isPointerLockAvailable() {
 }
 
 export default function HomeRestart({ user }: HomeRestartProps) {
+  const { cameraHeight } = useControls(playerControls);
+  const { planetRadius } = useControls(globeControls);
+  const playerRigidBodyRef = useRef<RapierRigidBody>(null);
+
   const { fov, positionZ } = useControls(cameraControls);
   const [locked, setLocked] = useState(false);
   const [usingOrbit, setUsingOrbit] = useState(true);
@@ -43,6 +48,16 @@ export default function HomeRestart({ user }: HomeRestartProps) {
     new Planet({ id: 1, scalar: 2, position: new Vector3(20, 20, 20) }),
   ]);
   const [currentPlanet, setCurrentPlanet] = useState(planets[0]);
+  const [teleporters] = useState([
+    new Teleporter({
+      planetA: planets[0],
+      planetB: planets[1],
+      positionA: new Vector3(planets[0].position.x + 0.5, planets[0].position.y + (planetRadius * planets[0].scalar) + 0.5, planets[0].position.z),
+      positionB: new Vector3(planets[1].position.x, planets[1].position.y + (planetRadius * planets[1].scalar) + 0.5, planets[1].position.z),
+      linkColor: new Vector3()
+    }),
+  ])
+  const [teleportLocked, setTeleportLocked] = useState(false);
 
   useEffect(() => {
     setSupportsPointerLock(isPointerLockAvailable());
@@ -56,8 +71,7 @@ export default function HomeRestart({ user }: HomeRestartProps) {
     setJoystickState({ x: 0, y: 0 });
   }, []);
 
-  const { cameraHeight } = useControls(playerControls);
-  const { planetRadius } = useControls(globeControls);
+
 
   const Controls = () => {
     const { camera } = useThree();
@@ -85,6 +99,19 @@ export default function HomeRestart({ user }: HomeRestartProps) {
       </>
     );
   };
+
+  const teleporterHandler = ({ targetPlanet, targetPosition }: { targetPlanet: Planet, targetPosition: Vector3 }) => {
+    if (!teleportLocked) {
+      setCurrentPlanet(targetPlanet);
+      setTeleportLocked(true);
+      playerRigidBodyRef.current?.setTranslation(targetPosition, true);
+    }
+  }
+
+  const teleportLeaveHandler = () => {
+    setTeleportLocked(false)
+  }
+
   return (
     <>
       {process.env.NODE_ENV !== "production" && (
@@ -116,9 +143,18 @@ export default function HomeRestart({ user }: HomeRestartProps) {
               controlType={supportsPointerLock ? "pointerlock" : "joystick"}
               joystickInput={joystickState}
               currentPlanet={currentPlanet}
+              rigidBodyRef={playerRigidBodyRef}
             />
             {planets.map((planet) => (
               <PlanetRender key={planet.id} planet={planet} />
+            ))}
+            {teleporters.map((teleporter) => (
+              <TeleporterRender
+                key={teleporter.planetA.id}
+                teleporter={teleporter}
+                collisionLeaveHandler={teleportLeaveHandler}
+                collisionAHandler={() => teleporterHandler({ targetPlanet: teleporter.planetB, targetPosition: teleporter.positionB })}
+                collisionBHandler={() => teleporterHandler({ targetPlanet: teleporter.planetA, targetPosition: teleporter.positionA })} />
             ))}
           </Physics>
           <axesHelper scale={10} />

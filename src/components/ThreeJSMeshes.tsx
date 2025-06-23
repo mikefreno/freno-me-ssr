@@ -1,9 +1,10 @@
 import { RigidBody, BallCollider } from "@react-three/rapier";
-import { useTexture } from "@react-three/drei";
+import { MeshPortalMaterial, useTexture } from "@react-three/drei";
 import { SRGBColorSpace } from "three";
 import { useControls } from "leva";
 import { globeControls } from "./ThreeDebug";
 import { Planet } from "@/entities/planet";
+import { Teleporter } from "@/entities/teleporter";
 
 interface PlanetRenderProps {
   planet: Planet;
@@ -43,7 +44,36 @@ export const PlanetRender = ({ planet }: PlanetRenderProps) => {
     </RigidBody>
   );
 };
+interface TeleporterRenderProps {
+  teleporter: Teleporter;
+  collisionLeaveHandler: ()=>void;
+  collisionAHandler: () => void
+  collisionBHandler: () => void
+}
 
-//export const Portal = () => {
-//return <MeshPortalMaterial></MeshPortalMaterial>;
-//};
+export const TeleporterRender = ({ teleporter,collisionLeaveHandler, collisionAHandler, collisionBHandler }: TeleporterRenderProps) => {
+  return (
+    <>
+      <RigidBody onCollisionEnter={collisionAHandler} onCollisionExit={collisionLeaveHandler}>
+        <mesh position={teleporter.positionA} quaternion={teleporter.quaternionA}>
+          <planeGeometry />
+          <MeshPortalMaterial resolution={0} blur={0}>
+            <mesh>
+              <sphereGeometry />
+            </mesh>
+          </MeshPortalMaterial>
+        </mesh>
+      </RigidBody>
+      <RigidBody onCollisionEnter={collisionBHandler} onCollisionExit={collisionLeaveHandler}>
+        <mesh position={teleporter.positionB} quaternion={teleporter.quaternionB}>
+          <planeGeometry />
+          <MeshPortalMaterial resolution={0} blur={0}>
+            <mesh>
+              <sphereGeometry />
+            </mesh>
+          </MeshPortalMaterial>
+        </mesh>
+      </RigidBody>
+    </>
+  )
+};
