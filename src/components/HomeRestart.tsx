@@ -2,7 +2,7 @@
 
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { PlanetRender, TeleporterRender } from "./ThreeJSMeshes";
-import { Physics, RapierRigidBody } from "@react-three/rapier";
+import { Physics, RapierRigidBody, RigidBody } from "@react-three/rapier";
 import {
   KeyboardControls,
   OrbitControls,
@@ -33,31 +33,16 @@ function isPointerLockAvailable() {
   );
 }
 
+
 export default function HomeRestart({ user }: HomeRestartProps) {
   const { cameraHeight } = useControls(playerControls);
-  const { planetRadius } = useControls(globeControls);
-  const playerRigidBodyRef = useRef<RapierRigidBody>(null);
 
   const { fov, positionZ } = useControls(cameraControls);
   const [locked, setLocked] = useState(false);
   const [usingOrbit, setUsingOrbit] = useState(true);
   const [supportsPointerLock, setSupportsPointerLock] = useState(true);
   const [joystickState, setJoystickState] = useState({ x: 0, y: 0 });
-  const [planets] = useState([
-    new Planet({ id: 0 }),
-    new Planet({ id: 1, scalar: 2, position: new Vector3(20, 20, 20) }),
-  ]);
-  const [currentPlanet, setCurrentPlanet] = useState(planets[0]);
-  const [teleporters] = useState([
-    new Teleporter({
-      planetA: planets[0],
-      planetB: planets[1],
-      positionA: new Vector3(planets[0].position.x + 0.5, planets[0].position.y + (planetRadius * planets[0].scalar) + 0.5, planets[0].position.z),
-      positionB: new Vector3(planets[1].position.x, planets[1].position.y + (planetRadius * planets[1].scalar) + 0.5, planets[1].position.z),
-      linkColor: new Vector3()
-    }),
-  ])
-  const [teleportLocked, setTeleportLocked] = useState(false);
+
 
   useEffect(() => {
     setSupportsPointerLock(isPointerLockAvailable());
@@ -70,7 +55,6 @@ export default function HomeRestart({ user }: HomeRestartProps) {
   const handleJoystickEnd = useCallback(() => {
     setJoystickState({ x: 0, y: 0 });
   }, []);
-
 
 
   const Controls = () => {
@@ -100,17 +84,6 @@ export default function HomeRestart({ user }: HomeRestartProps) {
     );
   };
 
-  const teleporterHandler = ({ targetPlanet, targetPosition }: { targetPlanet: Planet, targetPosition: Vector3 }) => {
-    if (!teleportLocked) {
-      setCurrentPlanet(targetPlanet);
-      setTeleportLocked(true);
-      playerRigidBodyRef.current?.setTranslation(targetPosition, true);
-    }
-  }
-
-  const teleportLeaveHandler = () => {
-    setTeleportLocked(false)
-  }
 
   return (
     <>
@@ -138,24 +111,7 @@ export default function HomeRestart({ user }: HomeRestartProps) {
           <ambientLight intensity={1.0} />
           <Controls />
           <Physics gravity={[0, 0, 0]} debug>
-            <Player
-              locked={locked}
-              controlType={supportsPointerLock ? "pointerlock" : "joystick"}
-              joystickInput={joystickState}
-              currentPlanet={currentPlanet}
-              rigidBodyRef={playerRigidBodyRef}
-            />
-            {planets.map((planet) => (
-              <PlanetRender key={planet.id} planet={planet} />
-            ))}
-            {teleporters.map((teleporter) => (
-              <TeleporterRender
-                key={teleporter.planetA.id}
-                teleporter={teleporter}
-                collisionLeaveHandler={teleportLeaveHandler}
-                collisionAHandler={() => teleporterHandler({ targetPlanet: teleporter.planetB, targetPosition: teleporter.positionB })}
-                collisionBHandler={() => teleporterHandler({ targetPlanet: teleporter.planetA, targetPosition: teleporter.positionA })} />
-            ))}
+            <CanvasAndPhysicsInterior locked={locked} supportsPointerLock={supportsPointerLock} joystickState={joystickState} />
           </Physics>
           <axesHelper scale={10} />
         </Canvas>
@@ -163,6 +119,86 @@ export default function HomeRestart({ user }: HomeRestartProps) {
     </>
   );
 }
+
+const CanvasAndPhysicsInterior = ({ locked, supportsPointerLock, joystickState }: { locked: boolean, supportsPointerLock: boolean, joystickState: { x: number, y: number } }) => {
+  const { planetRadius } = useControls(globeControls);
+  const playerRigidBodyRef = useRef<RapierRigidBody>(null);
+  const [planets] = useState([
+    new Planet({ id: 0 }),
+    new Planet({ id: 1, scalar: 2, position: new Vector3(20, 20, 20) }),
+  ]);
+  const [currentPlanet, setCurrentPlanet] = useState(planets[0]);
+  const [teleporters] = useState([
+    new Teleporter({
+      planetA: planets[0],
+      planetB: planets[1],
+      positionA: new Vector3(planets[0].position.x, planets[0].position.y + (planetRadius * planets[0].scalar), planets[0].position.z + 2.0),
+      positionB: new Vector3(planets[1].position.x, planets[1].position.y + (planetRadius * planets[1].scalar) + 0.5, planets[1].position.z),
+      linkColor: new Vector3()
+    }),
+  ])
+  const [teleportLocked, setTeleportLocked] = useState(false);
+
+  const teleporterHandler = ({ targetPlanet, targetPosition }: { targetPlanet: Planet, targetPosition: Vector3 }) => {
+    if (!teleportLocked) {
+      setTeleportLocked(true);
+      playerRigidBodyRef.current?.setTranslation(targetPosition, true);
+    }
+  }
+
+  const teleportLeaveHandler = () => {
+    setTeleportLocked(false)
+  }
+
+  // nearest planet calculation
+  useFrame(() => {
+    if (!playerRigidBodyRef.current) return;
+
+    const rigidBodyPos = playerRigidBodyRef.current.translation()
+    const playerPosition = new Vector3(rigidBodyPos.x, rigidBodyPos.y, rigidBodyPos.z);
+
+    let minDistance = Infinity;
+    let nearestPlanet: Planet | null = null;
+
+    planets.forEach(planet => {
+      const distanceToPlayer = playerPosition.distanceTo(planet.position) - (planetRadius * planet.scalar)
+      if (distanceToPlayer < minDistance) {
+        minDistance = distanceToPlayer;
+        nearestPlanet = planet;
+        planet.id
+      }
+    });
+
+
+    if (nearestPlanet && currentPlanet !== nearestPlanet) {
+      setCurrentPlanet(nearestPlanet);
+    }
+  });
+
+  return (
+    <>
+      <Player
+        locked={locked}
+        controlType={supportsPointerLock ? "pointerlock" : "joystick"}
+        joystickInput={joystickState}
+        currentPlanet={currentPlanet}
+        rigidBodyRef={playerRigidBodyRef}
+      />
+      {planets.map((planet) => (
+        <PlanetRender key={planet.id} planet={planet} />
+      ))}
+      {teleporters.map((teleporter) => (
+        <TeleporterRender
+          key={teleporter.planetA.id}
+          teleporter={teleporter}
+          collisionLeaveHandler={teleportLeaveHandler}
+          collisionAHandler={() => teleporterHandler({ targetPlanet: teleporter.planetB, targetPosition: teleporter.positionB })}
+          collisionBHandler={() => teleporterHandler({ targetPlanet: teleporter.planetA, targetPosition: teleporter.positionA })} />
+      ))}
+    </>
+  )
+}
+
 
 export enum Controls {
   forward = "forward",
