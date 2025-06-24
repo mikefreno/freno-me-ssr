@@ -32,7 +32,7 @@ export default function Home() {
     email?: string | undefined;
     display_name?: string | undefined;
     image?: string | undefined;
-  }>();
+  } | null>(null);
 
   useEffect(() => {
     const idToken = Cookies.get("userIDToken");
