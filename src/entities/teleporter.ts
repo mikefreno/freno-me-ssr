@@ -1,13 +1,13 @@
-import { Vector3, Quaternion } from "three";
+import { Vector3, Quaternion, Euler } from "three";
 import { Planet } from "./planet";
 
 interface TeleporterProps {
   planetA: Planet;
   planetB: Planet;
   positionA: Vector3;
-  quaternionA?: Quaternion;
+  rotationA?: Euler;
   positionB: Vector3;
-  quaternionB?: Quaternion;
+  rotationB?: Euler;
   linkColor: Vector3;
 }
 
@@ -16,19 +16,19 @@ export class Teleporter {
   planetB: Planet;
 
   positionA: Vector3;
-  quaternionA: Quaternion;
+  rotationA: Euler;
   positionB: Vector3;
-  quaternionB: Quaternion;
+  rotationB: Euler;
 
   linkColor: Vector3;
 
-  constructor({ planetA, planetB, positionA, quaternionA, positionB, quaternionB, linkColor }: TeleporterProps) {
+  constructor({ planetA, planetB, positionA, rotationA, positionB, rotationB, linkColor }: TeleporterProps) {
     this.planetA = planetA;
     this.planetB = planetB;
     this.positionA = positionA;
-    this.quaternionA = quaternionA ?? new Quaternion();
+    this.rotationA = rotationA ?? new Euler();
     this.positionB = positionB;
-    this.quaternionB = quaternionB ?? new Quaternion();
+    this.rotationB = rotationB ?? new Euler();
     this.linkColor = linkColor
   }
 }

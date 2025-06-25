@@ -1,6 +1,6 @@
 import { RigidBody, BallCollider } from "@react-three/rapier";
-import { MeshPortalMaterial, useTexture } from "@react-three/drei";
-import { SRGBColorSpace } from "three";
+import {  useTexture } from "@react-three/drei";
+import { DoubleSide, SRGBColorSpace } from "three";
 import { useControls } from "leva";
 import { globeControls } from "./ThreeDebug";
 import { Planet } from "@/entities/planet";
@@ -54,24 +54,18 @@ interface TeleporterRenderProps {
 export const TeleporterRender = ({ teleporter,collisionLeaveHandler, collisionAHandler, collisionBHandler }: TeleporterRenderProps) => {
   return (
     <>
-      <RigidBody onCollisionEnter={collisionAHandler} onCollisionExit={collisionLeaveHandler}>
-        <mesh position={teleporter.positionA} quaternion={teleporter.quaternionA}>
-          <planeGeometry />
-          <MeshPortalMaterial resolution={0} blur={0}>
-            <mesh>
-              <sphereGeometry />
-            </mesh>
-          </MeshPortalMaterial>
+      <RigidBody onCollisionEnter={collisionAHandler} onCollisionExit={collisionLeaveHandler} position={teleporter.positionA} rotation={teleporter.rotationA}>
+        <mesh>
+          <planeGeometry args={[1, 2]}/>
+          <meshBasicMaterial side={DoubleSide} color={[teleporter.linkColor.x, teleporter.linkColor.y, teleporter.linkColor.z]}/>
+          {/* <MeshPortalMaterial resolution={0} blur={0} side={DoubleSide}/> */}
         </mesh>
       </RigidBody>
-      <RigidBody onCollisionEnter={collisionBHandler} onCollisionExit={collisionLeaveHandler}>
-        <mesh position={teleporter.positionB} quaternion={teleporter.quaternionB}>
-          <planeGeometry />
-          <MeshPortalMaterial resolution={0} blur={0}>
-            <mesh>
-              <sphereGeometry />
-            </mesh>
-          </MeshPortalMaterial>
+      <RigidBody onCollisionEnter={collisionBHandler} onCollisionExit={collisionLeaveHandler} position={teleporter.positionB} rotation={teleporter.rotationB}>
+        <mesh>
+          <planeGeometry args={[1, 2]}/>
+          <meshBasicMaterial side={DoubleSide} color={[teleporter.linkColor.x, teleporter.linkColor.y, teleporter.linkColor.z]}/>
+          {/* <MeshPortalMaterial resolution={0} blur={0} side={DoubleSide}/> */}
         </mesh>
       </RigidBody>
     </>

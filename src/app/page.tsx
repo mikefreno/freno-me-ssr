@@ -9,20 +9,13 @@ import {
   PointerLockControls,
 } from "@react-three/drei";
 import { useControls } from "leva";
-import { cameraControls, globeControls, playerControls } from "@/components/ThreeDebug";
-import { Player } from "@/components/Player"
+import { globeControls } from "@/components/ThreeDebug";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Planet } from "@/entities/planet";
-import { Vector3 } from "three";
+import { Euler, Vector3 } from "three";
 import { Teleporter } from "@/entities/teleporter";
-
-interface HomeRestartProps {
-  user: {
-    email?: string | undefined;
-    display_name?: string | undefined;
-    image?: string | undefined;
-  } | null;
-}
+import { PlayerRender } from "@/components/PlayerRender";
+import { Character } from "@/entities/character";
 
 function isPointerLockAvailable() {
   return (
@@ -34,9 +27,6 @@ function isPointerLockAvailable() {
 
 
 export default function Home() {
-  const { cameraHeight } = useControls(playerControls);
-
-  const { fov, positionZ } = useControls(cameraControls);
   const [locked, setLocked] = useState(false);
   const [usingOrbit, setUsingOrbit] = useState(true);
   const [supportsPointerLock, setSupportsPointerLock] = useState(true);
@@ -86,14 +76,6 @@ export default function Home() {
 
   return (
     <>
-      {process.env.NODE_ENV !== "production" && (
-        <button
-          className="fixed z-50 bg-blue-400 text-white rounded px-4 py-1 m-2"
-          onClick={() => setUsingOrbit(!usingOrbit)}
-        >
-          Control Toggle
-        </button>
-      )}
       <KeyboardControls map={controlsMapping}>
         <Canvas
           style={{
@@ -101,10 +83,6 @@ export default function Home() {
             height: "100%",
             width: "100%",
             overflow: "hidden",
-          }}
-          camera={{
-            fov,
-            position: [0, 0, positionZ],
           }}
         >
           <ambientLight intensity={1.0} />
@@ -124,19 +102,30 @@ const CanvasAndPhysicsInterior = ({ locked, supportsPointerLock, joystickState }
   const playerRigidBodyRef = useRef<RapierRigidBody>(null);
   const [planets] = useState([
     new Planet({ id: 0 }),
-    new Planet({ id: 1, scalar: 2, position: new Vector3(20, 20, 20) }),
+    new Planet({ id: 1, scalar: 2, position: new Vector3(20, 10, 20) }),
+    new Planet({ id: 2, scalar: 1.5, position: new Vector3(-20, 10, 20) }),
   ]);
   const [currentPlanet, setCurrentPlanet] = useState(planets[0]);
   const [teleporters] = useState([
     new Teleporter({
       planetA: planets[0],
       planetB: planets[1],
-      positionA: new Vector3(planets[0].position.x, planets[0].position.y + (planetRadius * planets[0].scalar), planets[0].position.z + 2.0),
+      positionA: new Vector3(planets[0].position.x - 2.0, planets[0].position.y + (planetRadius * planets[0].scalar) + 0.5, planets[0].position.z + 2.0),
+      rotationA: new Euler(0.3, -0.3, 0.2),
       positionB: new Vector3(planets[1].position.x, planets[1].position.y + (planetRadius * planets[1].scalar) + 0.5, planets[1].position.z),
-      linkColor: new Vector3()
+      linkColor: new Vector3(1, 0, 0)
+    }),
+    new Teleporter({
+      planetA: planets[0],
+      planetB: planets[2],
+      positionA: new Vector3(planets[0].position.x + 2.0, planets[0].position.y + (planetRadius * planets[0].scalar) + 0.5, planets[0].position.z + 2.0),
+      rotationA: new Euler(0.3, 0.3, -0.2),
+      positionB: new Vector3(planets[2].position.x, planets[2].position.y + (planetRadius * planets[2].scalar) + 0.5, planets[2].position.z),
+      linkColor: new Vector3(0, 1, 0)
     }),
   ])
   const [teleportLocked, setTeleportLocked] = useState(false);
+  const [player] = useState(new Character({rigidBody: playerRigidBodyRef.current}))
 
   const teleporterHandler = ({ targetPlanet, targetPosition }: { targetPlanet: Planet, targetPosition: Vector3 }) => {
     if (!teleportLocked) {
@@ -176,10 +165,11 @@ const CanvasAndPhysicsInterior = ({ locked, supportsPointerLock, joystickState }
 
   return (
     <>
-      <Player
+      <PlayerRender
         locked={locked}
         controlType={supportsPointerLock ? "pointerlock" : "joystick"}
         joystickInput={joystickState}
+        player={}
         currentPlanet={currentPlanet}
         rigidBodyRef={playerRigidBodyRef}
       />
@@ -188,7 +178,7 @@ const CanvasAndPhysicsInterior = ({ locked, supportsPointerLock, joystickState }
       ))}
       {teleporters.map((teleporter) => (
         <TeleporterRender
-          key={teleporter.planetA.id}
+          key={`${teleporter.planetA.id}-${teleporter.planetB.id}`}
           teleporter={teleporter}
           collisionLeaveHandler={teleportLeaveHandler}
           collisionAHandler={() => teleporterHandler({ targetPlanet: teleporter.planetB, targetPosition: teleporter.positionB })}

@@ -26,12 +26,6 @@ export const playerControls = {
       max: 5,
       step: 0.1,
     },
-    cameraHeight: {
-      value: 2,
-      min: 0,
-      max: 5,
-      step: 0.1,
-    },
     joystickSensitivity: {
       value: 1,
       min: 0.1,
@@ -113,6 +107,21 @@ export const cameraControls = {
       min: 10,
       max: 90,
       step: 1,
+    },
+    cameraDistance: {
+      value:5.0,
+      min: 1,
+      max: 20
+    },
+    cameraHeight: {
+      value: 2.0,
+      min: 0,
+      max: 10
+    },
+    cameraSmoothing: {
+      value: 0.5,
+      min: 0.01,
+      max: 1
     },
   }),
 };
