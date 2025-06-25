@@ -1,3 +1,5 @@
+import { RapierRigidBody } from "@react-three/rapier";
+import { RefObject } from "react";
 import { Vector3 } from "three";
 
 export enum PlanetTextureType {
@@ -9,6 +11,7 @@ interface PlanetParams {
   position?: Vector3;
   scalar?: number;
   textureType?: PlanetTextureType;
+  RigidBodyRef: RefObject<RapierRigidBody | null>;
 }
 
 export class Planet {
@@ -16,9 +19,17 @@ export class Planet {
   position: Vector3;
   scalar: number;
   textureType: PlanetTextureType;
+  rigidBody: RefObject<RapierRigidBody | null>;
 
-  constructor({ id, position, scalar, textureType }: PlanetParams) {
+  constructor({
+    id,
+    position,
+    scalar,
+    textureType,
+    RigidBodyRef,
+  }: PlanetParams) {
     this.id = id;
+    this.rigidBody = RigidBodyRef;
     this.position = position ?? new Vector3();
     this.scalar = scalar ?? 1.0;
     this.textureType = textureType ?? PlanetTextureType.ROCKY;

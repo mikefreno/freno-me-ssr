@@ -1,10 +1,10 @@
 import { RapierRigidBody } from "@react-three/rapier";
-import { Ref, RefObject } from "react";
+import { RefObject } from "react";
 import { Vector3, Quaternion } from "three";
 
-interface CharacterProps{
-  rigidBody: RefObject<RapierRigidBody | null>;
-  currentPlanetRigidBody: RapierRigidBody
+interface CharacterProps {
+  rigidBodyRef: RefObject<RapierRigidBody | null>;
+  currentPlanetRigidBodyRef: RefObject<RapierRigidBody | null>;
 }
 
 export class Character {
@@ -12,75 +12,85 @@ export class Character {
   facing = new Quaternion();
   isJumping = false;
   rigidBody: RefObject<RapierRigidBody | null>;
-  currentPlanetRigidBody: RapierRigidBody | undefined;
+  currentPlanetRigidBody: RefObject<RapierRigidBody | null>;
 
-  constructor({rigidBody, currentPlanetRigidBody}: CharacterProps) {
-    this.rigidBody = rigidBody
-    this.currentPlanetRigidBody = currentPlanetRigidBody
+  constructor({ rigidBodyRef, currentPlanetRigidBodyRef }: CharacterProps) {
+    this.rigidBody = rigidBodyRef;
+    this.currentPlanetRigidBody = currentPlanetRigidBodyRef;
   }
 
-  updatePosition() {
-    if (this.rigidBody.current) {
+  updatePosition(upVector: Vector3) {
+    if (this.rigidBody.current && this.currentPlanetRigidBody.current) {
       this.position.copy(this.rigidBody.current.translation());
-      const upVector = new Vector3().subVectors(this.position, this.currentPlanetRigidBody?.translation()).normalize();
+
       this.facing.setFromUnitVectors(new Vector3(0, 1, 0), upVector);
     }
   }
 
-  updateFacing() {
+  updateFacing(upVector: Vector3) {
     if (this.rigidBody.current) {
       // Update facing direction based on rigid body's rotation
       const forward = new Vector3(0, 0, -1).applyQuaternion(this.facing);
-      this.facing.setFromUnitVectors(new Vector3(0, 1, 0), forward.cross(upVector));
+      this.facing.setFromUnitVectors(
+        new Vector3(0, 1, 0),
+        forward.cross(upVector),
+      );
     }
   }
 
-  jump() {
-    if (this.rigidBody && !this.isJumping) {
-      const upVector = new Vector3().subVectors(this.position, this.planetRigidBody?.translation()).normalize();
-      const jumpForce = new Vector3(0, 10, 0).applyQuaternion(upVector);
-      this.rigidBody.applyImpulse(jumpForce, true);
+  jump(upVector: Vector3) {
+    if (
+      this.rigidBody.current &&
+      this.currentPlanetRigidBody.current &&
+      !this.isJumping
+    ) {
+      const jumpForce = upVector.multiplyScalar(5);
+      this.rigidBody.current.applyImpulse(jumpForce, true);
       this.isJumping = false;
     }
   }
 
   moveLeft() {
-    if (this.rigidBody) {
+    if (this.rigidBody.current) {
       const leftDirection = new Vector3(-1, 0, 0).applyQuaternion(this.facing);
       const force = leftDirection.multiplyScalar(5); // Adjust the multiplier as needed
-      this.rigidBody.applyForce(force, true);
+      this.rigidBody.current.applyImpulse(force, true);
     }
   }
 
   moveRight() {
-    if (this.rigidBody) {
+    if (this.rigidBody.current) {
       const rightDirection = new Vector3(1, 0, 0).applyQuaternion(this.facing);
       const force = rightDirection.multiplyScalar(5); // Adjust the multiplier as needed
-      this.rigidBody.applyForce(force, true);
+      this.rigidBody.current.applyImpulse(force, true);
     }
   }
 
   moveForward() {
-    if (this.rigidBody) {
-      const forwardDirection = new Vector3(0, 0, -1).applyQuaternion(this.facing);
+    if (this.rigidBody.current) {
+      const forwardDirection = new Vector3(0, 0, -1).applyQuaternion(
+        this.facing,
+      );
       const force = forwardDirection.multiplyScalar(5); // Adjust the multiplier as needed
-      this.rigidBody.applyForce(force, true);
+      this.rigidBody.current.applyImpulse(force, true);
     }
   }
 
-  moveBack() {
-    if (this.rigidBody) {
-      const backwardDirection = new Vector3(0, 0, 1).applyQuaternion(this.facing);
+  moveBackward() {
+    if (this.rigidBody.current) {
+      const backwardDirection = new Vector3(0, 0, 1).applyQuaternion(
+        this.facing,
+      );
       const force = backwardDirection.multiplyScalar(5); // Adjust the multiplier as needed
-      this.rigidBody.applyForce(force, true);
+      this.rigidBody.current.applyImpulse(force, true);
     }
   }
 
-  attachRigidBody(rigidBody: RapierRigidBody) {
-    this.rigidBody = rigidBody;
+  attachRigidBody(rigidBodyRef: RefObject<RapierRigidBody | null>) {
+    this.rigidBody = rigidBodyRef;
   }
 
-  attachPlanetRigidBody(planetRigidBody: RapierRigidBody) {
-    this.currentPlanetRigidBody = planetRigidBody;
+  attachPlanetRigidBody(planetRigidBodyRef: RefObject<RapierRigidBody | null>) {
+    this.currentPlanetRigidBody = planetRigidBodyRef;
   }
 }

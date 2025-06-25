@@ -3,7 +3,8 @@ import { useFrame, useThree } from "@react-three/fiber";
 import { useKeyboardControls } from "@react-three/drei";
 import { RapierRigidBody, RigidBody, BallCollider } from "@react-three/rapier";
 import { Vector3, Group, Mesh } from "three";
-import { Character } from "@/entities/character";
+import { Character } from "@/entities/Character";
+import { Planet } from "@/entities/Planet";
 
 export function PlayerRender({
   locked,
@@ -11,14 +12,14 @@ export function PlayerRender({
   joystickInput,
   player,
   currentPlanet,
-  rigidBodyRef
+  rigidBodyRef,
 }: {
   locked: boolean;
   controlType: "pointerlock" | "joystick";
   joystickInput?: { x: number; y: number };
   player: Character;
-  currentPlanet: { position: Vector3, rigidBody: RapierRigidBody };
-  rigidBodyRef: RefObject<RapierRigidBody | null>
+  currentPlanet: Planet;
+  rigidBodyRef: RefObject<RapierRigidBody | null>;
 }) {
   const meshRef = useRef<Mesh>(null);
   const groupRef = useRef<Group>(null);
@@ -73,10 +74,8 @@ export function PlayerRender({
     playerFacingAngle.current += turnAmount * rotationSpeed * delta;
 
     // Update character's position and facing direction
-    player.attachRigidBody(rigidBodyRef.current);
-    player.attachPlanetRigidBody(currentPlanet.rigidBody);
-    player.updatePosition();
-    player.updateFacing();
+    player.updatePosition(upVector);
+    player.updateFacing(upVector);
 
     if (forward) {
       player.moveForward();
@@ -94,7 +93,7 @@ export function PlayerRender({
     // Handle jump
     if (jump && !isInContact) {
       player.isJumping = true;
-      player.jump();
+      player.jump(upVector);
     }
 
     // Update mesh position and rotation
@@ -102,7 +101,12 @@ export function PlayerRender({
     groupRef.current.quaternion.copy(player.facing);
 
     // Check for collision with the planet
-    const playerVelocity = rigidBodyRef.current.linvel();
+    const asSimpleVector = rigidBodyRef.current.linvel();
+    const playerVelocity = new Vector3(
+      asSimpleVector.x,
+      asSimpleVector.y,
+      asSimpleVector.z,
+    );
     if (playerVelocity.dot(upVector) > 0) {
       setIsInContact(true);
     } else {
@@ -128,7 +132,14 @@ export function PlayerRender({
 
       {/* Visual representation - follows physics body */}
       <group ref={groupRef}>
-        <mesh ref={meshRef} position={[player.position.x, player.position.y + 0.25, player.position.z]}>
+        <mesh
+          ref={meshRef}
+          position={[
+            player.position.x,
+            player.position.y + 0.25,
+            player.position.z,
+          ]}
+        >
           <capsuleGeometry args={[0.5, 1, 1, 4]} />
           <meshStandardMaterial color="red" />
         </mesh>
