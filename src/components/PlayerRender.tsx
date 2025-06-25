@@ -2,27 +2,23 @@ import { RefObject, useRef, useState } from "react";
 import { useFrame, useThree } from "@react-three/fiber";
 import { useKeyboardControls } from "@react-three/drei";
 import { RapierRigidBody, RigidBody, BallCollider } from "@react-three/rapier";
-import { Vector3, Group, Mesh } from "three";
-import { Character } from "@/entities/Character";
+import { Vector3, Quaternion, Group, Mesh, Object3DEventMap } from "three";
+import { useControls } from "leva";
+import { playerControls, globeControls, cameraControls } from "./ThreeDebug";
 import { Planet } from "@/entities/Planet";
+import { Character } from "@/entities/Character";
 
 export function PlayerRender({
-  locked,
   controlType,
   joystickInput,
   player,
-  currentPlanet,
-  rigidBodyRef,
+  groupRef,
 }: {
-  locked: boolean;
   controlType: "pointerlock" | "joystick";
   joystickInput?: { x: number; y: number };
   player: Character;
-  currentPlanet: Planet;
-  rigidBodyRef: RefObject<RapierRigidBody | null>;
+  groupRef: RefObject<Group<Object3DEventMap> | null>;
 }) {
-  const meshRef = useRef<Mesh>(null);
-  const groupRef = useRef<Group>(null);
   const [, get] = useKeyboardControls();
   const [isInContact, setIsInContact] = useState(false);
 
@@ -32,114 +28,55 @@ export function PlayerRender({
   // Get camera from three.js
   const { camera } = useThree();
 
+  // Add camera controls to your debug panel
+  const { cameraDistance, cameraHeight, cameraSmoothing } =
+    useControls(cameraControls);
+
+  const { gravityStrength, planetRadius } = useControls(globeControls);
+
   useFrame((state, delta) => {
-    if (!rigidBodyRef.current || !groupRef.current) return;
-
-    // 1. Get player position and calculate up vector
-    const playerPos = new Vector3().copy(
-      rigidBodyRef.current.translation() as any,
+    if (!player.rigidBodyRef.current || !player.meshGroupRef.current) return;
+    const { forwardVector, upVector, playerPos } = player.update(
+      delta,
+      gravityStrength,
+      get,
     );
-    const upVector = new Vector3()
-      .subVectors(playerPos, currentPlanet.position)
-      .normalize();
 
-    // 2. Apply gravity
-    const gravityForce = upVector
-      .clone()
-      .negate()
-      .multiplyScalar(10 * delta);
-    rigidBodyRef.current.applyImpulse(gravityForce, true);
+    const cameraOffset = new Vector3();
 
-    // 3. Handle inputs
-    const { forward, backward, right, left, jump } = get();
+    // Position camera behind player and slightly above
+    cameraOffset.copy(forwardVector).negate().multiplyScalar(cameraDistance);
+    cameraOffset.addScaledVector(upVector, cameraHeight);
 
-    let moveForward = 0;
-    let turnAmount = 0;
+    const targetCameraPos = new Vector3().copy(playerPos).add(cameraOffset);
 
-    if (forward) {
-      moveForward += 1;
-    }
-    if (backward) {
-      moveForward -= 1;
-    }
-    if (right) {
-      turnAmount += 1;
-    }
-    if (left) {
-      turnAmount -= 1;
-    }
+    // Smoothly interpolate camera position
+    camera.position.lerp(targetCameraPos, cameraSmoothing);
 
-    // Update character's facing direction
-    const rotationSpeed = 5; // Adjust the rotation speed as needed
-    playerFacingAngle.current += turnAmount * rotationSpeed * delta;
+    // Make camera look at player
+    camera.lookAt(playerPos);
 
-    // Update character's position and facing direction
-    player.updatePosition(upVector);
-    player.updateFacing(upVector);
-
-    if (forward) {
-      player.moveForward();
-    }
-    if (backward) {
-      player.moveBackward();
-    }
-    if (right) {
-      player.moveRight();
-    }
-    if (left) {
-      player.moveLeft();
-    }
-
-    // Handle jump
-    if (jump && !isInContact) {
-      player.isJumping = true;
-      player.jump(upVector);
-    }
-
-    // Update mesh position and rotation
-    groupRef.current.position.copy(player.position);
-    groupRef.current.quaternion.copy(player.facing);
-
-    // Check for collision with the planet
-    const asSimpleVector = rigidBodyRef.current.linvel();
-    const playerVelocity = new Vector3(
-      asSimpleVector.x,
-      asSimpleVector.y,
-      asSimpleVector.z,
-    );
-    if (playerVelocity.dot(upVector) > 0) {
-      setIsInContact(true);
-    } else {
-      setIsInContact(false);
-    }
+    // Ensure camera up vector aligns with player's up vector for proper orientation
+    camera.up.copy(upVector);
   });
 
   return (
     <>
-      {/* Physics body - invisible */}
       <RigidBody
         lockRotations
-        ref={rigidBodyRef}
+        ref={player.rigidBodyRef}
         colliders={false}
         mass={50}
         type="dynamic"
-        position={[0, currentPlanet.position.y + 1.5, 0]}
-        onCollisionEnter={() => setIsInContact(true)}
-        onCollisionExit={() => setIsInContact(false)}
+        position={[0, planetRadius + 2, 0]}
+        onCollisionEnter={() => (player.isInContact = true)}
+        onCollisionExit={() => (player.isInContact = false)}
       >
         <BallCollider args={[0.75]} />
       </RigidBody>
 
-      {/* Visual representation - follows physics body */}
       <group ref={groupRef}>
-        <mesh
-          ref={meshRef}
-          position={[
-            player.position.x,
-            player.position.y + 0.25,
-            player.position.z,
-          ]}
-        >
+        <mesh position={[0, 0.25, 0]}>
           <capsuleGeometry args={[0.5, 1, 1, 4]} />
           <meshStandardMaterial color="red" />
         </mesh>

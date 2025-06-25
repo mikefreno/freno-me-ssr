@@ -8,7 +8,7 @@ import {
   PointerLockControls,
 } from "@react-three/drei";
 import { useControls } from "leva";
-import { globeControls } from "@/components/ThreeDebug";
+import { globeControls, playerControls } from "@/components/ThreeDebug";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Planet } from "@/entities/Planet";
 import { Euler, Vector3 } from "three";
@@ -27,8 +27,6 @@ function isPointerLockAvailable() {
 }
 
 export default function Home() {
-  const [locked, setLocked] = useState(false);
-  const [usingOrbit, setUsingOrbit] = useState(true);
   const [supportsPointerLock, setSupportsPointerLock] = useState(true);
   const [joystickState, setJoystickState] = useState({ x: 0, y: 0 });
 
@@ -44,33 +42,6 @@ export default function Home() {
     setJoystickState({ x: 0, y: 0 });
   }, []);
 
-  const Controls = () => {
-    const { camera } = useThree();
-
-    if (process.env.NODE_ENV !== "production" && usingOrbit) {
-      return <OrbitControls />;
-    }
-
-    return supportsPointerLock ? (
-      <PointerLockControls
-        makeDefault
-        //@ts-ignore
-        args={[camera]}
-        onLock={() => setLocked(true)}
-        onUnlock={() => setLocked(false)}
-      />
-    ) : (
-      <>
-        <OrbitControls
-          enableZoom={false}
-          enablePan={false}
-          maxPolarAngle={Math.PI / 1.5}
-          minPolarAngle={Math.PI / 3}
-        />
-      </>
-    );
-  };
-
   return (
     <>
       <KeyboardControls map={controlsMapping}>
@@ -83,10 +54,8 @@ export default function Home() {
           }}
         >
           <ambientLight intensity={1.0} />
-          <Controls />
           <Physics gravity={[0, 0, 0]} debug>
             <CanvasAndPhysicsInterior
-              locked={locked}
               supportsPointerLock={supportsPointerLock}
               joystickState={joystickState}
             />
@@ -99,11 +68,9 @@ export default function Home() {
 }
 
 const CanvasAndPhysicsInterior = ({
-  locked,
   supportsPointerLock,
   joystickState,
 }: {
-  locked: boolean;
   supportsPointerLock: boolean;
   joystickState: { x: number; y: number };
 }) => {
@@ -134,7 +101,7 @@ const CanvasAndPhysicsInterior = ({
       planetB: planets[1],
       positionA: new Vector3(
         planets[0].position.x - 2.0,
-        planets[0].position.y + planetRadius * planets[0].scalar + 0.5,
+        planets[0].position.y + planetRadius * planets[0].scalar + 0.75,
         planets[0].position.z + 2.0,
       ),
       rotationA: new Euler(0.3, -0.3, 0.2),
@@ -150,7 +117,7 @@ const CanvasAndPhysicsInterior = ({
       planetB: planets[2],
       positionA: new Vector3(
         planets[0].position.x + 2.0,
-        planets[0].position.y + planetRadius * planets[0].scalar + 0.5,
+        planets[0].position.y + planetRadius * planets[0].scalar + 0.75,
         planets[0].position.z + 2.0,
       ),
       rotationA: new Euler(0.3, 0.3, -0.2),
@@ -163,10 +130,18 @@ const CanvasAndPhysicsInterior = ({
     }),
   ]);
   const [teleportLocked, setTeleportLocked] = useState(false);
+
+  const playerMeshGroupRef = useRef(null);
+  const { jumpForce, joystickSensitivity, rotationSpeed, movementSpeed } =
+    useControls(playerControls);
   const [player] = useState(
     new Character({
+      movementSpeed,
+      rotationSpeed,
+      jumpForce,
       rigidBodyRef: playerRigidBodyRef,
-      currentPlanetRigidBodyRef: currentPlanet.rigidBody,
+      currentPlanet: currentPlanet,
+      meshGroupRef: playerMeshGroupRef,
     }),
   );
 
@@ -214,19 +189,16 @@ const CanvasAndPhysicsInterior = ({
 
     if (nearestPlanet && currentPlanet !== nearestPlanet) {
       setCurrentPlanet(nearestPlanet as Planet);
-      player.attachPlanetRigidBody((nearestPlanet as Planet).rigidBody);
+      player.setPlanet(nearestPlanet as Planet);
     }
   });
 
   return (
     <>
       <PlayerRender
-        locked={locked}
         controlType={supportsPointerLock ? "pointerlock" : "joystick"}
         joystickInput={joystickState}
         player={player}
-        currentPlanet={currentPlanet}
-        rigidBodyRef={playerRigidBodyRef}
       />
       {planets.map((planet) => (
         <PlanetRender key={planet.id} planet={planet} />
