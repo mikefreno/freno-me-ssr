@@ -1,12 +1,8 @@
 "use client";
 
-import { Canvas, useFrame, useThree } from "@react-three/fiber";
+import { Canvas, useFrame } from "@react-three/fiber";
 import { Physics, RapierRigidBody } from "@react-three/rapier";
-import {
-  KeyboardControls,
-  OrbitControls,
-  PointerLockControls,
-} from "@react-three/drei";
+import { KeyboardControls } from "@react-three/drei";
 import { useControls } from "leva";
 import { globeControls, playerControls } from "@/components/ThreeDebug";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -17,6 +13,8 @@ import { PlayerRender } from "@/components/PlayerRender";
 import { Character } from "@/entities/Character";
 import { PlanetRender } from "@/components/PlanetRender";
 import { TeleporterRender } from "@/components/TeleporterRender";
+import { Modal3D } from "@/entities/Modal3d";
+import Modal3DRender from "@/components/Modal3dRender";
 
 function isPointerLockAvailable() {
   return (
@@ -101,10 +99,10 @@ const CanvasAndPhysicsInterior = ({
       planetB: planets[1],
       positionA: new Vector3(
         planets[0].position.x - 2.0,
-        planets[0].position.y + planetRadius * planets[0].scalar + 0.75,
+        planets[0].position.y + planetRadius * planets[0].scalar + 0.25,
         planets[0].position.z + 2.0,
       ),
-      rotationA: new Euler(0.3, -0.3, 0.2),
+      rotationA: new Euler(0.3, -0.45, 0.2),
       positionB: new Vector3(
         planets[1].position.x,
         planets[1].position.y + planetRadius * planets[1].scalar + 0.5,
@@ -117,10 +115,10 @@ const CanvasAndPhysicsInterior = ({
       planetB: planets[2],
       positionA: new Vector3(
         planets[0].position.x + 2.0,
-        planets[0].position.y + planetRadius * planets[0].scalar + 0.75,
+        planets[0].position.y + planetRadius * planets[0].scalar + 0.25,
         planets[0].position.z + 2.0,
       ),
-      rotationA: new Euler(0.3, 0.3, -0.2),
+      rotationA: new Euler(0.3, 0.45, -0.2),
       positionB: new Vector3(
         planets[2].position.x,
         planets[2].position.y + planetRadius * planets[2].scalar + 0.5,
@@ -130,6 +128,17 @@ const CanvasAndPhysicsInterior = ({
     }),
   ]);
   const [teleportLocked, setTeleportLocked] = useState(false);
+  const [modals] = useState([
+    new Modal3D({
+      id: 0,
+      text: "Testing",
+      position: new Vector3(
+        planets[0].position.x,
+        planets[0].position.y + 10,
+        planets[0].position.z + 2.0,
+      ),
+    }),
+  ]);
 
   const playerMeshGroupRef = useRef(null);
   const { jumpForce, joystickSensitivity, rotationSpeed, movementSpeed } =
@@ -140,7 +149,7 @@ const CanvasAndPhysicsInterior = ({
       rotationSpeed,
       jumpForce,
       rigidBodyRef: playerRigidBodyRef,
-      currentPlanet: currentPlanet,
+      startingPlanet: currentPlanet,
       meshGroupRef: playerMeshGroupRef,
     }),
   );
@@ -162,7 +171,6 @@ const CanvasAndPhysicsInterior = ({
     setTeleportLocked(false);
   };
 
-  // nearest planet calculation
   useFrame(() => {
     if (!playerRigidBodyRef.current) return;
 
@@ -221,6 +229,9 @@ const CanvasAndPhysicsInterior = ({
             })
           }
         />
+      ))}
+      {modals.map((modal) => (
+        <Modal3DRender key={modal.id} modal={modal} />
       ))}
     </>
   );

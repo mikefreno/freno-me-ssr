@@ -38,24 +38,6 @@ export const playerControls = {
       max: 20,
       step: 0.1,
     },
-    positionX: {
-      value: 0,
-      min: 0,
-      max: 20,
-      step: 1,
-    },
-    positionY: {
-      value: 0,
-      min: 0,
-      max: 20,
-      step: 1,
-    },
-    positionZ: {
-      value: 0,
-      min: 0,
-      max: 20,
-      step: 1,
-    },
   }),
 };
 
@@ -80,13 +62,13 @@ export const globeControls = {
       step: 2,
     },
     displacementScale: {
-      value: 0.28,
+      value: 0,
       min: 0,
       max: 10,
       step: 0.001,
     },
     displacementBias: {
-      value: 0.37,
+      value: 0,
       min: 0,
       max: 10,
       step: 0.001,
@@ -109,19 +91,19 @@ export const cameraControls = {
       step: 1,
     },
     cameraDistance: {
-      value:5.0,
+      value: 5.0,
       min: 1,
-      max: 20
+      max: 20,
     },
     cameraHeight: {
       value: 2.0,
       min: 0,
-      max: 10
+      max: 10,
     },
     cameraSmoothing: {
       value: 0.5,
       min: 0.01,
-      max: 1
+      max: 1,
     },
   }),
 };

@@ -3,13 +3,17 @@ import { RefObject } from "react";
 import { Vector3, Quaternion, Object3DEventMap, Group } from "three";
 import { Planet } from "@/entities/Planet";
 
+type KeyboardControlsState<T extends string = string> = {
+  [K in T]: boolean;
+};
+
 interface CharacterProps {
   movementSpeed: number;
   rotationSpeed: number;
   jumpForce: number;
   rigidBodyRef: RefObject<RapierRigidBody | null>;
   meshGroupRef: RefObject<Group<Object3DEventMap> | null>;
-  currentPlanet: Planet;
+  startingPlanet: Planet;
 }
 
 export class Character {
@@ -18,11 +22,13 @@ export class Character {
   jumpForce: number;
   isJumping = false;
   facingRotation = 0;
+  position: Vector3;
   rigidBodyRef: RefObject<RapierRigidBody | null>;
   currentPlanet: Planet;
   // Responsible for the visual representation, to be righted according to the physics body
   meshGroupRef: RefObject<Group<Object3DEventMap> | null>;
-  isInContact: boolean = false;
+  isInContact: boolean = true;
+  mass = 50;
 
   constructor({
     movementSpeed,
@@ -30,14 +36,19 @@ export class Character {
     jumpForce,
     rigidBodyRef,
     meshGroupRef,
-    currentPlanet,
+    startingPlanet,
   }: CharacterProps) {
     this.movementSpeed = movementSpeed;
     this.rotationSpeed = rotationSpeed;
     this.jumpForce = jumpForce;
     this.rigidBodyRef = rigidBodyRef;
     this.meshGroupRef = meshGroupRef;
-    this.currentPlanet = currentPlanet;
+    this.currentPlanet = startingPlanet;
+    this.position = new Vector3(
+      startingPlanet.position.x,
+      startingPlanet.position.y + 1.0,
+      startingPlanet.position.z,
+    );
   }
 
   update(
@@ -51,12 +62,9 @@ export class Character {
         upVector: new Vector3(),
         playerPos: new Vector3(),
       };
-    const playerPos = new Vector3().copy(
-      this.rigidBodyRef.current.translation(),
-    );
 
     const upVector = new Vector3()
-      .subVectors(playerPos, this.currentPlanet.position)
+      .subVectors(this.position, this.currentPlanet.position)
       .normalize();
 
     const gravityForce = upVector
@@ -65,7 +73,6 @@ export class Character {
       .multiplyScalar(gravityStrength * delta);
     this.rigidBodyRef.current.applyImpulse(gravityForce, true);
 
-    // 3. Handle inputs
     const { forward, backward, right, left, jump } = get();
 
     // ---- for now, only worrying about keyboard controls ----
@@ -76,72 +83,63 @@ export class Character {
     //turnAmount = joystickInput.x * joystickSensitivity;
     //}
 
-    //const currentRotation = this.rigidBodyRef.current.rotation()
-    //this.rigidBodyRef.current.setRotation()
     this.facingRotation -= turnAmount * delta * this.rotationSpeed;
 
-    // 5. Calculate player's local coordinate system using quaternions
-    // Create a quaternion that rotates from world up (0,1,0) to the player's up direction
     const alignToSurfaceQuat = new Quaternion();
     alignToSurfaceQuat.setFromUnitVectors(new Vector3(0, 1, 0), upVector);
 
-    // Create a quaternion for the player's rotation around their local up axis
     const playerRotationQuat = new Quaternion();
     playerRotationQuat.setFromAxisAngle(
       new Vector3(0, 1, 0),
       this.facingRotation,
     );
 
-    // Combine the quaternions: first align to surface, then apply player rotation
     const combinedQuat = new Quaternion();
     combinedQuat.multiplyQuaternions(alignToSurfaceQuat, playerRotationQuat);
 
-    // Extract the local coordinate axes from the combined quaternion
     const forwardVector = new Vector3(0, 0, 1).applyQuaternion(combinedQuat);
 
-    // Project forward vector onto tangent plane (orthogonal to upVector)
     const moveVector = forwardVector.clone().projectOnPlane(upVector);
     moveVector
       .normalize()
       .multiplyScalar(moveForward * this.movementSpeed * delta);
 
-    // Get current velocity
     const velocity = this.rigidBodyRef.current.linvel();
     const currentVel = new Vector3(velocity.x, velocity.y, velocity.z);
 
-    // Project current velocity onto the planet surface plane
     const upComponent = upVector
       .clone()
       .multiplyScalar(currentVel.dot(upVector));
     const tangentVelocity = new Vector3().subVectors(currentVel, upComponent);
 
-    // Calculate new velocity with damping
     const dampingFactor = 0.95;
     const newTangentVel = tangentVelocity
       .multiplyScalar(dampingFactor)
       .add(moveVector);
 
-    // Apply jump if grounded
     if (this.isInContact && jump) {
       upComponent.addScaledVector(upVector, this.jumpForce);
     }
 
-    // Combine for final velocity
     const newVelocity = new Vector3().add(newTangentVel).add(upComponent);
 
-    // Apply the velocity
     this.rigidBodyRef.current.setLinvel(newVelocity, true);
+    const simplePosition = this.rigidBodyRef.current.translation();
 
-    // 7. Update group orientation using the combined quaternion
+    this.position = new Vector3(
+      simplePosition.x,
+      simplePosition.y,
+      simplePosition.z,
+    );
+
     this.meshGroupRef.current.quaternion.copy(combinedQuat);
 
-    // 8. Position the group at the rigid body's position
-    this.meshGroupRef.current.position.copy(playerPos);
+    this.meshGroupRef.current.position.copy(this.position);
 
     return {
       forwardVector,
       upVector,
-      playerPos,
+      playerPos: this.position,
     };
   }
 
